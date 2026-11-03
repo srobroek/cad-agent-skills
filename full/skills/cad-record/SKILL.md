@@ -23,13 +23,12 @@ ASK explicit owner approval of an import mapping before any imported byte lands 
    Schemas are `<skill-dir>/schemas/<root>.schema.json`; never resolve them from the product cwd.
 2. LOAD references/record.md (`skill://cad-record/references/record.md`) for paths, IDs, versions,
    the hash graph and facts.
-3. Bootstrap only when `test ! -e hw && test ! -L hw` succeeds: copy `<skill-dir>/assets/project-template/hw`
-   to `hw/`, never over an existing or dangling path → every template file validates (step 4).
-4. LOAD references/validation.md (`skill://cad-record/references/validation.md`); run the exact
-   `check-jsonschema` command for every file layout.json maps to a schema, then the semantic check
-   → each command exits 0 and the semantic result is a check-result with no FAIL or UNKNOWN.
-5. LOAD references/import.md (`skill://cad-record/references/import.md`) only when an existing record
-   is present; follow its dry-run, approval and apply steps.
+3. Bootstrap, keep or import `hw/`: run procedure `record-bootstrap` in references/record.md
+   (`skill://cad-record/references/record.md#record-bootstrap`) → `hw/` validates and its open questions are listed.
+4. LOAD references/validation.md (`skill://cad-record/references/validation.md`) to validate any record file,
+   result, manifest, brief or delivery → each command exits 0 and the semantic result has no FAIL or UNKNOWN.
+5. LOAD references/import.md (`skill://cad-record/references/import.md`) only when `record-bootstrap` routes
+   an existing record to import; follow its dry-run, approval and apply steps.
 6. LOAD references/contract-index.md (`skill://cad-record/references/contract-index.md`) for every
    schema root, ID family, check family, path and result field another skill consumes.
 

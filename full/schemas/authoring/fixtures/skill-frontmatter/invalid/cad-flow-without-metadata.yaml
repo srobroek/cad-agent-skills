@@ -1,0 +1,3 @@
+name: cad-flow
+description: Runs a cad-agent-skills design from use case to release. Use for "design a phone stand", "continue the design",
+  "approve this gate".

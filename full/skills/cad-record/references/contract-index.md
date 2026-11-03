@@ -170,7 +170,7 @@ The `common` root validates contract probes only (`probe: cad-agent-skills.commo
 ## Stage verdict (`stage-verdict`)
 
 `stage`, `version`, `predecessor{stage, version, verdict, approval}` (required after GROUND), `supersedes`,
-`version_manifest{path, sha256}`, `policy{path (absolute), plugin{name, version, manifest}}`, `expected[obligation_id]`,
+`version_manifest{path, sha256}`, `policy{path (absolute), plugin{name, version}}`, `expected[obligation_id]`,
 `results[{check, attempt, family, result, waiver, binding VERSION|CARRIED_FORWARD, result_file, bundle, carried_from}]`,
 `bundles[{kind DRAWING|BOM|VERIFICATION, manifest}]`, `waivers[{id WV-###, decision DR-###}]`,
 `future[obligation_id]` (PLANNED), `blockers[{code, text, obligation}]`, `review{required, verdict, result}`,
@@ -187,12 +187,15 @@ checks (references/validation.md).
 - `bundle-manifest`: `kind CHECK|DRAWING|BOM|VERIFICATION`, `binding`, `input[{path, sha256}]`, `recipe` (`kind: COMMAND`
   `{commands, packages, platform}` or `kind: REVIEW` `{inspected}`), `policy{path, plugin}`, `files[{path, sha256, role}]`
   without itself, `complete`.
-- `worker-brief`: `resources{plugin{name, version, manifest}, skills[{name, path, uri}], schemas[{name, path}],
+- `worker-brief`: `resources{plugin{name, version}, skills[{name, path, uri}], schemas[{name, path}],
   role_reference{name, path, uri}}` with absolute paths and no hashes of installed files; `input_inventory{sha256,
   files[{path under hw/, sha256}]}`.
 - `worker-delivery`: `brief_sha256`, `input_inventory_sha256`, `boundary{method, before_sha256, after_sha256, violations}`.
 - Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
-  policy are identified by plugin name, version and resolved absolute path; nothing installed is hashed.
+  policy are identified by `plugin{name, version}` and their resolved absolute paths; nothing installed is hashed.
+  On every host the version source is the installed cad-flow SKILL.md frontmatter
+  `metadata: {plugin: cad-agent-skills, version: "<semver>"}` (lean: `cad-agent-skills-lean`); the
+  `skill-frontmatter` authoring schema requires both keys on cad-flow.
 
 ## Stage policy (`stage-policy`, written by cad-flow)
 
