@@ -149,7 +149,7 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `producer_role`, `stage` | role or `lead`; stage enum |
 | `binding` | `{kind: UNIT, unit, brief_sha256, input_inventory_sha256}` or `{kind: VERSION, version, version_manifest_sha256}` |
 | `input_files` | `[{path, sha256}]` of every input read |
-| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; the reviewer always reports REVIEW |
+| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; `inspected` lists every file read, including other checks' `result.json` and `bundle-manifest.json`; the reviewer always reports REVIEW |
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |
 | `findings[]` | `{id, family, subject, severity, outcome, measured, criterion, method, uncertainty, consequence, remedy, alternatives, recheck}` |
@@ -191,6 +191,13 @@ checks (references/validation.md).
   role_reference{name, path, uri}}` with absolute paths and no hashes of installed files; `input_inventory{sha256,
   files[{path under hw/, sha256}]}`.
 - `worker-delivery`: `brief_sha256`, `input_inventory_sha256`, `boundary{method, before_sha256, after_sha256, violations}`.
+- `release-manifest`: `phase: PROPOSAL` (`hw/versions/vN/release-proposal.json`) has `rev`, `frozen{version,
+  version_manifest, verdict, decision}` (the FREEZE attempt), `decisions`, `planned`, `scope`, `claims`, `waivers`,
+  `licenses`, `exclusions`, and never `readiness`, `approval`, `integrity` or `inventory`. `phase: FINAL` adds the
+  required `readiness` (RELEASE stage verdict), `approval`, `integrity` and `inventory`. The RELEASE checks and
+  verdict hash the proposal, so the proposal cannot hash them; the RELEASE approval DR binds both.
+- `selection`: `assessment.input_sha256` is the set digest of the `hw/` files the assessment read, never of
+  `hw/manufacturing/selection.yaml` itself.
 - Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
   policy are identified by `plugin{name, version}` and their resolved absolute paths; nothing installed is hashed.
   On every host the version source is the installed cad-flow SKILL.md frontmatter
@@ -206,7 +213,8 @@ and `check_order[family]` (the fixed cost order).
 ## Decision bindings (`decision`)
 
 `binding.kind`: `PROPOSAL{path under hw/decisions/proposals/DR-###/, sha256}`, `STAGE{stage, version, verdict, verdict_result}`,
-`FROZEN{version, version_manifest_sha256, verdict}`, `RELEASE_INVENTORY{rev, version, proposal}`. A GATE DR binds STAGE;
+`FROZEN{version, version_manifest_sha256, verdict}`, `RELEASE_INVENTORY{rev, version, proposal, verdict}` (`proposal`
+the release proposal, `verdict` the RELEASE readiness verdict that hashes it). A GATE DR binds STAGE;
 an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTHORITY actor and a transcript statement.
 
 ## Paths
@@ -285,6 +293,8 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `scratch.unit_input`: `.cad-work/{UNIT}/input/**`
 - `scratch.unit_output`: `.cad-work/{UNIT}/output/**`
 - `scratch.unit_build`: `.cad-work/{UNIT}/build.py`
+- `scratch.unit_build_lock`: `.cad-work/{UNIT}/build.py.lock` (uv writes `uv lock --script build.py` next to the script)
 - `scratch.unit_check`: `.cad-work/{UNIT}/check.py`
+- `scratch.unit_check_lock`: `.cad-work/{UNIT}/check.py.lock` (`uv lock --script check.py`)
 - `scratch.unit_delivery`: `.cad-work/{UNIT}/delivery.json` → `worker-delivery`
 - `scratch.stage`: `.cad-work/stage-{V}/**`

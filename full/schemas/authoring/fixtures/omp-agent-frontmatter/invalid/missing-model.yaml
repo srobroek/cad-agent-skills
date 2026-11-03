@@ -1,6 +1,6 @@
 name: cad-checker
 description: Independent checker for one assigned check unit.
-thinking-level: high
+thinkingLevel: high
 tools:
 - read
 - grep

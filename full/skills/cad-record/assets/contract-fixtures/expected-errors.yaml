@@ -36,6 +36,9 @@ check-result/invalid/reviewer-command-implementation.json: the read-only reviewe
 check-result/invalid/unit-binding-missing-brief.json: UNIT binding needs unit, brief and input inventory digests
 check-result/invalid/unknown-reported-pass.json: an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
 check-result/invalid/unregistered-family.json: families are the registered enum
+# check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the
+# review's own result.json or bundle-manifest.json is semantic only (references/validation.md item 11), because
+# the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.
 common/invalid/allowable-without-authority.yaml: ALLOWABLE needs authority, conditions and derivation
 common/invalid/component-without-pn.yaml: a COMPONENT subject names its PN
 common/invalid/datasheet-without-locator.yaml: a datasheet source names a url or a retained artifact
@@ -52,6 +55,7 @@ decision/invalid/gate-approves-failed-verdict.yaml: an approved gate binds a PAS
 decision/invalid/gate-binds-proposal.yaml: a GATE decision binds a STAGE verdict
 decision/invalid/lead-approves-gate.yaml: only a USER or AUTHORITY approves
 decision/invalid/proposal-in-scratch.yaml: a PROPOSAL binding names an immutable proposal under hw/decisions/proposals/DR-###/, never scratch
+decision/invalid/release-without-verdict.yaml: a RELEASE approval binds the proposal and the RELEASE readiness verdict that hashes it
 decision/invalid/supersede-without-refers.yaml: SUPERSEDED refers to the old DR
 interfaces/invalid/face-index-feature.yaml: features are semantic lower ids, never face indices
 interfaces/invalid/missing-play.yaml: play is required (a value or an explicit UNKNOWN/NOT_APPLICABLE)
@@ -86,7 +90,9 @@ product/invalid/rigor-default-pro.yaml: rigor is maker|pro|regulated (lowercase)
 product/invalid/service-class-without-decision.yaml: a known service class requires its decision
 product/invalid/wrong-format.yaml: format must be cad-agent-skills and record_version 1
 release-manifest/invalid/final-without-integrity.json: FINAL requires approval, integrity and inventory
+release-manifest/invalid/final-without-readiness.json: a FINAL manifest names the RELEASE readiness verdict
 release-manifest/invalid/proposal-with-approval.json: a PROPOSAL excludes the not-yet-written approval and integrity
+release-manifest/invalid/proposal-with-readiness.json: a PROPOSAL never hashes the RELEASE readiness verdict (that verdict hashes the proposal)
 release-manifest/invalid/rev-reused-letter.json: REV letters exclude I, O, Q, S, X, Z
 release-manifest/invalid/self-listed.json: the manifest never inventories itself
 release-manifest/invalid/unknown-service-scope.json: a release states a known service class
@@ -129,7 +135,8 @@ version-manifest/invalid/includes-check-result.json: inventories hold only hw/ve
 version-manifest/invalid/includes-itself.json: the manifest and stage verdict are never inventoried
 version-manifest/invalid/pre-cad-no-reason.json: NOT_APPLICABLE geometry states its reason
 worker-brief/invalid/installed-hash.yaml: 'installed skills are never hashed: installed_sha256 is not a field'
-worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name, version and manifest path
+worker-brief/invalid/lock-outside-scratch.yaml: a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
+worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name and version
 worker-brief/invalid/plugin-manifest-field.yaml: plugin provenance is name and version from the cad-flow SKILL.md metadata; no manifest path
 worker-brief/invalid/plugin-version-not-semver.yaml: plugin version is a semver string
 worker-brief/invalid/relative-skill-path.yaml: resource paths are literal absolute paths from preflight
