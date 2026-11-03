@@ -1,0 +1,14 @@
+CAD Agent Skills attribution
+============================
+
+This project derives documentation and skill material in part from
+srobroek/cad-agent, whose NOTICE records its historical import from
+srobroek/omp-plugins. The source repositories are:
+
+  https://github.com/srobroek/cad-agent
+  https://github.com/srobroek/omp-plugins
+
+The cad-agent source is licensed under Apache-2.0, as is this repository.
+This NOTICE records provenance only and does not modify the license. No
+AgentCAD scripts are copied into this repository. Third-party material and
+later additions retain their applicable notices and licenses.

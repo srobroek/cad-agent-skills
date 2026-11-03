@@ -1,0 +1,4 @@
+# CI checks relative links without making network requests.
+offline = true
+include_fragments = true
+exclude = ["^skill://"]
