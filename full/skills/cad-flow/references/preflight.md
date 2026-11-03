@@ -33,9 +33,9 @@ holds this session's approval statements, and at finish its claim, preflight and
 2. `test -f` each derived path: `<cad-record>/schemas/<root>.schema.json` for the 28 roots,
    `<cad-record>/layout.json`, `<cad-flow>/assets/stages.yaml`, `<cad-flow>/assets/worker-brief.yaml`,
    `<cad-flow>/assets/worker-delivery.yaml` and `<cad-flow>/references/agent-roles.md`.
-3. Plugin provenance (cad-record common `plugin`): `name` and `version` read from the installed plugin manifest
-   the host installed the skills with, and that manifest's resolved absolute path. No manifest found → stop as
-   an installation defect. Installed bytes are not hashed.
+3. Plugin provenance (cad-record common `plugin`): `name` and `version` are the `metadata.plugin` and
+   `metadata.version` values in the frontmatter of the resolved `<cad-flow>/SKILL.md`, on every host. Either
+   value missing → stop as an installation defect.
 4. The host can dispatch all five roles (cad-concept-designer, cad-part-designer, cad-checker,
    cad-mech-dfm-reviewer, cad-sourcing-researcher) by name.
 5. No resolved path lies under `<root>/hw/` or `<root>/.cad-work/`.
@@ -66,7 +66,7 @@ UNKNOWN `UNSUPPORTED_METHOD`, never a fallback method.
 
 ## preflight.json
 
-Fields: `root`, `host`, `harness`, `session`, `plugin {name, version, manifest}`, `skills [{name, path, uri}]`,
+Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`,
 `schemas [{name, path}]`, `layout`, `policy {path, plugin}`, `role_reference`, `templates`,
 `tools [{name, argv, version}]`, `isolation`, `time`. Every path is absolute. Briefs and verdicts copy resource
 paths and provenance from this file only.
