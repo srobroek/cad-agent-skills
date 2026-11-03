@@ -1,0 +1,158 @@
+image: python:3.12.12-slim-bookworm
+
+stages:
+  - test
+
+static-checks:
+  stage: test
+  timeout: 20m
+  tags:
+    - arch:arm64
+    - size:small
+  variables:
+    PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends ca-certificates coreutils curl grep tar xz-utils && rm -rf /var/lib/apt/lists/*
+    - |
+      set -euo pipefail
+      curl --fail --location --silent --show-error https://github.com/astral-sh/uv/releases/download/0.13.7/uv-aarch64-unknown-linux-gnu.tar.gz --output /tmp/uv.tar.gz
+      echo "71279f8d3c67241e807b9d8db872d1bf541579fb9f08b7d1eb1682196d1e57dc  /tmp/uv.tar.gz" | sha256sum --check
+      mkdir /tmp/uv && tar -xzf /tmp/uv.tar.gz --strip-components=1 -C /tmp/uv uv-aarch64-unknown-linux-gnu/uv
+      install -m 0755 /tmp/uv/uv /usr/local/bin/uv
+      curl --fail --location --silent --show-error https://nodejs.org/dist/v22.21.1/node-v22.21.1-linux-arm64.tar.xz --output /tmp/node.tar.xz
+      echo "e660365729b434af422bcd2e8e14228637ecf24a1de2cd7c916ad48f2a0521e1  /tmp/node.tar.xz" | sha256sum --check
+      mkdir /opt/node && tar -xJf /tmp/node.tar.xz --strip-components=1 -C /opt/node node-v22.21.1-linux-arm64
+      export PATH="/opt/node/bin:$PATH"
+      curl --fail --location --silent --show-error https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-aarch64-unknown-linux-gnu.tar.gz --output /tmp/lychee.tar.gz
+      echo "91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c  /tmp/lychee.tar.gz" | sha256sum --check
+      mkdir /tmp/lychee && tar -xzf /tmp/lychee.tar.gz -C /tmp/lychee
+      install -m 0755 /tmp/lychee/lychee /usr/local/bin/lychee
+  script:
+    - |
+      set -euo pipefail
+      forbidden='(^|/)(scripts|tools|hooks)(/|$)|\.(py|js|ts|sh|ipynb)$'
+      if git ls-files -z | grep -zEiq "$forbidden"; then
+        printf '%s\n' 'Tracked executable source, scripts/, tools/, and hooks/ are not permitted.' >&2
+        git ls-files | grep -Ei "$forbidden" >&2 || true
+        exit 1
+      fi
+    - |
+      set -euo pipefail
+      shopt -s nullglob
+      for variant in full lean; do
+        root_schemas=("$variant/skills/cad-record/schemas"/*.schema.json)
+        if ((${#root_schemas[@]} == 0)); then
+          [[ "$variant" == lean ]] && continue
+          printf 'No mechanical schemas found in %s\n' "$variant" >&2
+          exit 1
+        fi
+        schemas=("${root_schemas[@]}")
+        authoring_schemas=("$variant/schemas/authoring"/*.schema.json)
+        schemas+=("${authoring_schemas[@]}")
+        uvx --from check-jsonschema==0.39.0 check-jsonschema --check-metaschema "${schemas[@]}"
+      done
+    - |
+      set -euo pipefail
+      shopt -s nullglob
+      validate_pair() {
+        uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile "$1" "$2"
+      }
+      validate_fixtures() {
+        local schema="$1"
+        local root="$2"
+        local fixture_root="$3"
+        for status in valid invalid; do
+          local fixture_dir="$fixture_root/$root/$status"
+          [[ -d "$fixture_dir" ]] || { printf 'Missing %s fixtures: %s\n' "$status" "$fixture_dir" >&2; exit 1; }
+          local instances=("$fixture_dir"/*)
+          ((${#instances[@]} > 0)) || { printf 'No fixtures in %s\n' "$fixture_dir" >&2; exit 1; }
+          local instance
+          for instance in "${instances[@]}"; do
+            [[ -f "$instance" ]] || continue
+            if [[ "$status" == valid ]]; then
+              validate_pair "$schema" "$instance"
+            elif uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile "$schema" "$instance"; then
+              printf 'Invalid fixture unexpectedly validated: %s\n' "$instance" >&2
+              exit 1
+            fi
+          done
+        done
+      }
+      for variant in full lean; do
+        schemas="$variant/skills/cad-record/schemas"
+        if [[ ! -d "$schemas" ]]; then
+          [[ "$variant" == lean ]] && continue
+          printf 'Missing full schema directory: %s\n' "$schemas" >&2
+          exit 1
+        fi
+        schema_files=("$schemas"/*.schema.json)
+        if ((${#schema_files[@]} == 0)); then
+          [[ "$variant" == lean ]] && continue
+          printf 'No mechanical schemas found in %s\n' "$schemas" >&2
+          exit 1
+        fi
+        fixtures="$variant/skills/cad-record/assets/contract-fixtures"
+        for schema in "${schema_files[@]}"; do
+          root="${schema##*/}"
+          root="${root%.schema.json}"
+          validate_fixtures "$schema" "$root" "$fixtures"
+        done
+
+        template_root="$variant/skills/cad-record/assets/project-template/hw"
+        if [[ -d "$template_root" ]]; then
+          while IFS= read -r -d '' template; do
+            case "${template#"$variant/skills/cad-record/"}" in
+              assets/project-template/hw/product.yaml) root=product ;;
+              assets/project-template/hw/requirements.yaml) root=requirements ;;
+              assets/project-template/hw/interfaces.yaml) root=interfaces ;;
+              assets/project-template/hw/assembly.yaml) root=assembly ;;
+              assets/project-template/hw/check-plan.yaml) root=check-plan ;;
+              assets/project-template/hw/manufacturing/materials.yaml) root=material-library ;;
+              assets/project-template/hw/manufacturing/capabilities.yaml) root=capability-library ;;
+              assets/project-template/hw/manufacturing/selection.yaml) root=selection ;;
+              *) printf 'Unmapped project template: %s\n' "$template" >&2; exit 1 ;;
+            esac
+            validate_pair "$schemas/$root.schema.json" "$template"
+          done < <(find "$template_root" -type f \( -name '*.yaml' -o -name '*.json' \) -print0 | sort -z)
+        fi
+        if [[ -f "$variant/skills/cad-record/layout.json" ]]; then
+          validate_pair "$schemas/layout.schema.json" "$variant/skills/cad-record/layout.json"
+        fi
+        for instance in "$variant"/skills/cad-record/assets/manufacturing/material-profiles/*.yaml; do
+          [[ -f "$instance" ]] && validate_pair "$schemas/material-library.schema.json" "$instance"
+        done
+        if [[ -f "$variant/skills/cad-record/assets/manufacturing/capability-templates.yaml" ]]; then
+          validate_pair "$schemas/capability-library.schema.json" "$variant/skills/cad-record/assets/manufacturing/capability-templates.yaml"
+        fi
+        if [[ -f "$variant/skills/cad-flow/assets/stages.yaml" ]]; then
+          validate_pair "$schemas/stage-policy.schema.json" "$variant/skills/cad-flow/assets/stages.yaml"
+        fi
+
+        authoring="$variant/schemas/authoring"
+        if [[ -d "$authoring" ]]; then
+          for fixture_root in "$authoring"/fixtures/*; do
+            [[ -d "$fixture_root" ]] || continue
+            stem="${fixture_root##*/}"
+            schema="$authoring/$stem.schema.json"
+            [[ -f "$schema" ]] || { printf 'Missing authoring schema for fixtures: %s\n' "$fixture_root" >&2; exit 1; }
+            validate_fixtures "$schema" "$stem" "$authoring/fixtures"
+          done
+        fi
+      done
+
+      authoring=full/schemas/authoring
+      validate_pair "$authoring/claude-plugin.schema.json" full/.claude-plugin/plugin.json
+      validate_pair "$authoring/claude-plugin.schema.json" lean/.claude-plugin/plugin.json
+      validate_pair "$authoring/omp-plugin.schema.json" full/.omp-plugin/plugin.json
+      validate_pair "$authoring/omp-plugin.schema.json" lean/.omp-plugin/plugin.json
+      validate_pair "$authoring/claude-marketplace.schema.json" .claude-plugin/marketplace.json
+      validate_pair "$authoring/omp-marketplace.schema.json" .omp-plugin/marketplace.json
+      for file in full/skills/*/SKILL.md full/agents/*.md full/harness/claude/agents/*.md full/harness/opencode/agents/*.md; do
+        [[ -f "$file" ]] || continue
+        IFS= read -r first_line < "$file"
+        [[ "$first_line" == '---' ]] || { printf 'Missing YAML frontmatter: %s\n' "$file" >&2; exit 1; }
+      done
+      npm exec --yes --package=markdownlint-cli2@0.24.0 -- markdownlint-cli2 '**/*.md'
+      npm install --no-save --ignore-scripts --no-package-lock remark-cli@12.0.1 remark@15.0.1 remark-frontmatter@5.0.0 remark-lint-frontmatter-schema@3.15.4
+      ./node_modules/.bin/remark --frail --quiet 'full/skills/*/SKILL.md' 'full/agents/*.md' 'full/harness/claude/agents/*.md' 'full/harness/opencode/agents/*.md'
+      lychee --config lychee.toml --offline --include-fragments '**/*.md'

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cad-agent-skills",
+  "owner": {
+    "name": "Sjors Robroek"
+  },
+  "metadata": {
+    "description": "Mechanical product architecture and CAD modelling skills and agent roles.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "cad-agent-skills",
+      "source": "./full",
+      "description": "Full-parity mechanical product architecture and CAD modelling plugin.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "cad-agent-skills-lean",
+      "source": "./lean",
+      "description": "Lean mechanical product architecture and CAD modelling plugin.",
+      "version": "0.1.0"
+    }
+  ]
+}

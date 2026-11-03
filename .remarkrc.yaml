@@ -1,0 +1,12 @@
+plugins:
+  - remark-frontmatter
+  - - remark-lint-frontmatter-schema
+    - schemas:
+        ./full/schemas/authoring/skill-frontmatter.schema.json:
+          - full/skills/*/SKILL.md
+        ./full/schemas/authoring/omp-agent-frontmatter.schema.json:
+          - full/agents/*.md
+        ./full/schemas/authoring/claude-agent-frontmatter.schema.json:
+          - full/harness/claude/agents/*.md
+        ./full/schemas/authoring/opencode-agent-frontmatter.schema.json:
+          - full/harness/opencode/agents/*.md
