@@ -22,7 +22,6 @@ resources:
   plugin:
     name: cad-agent-skills
     version: 0.0.0
-    manifest: /RESOLVED/BY/PREFLIGHT/plugin/.claude-plugin/plugin.json
   skills:
   - name: cad-design
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-design/SKILL.md

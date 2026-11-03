@@ -133,8 +133,8 @@ Each owner reference defines the step under a heading with the procedure ID.
 
 | ID | Owner reference | Output |
 |---|---|---|
-| `record-bootstrap` | cad-record SKILL.md workflow (bootstrap, or references/import.md) | `hw/` from the template or an approved import |
-| `intake-use-case` | cad-select references/use-case.md | intake, service, risk, authority, release scope, questions |
+| `record-bootstrap` | cad-record references/record.md (`skill://cad-record/references/record.md#record-bootstrap`) | `hw/` from the template or an approved import |
+| `intake-use-case` | cad-select references/selection.md | intake, service, risk, authority, release scope, questions |
 | `select-candidates` | cad-select references/selection.md | candidates and the facts to source |
 | `assess-selection` | cad-select references/selection.md | `selection.yaml` assessment and recommendation |
 | `specify-requirements` | cad-verify references/check-plan.md | requirement criteria, methods, facets, due stages |
