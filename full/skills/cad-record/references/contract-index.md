@@ -191,6 +191,13 @@ checks (references/validation.md).
   role_reference{name, path, uri}}` with absolute paths and no hashes of installed files; `input_inventory{sha256,
   files[{path under hw/, sha256}]}`.
 - `worker-delivery`: `brief_sha256`, `input_inventory_sha256`, `boundary{method, before_sha256, after_sha256, violations}`.
+- `release-manifest`: `phase: PROPOSAL` (`hw/versions/vN/release-proposal.json`) has `rev`, `frozen{version,
+  version_manifest, verdict, decision}` (the FREEZE attempt), `decisions`, `planned`, `scope`, `claims`, `waivers`,
+  `licenses`, `exclusions`, and never `readiness`, `approval`, `integrity` or `inventory`. `phase: FINAL` adds the
+  required `readiness` (RELEASE stage verdict), `approval`, `integrity` and `inventory`. The RELEASE checks and
+  verdict hash the proposal, so the proposal cannot hash them; the RELEASE approval DR binds both.
+- `selection`: `assessment.input_sha256` is the set digest of the `hw/` files the assessment read, never of
+  `hw/manufacturing/selection.yaml` itself.
 - Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
   policy are identified by `plugin{name, version}` and their resolved absolute paths; nothing installed is hashed.
   On every host the version source is the installed cad-flow SKILL.md frontmatter
@@ -206,7 +213,8 @@ and `check_order[family]` (the fixed cost order).
 ## Decision bindings (`decision`)
 
 `binding.kind`: `PROPOSAL{path under hw/decisions/proposals/DR-###/, sha256}`, `STAGE{stage, version, verdict, verdict_result}`,
-`FROZEN{version, version_manifest_sha256, verdict}`, `RELEASE_INVENTORY{rev, version, proposal}`. A GATE DR binds STAGE;
+`FROZEN{version, version_manifest_sha256, verdict}`, `RELEASE_INVENTORY{rev, version, proposal, verdict}` (`proposal`
+the release proposal, `verdict` the RELEASE readiness verdict that hashes it). A GATE DR binds STAGE;
 an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTHORITY actor and a transcript statement.
 
 ## Paths
