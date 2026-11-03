@@ -1076,14 +1076,13 @@
     "gen_header_format": {"type": "string", "pattern": "^cad-agent-skills\\.[a-z][a-z0-9-]*$"},
     "waiver_id": {"type": "string", "pattern": "^WV-[0-9]{3}$"},
     "plugin": {
-      "description": "installed plugin provenance: name and version read from its installed plugin manifest, and that manifest's resolved absolute path; installed bytes are not hashed",
+      "description": "plugin provenance: name and version from the cad-flow SKILL.md frontmatter metadata of the installed skills; with the resolved absolute paths it identifies the installed contract; installed bytes are not hashed",
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "version", "manifest"],
+      "required": ["name", "version"],
       "properties": {
         "name": {"enum": ["cad-agent-skills", "cad-agent-skills-lean"]},
-        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"},
-        "manifest": {"$ref": "#/$defs/absolute_path"}
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"}
       }
     },
     "installed_policy": {
