@@ -166,12 +166,28 @@ Every fact is `KNOWN`, `UNKNOWN` or `NOT_APPLICABLE` (common.schema.json `fact`)
   never relaxes the evidence a service class needs.
 - PRODUCTION and SAFETY_CRITICAL need a competent authority with supplied criteria, allowables and evidence.
 
-## Template and bootstrap
+## Template
 
 - `assets/project-template/hw/` holds empty collections and explicit UNKNOWN facts with owners and the
   open questions `Q-001`…`Q-017`. It sets no printer, material, process, tolerance, regime, general
   tolerance, clearance, rigor or license.
-- Copy it only when `test ! -e hw && test ! -L hw` succeeds; never overwrite, merge or follow a symlink.
-  Then replace `id` and `title` with the owner's product name, and validate.
 - The template is schema-valid with zero requirements. SPECIFY semantic completeness rejects a mandatory
   requirement without engineering acceptance.
+
+## record-bootstrap
+
+Procedure `record-bootstrap`, run by cad-flow at GROUND from the project root. `<skill-dir>` is the absolute
+cad-record directory from the brief or preflight.
+
+1. When `test ! -e hw && test ! -L hw` succeeds, copy the template, then set `id` and `title` in
+   `hw/product.yaml` from the owner's product name:
+   `cp -R "<skill-dir>/assets/project-template/hw" hw`
+   Never overwrite, merge into or follow an existing or dangling `hw`.
+2. Otherwise, when `hw/product.yaml` declares `format: cad-agent-skills` and `record_version: 1`, keep the
+   record unchanged.
+3. Otherwise the record is legacy or foreign: run references/import.md (dry run, owner IMPORT DR, apply);
+   no byte lands in `hw/` before that approval.
+4. Validate per references/validation.md: every schema command exits 0 and the `record.semantic` result has
+   no FAIL or UNKNOWN. UNKNOWN facts with open questions are intake input, not validation failures.
+5. Report the path taken (`COPIED`, `EXISTING` or `IMPORTED`), the validation result paths and every open
+   question for GROUND intake.

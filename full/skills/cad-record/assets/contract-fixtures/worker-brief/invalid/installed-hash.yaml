@@ -16,7 +16,6 @@ resources:
   plugin:
     name: cad-agent-skills
     version: 0.1.0
-    manifest: /Users/me/.agents/plugins/cad-agent-skills/.claude-plugin/plugin.json
   skills:
   - name: cad-model
     path: /Users/me/.agents/skills/cad-model/SKILL.md
