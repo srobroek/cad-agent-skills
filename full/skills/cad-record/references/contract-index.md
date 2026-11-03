@@ -293,6 +293,8 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `scratch.unit_input`: `.cad-work/{UNIT}/input/**`
 - `scratch.unit_output`: `.cad-work/{UNIT}/output/**`
 - `scratch.unit_build`: `.cad-work/{UNIT}/build.py`
+- `scratch.unit_build_lock`: `.cad-work/{UNIT}/build.py.lock` (uv writes `uv lock --script build.py` next to the script)
 - `scratch.unit_check`: `.cad-work/{UNIT}/check.py`
+- `scratch.unit_check_lock`: `.cad-work/{UNIT}/check.py.lock` (`uv lock --script check.py`)
 - `scratch.unit_delivery`: `.cad-work/{UNIT}/delivery.json` → `worker-delivery`
 - `scratch.stage`: `.cad-work/stage-{V}/**`

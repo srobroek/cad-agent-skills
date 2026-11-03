@@ -132,6 +132,7 @@ version-manifest/invalid/includes-check-result.json: inventories hold only hw/ve
 version-manifest/invalid/includes-itself.json: the manifest and stage verdict are never inventoried
 version-manifest/invalid/pre-cad-no-reason.json: NOT_APPLICABLE geometry states its reason
 worker-brief/invalid/installed-hash.yaml: 'installed skills are never hashed: installed_sha256 is not a field'
+worker-brief/invalid/lock-outside-scratch.yaml: a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
 worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name, version and manifest path
 worker-brief/invalid/plugin-manifest-field.yaml: plugin provenance is name and version from the cad-flow SKILL.md metadata; no manifest path
 worker-brief/invalid/plugin-version-not-semver.yaml: plugin version is a semver string
