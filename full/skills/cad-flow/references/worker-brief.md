@@ -1,0 +1,35 @@
+# Worker brief
+
+Owner: cad-flow. How the lead writes `.cad-work/<unit>/brief.yaml` (root `worker-brief`) before dispatch.
+Template: `assets/worker-brief.yaml`. Role duties, skills and write sets: references/agent-roles.md.
+
+## Compose
+
+1. `mkdir .cad-work/<unit>` must succeed; an existing directory is an existing unit (references/delegation.md).
+2. Copy every file the unit reads byte-identically to `.cad-work/<unit>/input/<its project-relative path>`.
+3. Fill the fields below, validate against the worker-brief root → exit 0, record its sha256 in
+   `.cad-work/lead/units.yaml`. The brief is never edited after dispatch; a change is a new unit.
+
+| Field | Value |
+|---|---|
+| `unit`, `role`, `stage` | the unit id, one of the five roles, the current stage |
+| `version` | the published `vN` a checker or reviewer works on; absent for design and sourcing units |
+| `task` | one sentence: the subject and the result wanted |
+| `subjects` | the PNs, components, interfaces, requirements, cases or operations in scope |
+| `input_inventory` | every inventoried `hw/` file with its sha256, and their set digest (cad-record references/record.md "Inventory digest") |
+| `resources.plugin` | `{name, version, manifest}` copied from `.cad-work/lead/preflight.json` |
+| `resources.skills` | the role's skills from references/agent-roles.md plus cad-review (rubric), each with its absolute SKILL.md path and `skill://` URI |
+| `resources.schemas` | every root the unit writes or validates, always `worker-delivery`, and `check-result` when it runs checks |
+| `resources.role_reference` | the absolute path and URI of references/agent-roles.md |
+| `boundary.project_root` | the claim's `root` |
+| `boundary.scratch`, `boundary.writable` | `.cad-work/<unit>`; the role's write set from references/agent-roles.md |
+| `boundary.locked` | `hw/` files the unit may not change: interfaces, assembly, other PNs, criteria |
+| `boundary.read_only` | other paths it may read |
+| `expected.outputs` | each `hw/` target with its kind |
+| `expected.checks`, `expected.obligations` | the check-plan checks and obligation IDs the unit must run and cover |
+| `expected.stop` | the unit's stop conditions beyond the role's own |
+| `expected.report` | `VERDICT line, delivery.json absolute path, findings, unknowns, proposals` |
+| `lead.session` | the claim's `session`; the native task id is logged in `units.yaml` only |
+
+Every path in `resources` and `boundary.project_root` is copied from `preflight.json`; never typed, guessed or
+resolved from the product directory.
