@@ -153,12 +153,16 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "rev", "version", "proposal"],
+          "required": ["kind", "rev", "version", "proposal", "verdict"],
           "properties": {
             "kind": {"const": "RELEASE_INVENTORY"},
             "rev": {"$ref": "common.schema.json#/$defs/release_rev"},
             "version": {"$ref": "common.schema.json#/$defs/version"},
-            "proposal": {"$ref": "common.schema.json#/$defs/file_hash"}
+            "proposal": {"$ref": "common.schema.json#/$defs/file_hash"},
+            "verdict": {
+              "description": "the RELEASE readiness stage verdict, which hashes the proposal; the proposal never hashes it",
+              "$ref": "common.schema.json#/$defs/file_hash"
+            }
           }
         }
       ]

@@ -15,10 +15,6 @@
     },
     "decision": "DR-020"
   },
-  "readiness": {
-    "path": "hw/versions/v13/stage-verdict.json",
-    "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
-  },
   "decisions": [
     {
       "path": "hw/decisions/DR-020.yaml",
