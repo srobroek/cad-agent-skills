@@ -15,6 +15,8 @@ kiro-agent/invalid/subagent-tool.json: 'roles never delegate: no subagent tool'
 kiro-agent/invalid/v2-allowed-tools.json: V2 allowedTools is refused
 omp-agent-frontmatter/invalid/missing-model.yaml: model role selector is required
 omp-agent-frontmatter/invalid/spawns-star.yaml: 'roles never delegate: spawns is empty'
+omp-agent-frontmatter/invalid/thinking-level-key.yaml: OMP reads thinkingLevel; the thinking-level key is refused
+omp-agent-frontmatter/invalid/unknown-thinking-level.yaml: thinkingLevel is a canonical OMP selector (auto, inherit, off, minimal, low, medium, high, xhigh, max)
 omp-agent-frontmatter/invalid/unknown-role.yaml: name is one of the five roles
 omp-marketplace/invalid/entry-without-version.json: every entry declares version
 omp-marketplace/invalid/root-source.json: sources are ./full or ./lean
