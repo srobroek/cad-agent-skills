@@ -23,5 +23,9 @@ omp-plugin/invalid/skills-remap.json: no skills remap
 opencode-agent-frontmatter/invalid/old-list-dialect.yaml: the old permissions list dialect is refused
 opencode-agent-frontmatter/invalid/primary-mode.yaml: mode is subagent
 opencode-agent-frontmatter/invalid/task-allowed.yaml: task is denied
+skill-frontmatter/invalid/cad-flow-unknown-plugin.yaml: metadata.plugin is cad-agent-skills or cad-agent-skills-lean
+skill-frontmatter/invalid/cad-flow-without-metadata.yaml: cad-flow carries metadata.plugin and metadata.version
+skill-frontmatter/invalid/cad-flow-without-version.yaml: cad-flow metadata names the version
 skill-frontmatter/invalid/extra-field.yaml: 'closed: only name and description'
+skill-frontmatter/invalid/metadata-non-string.yaml: metadata values are strings (quote the version)
 skill-frontmatter/invalid/unknown-name.yaml: name is one of the eight skills
