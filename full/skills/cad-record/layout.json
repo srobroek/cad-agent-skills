@@ -1038,6 +1038,20 @@
       "meaning": "worker build program"
     },
     {
+      "id": "scratch.unit_build_lock",
+      "path": ".cad-work/{UNIT}/build.py.lock",
+      "kind": "SCRATCH",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-model",
+      "writer": "worker",
+      "mutability": "SCRATCH",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "the unit locks its build program with uv lock --script build.py"},
+      "gate_credit": false,
+      "meaning": "uv script lock of the worker build program, written next to build.py"
+    },
+    {
       "id": "scratch.unit_check",
       "path": ".cad-work/{UNIT}/check.py",
       "kind": "SCRATCH",
@@ -1050,6 +1064,20 @@
       "condition": {"kind": "CONDITIONAL", "when": "the unit runs checks"},
       "gate_credit": false,
       "meaning": "worker check program"
+    },
+    {
+      "id": "scratch.unit_check_lock",
+      "path": ".cad-work/{UNIT}/check.py.lock",
+      "kind": "SCRATCH",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-verify",
+      "writer": "worker",
+      "mutability": "SCRATCH",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "the unit locks its check program with uv lock --script check.py"},
+      "gate_credit": false,
+      "meaning": "uv script lock of the worker check program, written next to check.py"
     },
     {
       "id": "scratch.unit_delivery",

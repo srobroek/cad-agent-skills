@@ -86,8 +86,11 @@ No input contains downstream result bytes or its own future hash.
 7. A successor attempt names its approved predecessor; a retry names the accepted causal baseline and the
    superseded failure. Impact reopens dependents explicitly; no step of the chain is skipped.
 8. Release: the PROPOSAL manifest (`hw/versions/vN/release-proposal.json`) lists the planned payload and
-   excludes the not-yet-written approval and integrity result. The FINAL manifest adds approval, the
-   package-integrity result and the full inventory, and excludes itself; its digest is reported outside it.
+   names the frozen FREEZE version and verdict; it excludes the not-yet-written RELEASE readiness verdict,
+   approval and integrity result, because the RELEASE checks and verdict hash the proposal. The RELEASE
+   approval DR then binds both the proposal and that readiness verdict (`RELEASE_INVENTORY`). The FINAL
+   manifest adds the readiness verdict, the approval, the package-integrity result and the full inventory,
+   and excludes itself; its digest is reported outside it.
 
 A checker may inspect scratch before the manifest exists, then emit its VERSION result against the identical
 inventoried input. Whole-assembly checks rerun on the integrated version; never relabel a UNIT PASS.
@@ -95,7 +98,8 @@ inventoried input. Whole-assembly checks rerun on the integrated version; never 
 ## Inventory digest
 
 One digest rule for `input_inventory.sha256` (worker brief), `input_inventory_sha256` (UNIT binding, worker
-delivery) and `boundary.before_sha256` / `boundary.after_sha256` (worker delivery).
+delivery), `boundary.before_sha256` / `boundary.after_sha256` (worker delivery) and `assessment.input_sha256`
+(selection, a set digest that never lists `hw/manufacturing/selection.yaml` itself).
 
 - Root: the project root, the directory that holds `hw/`. Every path is relative to it.
 - Line: `<lowercase sha256 hex>  <path>` (two spaces) followed by LF: the `shasum -a 256` and `sha256sum` line.

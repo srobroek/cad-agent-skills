@@ -12,7 +12,10 @@
       "additionalProperties": false,
       "required": ["input_sha256", "method", "date"],
       "properties": {
-        "input_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "input_sha256": {
+          "description": "set digest (references/record.md#inventory-digest) of the hw/ files the assessment read; it never lists hw/manufacturing/selection.yaml, which holds this digest, or a decision written from this assessment",
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
         "method": {"$ref": "common.schema.json#/$defs/text"},
         "date": {"$ref": "common.schema.json#/$defs/date"},
         "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
