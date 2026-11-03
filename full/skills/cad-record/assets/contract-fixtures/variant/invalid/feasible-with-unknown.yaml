@@ -1,0 +1,58 @@
+id: printed-hinge
+title: Printed hinge stand
+architecture: two printed parts on a bought pin
+architecture_doc: hw/concepts/printed-hinge/architecture.md
+parts:
+- PN: STD-0001
+  title: Base
+  sourcing: MAKE
+  material_profile: fdm_petg_polylite
+  route:
+  - FDM
+- PN: STD-0003
+  title: Pin
+  sourcing: BUY
+  material_profile:
+    status: UNKNOWN
+    reason: pin grade open
+  route:
+  - PURCHASED
+requirements:
+- REQ-001
+hard_outcomes:
+- requirement: REQ-001
+  outcome: UNKNOWN
+  criterion:
+    property: viewing_angle
+    comparator: BETWEEN
+    value:
+    - 55
+    - 75
+    units: deg
+    source:
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  method: coarse CAD
+  reason: angle stop not modelled
+feasibility: FEASIBLE
+unknowns:
+- status: UNKNOWN
+  reason: angle stop detail
+limits:
+- coarse geometry only; preview is not verification
+source:
+  unit: concept-a
+  role: cad-concept-designer
+  delivery_sha256: '5555555555555555555555555555555555555555555555555555555555555555'
+  brief_sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+geometry:
+  status: PRESENT
+  kernel: build123d
+  units: mm
+  files:
+  - path: hw/concepts/printed-hinge/geometry/coarse.glb
+    sha256: '7777777777777777777777777777777777777777777777777777777777777777'
+    role: VISUALIZATION
+    format: GLB

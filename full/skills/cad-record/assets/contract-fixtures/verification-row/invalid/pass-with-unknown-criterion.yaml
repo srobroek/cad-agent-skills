@@ -1,0 +1,15 @@
+requirement: REQ-001
+subject:
+  kind: ASSEMBLY
+method: INSPECTION
+criterion:
+  status: UNKNOWN
+  reason: no criterion
+facet: CAD_VALID
+due: LAYOUT
+outcome: PASS
+obligations:
+- geometry.clearance@assembly
+results:
+- path: hw/checks/v6/clearance/a1/result.json
+  sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb

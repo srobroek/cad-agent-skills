@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills capability library (hw/manufacturing/capabilities.yaml, starter capability-templates.yaml)",
+  "description": "Wrapper listing capability profiles; each item is a capability-profile root.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profiles"],
+  "properties": {"profiles": {"type": "array", "items": {"$ref": "capability-profile.schema.json"}}}
+}

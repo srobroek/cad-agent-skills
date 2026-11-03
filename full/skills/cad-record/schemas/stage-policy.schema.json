@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills stage policy (cad-flow/assets/stages.yaml)",
+  "description": "Ordered stages with predecessor, gate, owner, procedure ids, registered check families with applicability, due stage and reopen policy, and the fixed cost order of check families. Order and predecessor consistency are semantic checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "stages", "check_order"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.stage-policy"},
+    "schema_version": {"const": 1},
+    "stages": {"type": "array", "items": {"$ref": "#/$defs/stage"}, "minItems": 13, "maxItems": 13},
+    "check_order": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/check_family"},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "predecessor", "gate", "owner", "procedure", "checks", "reopen"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/stage"},
+        "order": {"type": "integer", "minimum": 1, "maximum": 13},
+        "predecessor": {"oneOf": [{"$ref": "common.schema.json#/$defs/stage"}, {"type": "null"}]},
+        "gate": {"enum": ["HUMAN", "NONE", "REVIEW"]},
+        "gate_subject": {"$ref": "common.schema.json#/$defs/text"},
+        "owner": {"$ref": "common.schema.json#/$defs/skill"},
+        "procedure": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["family", "applicability", "due"],
+            "properties": {
+              "family": {"$ref": "common.schema.json#/$defs/check_family"},
+              "applicability": {"enum": ["ALWAYS", "CONDITIONAL"]},
+              "condition": {"$ref": "common.schema.json#/$defs/text"},
+              "due": {"$ref": "common.schema.json#/$defs/stage"},
+              "required_by": {"$ref": "common.schema.json#/$defs/stage"},
+              "safety": {"type": "boolean"},
+              "waiver_policy": {"$ref": "common.schema.json#/$defs/waiver_policy"}
+            },
+            "if": {"properties": {"applicability": {"const": "CONDITIONAL"}}},
+            "then": {"required": ["condition"]}
+          },
+          "minItems": 0
+        },
+        "reopen": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/stage"},
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "if": {"properties": {"gate": {"enum": ["HUMAN", "REVIEW"]}}},
+      "then": {"required": ["gate_subject"]}
+    }
+  }
+}

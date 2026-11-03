@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills interfaces record (hw/interfaces.yaml)",
+  "description": "Functional contracts between occurrences: features, functions, criticality, datums, fits, variation, clearance, play, contact, environment, stack and tool, install, service and inspection access. Each feature is semantic.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["interfaces"],
+  "properties": {"interfaces": {"type": "array", "items": {"$ref": "#/$defs/interface"}}},
+  "$defs": {
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "kind",
+        "members",
+        "functions",
+        "critical",
+        "fit",
+        "clearance",
+        "play",
+        "variation",
+        "contact",
+        "environment",
+        "access"
+      ],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/interface_id"},
+        "title": {"$ref": "common.schema.json#/$defs/text"},
+        "kind": {
+          "enum": [
+            "FIXED",
+            "SLIDING",
+            "ROTATING",
+            "PRESS_FIT",
+            "FASTENED",
+            "SNAP",
+            "CONTACT",
+            "CLEARANCE",
+            "SEAL",
+            "ELECTRICAL",
+            "OTHER"
+          ]
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["PN", "feature", "role"],
+            "properties": {
+              "occurrence": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "PN": {"$ref": "common.schema.json#/$defs/pn"},
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "component": {"$ref": "common.schema.json#/$defs/component_id"},
+              "role": {"enum": ["BORE", "SHAFT", "SEAT", "FACE", "SLOT", "PIN", "THREAD", "SNAP", "SURFACE", "OTHER"]}
+            }
+          },
+          "minItems": 2
+        },
+        "functions": {
+          "oneOf": [
+            {"type": "array", "items": {"$ref": "common.schema.json#/$defs/function_entry"}, "minItems": 1},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "critical": {"$ref": "common.schema.json#/$defs/boolean_fact"},
+        "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+        "datums": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "PN", "feature", "order"],
+            "properties": {
+              "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "PN": {"$ref": "common.schema.json#/$defs/pn"},
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "order": {"enum": ["PRIMARY", "SECONDARY", "TERTIARY"]}
+            }
+          },
+          "minItems": 1
+        },
+        "fit": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "designation", "state", "source"],
+              "properties": {
+                "kind": {"enum": ["CLEARANCE", "TRANSITION", "INTERFERENCE"]},
+                "designation": {"$ref": "common.schema.json#/$defs/text_fact"},
+                "hole": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "shaft": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "state": {"$ref": "common.schema.json#/$defs/dimension_state"},
+                "source": {"$ref": "common.schema.json#/$defs/source"}
+              }
+            },
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "clearance": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["minimum"],
+              "properties": {
+                "minimum": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "maximum": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "criterion": {"$ref": "common.schema.json#/$defs/criterion"}
+              }
+            },
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "play": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["axial", "radial", "angular"],
+              "properties": {
+                "axial": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "radial": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "angular": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "backlash": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "cases": {
+                  "type": "array",
+                  "items": {"$ref": "common.schema.json#/$defs/case_id"},
+                  "minItems": 1,
+                  "uniqueItems": true
+                }
+              }
+            },
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "variation": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["stack_case", "method"],
+              "properties": {
+                "stack_case": {"$ref": "common.schema.json#/$defs/case_id"},
+                "method": {"enum": ["WORST_CASE", "JUSTIFIED_RSS"]},
+                "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+              },
+              "if": {"properties": {"method": {"const": "JUSTIFIED_RSS"}}},
+              "then": {"required": ["decision"]}
+            },
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "contact": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["materials", "finish", "lubrication", "load", "speed", "duty", "life"],
+              "properties": {
+                "materials": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {"$ref": "common.schema.json#/$defs/profile_id"},
+                      {"$ref": "common.schema.json#/$defs/fact_unknown"}
+                    ]
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "finish": {"$ref": "common.schema.json#/$defs/text_fact"},
+                "lubrication": {"$ref": "common.schema.json#/$defs/text_fact"},
+                "load": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "speed": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "duty": {"$ref": "common.schema.json#/$defs/text_fact"},
+                "life": {"$ref": "common.schema.json#/$defs/quantity_fact"}
+              }
+            },
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "environment": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "access": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tool", "install", "service", "inspection"],
+          "properties": {
+            "tool": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "install": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "service": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "inspection": {"$ref": "common.schema.json#/$defs/text_fact"}
+          }
+        },
+        "assembly_operations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/slug"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "acceptance": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/criterion"}, "minItems": 1},
+        "decisions": {"$ref": "common.schema.json#/$defs/decision_ids"}
+      }
+    }
+  }
+}

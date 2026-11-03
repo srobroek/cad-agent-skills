@@ -1,0 +1,24 @@
+id: DR-007
+kind: GATE
+state: APPROVED
+binding:
+  kind: STAGE
+  stage: LAYOUT
+  version: v6
+  verdict:
+    path: hw/versions/v6/stage-verdict.json
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  verdict_result: FAIL
+title: Approve LAYOUT v6
+scope: layout boundary after full checks
+rationale: all due checks pass; stated limits accepted
+limits:
+- physical stability UNKNOWN until tested
+actor:
+  kind: USER
+  name: Sjors
+time: '2026-11-03T10:15:00Z'
+statement:
+  transcript_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+  quote: 'Approved: LAYOUT v6 with digest cccc…'
+  time: '2026-11-03T10:15:00Z'

@@ -1,0 +1,142 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "review/a1",
+  "check": "review",
+  "attempt": "a1",
+  "family": "review.mechanical_dfm",
+  "producer_role": "cad-mech-dfm-reviewer",
+  "stage": "CRITIQUE",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v6/manifest.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "implementation": {
+    "source_files": [
+      {
+        "path": "hw/checks/v6/clearance/a1/source/check.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/chk/check.py"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "INTERFACE",
+        "interface": "IF-001"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "review.mechanical_dfm@assembly"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "review.mechanical_dfm@assembly",
+      "requirement": "REQ-001",
+      "subject": {
+        "kind": "ASSEMBLY"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "PASS",
+      "value": {
+        "text": "no unresolved findings"
+      },
+      "criterion": {
+        "id": "hinge_clearance",
+        "property": "clearance",
+        "comparator": "GE",
+        "value": 0.2,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        }
+      },
+      "method": {
+        "name": "OCCT BRepExtrema distance on readback",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/clearance/a1/artifacts/pairs.json",
+          "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "uncertainty": "numerical tolerance 1e-6 mm",
+      "sampling": {
+        "kind": "FULL"
+      }
+    }
+  ],
+  "findings": [],
+  "artifacts": [
+    {
+      "path": "hw/checks/v6/clearance/a1/artifacts/pairs.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v6/clearance/a1/stdout.txt",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "PASS",
+  "limitations": [
+    "nominal geometry only; play extremes in motion.play"
+  ],
+  "review": {
+    "verdict": "PASS",
+    "mechanical": [
+      {
+        "obligation": "geometry.clearance@IF-001#hinge_bore",
+        "outcome": "PASS"
+      }
+    ],
+    "dfm": [
+      {
+        "obligation": "process.fdm@STD-0001",
+        "outcome": "PASS"
+      }
+    ]
+  }
+}

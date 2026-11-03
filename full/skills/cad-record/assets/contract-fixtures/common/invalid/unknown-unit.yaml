@@ -1,0 +1,193 @@
+probe: cad-agent-skills.common
+fact:
+- status: KNOWN
+  value:
+    value: 2.5
+    units: N
+  basis: USER_DECLARED
+  sources:
+  - &id001
+    kind: USER
+    reference: owner interview
+    origin: product owner
+    date: '2026-11-03'
+- status: UNKNOWN
+  reason: not asked
+  owner: user
+  question: Q-001
+  consequential: true
+- status: NOT_APPLICABLE
+  reason: no motion in this product
+  reviewed_by: product owner
+- status: KNOWN
+  value:
+    value: 30
+    units: MPa
+  basis: ESTIMATE
+  sources:
+  - kind: ESTIMATE
+    reference: engineering judgement
+    reason: no datasheet
+  uncertainty:
+    lower: 20
+    upper: 40
+    note: family range
+- status: KNOWN
+  value:
+    value: 40
+    units: MPa
+  basis: ALLOWABLE
+  sources:
+  - &id002
+    kind: DATASHEET
+    reference: Supplier datasheet
+    revision: V5.4
+    url: https://example.com/ds.pdf
+    accessed: '2026-11-02'
+    conditions: ISO 527, 23 °C
+  conditions: 23 °C dry, XY
+  derivation: mean minus 3 sigma of 10 coupons
+  authority:
+    name: Lab X
+    role: COMPETENT_AUTHORITY
+    basis: accredited lab
+    scope: this grade
+source:
+- *id001
+- *id002
+- kind: POLICY
+  reference: unknown never passes
+  origin: cad-agent-skills
+  document: cad-verify/references/check-plan.md
+quantity:
+- value: 1
+  units: inch
+criterion:
+- property: viewing_angle
+  comparator: BETWEEN
+  value:
+  - 55
+  - 75
+  units: deg
+  source: *id001
+- &id003
+  id: hinge_clearance
+  property: clearance
+  comparator: GE
+  value: 0.2
+  units: mm
+  state: ASSEMBLED
+  source: *id001
+- property: finish
+  comparator: ONE_OF
+  value:
+  - matte
+  - satin
+  source: *id001
+subject:
+- kind: PRODUCT
+- kind: FEATURE
+  PN: STD-0001
+  feature: hinge_bore
+- kind: COMPONENT
+  PN: STD-0001
+  component: body
+obligation:
+- id: geometry.clearance@IF-001#hinge_bore
+  family: geometry.clearance
+  check: clearance
+  subject:
+    kind: INTERFACE
+    interface: IF-001
+  facet: CAD_VALID
+  due: LAYOUT
+  basis: IF-001 critical rotating
+finding:
+- id: motion.sweep:assembly:hinge
+  family: motion.sweep
+  subject:
+    kind: ASSEMBLY
+  severity: MAJOR
+  outcome: UNKNOWN
+  measured:
+    status: UNKNOWN
+    reason: not run
+  criterion: *id003
+  method:
+    name: joint sweep
+  uncertainty: whole travel unsampled
+  consequence: collision at full travel not excluded
+  remedy: rerun with a 2 deg grid and 900 s deadline
+  recheck:
+    families:
+    - motion.sweep
+    earliest_stage: LAYOUT
+waiver:
+- decision: DR-015
+  obligation: physical.test@REQ-001
+  subject:
+    kind: ASSEMBLY
+  criterion: angle holds after 100 cycles
+  classification: UNVALIDATED_TRIAL
+  retained_outcome: UNKNOWN
+  safety_or_regulatory: false
+  limitation: cycle life unverified
+  operating_envelope: desk use, phone <= 250 g
+  supervision: owner only
+  expires: '2027-01-31'
+  reason: trial to collect cycle data
+  consequence: arm may loosen
+  authority:
+    name: Sjors
+    role: OWNER
+    basis: owner
+    scope: non-safety trial
+authority:
+- name: Sjors
+  role: OWNER
+  basis: product owner
+  scope: all gates
+binding:
+- kind: VERSION
+  version: v6
+  version_manifest_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+- kind: UNIT
+  unit: base-part
+  brief_sha256: '1111111111111111111111111111111111111111111111111111111111111111'
+  input_inventory_sha256: '2222222222222222222222222222222222222222222222222222222222222222'
+outcome_entry:
+- obligation: geometry.clearance@IF-001#hinge_bore
+  requirement: REQ-001
+  subject:
+    kind: INTERFACE
+    interface: IF-001
+  facet: CAD_VALID
+  outcome: PASS
+  value:
+    value: 0.24
+    units: mm
+  criterion: *id003
+  method:
+    name: OCCT BRepExtrema distance on readback
+    tool: cadquery-ocp
+    version: 7.9.3.1.1
+  evidence:
+  - path: hw/checks/v6/clearance/a1/artifacts/pairs.json
+    sha256: '3333333333333333333333333333333333333333333333333333333333333333'
+  uncertainty: numerical tolerance 1e-6 mm
+  sampling:
+    kind: FULL
+- obligation: motion.sweep@assembly
+  subject:
+    kind: ASSEMBLY
+  facet: CAD_VALID
+  outcome: UNKNOWN
+  method:
+    name: joint sweep
+  reason: sweep not run before timeout
+  unknown_code: TIMEOUT
+file_hash:
+- path: hw/product.yaml
+  sha256: '1111111111111111111111111111111111111111111111111111111111111111'
+- path: .cad-work/u1/out.json
+  sha256: '2222222222222222222222222222222222222222222222222222222222222222'

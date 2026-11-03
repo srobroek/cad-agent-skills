@@ -1,0 +1,3 @@
+name = "cad-part-designer"
+description = "Designs one assigned part unit in its own scratch."
+model_reasoning_effort = "high"

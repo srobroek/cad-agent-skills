@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills BOM (hw/bom/vN/bom.yaml)",
+  "description": "Typed EBOM derived for one version; rows sorted by path then component (a semantic check). bom.csv is a derivative of this file only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "version", "version_manifest_sha256", "rows", "totals"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.bom"},
+    "schema_version": {"const": 1},
+    "version": {"$ref": "common.schema.json#/$defs/version"},
+    "version_manifest_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "rows": {"type": "array", "items": {"$ref": "bom-row.schema.json"}, "minItems": 0},
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mass", "part_count"],
+      "properties": {
+        "mass": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "part_count": {"type": "integer", "minimum": 0},
+        "price": {"$ref": "common.schema.json#/$defs/money_fact"}
+      }
+    }
+  }
+}

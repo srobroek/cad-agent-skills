@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills worker delivery (.cad-work/<unit>/delivery.json)",
+  "description": "What one worker returns: unit, brief and input digests, role, verdict, source-to-target hashes, checks, logs, boundary proof, proposals and limits. A failed build or a FAIL or UNKNOWN check is never a ready PASS; the lead copies accepted bytes verbatim and rechecks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "unit",
+    "role",
+    "brief_sha256",
+    "input_inventory_sha256",
+    "verdict",
+    "build",
+    "outputs",
+    "checks",
+    "logs",
+    "boundary",
+    "proposals",
+    "unknowns",
+    "limits",
+    "ready"
+  ],
+  "properties": {
+    "format": {"const": "cad-agent-skills.worker-delivery"},
+    "schema_version": {"const": 1},
+    "unit": {"$ref": "common.schema.json#/$defs/unit_id"},
+    "role": {"$ref": "common.schema.json#/$defs/role"},
+    "brief_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "input_inventory_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "verdict": {"enum": ["PASS", "MINOR", "MAJOR"]},
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["SUCCEEDED", "FAILED", "NOT_APPLICABLE"]},
+        "log": {"$ref": "common.schema.json#/$defs/file_hash"},
+        "reason": {"$ref": "common.schema.json#/$defs/text"}
+      },
+      "if": {"properties": {"status": {"const": "NOT_APPLICABLE"}}},
+      "then": {"required": ["reason"]},
+      "else": {"required": ["log"]}
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source", "target", "sha256", "kind"],
+        "properties": {
+          "source": {"$ref": "common.schema.json#/$defs/absolute_path"},
+          "target": {"$ref": "common.schema.json#/$defs/hw_path"},
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "kind": {"$ref": "common.schema.json#/$defs/text"}
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["result_file", "result", "family"],
+        "properties": {
+          "result_file": {"$ref": "common.schema.json#/$defs/file_hash"},
+          "result": {"$ref": "common.schema.json#/$defs/result"},
+          "family": {"$ref": "common.schema.json#/$defs/check_family"}
+        }
+      }
+    },
+    "logs": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}},
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "before_sha256", "after_sha256", "violations"],
+      "properties": {
+        "method": {"$ref": "common.schema.json#/$defs/text"},
+        "before_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "after_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "violations": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/text"}}
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target", "path", "sha256", "change", "reason"],
+        "properties": {
+          "target": {"$ref": "common.schema.json#/$defs/hw_path"},
+          "path": {"$ref": "common.schema.json#/$defs/scratch_path"},
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "change": {"$ref": "common.schema.json#/$defs/text"},
+          "reason": {"$ref": "common.schema.json#/$defs/text"}
+        }
+      }
+    },
+    "unknowns": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/fact_unknown"}},
+    "limits": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/text"}},
+    "ready": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["build"], "properties": {"build": {"properties": {"status": {"const": "FAILED"}}}}},
+      "then": {"properties": {"verdict": {"const": "MAJOR"}, "ready": {"const": false}}}
+    },
+    {
+      "if": {
+        "required": ["checks"],
+        "properties": {
+          "checks": {
+            "contains": {
+              "type": "object",
+              "required": ["result"],
+              "properties": {"result": {"enum": ["FAIL", "UNKNOWN"]}}
+            }
+          }
+        }
+      },
+      "then": {"properties": {"verdict": {"not": {"const": "PASS"}}, "ready": {"const": false}}}
+    },
+    {
+      "if": {"required": ["boundary"], "properties": {"boundary": {"properties": {"violations": {"minItems": 1}}}}},
+      "then": {"properties": {"verdict": {"const": "MAJOR"}, "ready": {"const": false}}}
+    },
+    {
+      "if": {"required": ["ready"], "properties": {"ready": {"const": true}}},
+      "then": {"properties": {"verdict": {"const": "PASS"}}}
+    }
+  ]
+}

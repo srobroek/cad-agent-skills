@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills version manifest (hw/versions/vN/manifest.json)",
+  "description": "Immutable input and geometry inventory of one stage attempt, written after geometry build and readback (or with geometry NOT_APPLICABLE before CAD). It excludes itself, check results, the stage verdict, later decisions and every drawing, BOM or verification output that embeds its digest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "version",
+    "stage",
+    "record",
+    "cases",
+    "build",
+    "source_artifacts",
+    "runtime",
+    "geometry",
+    "manufacturing"
+  ],
+  "properties": {
+    "format": {"const": "cad-agent-skills.version-manifest"},
+    "schema_version": {"const": 1},
+    "version": {"$ref": "common.schema.json#/$defs/version"},
+    "stage": {"$ref": "common.schema.json#/$defs/stage"},
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "version", "verdict"],
+      "properties": {
+        "stage": {"$ref": "common.schema.json#/$defs/stage"},
+        "version": {"$ref": "common.schema.json#/$defs/version"},
+        "verdict": {"$ref": "common.schema.json#/$defs/file_hash"}
+      }
+    },
+    "record": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "common.schema.json#/$defs/file_hash"},
+          {
+            "properties": {
+              "path": {
+                "pattern": "^hw/versions/v[1-9][0-9]*/record/",
+                "not": {"pattern": "(^|/)(manifest|stage-verdict)\\.json$"}
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "cases": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/case_id"},
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "build": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "source", "locks"],
+          "properties": {
+            "status": {"const": "PRESENT"},
+            "source": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/file_hash"},
+                  {
+                    "properties": {
+                      "path": {
+                        "pattern": "^hw/versions/v[1-9][0-9]*/source/",
+                        "not": {"pattern": "(^|/)(manifest|stage-verdict)\\.json$"}
+                      }
+                    }
+                  }
+                ]
+              },
+              "minItems": 1
+            },
+            "locks": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/file_hash"},
+                  {
+                    "properties": {
+                      "path": {
+                        "pattern": "^hw/versions/v[1-9][0-9]*/source/",
+                        "not": {"pattern": "(^|/)(manifest|stage-verdict)\\.json$"}
+                      }
+                    }
+                  }
+                ]
+              },
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {"status": {"const": "NOT_APPLICABLE"}, "reason": {"$ref": "common.schema.json#/$defs/text"}}
+        }
+      ]
+    },
+    "source_artifacts": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "common.schema.json#/$defs/file_hash"},
+          {
+            "properties": {
+              "path": {
+                "pattern": "^hw/versions/v[1-9][0-9]*/record/",
+                "not": {"pattern": "(^|/)(manifest|stage-verdict)\\.json$"}
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 0
+    },
+    "runtime": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "kernel", "python", "packages", "platform", "commands"],
+          "properties": {
+            "status": {"const": "PRESENT"},
+            "kernel": {"$ref": "common.schema.json#/$defs/kernel"},
+            "python": {"$ref": "common.schema.json#/$defs/text"},
+            "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}, "minItems": 1},
+            "platform": {"$ref": "common.schema.json#/$defs/platform"},
+            "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {"status": {"const": "NOT_APPLICABLE"}, "reason": {"$ref": "common.schema.json#/$defs/text"}}
+        }
+      ]
+    },
+    "geometry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "units", "frame", "files", "occurrences", "export_tolerance", "readback"],
+          "properties": {
+            "status": {"const": "PRESENT"},
+            "units": {"const": "mm"},
+            "frame": {"const": "RIGHT_HANDED_Z_UP"},
+            "files": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["path", "sha256", "role", "format"],
+                    "properties": {
+                      "path": {"$ref": "common.schema.json#/$defs/hw_path"},
+                      "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+                      "role": {"enum": ["DEFINITION", "MANUFACTURE", "VISUALIZATION", "PREVIEW", "PROFILE", "PROXY"]},
+                      "format": {"enum": ["STEP", "STL", "GLB", "SVG", "PNG", "DXF"]},
+                      "PN": {"$ref": "common.schema.json#/$defs/pn"},
+                      "component": {"$ref": "common.schema.json#/$defs/component_id"},
+                      "state": {"$ref": "common.schema.json#/$defs/semantic_id"}
+                    }
+                  },
+                  {
+                    "properties": {"path": {"pattern": "^hw/versions/v[1-9][0-9]*/(definition|manufacturing|previews)/"}}
+                  }
+                ]
+              },
+              "minItems": 1
+            },
+            "occurrences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["occurrence", "PN", "rev", "translation", "rotation", "step_name"],
+                "properties": {
+                  "occurrence": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "PN": {"$ref": "common.schema.json#/$defs/pn"},
+                  "rev": {"$ref": "common.schema.json#/$defs/part_rev"},
+                  "translation": {"$ref": "common.schema.json#/$defs/vector"},
+                  "rotation": {"$ref": "common.schema.json#/$defs/quaternion"},
+                  "step_name": {
+                    "description": "exported STEP product name, mapped back on readback",
+                    "$ref": "common.schema.json#/$defs/text"
+                  }
+                }
+              },
+              "minItems": 1
+            },
+            "export_tolerance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["linear_deflection_mm", "angular_deflection_rad", "glb"],
+              "properties": {
+                "linear_deflection_mm": {"type": "number", "exclusiveMinimum": 0},
+                "angular_deflection_rad": {"type": "number", "exclusiveMinimum": 0, "maximum": 3.141592653589793},
+                "glb": {"const": "METRE_Y_UP"}
+              }
+            },
+            "readback": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["solids", "occurrences", "valid", "method"],
+              "properties": {
+                "solids": {"type": "integer", "minimum": 0},
+                "occurrences": {"type": "integer", "minimum": 0},
+                "valid": {"type": "boolean"},
+                "method": {"$ref": "common.schema.json#/$defs/text"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {"status": {"const": "NOT_APPLICABLE"}, "reason": {"$ref": "common.schema.json#/$defs/text"}}
+        }
+      ]
+    },
+    "manufacturing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["PN", "relationship", "components", "files"],
+        "properties": {
+          "PN": {"$ref": "common.schema.json#/$defs/pn"},
+          "relationship": {"enum": ["SAME", "DIFFERENT"]},
+          "state": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "components": {
+            "type": "array",
+            "items": {"$ref": "common.schema.json#/$defs/component_id"},
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "orientation": {"$ref": "common.schema.json#/$defs/quaternion"},
+          "files": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                {"$ref": "common.schema.json#/$defs/file_hash"},
+                {
+                  "properties": {
+                    "path": {
+                      "pattern": "^hw/versions/v[1-9][0-9]*/manufacturing/",
+                      "not": {"pattern": "(^|/)(manifest|stage-verdict)\\.json$"}
+                    }
+                  }
+                }
+              ]
+            },
+            "minItems": 1
+          }
+        }
+      },
+      "minItems": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["stage"], "properties": {"stage": {"not": {"const": "GROUND"}}}},
+      "then": {"required": ["predecessor"]}
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "format": "cad-agent-skills.version-manifest",
+  "schema_version": 1,
+  "version": "v6",
+  "stage": "LAYOUT",
+  "predecessor": {
+    "stage": "VARIANT",
+    "version": "v5",
+    "verdict": {
+      "path": "hw/versions/v5/stage-verdict.json",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+    }
+  },
+  "record": [
+    {
+      "path": "hw/versions/v6/record/product.yaml",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "path": "hw/versions/v6/record/assembly.yaml",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "path": "hw/versions/v6/record/check-plan.yaml",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    {
+      "path": "hw/checks/v6/clearance/a1/result.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "cases": [
+    "hinge-travel"
+  ],
+  "build": {
+    "status": "PRESENT",
+    "source": [
+      {
+        "path": "hw/versions/v6/source/build.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      {
+        "path": "hw/versions/v6/source/parts/STD-0001/model.py",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      }
+    ],
+    "locks": [
+      {
+        "path": "hw/versions/v6/source/build.py.lock",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      }
+    ]
+  },
+  "source_artifacts": [
+    {
+      "path": "hw/versions/v6/record/manufacturing/sources/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc/coupons.csv",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "runtime": {
+    "status": "PRESENT",
+    "kernel": "cadquery",
+    "python": "3.12.8",
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64"
+    },
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/stage-v6/build.py"
+        ],
+        "exit_code": 0
+      }
+    ]
+  },
+  "geometry": {
+    "status": "PRESENT",
+    "units": "mm",
+    "frame": "RIGHT_HANDED_Z_UP",
+    "files": [
+      {
+        "path": "hw/versions/v6/definition/assembly.step",
+        "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+        "role": "DEFINITION",
+        "format": "STEP"
+      },
+      {
+        "path": "hw/versions/v6/definition/assembly.glb",
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+        "role": "VISUALIZATION",
+        "format": "GLB"
+      },
+      {
+        "path": "hw/versions/v6/manufacturing/STD-0001/part.stl",
+        "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "role": "MANUFACTURE",
+        "format": "STL",
+        "PN": "STD-0001",
+        "component": "body"
+      }
+    ],
+    "occurrences": [
+      {
+        "occurrence": "base",
+        "PN": "STD-0001",
+        "rev": "X1",
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "step_name": "STD-0001 base"
+      }
+    ],
+    "export_tolerance": {
+      "linear_deflection_mm": 0.05,
+      "angular_deflection_rad": 0.1,
+      "glb": "METRE_Y_UP"
+    },
+    "readback": {
+      "solids": 3,
+      "occurrences": 3,
+      "valid": true,
+      "method": "STEP reimport, per-occurrence volume and bbox"
+    }
+  },
+  "manufacturing": [
+    {
+      "PN": "STD-0001",
+      "relationship": "SAME",
+      "components": [
+        "body"
+      ],
+      "orientation": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "files": [
+        {
+          "path": "hw/versions/v6/manufacturing/STD-0001/part.stl",
+          "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ]
+    }
+  ]
+}

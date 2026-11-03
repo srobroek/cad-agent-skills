@@ -1,0 +1,62 @@
+{
+  "format": "cad-agent-skills.worker-delivery",
+  "schema_version": 1,
+  "unit": "base-part",
+  "role": "cad-part-designer",
+  "brief_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "input_inventory_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "verdict": "PASS",
+  "build": {
+    "status": "SUCCEEDED",
+    "log": {
+      "path": ".cad-work/base-part/output/build.log",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  },
+  "outputs": [
+    {
+      "source": "/Users/me/projects/phone-stand/.cad-work/base-part/output/part.yaml",
+      "target": "hw/parts/STD-0001/part.yaml",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "kind": "part record"
+    }
+  ],
+  "checks": [
+    {
+      "result_file": {
+        "path": ".cad-work/base-part/output/checks/clearance/result.json",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "result": "PASS",
+      "family": "geometry.clearance"
+    }
+  ],
+  "logs": [
+    {
+      "path": ".cad-work/base-part/output/build.log",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "boundary": {
+    "method": "before/after sha256 inventory of hw/",
+    "before_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "after_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "violations": [
+      "wrote hw/assembly.yaml"
+    ]
+  },
+  "proposals": [
+    {
+      "target": "hw/interfaces.yaml",
+      "path": ".cad-work/base-part/output/proposals/interfaces.yaml",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "change": "bore H11 to H9",
+      "reason": "pin play"
+    }
+  ],
+  "unknowns": [],
+  "limits": [
+    "UNIT evidence only; integrated VERSION checks rerun"
+  ],
+  "ready": true
+}

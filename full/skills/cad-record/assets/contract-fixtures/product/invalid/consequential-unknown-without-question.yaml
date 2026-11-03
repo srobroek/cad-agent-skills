@@ -1,0 +1,299 @@
+format: cad-agent-skills
+record_version: 1
+id: unnamed-product
+title: Unnamed product
+identity:
+  description:
+    status: UNKNOWN
+    reason: 'not yet asked: what the product is and does'
+    owner: user
+    question: Q-001
+    consequential: true
+  owner:
+    status: UNKNOWN
+    reason: 'not yet asked: who owns the product and its approvals'
+    owner: user
+    question: Q-002
+    consequential: true
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor:
+  status: UNKNOWN
+  reason: 'not yet asked: documentation depth maker, pro or regulated'
+  owner: user
+  question: Q-003
+  consequential: true
+regime:
+  status: UNKNOWN
+  reason: 'not yet asked: tolerancing and drawing regime'
+  owner: user
+  question: Q-004
+  consequential: true
+general_tolerance:
+  status: UNKNOWN
+  reason: 'not yet asked: general tolerance and its authority'
+  owner: user
+  question: Q-004
+  consequential: true
+intake:
+  status: UNKNOWN
+  purpose:
+    status: UNKNOWN
+    reason: 'not yet asked: purpose and use case'
+    owner: user
+    question: Q-001
+    consequential: true
+  users:
+    status: UNKNOWN
+    reason: 'not yet asked: who uses, installs and services it'
+    owner: user
+    question: Q-005
+    consequential: true
+  loads:
+    status: UNKNOWN
+    reason: 'not yet asked: load directions, magnitudes, impact, vibration, cycles and sustained loads'
+    owner: user
+    question: Q-006
+    consequential: true
+  environment:
+    temperature:
+      status: UNKNOWN
+      reason: 'not yet asked: operating and storage temperature'
+      owner: user
+      question: Q-007
+      consequential: true
+    heat_sources:
+      status: UNKNOWN
+      reason: 'not yet asked: nearby heat sources'
+      owner: user
+      question: Q-007
+      consequential: true
+    moisture:
+      status: UNKNOWN
+      reason: 'not yet asked: moisture and humidity'
+      owner: user
+      question: Q-007
+      consequential: true
+    chemicals:
+      status: UNKNOWN
+      reason: 'not yet asked: chemical exposure'
+      owner: user
+      question: Q-007
+      consequential: true
+    uv:
+      status: UNKNOWN
+      reason: 'not yet asked: UV exposure'
+      owner: user
+      question: Q-007
+      consequential: true
+    corrosion:
+      status: UNKNOWN
+      reason: 'not yet asked: corrosion exposure'
+      owner: user
+      question: Q-007
+      consequential: true
+  motion:
+    speed:
+      status: UNKNOWN
+      reason: 'not yet asked: motion speed'
+      owner: user
+      question: Q-008
+      consequential: true
+    range:
+      status: UNKNOWN
+      reason: 'not yet asked: motion range'
+      owner: user
+      question: Q-008
+      consequential: true
+    duty_cycle:
+      status: UNKNOWN
+      reason: 'not yet asked: duty cycle'
+      owner: user
+      question: Q-008
+      consequential: true
+    service_life:
+      status: UNKNOWN
+      reason: 'not yet asked: service life'
+      owner: user
+      question: Q-008
+      consequential: true
+    wear:
+      status: UNKNOWN
+      reason: 'not yet asked: wear expectations'
+      owner: user
+      question: Q-008
+      consequential: true
+    friction:
+      status: UNKNOWN
+      reason: 'not yet asked: friction needs'
+      owner: user
+      question: Q-008
+      consequential: true
+  accuracy:
+    tolerance:
+      status: UNKNOWN
+      reason: 'not yet asked: functional accuracy'
+      owner: user
+      question: Q-009
+      consequential: true
+    repeatability:
+      status: UNKNOWN
+      reason: 'not yet asked: repeatability'
+      owner: user
+      question: Q-009
+      consequential: true
+    surface_finish:
+      status: UNKNOWN
+      reason: 'not yet asked: surface finish'
+      owner: user
+      question: Q-009
+      consequential: true
+    dimensional_stability:
+      status: UNKNOWN
+      reason: 'not yet asked: dimensional stability'
+      owner: user
+      question: Q-009
+      consequential: true
+  logistics:
+    quantity:
+      status: UNKNOWN
+      reason: 'not yet asked: quantity'
+      owner: user
+      question: Q-010
+      consequential: true
+    budget:
+      status: UNKNOWN
+      reason: 'not yet asked: budget'
+      owner: user
+      question: Q-010
+      consequential: true
+    lead_time:
+      status: UNKNOWN
+      reason: 'not yet asked: lead time'
+      owner: user
+      question: Q-010
+      consequential: true
+    maintenance:
+      status: UNKNOWN
+      reason: 'not yet asked: maintenance'
+      owner: user
+      question: Q-010
+      consequential: true
+    repair:
+      status: UNKNOWN
+      reason: 'not yet asked: repair'
+      owner: user
+      question: Q-010
+      consequential: true
+  capability:
+    equipment:
+      status: UNKNOWN
+      reason: 'not yet asked: available machines and their capability profiles'
+      owner: user
+      question: Q-011
+      consequential: true
+    operator:
+      status: UNKNOWN
+      reason: 'not yet asked: operator skills and constraints'
+      owner: user
+      question: Q-011
+      consequential: true
+    outsourcing:
+      status: UNKNOWN
+      reason: 'not yet asked: acceptable outsourcing'
+      owner: user
+      question: Q-011
+      consequential: true
+service:
+  class: UNKNOWN
+  question: Q-012
+risk:
+  failure_consequence:
+    status: UNKNOWN
+    reason: 'not yet asked: consequence of failure'
+    owner: user
+    question: Q-013
+    consequential: true
+  severity:
+    status: UNKNOWN
+    reason: not asked
+    consequential: true
+  forbidden_outcomes:
+    status: UNKNOWN
+    reason: 'not yet asked: outcomes that must never happen'
+    owner: user
+    question: Q-013
+    consequential: true
+  standards:
+    status: UNKNOWN
+    reason: 'not yet asked: governing standards or regulations'
+    owner: user
+    question: Q-013
+    consequential: true
+  supervision:
+    status: UNKNOWN
+    reason: 'not yet asked: supervision during use'
+    owner: user
+    question: Q-013
+    consequential: true
+authority:
+  approver:
+    status: UNKNOWN
+    reason: 'not yet asked: who approves gates and releases'
+    owner: user
+    question: Q-014
+    consequential: true
+  competent:
+    status: UNKNOWN
+    reason: 'not yet asked: whether a competent authority is required and who it is'
+    owner: user
+    question: Q-014
+    consequential: true
+release_scope:
+  purpose:
+    status: UNKNOWN
+    reason: 'not yet asked: what a release is for'
+    owner: user
+    question: Q-015
+    consequential: true
+  operating_limits:
+    status: UNKNOWN
+    reason: 'not yet asked: operating limits a release states'
+    owner: user
+    question: Q-015
+    consequential: true
+  exclusions:
+    status: UNKNOWN
+    reason: 'not yet asked: what a release excludes'
+    owner: user
+    question: Q-015
+    consequential: true
+storage:
+  results_in_git:
+    status: UNKNOWN
+    reason: 'not yet asked: whether generated results are tracked in git'
+    owner: user
+    question: Q-016
+    consequential: true
+  retention:
+    status: UNKNOWN
+    reason: 'not yet asked: how long evidence is retained'
+    owner: user
+    question: Q-016
+    consequential: true
+license:
+  hardware:
+    status: UNKNOWN
+    reason: 'not yet asked: hardware license approved by the owner'
+    owner: user
+    question: Q-017
+    consequential: true
+  documentation:
+    status: UNKNOWN
+    reason: 'not yet asked: documentation license approved by the owner'
+    owner: user
+    question: Q-017
+    consequential: true

@@ -1,0 +1,26 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "GROUND",
+  "version": "v1",
+  "version_manifest": {
+    "path": "hw/versions/v1/manifest.json",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "expected": [],
+  "results": [],
+  "bundles": [],
+  "waivers": [],
+  "future": [],
+  "blockers": [],
+  "review": {
+    "required": false
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T10:00:00Z"
+}

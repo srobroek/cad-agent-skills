@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills Claude agent frontmatter (harness/claude/agents/<role>.md)",
+  "description": "Closed Claude plugin subagent frontmatter. model is omitted (inherit); permissionMode, hooks and mcpServers are ignored for plugin agents and therefore refused.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description", "tools", "disallowedTools"],
+  "properties": {
+    "name": {
+      "enum": [
+        "cad-concept-designer",
+        "cad-part-designer",
+        "cad-checker",
+        "cad-mech-dfm-reviewer",
+        "cad-sourcing-researcher"
+      ]
+    },
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024},
+    "tools": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      ]
+    },
+    "disallowedTools": {
+      "description": "must disallow Agent: roles never delegate",
+      "oneOf": [
+        {"type": "string", "pattern": "(^|,\\s*)Agent(\\s*,|$)"},
+        {"type": "array", "items": {"type": "string", "minLength": 1}, "contains": {"const": "Agent"}}
+      ]
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "cad-flow",
+          "cad-record",
+          "cad-select",
+          "cad-design",
+          "cad-model",
+          "cad-verify",
+          "cad-review",
+          "cad-release"
+        ]
+      }
+    }
+  }
+}

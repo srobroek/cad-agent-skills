@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills material library (hw/manufacturing/materials.yaml, starter material-profiles/*.yaml)",
+  "description": "Wrapper listing material profiles; each item is a material-profile root.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profiles"],
+  "properties": {"profiles": {"type": "array", "items": {"$ref": "material-profile.schema.json"}}}
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills OMP plugin manifest (<variant>/.omp-plugin/plugin.json)",
+  "description": "Closed OMP plugin manifest; skills and root agents use the native convention, so no skills or agents remap is allowed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description", "version"],
+  "properties": {
+    "name": {"enum": ["cad-agent-skills", "cad-agent-skills-lean"]},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"},
+    "category": {"type": "string", "minLength": 1},
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "email": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "minLength": 1}
+      }
+    },
+    "homepage": {"type": "string", "pattern": "^https://"},
+    "repository": {"type": "string", "pattern": "^https://"},
+    "license": {"type": "string", "minLength": 1},
+    "keywords": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}
