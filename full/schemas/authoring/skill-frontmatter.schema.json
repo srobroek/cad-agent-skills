@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "cad-agent-skills SKILL.md frontmatter",
-  "description": "Closed frontmatter of each skills/<name>/SKILL.md: name is one of the eight skills and matches its folder (a separate check); description is the trigger surface.",
+  "description": "Closed frontmatter of each skills/<name>/SKILL.md: name is one of the eight skills and matches its folder (a separate check); description is the trigger surface; optional metadata holds string values. cad-flow carries metadata.plugin and metadata.version, the installed-version source on every host.",
   "type": "object",
   "additionalProperties": false,
   "required": ["name", "description"],
@@ -18,6 +18,28 @@
         "cad-release"
       ]
     },
-    "description": {"type": "string", "minLength": 1, "maxLength": 1024}
-  }
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024},
+    "metadata": {
+      "description": "Agent Skills metadata map of string values",
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"name": {"const": "cad-flow"}}},
+      "then": {
+        "required": ["metadata"],
+        "properties": {
+          "metadata": {
+            "required": ["plugin", "version"],
+            "properties": {
+              "plugin": {"enum": ["cad-agent-skills", "cad-agent-skills-lean"]},
+              "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"}
+            }
+          }
+        }
+      }
+    }
+  ]
 }
