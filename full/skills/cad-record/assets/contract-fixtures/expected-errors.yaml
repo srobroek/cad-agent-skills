@@ -36,6 +36,9 @@ check-result/invalid/reviewer-command-implementation.json: the read-only reviewe
 check-result/invalid/unit-binding-missing-brief.json: UNIT binding needs unit, brief and input inventory digests
 check-result/invalid/unknown-reported-pass.json: an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
 check-result/invalid/unregistered-family.json: families are the registered enum
+# check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the
+# review's own result.json or bundle-manifest.json is semantic only (references/validation.md item 11), because
+# the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.
 common/invalid/allowable-without-authority.yaml: ALLOWABLE needs authority, conditions and derivation
 common/invalid/component-without-pn.yaml: a COMPONENT subject names its PN
 common/invalid/datasheet-without-locator.yaml: a datasheet source names a url or a retained artifact
@@ -133,7 +136,7 @@ version-manifest/invalid/includes-itself.json: the manifest and stage verdict ar
 version-manifest/invalid/pre-cad-no-reason.json: NOT_APPLICABLE geometry states its reason
 worker-brief/invalid/installed-hash.yaml: 'installed skills are never hashed: installed_sha256 is not a field'
 worker-brief/invalid/lock-outside-scratch.yaml: a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
-worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name, version and manifest path
+worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name and version
 worker-brief/invalid/plugin-manifest-field.yaml: plugin provenance is name and version from the cad-flow SKILL.md metadata; no manifest path
 worker-brief/invalid/plugin-version-not-semver.yaml: plugin version is a semver string
 worker-brief/invalid/relative-skill-path.yaml: resource paths are literal absolute paths from preflight
