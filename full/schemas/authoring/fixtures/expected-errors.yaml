@@ -1,0 +1,27 @@
+# Intended error of each invalid authoring fixture (data index, not an instance).
+claude-agent-frontmatter/invalid/agent-allowed.yaml: Agent must be disallowed
+claude-agent-frontmatter/invalid/model-set.yaml: model is omitted
+claude-agent-frontmatter/invalid/permission-mode.yaml: plugin agents ignore permissionMode; refused
+claude-marketplace/invalid/entry-without-version.json: every entry declares version
+claude-marketplace/invalid/root-source.json: sources are ./full or ./lean
+claude-plugin/invalid/bad-version.json: version is semver
+claude-plugin/invalid/hooks.json: hooks are refused
+claude-plugin/invalid/missing-agent.json: all five agents are listed
+codex-agent/invalid/missing-instructions.toml: developer_instructions is required
+codex-agent/invalid/model-override.toml: model is omitted
+codex-agent/invalid/sandbox-override.toml: no agent sandbox override
+kiro-agent/invalid/mcp-included.json: includeMcpJson is false
+kiro-agent/invalid/subagent-tool.json: 'roles never delegate: no subagent tool'
+kiro-agent/invalid/v2-allowed-tools.json: V2 allowedTools is refused
+omp-agent-frontmatter/invalid/missing-model.yaml: model role selector is required
+omp-agent-frontmatter/invalid/spawns-star.yaml: 'roles never delegate: spawns is empty'
+omp-agent-frontmatter/invalid/unknown-role.yaml: name is one of the five roles
+omp-marketplace/invalid/entry-without-version.json: every entry declares version
+omp-marketplace/invalid/root-source.json: sources are ./full or ./lean
+omp-plugin/invalid/missing-version.json: version is required
+omp-plugin/invalid/skills-remap.json: no skills remap
+opencode-agent-frontmatter/invalid/old-list-dialect.yaml: the old permissions list dialect is refused
+opencode-agent-frontmatter/invalid/primary-mode.yaml: mode is subagent
+opencode-agent-frontmatter/invalid/task-allowed.yaml: task is denied
+skill-frontmatter/invalid/extra-field.yaml: 'closed: only name and description'
+skill-frontmatter/invalid/unknown-name.yaml: name is one of the eight skills

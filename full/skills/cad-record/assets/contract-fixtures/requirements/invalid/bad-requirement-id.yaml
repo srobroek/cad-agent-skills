@@ -1,0 +1,90 @@
+requirements:
+- id: REQ-1
+  title: Viewing angle
+  text: Hold the phone between 55 and 75 degrees from horizontal
+  kind: FUNCTIONAL
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: viewing_angle
+    comparator: BETWEEN
+    value:
+    - 55
+    - 75
+    units: deg
+    source: &id001
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  conditions:
+    status: KNOWN
+    value: phone up to 250 g
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  methods:
+  - INSPECTION
+  - TEST
+  facets:
+  - CAD_VALID
+  - PHYSICALLY_VALIDATED
+  due: LAYOUT
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *id001
+  owner: product owner
+- id: REQ-002
+  text: Not tip over with a 250 g phone
+  kind: SAFETY
+  priority: CRITICAL
+  subjects:
+  - kind: PRODUCT
+  criteria:
+    status: UNKNOWN
+    reason: tipping criterion not yet sourced
+    owner: user
+    question: Q-001
+    consequential: true
+  methods:
+  - ANALYSIS
+  - TEST
+  facets:
+  - SIMULATION_SUPPORTED
+  - PHYSICALLY_VALIDATED
+  due: ANALYSIS
+  safety: true
+  waiver_policy: FORBIDDEN
+  source: *id001
+  owner: product owner
+preferences:
+- id: PRF-001
+  text: Prefer one material
+  weight: 1
+  source: *id001
+assumptions:
+- id: ASM-001
+  text: Phones weigh at most 250 g
+  bounds: mass <= 250 g
+  origin: product owner
+  reason: common phone mass
+  owner: product owner
+  validation: weigh target phones
+  status: OPEN
+questions:
+- id: Q-001
+  question: What tipping margin is acceptable?
+  owner: user
+  material_to_choice: false
+  safety_relevant: true
+  status: OPEN
+- id: Q-002
+  question: Which colour?
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution:
+    answer: black
+    source: *id001

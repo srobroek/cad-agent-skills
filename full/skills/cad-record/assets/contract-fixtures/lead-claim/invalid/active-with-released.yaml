@@ -1,0 +1,13 @@
+format: cad-agent-skills.lead-claim
+schema_version: 1
+root: /Users/me/projects/phone-stand
+host: studio.local
+harness: OMP
+session: omp-2026-11-03-a
+owner: Sjors
+started: '2026-11-03T08:00:00Z'
+resumes:
+- session: omp-2026-11-03-a
+  time: '2026-11-03T13:00:00Z'
+state: ACTIVE
+released: '2026-11-03T18:00:00Z'

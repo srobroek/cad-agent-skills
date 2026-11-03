@@ -1,0 +1,26 @@
+{
+  "format": "cad-agent-skills.version-manifest",
+  "schema_version": 1,
+  "version": "v1",
+  "stage": "GROUND",
+  "record": [
+    {
+      "path": "hw/versions/v1/record/product.yaml",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ],
+  "cases": [],
+  "build": {
+    "status": "NOT_APPLICABLE",
+    "reason": "pre-CAD stage"
+  },
+  "source_artifacts": [],
+  "runtime": {
+    "status": "NOT_APPLICABLE",
+    "reason": "pre-CAD stage"
+  },
+  "geometry": {
+    "status": "NOT_APPLICABLE"
+  },
+  "manufacturing": []
+}

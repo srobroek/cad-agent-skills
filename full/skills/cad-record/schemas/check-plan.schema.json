@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills check plan (hw/check-plan.yaml)",
+  "description": "Planned checks with family, subjects, components, operations, criterion, method, facet, due stage, applicability, safety and waiver policy, plus typed motion, stack, load, FEA and mass cases with state, sampling, boundary conditions, material and convergence. Cases are frozen inputs: a change invalidates their evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["checks", "cases"],
+  "properties": {
+    "checks": {"type": "array", "items": {"$ref": "#/$defs/check"}},
+    "cases": {"type": "array", "items": {"$ref": "#/$defs/case"}}
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "family",
+        "subjects",
+        "components",
+        "operations",
+        "criterion",
+        "method",
+        "facet",
+        "due",
+        "applicability",
+        "safety",
+        "waiver_policy",
+        "producer_role"
+      ],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/check_id"},
+        "family": {"$ref": "common.schema.json#/$defs/check_family"},
+        "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+        "components": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/component_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "operations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+        "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+        "method": {"$ref": "common.schema.json#/$defs/text"},
+        "facet": {"$ref": "common.schema.json#/$defs/facet"},
+        "due": {"$ref": "common.schema.json#/$defs/stage"},
+        "applicability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {
+            "status": {"enum": ["APPLICABLE", "CONDITIONAL", "NOT_APPLICABLE"]},
+            "reason": {"$ref": "common.schema.json#/$defs/text"},
+            "condition": {"$ref": "common.schema.json#/$defs/text"},
+            "reviewed_by": {"$ref": "common.schema.json#/$defs/text"}
+          },
+          "allOf": [
+            {
+              "if": {"required": ["status"], "properties": {"status": {"const": "CONDITIONAL"}}},
+              "then": {"required": ["condition"]}
+            },
+            {
+              "if": {"required": ["status"], "properties": {"status": {"const": "NOT_APPLICABLE"}}},
+              "then": {"required": ["reviewed_by"]}
+            }
+          ]
+        },
+        "safety": {"type": "boolean"},
+        "waiver_policy": {"$ref": "common.schema.json#/$defs/waiver_policy"},
+        "cases": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/case_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "producer_role": {"$ref": "common.schema.json#/$defs/producer_role"}
+      },
+      "if": {"properties": {"safety": {"const": true}}},
+      "then": {"properties": {"waiver_policy": {"const": "FORBIDDEN"}}}
+    },
+    "case": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "subjects",
+            "state",
+            "joints",
+            "sampling",
+            "steps",
+            "pairs",
+            "play_extremes",
+            "criterion"
+          ],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/case_id"},
+            "title": {"$ref": "common.schema.json#/$defs/text"},
+            "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+            "state": {"$ref": "common.schema.json#/$defs/text"},
+            "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+            "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+            "kind": {"const": "MOTION"},
+            "joints": {
+              "type": "array",
+              "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "sampling": {"$ref": "common.schema.json#/$defs/sampling"},
+            "steps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["joint", "step"],
+                "properties": {
+                  "joint": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "step": {"$ref": "common.schema.json#/$defs/quantity"}
+                }
+              },
+              "minItems": 1
+            },
+            "pairs": {
+              "oneOf": [
+                {"const": "ALL"},
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "minItems": 1
+                }
+              ]
+            },
+            "play_extremes": {"type": "boolean"},
+            "tool_state": {"$ref": "common.schema.json#/$defs/text"},
+            "service_state": {"$ref": "common.schema.json#/$defs/text"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "kind", "subjects", "state", "contributors", "method", "criterion"],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/case_id"},
+            "title": {"$ref": "common.schema.json#/$defs/text"},
+            "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+            "state": {"$ref": "common.schema.json#/$defs/text"},
+            "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+            "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+            "kind": {"const": "STACK"},
+            "interface": {"$ref": "common.schema.json#/$defs/interface_id"},
+            "contributors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "subject", "sign", "nominal", "tolerance", "state", "source"],
+                "properties": {
+                  "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "subject": {"$ref": "common.schema.json#/$defs/subject"},
+                  "sign": {"enum": [1, -1]},
+                  "nominal": {"$ref": "common.schema.json#/$defs/quantity"},
+                  "tolerance": {"$ref": "common.schema.json#/$defs/quantity"},
+                  "state": {"$ref": "common.schema.json#/$defs/dimension_state"},
+                  "effects": {"$ref": "common.schema.json#/$defs/texts"},
+                  "source": {"$ref": "common.schema.json#/$defs/source"}
+                }
+              },
+              "minItems": 1
+            },
+            "method": {"enum": ["WORST_CASE", "JUSTIFIED_RSS"]},
+            "rss": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["distribution", "independence", "centering", "sigma", "confidence", "capability", "decision"],
+              "properties": {
+                "distribution": {"$ref": "common.schema.json#/$defs/text"},
+                "independence": {"$ref": "common.schema.json#/$defs/text"},
+                "centering": {"$ref": "common.schema.json#/$defs/text"},
+                "sigma": {"type": "number", "exclusiveMinimum": 0},
+                "confidence": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+                "capability": {"$ref": "common.schema.json#/$defs/text"},
+                "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+              }
+            }
+          },
+          "if": {"properties": {"method": {"const": "JUSTIFIED_RSS"}}},
+          "then": {"required": ["rss"]}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "subjects",
+            "state",
+            "loads",
+            "boundary_conditions",
+            "material",
+            "failure_modes",
+            "method",
+            "validity",
+            "criterion"
+          ],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/case_id"},
+            "title": {"$ref": "common.schema.json#/$defs/text"},
+            "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+            "state": {"$ref": "common.schema.json#/$defs/text"},
+            "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+            "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+            "kind": {"const": "LOAD"},
+            "loads": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/load"}, "minItems": 1},
+            "boundary_conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "kind", "subject", "description"],
+                "properties": {
+                  "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "kind": {"enum": ["FIXED", "PINNED", "SYMMETRY", "CONTACT", "SPRING", "OTHER"]},
+                  "subject": {"$ref": "common.schema.json#/$defs/subject"},
+                  "description": {"$ref": "common.schema.json#/$defs/text"}
+                }
+              },
+              "minItems": 1
+            },
+            "material": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["profile", "properties", "basis_required"],
+              "properties": {
+                "profile": {"$ref": "common.schema.json#/$defs/profile_id"},
+                "properties": {
+                  "type": "array",
+                  "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "basis_required": {"enum": ["ALLOWABLE", "SUPPLIER_TYPICAL", "MEASURED"]},
+                "state": {"$ref": "common.schema.json#/$defs/text"}
+              }
+            },
+            "failure_modes": {"$ref": "common.schema.json#/$defs/texts"},
+            "method": {"enum": ["HAND", "FEA"]},
+            "validity": {"$ref": "common.schema.json#/$defs/text"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "subjects",
+            "state",
+            "solver",
+            "loads",
+            "boundary_conditions",
+            "material",
+            "mesh",
+            "convergence",
+            "units",
+            "limits",
+            "criterion"
+          ],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/case_id"},
+            "title": {"$ref": "common.schema.json#/$defs/text"},
+            "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+            "state": {"$ref": "common.schema.json#/$defs/text"},
+            "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+            "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+            "kind": {"const": "FEA"},
+            "solver": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "version", "documentation"],
+              "properties": {
+                "name": {"$ref": "common.schema.json#/$defs/text"},
+                "version": {"$ref": "common.schema.json#/$defs/text"},
+                "documentation": {"$ref": "common.schema.json#/$defs/text"},
+                "capability": {"$ref": "common.schema.json#/$defs/profile_id"}
+              }
+            },
+            "loads": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/load"}, "minItems": 1},
+            "boundary_conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "kind", "subject", "description"],
+                "properties": {
+                  "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "kind": {"enum": ["FIXED", "PINNED", "SYMMETRY", "CONTACT", "SPRING", "OTHER"]},
+                  "subject": {"$ref": "common.schema.json#/$defs/subject"},
+                  "description": {"$ref": "common.schema.json#/$defs/text"}
+                }
+              },
+              "minItems": 1
+            },
+            "material": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["profile", "properties", "basis_required"],
+              "properties": {
+                "profile": {"$ref": "common.schema.json#/$defs/profile_id"},
+                "properties": {
+                  "type": "array",
+                  "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "basis_required": {"enum": ["ALLOWABLE", "SUPPLIER_TYPICAL", "MEASURED"]},
+                "state": {"$ref": "common.schema.json#/$defs/text"}
+              }
+            },
+            "contact": {"$ref": "common.schema.json#/$defs/texts"},
+            "mesh": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["element", "seed", "threads", "refinement"],
+              "properties": {
+                "element": {"$ref": "common.schema.json#/$defs/text"},
+                "seed": {"$ref": "common.schema.json#/$defs/quantity"},
+                "threads": {"type": "integer", "minimum": 1},
+                "refinement": {"$ref": "common.schema.json#/$defs/texts"}
+              }
+            },
+            "convergence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["quantity", "tolerance", "levels"],
+              "properties": {
+                "quantity": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                "tolerance": {"$ref": "common.schema.json#/$defs/quantity"},
+                "levels": {"type": "integer", "minimum": 2}
+              }
+            },
+            "units": {"const": "mm-N-MPa"},
+            "limits": {"$ref": "common.schema.json#/$defs/texts"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "kind", "subjects", "densities", "outputs"],
+          "properties": {
+            "id": {"$ref": "common.schema.json#/$defs/case_id"},
+            "title": {"$ref": "common.schema.json#/$defs/text"},
+            "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+            "state": {"$ref": "common.schema.json#/$defs/text"},
+            "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+            "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+            "kind": {"const": "MASS"},
+            "densities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["subject", "density"],
+                "properties": {
+                  "subject": {"$ref": "common.schema.json#/$defs/subject"},
+                  "density": {"$ref": "common.schema.json#/$defs/quantity_fact"}
+                }
+              },
+              "minItems": 1
+            },
+            "outputs": {
+              "type": "array",
+              "items": {"enum": ["MASS", "CENTRE_OF_MASS", "INERTIA"]},
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "stability": {"$ref": "common.schema.json#/$defs/text"}
+          }
+        }
+      ]
+    }
+  }
+}

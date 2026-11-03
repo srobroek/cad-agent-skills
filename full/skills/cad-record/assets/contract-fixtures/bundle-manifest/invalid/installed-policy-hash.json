@@ -1,0 +1,74 @@
+{
+  "format": "cad-agent-skills.bundle-manifest",
+  "schema_version": 1,
+  "kind": "CHECK",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input": [
+    {
+      "path": "hw/versions/v6/manifest.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "recipe": {
+    "kind": "COMMAND",
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/chk/check.py"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0",
+      "manifest": "/Users/me/.agents/plugins/cad-agent-skills/.claude-plugin/plugin.json"
+    },
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "files": [
+    {
+      "path": "hw/checks/v6/clearance/a1/result.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "role": "RESULT"
+    },
+    {
+      "path": "hw/checks/v6/clearance/a1/source/check.py",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "role": "SOURCE"
+    },
+    {
+      "path": "hw/checks/v6/clearance/a1/source/check.py.lock",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "role": "LOCK"
+    },
+    {
+      "path": "hw/checks/v6/clearance/a1/stdout.txt",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "role": "LOG"
+    }
+  ],
+  "complete": true
+}

@@ -1,0 +1,599 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills part record (hw/parts/<PN>/part.yaml)",
+  "description": "PN and revision, MAKE, BUY or MADE_TO_DRAWING, model and frame, disconnected components, manufacture relationship, manufacturing intent (functions, material, service, critical surfaces, complete route with orientation, setup, support, finishing and inspection), procurement and drawing intent.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["PN", "rev", "title", "sourcing", "model", "transparency", "intent", "drawing"],
+  "properties": {
+    "PN": {"$ref": "common.schema.json#/$defs/pn"},
+    "rev": {"$ref": "common.schema.json#/$defs/part_rev"},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "sourcing": {"$ref": "common.schema.json#/$defs/sourcing"},
+    "model": {"$ref": "#/$defs/model"},
+    "transparency": {
+      "description": "an optical need is met by a purchased transparent part or identified transparent stock on a suitable route, never by FDM",
+      "enum": ["OPAQUE", "TRANSLUCENT", "TRANSPARENT"]
+    },
+    "components": {"type": "array", "items": {"$ref": "#/$defs/component"}, "minItems": 1},
+    "manufacture": {"$ref": "#/$defs/manufacture"},
+    "intent": {"$ref": "#/$defs/intent"},
+    "procurement": {"$ref": "#/$defs/procurement"},
+    "drawing": {"$ref": "#/$defs/drawing"},
+    "mass_target": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+    "decisions": {"$ref": "common.schema.json#/$defs/decision_ids"}
+  },
+  "allOf": [
+    {"if": {"properties": {"sourcing": {"const": "MAKE"}}}, "then": {"required": ["manufacture"]}},
+    {
+      "if": {"properties": {"sourcing": {"enum": ["BUY", "MADE_TO_DRAWING"]}}},
+      "then": {"required": ["procurement"]}
+    },
+    {"if": {"properties": {"sourcing": {"const": "BUY"}}}, "then": {"not": {"required": ["manufacture"]}}}
+  ],
+  "$defs": {
+    "model": {
+      "description": "how the definition geometry is produced: an authored program (one kernel per model.py), a supplier-sourced model, an explicit bounded proxy, or none",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "kernel", "path", "frame"],
+          "properties": {
+            "kind": {"const": "AUTHORED"},
+            "kernel": {"$ref": "common.schema.json#/$defs/kernel"},
+            "path": {"$ref": "common.schema.json#/$defs/hw_path"},
+            "frame": {"$ref": "#/$defs/frame"},
+            "import": {"$ref": "#/$defs/import"}
+          },
+          "if": {"properties": {"frame": {"const": "ASSEMBLY_ZERO"}}},
+          "then": {"required": ["import"]}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "source", "file", "frame"],
+          "properties": {
+            "kind": {"const": "SUPPLIER"},
+            "source": {"$ref": "common.schema.json#/$defs/source"},
+            "file": {"$ref": "common.schema.json#/$defs/file_hash"},
+            "frame": {"$ref": "#/$defs/frame"},
+            "import": {"$ref": "#/$defs/import"}
+          },
+          "if": {"properties": {"frame": {"const": "ASSEMBLY_ZERO"}}},
+          "then": {"required": ["import"]}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "kernel", "path", "frame", "bounds", "reason"],
+          "properties": {
+            "kind": {"const": "PROXY"},
+            "kernel": {"$ref": "common.schema.json#/$defs/kernel"},
+            "path": {"$ref": "common.schema.json#/$defs/hw_path"},
+            "frame": {"$ref": "#/$defs/frame"},
+            "bounds": {"$ref": "common.schema.json#/$defs/text"},
+            "reason": {"$ref": "common.schema.json#/$defs/text"}
+          },
+          "if": {"properties": {"frame": {"const": "ASSEMBLY_ZERO"}}},
+          "then": {"required": ["import"]}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "reason"],
+          "properties": {"kind": {"const": "NONE"}, "reason": {"$ref": "common.schema.json#/$defs/text"}}
+        }
+      ]
+    },
+    "frame": {
+      "description": "PART_LOCAL for new geometry; ASSEMBLY_ZERO only for imported geometry until separately migrated",
+      "enum": ["PART_LOCAL", "ASSEMBLY_ZERO"]
+    },
+    "import": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["original", "decision"],
+      "properties": {
+        "original": {"$ref": "common.schema.json#/$defs/hw_path"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      }
+    },
+    "component": {
+      "description": "one disconnected solid, bound by an interior witness point in the native frame (mm) or a semantic locator; every solid binds exactly once",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "material_profile", "multiplicity"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/component_id"},
+        "witness": {"$ref": "common.schema.json#/$defs/vector"},
+        "locator": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["feature"],
+          "properties": {
+            "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+            "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+            "component": {"$ref": "common.schema.json#/$defs/component_id"}
+          }
+        },
+        "material_profile": {
+          "oneOf": [{"$ref": "common.schema.json#/$defs/profile_id"}, {"$ref": "common.schema.json#/$defs/fact_open"}]
+        },
+        "functions": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/function_entry"}, "minItems": 1},
+        "multiplicity": {"type": "integer", "minimum": 1},
+        "note": {"$ref": "common.schema.json#/$defs/text"}
+      },
+      "oneOf": [{"required": ["witness"]}, {"required": ["locator"]}]
+    },
+    "manufacture": {
+      "description": "manufacturing state relative to the installed definition",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relationship"],
+      "properties": {
+        "relationship": {"enum": ["SAME", "DIFFERENT"]},
+        "state": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "reason": {"$ref": "common.schema.json#/$defs/text"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "volume_tolerance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "relative": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+            "absolute_mm3": {"type": "number", "exclusiveMinimum": 0}
+          },
+          "minProperties": 1
+        }
+      },
+      "if": {"properties": {"relationship": {"const": "DIFFERENT"}}},
+      "then": {"required": ["state", "reason", "decision", "volume_tolerance"]},
+      "else": {
+        "not": {
+          "anyOf": [
+            {"required": ["state"]},
+            {"required": ["reason"]},
+            {"required": ["decision"]},
+            {"required": ["volume_tolerance"]}
+          ]
+        }
+      }
+    },
+    "intent": {
+      "description": "what the part does, its qualified material profile, the service it sees, its critical surfaces and its complete ordered route",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["functions", "material_profile", "service", "critical_surfaces", "route"],
+      "properties": {
+        "functions": {
+          "oneOf": [
+            {"type": "array", "items": {"$ref": "common.schema.json#/$defs/function_entry"}, "minItems": 1},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "material_profile": {
+          "oneOf": [{"$ref": "common.schema.json#/$defs/profile_id"}, {"$ref": "common.schema.json#/$defs/fact_open"}]
+        },
+        "service": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+                "loads": {"$ref": "common.schema.json#/$defs/semantic_ids"},
+                "environment": {"$ref": "common.schema.json#/$defs/text"},
+                "duty": {"$ref": "common.schema.json#/$defs/text"},
+                "life": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                "differences": {"$ref": "common.schema.json#/$defs/text"}
+              },
+              "minProperties": 1
+            },
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "critical_surfaces": {
+          "oneOf": [
+            {"type": "array", "items": {"$ref": "#/$defs/critical_surface"}, "minItems": 1},
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "route": {
+          "oneOf": [
+            {"type": "array", "items": {"$ref": "#/$defs/operation"}, "minItems": 1},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "selection": {"$ref": "common.schema.json#/$defs/slug"},
+        "rationale": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+            "alternatives": {"$ref": "common.schema.json#/$defs/texts"},
+            "tradeoffs": {"$ref": "common.schema.json#/$defs/text"}
+          },
+          "minProperties": 1
+        }
+      }
+    },
+    "critical_surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "feature", "role", "state"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "component": {"$ref": "common.schema.json#/$defs/component_id"},
+        "role": {
+          "enum": [
+            "DATUM",
+            "BORE",
+            "SEAT",
+            "JOURNAL",
+            "RUNNING",
+            "SLIDING",
+            "FLANK",
+            "CAM",
+            "SEAL",
+            "FASTENER",
+            "LOCATING",
+            "OPTICAL",
+            "OTHER"
+          ]
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/interface_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+        "criteria": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/criterion"}, "minItems": 1},
+        "finish": {"$ref": "common.schema.json#/$defs/text"},
+        "inspection": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "state": {"$ref": "common.schema.json#/$defs/dimension_state"}
+      }
+    },
+    "operation": {
+      "description": "one route operation in order; a made operation names its capability profile or why it is unknown; a purchase names identity, specification and ratings",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "kind": {"$ref": "common.schema.json#/$defs/route_kind"},
+        "title": {"$ref": "common.schema.json#/$defs/text"},
+        "description": {"$ref": "common.schema.json#/$defs/text"},
+        "capability": {
+          "oneOf": [
+            {"$ref": "common.schema.json#/$defs/profile_id"},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "provider": {"enum": ["LOCAL", "OUTSOURCED"]},
+        "supplier": {"$ref": "common.schema.json#/$defs/text"},
+        "components": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/component_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "depends_on": {"$ref": "common.schema.json#/$defs/semantic_ids"},
+        "input_state": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "output_state": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["feature"],
+            "properties": {
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "component": {"$ref": "common.schema.json#/$defs/component_id"}
+            }
+          },
+          "minItems": 1
+        },
+        "setup": {"$ref": "#/$defs/setup"},
+        "orientation": {"oneOf": [{"$ref": "#/$defs/orientation"}, {"$ref": "common.schema.json#/$defs/fact_open"}]},
+        "supports": {"oneOf": [{"$ref": "#/$defs/supports"}, {"$ref": "common.schema.json#/$defs/fact_open"}]},
+        "allowances": {"type": "array", "items": {"$ref": "#/$defs/allowance"}, "minItems": 1},
+        "post_processing": {"$ref": "common.schema.json#/$defs/texts"},
+        "inspection": {"type": "array", "items": {"$ref": "#/$defs/inspection"}, "minItems": 1},
+        "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+        "criteria": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/criterion"}, "minItems": 1},
+        "purchase": {"$ref": "#/$defs/purchase"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "PURCHASED"}}},
+          "then": {
+            "required": ["purchase"],
+            "not": {
+              "anyOf": [{"required": ["capability"]}, {"required": ["supports"]}, {"required": ["orientation"]}]
+            }
+          },
+          "else": {"required": ["capability"], "not": {"required": ["purchase"]}}
+        },
+        {"if": {"properties": {"kind": {"const": "OTHER"}}}, "then": {"required": ["description"]}}
+      ]
+    },
+    "purchase": {
+      "description": "traceable purchase identity; never an unidentified description",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "specification", "ratings"],
+      "properties": {
+        "identity": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "specification": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "ratings": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "optical": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "thickness": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "availability": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "supplier_evidence": {"$ref": "common.schema.json#/$defs/sources"}
+      }
+    },
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stock": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "material_profile": {
+              "oneOf": [
+                {"$ref": "common.schema.json#/$defs/profile_id"},
+                {"$ref": "common.schema.json#/$defs/fact_open"}
+              ]
+            },
+            "grade": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "form": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "dimensions": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "thickness": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "state": {"$ref": "common.schema.json#/$defs/text"},
+            "supplier": {"$ref": "common.schema.json#/$defs/text"}
+          },
+          "minProperties": 1
+        },
+        "datums": {"$ref": "common.schema.json#/$defs/semantic_ids"},
+        "workholding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method"],
+          "properties": {
+            "method": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "contact_regions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["feature"],
+                "properties": {
+                  "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+                  "component": {"$ref": "common.schema.json#/$defs/component_id"}
+                }
+              },
+              "minItems": 1
+            },
+            "fixture": {"$ref": "common.schema.json#/$defs/text"},
+            "clamping_force": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "allowable_deformation": {"$ref": "common.schema.json#/$defs/quantity_fact"}
+          }
+        },
+        "access": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sides": {"$ref": "common.schema.json#/$defs/texts"},
+            "tools": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["description"],
+                "properties": {
+                  "description": {"$ref": "common.schema.json#/$defs/text"},
+                  "capability": {"$ref": "common.schema.json#/$defs/profile_id"},
+                  "diameter": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                  "reach": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+                  "holder": {"$ref": "common.schema.json#/$defs/text_fact"}
+                }
+              },
+              "minItems": 1
+            }
+          },
+          "minProperties": 1
+        },
+        "inspection_access": {"$ref": "common.schema.json#/$defs/text_fact"}
+      },
+      "minProperties": 1
+    },
+    "orientation": {
+      "description": "fixed manufacturing orientation in the native frame; an approved one names its decision; an envelope auto-fit is never approved",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "rotation"],
+      "properties": {
+        "status": {"enum": ["PROPOSED", "APPROVED"]},
+        "rotation": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["quaternion"],
+              "properties": {"quaternion": {"$ref": "common.schema.json#/$defs/quaternion"}}
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["axis", "angle_deg"],
+              "properties": {"axis": {"$ref": "common.schema.json#/$defs/vector"}, "angle_deg": {"type": "number"}}
+            }
+          ]
+        },
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "note": {"$ref": "common.schema.json#/$defs/text"}
+      },
+      "if": {"properties": {"status": {"const": "APPROVED"}}},
+      "then": {"required": ["decision"]}
+    },
+    "supports": {
+      "description": "where supports start, touch and come off; absent supports are UNKNOWN, never NONE",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy"],
+      "properties": {
+        "strategy": {"enum": ["NONE", "REACHABLE_NONCRITICAL", "FINISHED_CRITICAL"]},
+        "start_regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["feature"],
+            "properties": {
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "component": {"$ref": "common.schema.json#/$defs/component_id"}
+            }
+          },
+          "minItems": 1
+        },
+        "contact_regions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["feature"],
+            "properties": {
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "component": {"$ref": "common.schema.json#/$defs/component_id"}
+            }
+          },
+          "minItems": 1
+        },
+        "material": {"$ref": "common.schema.json#/$defs/text"},
+        "removal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tools", "access"],
+          "properties": {
+            "tools": {"$ref": "common.schema.json#/$defs/texts"},
+            "access": {"$ref": "common.schema.json#/$defs/text"},
+            "path": {"$ref": "common.schema.json#/$defs/text"}
+          }
+        },
+        "affected_surfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["feature"],
+            "properties": {
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "component": {"$ref": "common.schema.json#/$defs/component_id"}
+            }
+          },
+          "minItems": 1
+        },
+        "allowance": {"$ref": "common.schema.json#/$defs/quantity"},
+        "finish": {"$ref": "common.schema.json#/$defs/text"},
+        "inspection": {"$ref": "common.schema.json#/$defs/semantic_ids"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"strategy": {"const": "REACHABLE_NONCRITICAL"}}},
+          "then": {"required": ["contact_regions", "removal"]}
+        },
+        {
+          "if": {"properties": {"strategy": {"const": "FINISHED_CRITICAL"}}},
+          "then": {"required": ["contact_regions", "removal", "allowance", "finish", "inspection"]}
+        }
+      ]
+    },
+    "allowance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["feature", "amount", "purpose", "source"],
+      "properties": {
+        "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "amount": {"$ref": "common.schema.json#/$defs/quantity"},
+        "purpose": {"enum": ["STOCK", "FINISH", "COATING", "SUPPORT_REMOVAL", "SHRINKAGE", "COMPENSATION", "OTHER"]},
+        "limits": {"$ref": "common.schema.json#/$defs/text"},
+        "source": {"$ref": "common.schema.json#/$defs/source"}
+      }
+    },
+    "inspection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "method", "state"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "region": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
+        "criterion": {"$ref": "common.schema.json#/$defs/criterion"},
+        "method": {"$ref": "common.schema.json#/$defs/text"},
+        "instrument": {"$ref": "common.schema.json#/$defs/text"},
+        "capability": {"$ref": "common.schema.json#/$defs/profile_id"},
+        "state": {"$ref": "common.schema.json#/$defs/dimension_state"},
+        "coupon": {"type": "boolean"}
+      }
+    },
+    "procurement": {
+      "description": "purchase or made-to-drawing supply; price, availability and lead time stay UNKNOWN until sourced and dated",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "specification", "supplier", "availability", "price", "lead_time"],
+      "properties": {
+        "identity": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "specification": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "ratings": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "supplier": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "availability": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "price": {"$ref": "common.schema.json#/$defs/money_fact"},
+        "lead_time": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "quantity": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"}
+      }
+    },
+    "drawing": {
+      "description": "drawing intent: required or not, datums, characteristics and views; a required feature the model cannot draw blocks the stage",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": {"enum": ["REQUIRED", "NOT_REQUIRED", "UNKNOWN"]},
+        "reason": {"$ref": "common.schema.json#/$defs/text"},
+        "datums": {"$ref": "common.schema.json#/$defs/semantic_ids"},
+        "views": {"$ref": "common.schema.json#/$defs/texts"},
+        "characteristics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "feature", "kind"],
+            "properties": {
+              "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "feature": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "kind": {"enum": ["DIMENSION", "GEOMETRIC", "FINISH", "THREAD", "NOTE"]},
+              "criterion": {"$ref": "common.schema.json#/$defs/criterion"},
+              "datums": {"$ref": "common.schema.json#/$defs/semantic_ids"},
+              "inspection": {"$ref": "common.schema.json#/$defs/semantic_id"},
+              "function": {"$ref": "common.schema.json#/$defs/text"}
+            }
+          },
+          "minItems": 1
+        },
+        "notes": {"$ref": "common.schema.json#/$defs/texts"}
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "LAYOUT",
+  "version": "v6",
+  "predecessor": {
+    "stage": "VARIANT",
+    "version": "v5",
+    "verdict": {
+      "path": "hw/versions/v5/stage-verdict.json",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-006.yaml",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    }
+  },
+  "version_manifest": {
+    "path": "hw/versions/v6/manifest.json",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0",
+      "manifest": "/Users/me/.agents/plugins/cad-agent-skills/.claude-plugin/plugin.json"
+    }
+  },
+  "expected": [
+    "geometry.clearance@IF-001#hinge_bore"
+  ],
+  "results": [
+    {
+      "check": "clearance",
+      "attempt": "a1",
+      "family": "geometry.clearance",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/clearance/a1/result.json",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/clearance/a1/bundle-manifest.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    }
+  ],
+  "bundles": [],
+  "waivers": [],
+  "future": [
+    "physical.test@REQ-001"
+  ],
+  "blockers": [
+    {
+      "code": "DUE_UNKNOWN",
+      "text": "motion.sweep timed out",
+      "obligation": "motion.sweep@assembly"
+    }
+  ],
+  "review": {
+    "required": false
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T10:00:00Z"
+}

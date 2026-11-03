@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills worker brief (.cad-work/<unit>/brief.yaml)",
+  "description": "Typed self-contained assignment for one worker: unit, role, stage, subjects, locked input inventory, literal absolute resource map (SKILL.md, schemas, role reference) with plugin name and version, write boundary, own scratch files and the expected outputs, checks, stop conditions and report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "unit",
+    "role",
+    "stage",
+    "task",
+    "subjects",
+    "input_inventory",
+    "resources",
+    "boundary",
+    "expected",
+    "lead"
+  ],
+  "properties": {
+    "format": {"const": "cad-agent-skills.worker-brief"},
+    "schema_version": {"const": 1},
+    "unit": {"$ref": "common.schema.json#/$defs/unit_id"},
+    "role": {"$ref": "common.schema.json#/$defs/role"},
+    "stage": {"$ref": "common.schema.json#/$defs/stage"},
+    "version": {"$ref": "common.schema.json#/$defs/version"},
+    "task": {"$ref": "common.schema.json#/$defs/text"},
+    "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+    "input_inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "files"],
+      "properties": {
+        "sha256": {
+          "description": "set digest over files (references/record.md#inventory-digest)",
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {"$ref": "common.schema.json#/$defs/hw_path"},
+              "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+              "bytes": {"type": "integer", "minimum": 0}
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "resources": {
+      "description": "literal resolved absolute paths from the lead preflight and the installed plugin name and version; installed bytes are not hashed",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plugin", "skills", "schemas", "role_reference"],
+      "properties": {
+        "plugin": {"$ref": "common.schema.json#/$defs/plugin"},
+        "skills": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "path"],
+                "properties": {
+                  "name": {"$ref": "common.schema.json#/$defs/text"},
+                  "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
+                  "uri": {"type": "string", "pattern": "^skill://cad-[a-z]+(/[A-Za-z0-9._/-]+)?$"}
+                }
+              },
+              {"properties": {"name": {"$ref": "common.schema.json#/$defs/skill"}}}
+            ]
+          },
+          "minItems": 1
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "path"],
+                "properties": {
+                  "name": {"$ref": "common.schema.json#/$defs/text"},
+                  "path": {"$ref": "common.schema.json#/$defs/absolute_path"}
+                }
+              },
+              {
+                "properties": {
+                  "name": {
+                    "enum": [
+                      "common",
+                      "product",
+                      "requirements",
+                      "interfaces",
+                      "part",
+                      "assembly",
+                      "bom-row",
+                      "bom",
+                      "verification-row",
+                      "verification",
+                      "decision",
+                      "check-result",
+                      "stage-verdict",
+                      "stage-policy",
+                      "material-profile",
+                      "material-library",
+                      "capability-profile",
+                      "capability-library",
+                      "selection",
+                      "check-plan",
+                      "variant",
+                      "version-manifest",
+                      "bundle-manifest",
+                      "worker-brief",
+                      "worker-delivery",
+                      "lead-claim",
+                      "release-manifest",
+                      "layout"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "role_reference": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "path"],
+          "properties": {
+            "name": {"$ref": "common.schema.json#/$defs/text"},
+            "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
+            "uri": {"type": "string", "pattern": "^skill://cad-[a-z]+(/[A-Za-z0-9._/-]+)?$"}
+          }
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_root", "scratch", "writable", "locked"],
+      "properties": {
+        "project_root": {"$ref": "common.schema.json#/$defs/absolute_path"},
+        "scratch": {"$ref": "common.schema.json#/$defs/scratch_path"},
+        "writable": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/scratch_path"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "locked": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/hw_path"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "read_only": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/project_path"},
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outputs", "checks", "stop", "report"],
+      "properties": {
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["target", "kind"],
+            "properties": {
+              "target": {"$ref": "common.schema.json#/$defs/hw_path"},
+              "kind": {"$ref": "common.schema.json#/$defs/text"}
+            }
+          }
+        },
+        "checks": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/check_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "obligations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/obligation_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "stop": {"$ref": "common.schema.json#/$defs/texts"},
+        "report": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "lead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session"],
+      "properties": {
+        "session": {"$ref": "common.schema.json#/$defs/text"},
+        "task_id": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    }
+  }
+}

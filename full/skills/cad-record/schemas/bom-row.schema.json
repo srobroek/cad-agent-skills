@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills BOM row",
+  "description": "One derived occurrence or component row: occurrence path, PN and revision, quantity and unit, material and route, purchase identity, availability and mass. Derived from the record and version manifest; never authored.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "path",
+    "occurrence",
+    "PN",
+    "rev",
+    "title",
+    "quantity",
+    "unit",
+    "sourcing",
+    "material_profile",
+    "route",
+    "availability",
+    "mass"
+  ],
+  "properties": {
+    "path": {
+      "description": "occurrence path from the assembly root, slash-separated",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(/[a-z][a-z0-9_]*)*$"
+    },
+    "occurrence": {"$ref": "common.schema.json#/$defs/semantic_id"},
+    "PN": {"$ref": "common.schema.json#/$defs/pn"},
+    "rev": {"$ref": "common.schema.json#/$defs/part_rev"},
+    "component": {"$ref": "common.schema.json#/$defs/component_id"},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "quantity": {"type": "integer", "minimum": 1},
+    "unit": {"enum": ["EA", "mm", "m", "g", "kg"]},
+    "sourcing": {"$ref": "common.schema.json#/$defs/sourcing"},
+    "material_profile": {
+      "oneOf": [{"$ref": "common.schema.json#/$defs/profile_id"}, {"$ref": "common.schema.json#/$defs/fact_open"}]
+    },
+    "route": {
+      "oneOf": [
+        {"type": "array", "items": {"$ref": "common.schema.json#/$defs/route_kind"}, "minItems": 1},
+        {"$ref": "common.schema.json#/$defs/fact_unknown"}
+      ]
+    },
+    "purchase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "specification", "supplier"],
+      "properties": {
+        "identity": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "specification": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "supplier": {"$ref": "common.schema.json#/$defs/text_fact"}
+      }
+    },
+    "availability": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "mass": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+    "price": {"$ref": "common.schema.json#/$defs/money_fact"},
+    "lead_time": {"$ref": "common.schema.json#/$defs/quantity_fact"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"sourcing": {"enum": ["BUY", "MADE_TO_DRAWING"]}}},
+      "then": {"required": ["purchase"]}
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills SKILL.md frontmatter",
+  "description": "Closed frontmatter of each skills/<name>/SKILL.md: name is one of the eight skills and matches its folder (a separate check); description is the trigger surface.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "enum": [
+        "cad-flow",
+        "cad-record",
+        "cad-select",
+        "cad-design",
+        "cad-model",
+        "cad-verify",
+        "cad-review",
+        "cad-release"
+      ]
+    },
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024}
+  }
+}

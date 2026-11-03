@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills verification index (hw/verification/vN/verification.yaml)",
+  "description": "Derived verification index for one version; check results stay the sole observation authority. verification.csv is a derivative of this file only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "version", "stage", "version_manifest_sha256", "rows"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.verification"},
+    "schema_version": {"const": 1},
+    "version": {"$ref": "common.schema.json#/$defs/version"},
+    "stage": {"$ref": "common.schema.json#/$defs/stage"},
+    "version_manifest_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+    "rows": {"type": "array", "items": {"$ref": "verification-row.schema.json"}, "minItems": 0}
+  }
+}

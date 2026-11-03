@@ -1,0 +1,6 @@
+description: Independent checker for one assigned check unit.
+mode: subagent
+permissions:
+- action: '*'
+  resource: '*'
+  effect: deny

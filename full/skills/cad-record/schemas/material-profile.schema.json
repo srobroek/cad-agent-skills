@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills material profile",
+  "description": "One material profile: family or grade, form, process state and per-property value with source, basis, test standard, temperature, conditioning, orientation and uncertainty. Conditions a supplier never states stay explicit UNKNOWN. A typical_not_allowable profile holds typical or standard-minimum data, never design allowables; density is never strength.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "revision",
+    "title",
+    "level",
+    "family",
+    "grade",
+    "form",
+    "process_state",
+    "typical_not_allowable",
+    "properties"
+  ],
+  "properties": {
+    "id": {"$ref": "common.schema.json#/$defs/profile_id"},
+    "revision": {"type": "integer", "minimum": 1},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "level": {"enum": ["FAMILY", "GRADE"]},
+    "family": {"$ref": "common.schema.json#/$defs/text"},
+    "grade": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "manufacturer": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "specification": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "form": {
+      "enum": ["PRINTED", "BULK", "WROUGHT", "CAST", "MOULDED", "SHEET", "ROD", "FILM", "PURCHASED", "UNKNOWN"]
+    },
+    "process_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["process", "conditioning"],
+      "properties": {
+        "process": {
+          "oneOf": [{"$ref": "common.schema.json#/$defs/route_kind"}, {"$ref": "common.schema.json#/$defs/fact_open"}]
+        },
+        "orientation": {"$ref": "common.schema.json#/$defs/text"},
+        "layup": {"$ref": "common.schema.json#/$defs/text"},
+        "temper": {"$ref": "common.schema.json#/$defs/text"},
+        "conditioning": {
+          "description": "dry as moulded or dried, moisture-conditioned, as received, or not stated",
+          "enum": ["DRY", "CONDITIONED", "AS_RECEIVED", "UNKNOWN"]
+        },
+        "lot": {"$ref": "common.schema.json#/$defs/text"},
+        "notes": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "typical_not_allowable": {"type": "boolean"},
+    "properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value", "conditions"],
+        "properties": {
+          "name": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "value": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+          "conditions": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["test_standard", "temperature", "conditioning"],
+            "properties": {
+              "test_standard": {"$ref": "common.schema.json#/$defs/text_fact"},
+              "temperature": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+              "conditioning": {
+                "description": "dry as moulded or dried, moisture-conditioned, as received, or not stated",
+                "enum": ["DRY", "CONDITIONED", "AS_RECEIVED", "UNKNOWN"]
+              },
+              "orientation": {
+                "description": "print or grain orientation of the specimen",
+                "$ref": "common.schema.json#/$defs/text_fact"
+              },
+              "specimen": {"$ref": "common.schema.json#/$defs/text"},
+              "rate": {"$ref": "common.schema.json#/$defs/text"},
+              "notes": {"$ref": "common.schema.json#/$defs/text"}
+            }
+          }
+        }
+      }
+    },
+    "guidance": {"$ref": "common.schema.json#/$defs/texts"},
+    "note": {"$ref": "common.schema.json#/$defs/text"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["level"], "properties": {"level": {"const": "FAMILY"}}},
+      "then": {"properties": {"grade": {"$ref": "common.schema.json#/$defs/fact_open"}}}
+    },
+    {
+      "if": {"required": ["level"], "properties": {"level": {"const": "GRADE"}}},
+      "then": {"properties": {"grade": {"$ref": "common.schema.json#/$defs/fact_known"}}}
+    },
+    {
+      "if": {"required": ["form"], "properties": {"form": {"const": "PRINTED"}}},
+      "then": {"properties": {"properties": {"items": {"properties": {"conditions": {"required": ["orientation"]}}}}}}
+    },
+    {
+      "if": {"required": ["typical_not_allowable"], "properties": {"typical_not_allowable": {"const": true}}},
+      "then": {
+        "properties": {
+          "properties": {
+            "items": {
+              "properties": {"value": {"not": {"required": ["basis"], "properties": {"basis": {"const": "ALLOWABLE"}}}}}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

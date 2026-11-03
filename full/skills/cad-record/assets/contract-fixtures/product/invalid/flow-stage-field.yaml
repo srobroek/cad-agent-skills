@@ -1,0 +1,277 @@
+format: cad-agent-skills
+record_version: 1
+id: phone-stand
+title: Adjustable desktop phone stand
+identity:
+  description:
+    status: KNOWN
+    value: Desk stand holding one phone at an adjustable viewing angle
+    basis: USER_DECLARED
+    sources:
+    - &id001
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  owner:
+    status: KNOWN
+    value: Sjors (product owner)
+    basis: USER_DECLARED
+    sources:
+    - *id001
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor: maker
+regime: ISO
+general_tolerance:
+  status: KNOWN
+  value: ISO 2768-m
+  basis: STANDARD
+  sources:
+  - kind: STANDARD
+    reference: ISO 2768-1
+    url: https://www.iso.org/standard/7748.html
+    accessed: '2026-11-03'
+intake:
+  status: DRAFT
+  purpose:
+    status: KNOWN
+    value: Hold a phone for video calls
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  users:
+    status: UNKNOWN
+    reason: 'not yet asked: who uses, installs and services it'
+    owner: user
+    question: Q-005
+    consequential: true
+  loads:
+  - id: phone_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value:
+        value: 2.5
+        units: N
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    direction:
+      status: KNOWN
+      value: -Z at the cradle lip
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  environment:
+    temperature:
+      status: KNOWN
+      value:
+        lower: 15
+        upper: 35
+        units: deg_C
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    heat_sources:
+      status: UNKNOWN
+      reason: 'not yet asked: nearby heat sources'
+      owner: user
+      question: Q-007
+      consequential: true
+    moisture:
+      status: UNKNOWN
+      reason: 'not yet asked: moisture and humidity'
+      owner: user
+      question: Q-007
+      consequential: true
+    chemicals:
+      status: UNKNOWN
+      reason: 'not yet asked: chemical exposure'
+      owner: user
+      question: Q-007
+      consequential: true
+    uv:
+      status: UNKNOWN
+      reason: 'not yet asked: UV exposure'
+      owner: user
+      question: Q-007
+      consequential: true
+    corrosion:
+      status: UNKNOWN
+      reason: 'not yet asked: corrosion exposure'
+      owner: user
+      question: Q-007
+      consequential: true
+  motion:
+    speed: &id002
+      status: NOT_APPLICABLE
+      reason: no motion in this product
+      reviewed_by: product owner
+    range: *id002
+    duty_cycle: *id002
+    service_life: *id002
+    wear: *id002
+    friction: *id002
+  accuracy:
+    tolerance:
+      status: UNKNOWN
+      reason: 'not yet asked: functional accuracy'
+      owner: user
+      question: Q-009
+      consequential: true
+    repeatability:
+      status: UNKNOWN
+      reason: 'not yet asked: repeatability'
+      owner: user
+      question: Q-009
+      consequential: true
+    surface_finish:
+      status: UNKNOWN
+      reason: 'not yet asked: surface finish'
+      owner: user
+      question: Q-009
+      consequential: true
+    dimensional_stability:
+      status: UNKNOWN
+      reason: 'not yet asked: dimensional stability'
+      owner: user
+      question: Q-009
+      consequential: true
+  logistics:
+    quantity:
+      status: UNKNOWN
+      reason: 'not yet asked: quantity'
+      owner: user
+      question: Q-010
+      consequential: true
+    budget:
+      status: KNOWN
+      value:
+        amount: 20
+        currency: EUR
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    lead_time:
+      status: UNKNOWN
+      reason: 'not yet asked: lead time'
+      owner: user
+      question: Q-010
+      consequential: true
+    maintenance:
+      status: UNKNOWN
+      reason: 'not yet asked: maintenance'
+      owner: user
+      question: Q-010
+      consequential: true
+    repair:
+      status: UNKNOWN
+      reason: 'not yet asked: repair'
+      owner: user
+      question: Q-010
+      consequential: true
+  capability:
+    equipment:
+    - bambu_x1c
+    operator:
+      status: UNKNOWN
+      reason: 'not yet asked: operator skills and constraints'
+      owner: user
+      question: Q-011
+      consequential: true
+    outsourcing:
+      status: UNKNOWN
+      reason: 'not yet asked: acceptable outsourcing'
+      owner: user
+      question: Q-011
+      consequential: true
+service:
+  class: FIT_ASSEMBLY
+  decision: DR-001
+risk:
+  failure_consequence:
+    status: UNKNOWN
+    reason: 'not yet asked: consequence of failure'
+    owner: user
+    question: Q-013
+    consequential: true
+  severity: MINOR
+  forbidden_outcomes:
+    status: UNKNOWN
+    reason: 'not yet asked: outcomes that must never happen'
+    owner: user
+    question: Q-013
+    consequential: true
+  standards:
+    status: UNKNOWN
+    reason: 'not yet asked: governing standards or regulations'
+    owner: user
+    question: Q-013
+    consequential: true
+  supervision:
+    status: UNKNOWN
+    reason: 'not yet asked: supervision during use'
+    owner: user
+    question: Q-013
+    consequential: true
+authority:
+  approver:
+    name: Sjors
+    role: OWNER
+    basis: product owner
+    scope: all gates and releases
+  competent:
+    status: NOT_APPLICABLE
+    reason: no production or safety-critical scope
+    reviewed_by: product owner
+release_scope:
+  purpose:
+    status: UNKNOWN
+    reason: 'not yet asked: what a release is for'
+    owner: user
+    question: Q-015
+    consequential: true
+  operating_limits:
+    status: UNKNOWN
+    reason: 'not yet asked: operating limits a release states'
+    owner: user
+    question: Q-015
+    consequential: true
+  exclusions:
+    status: UNKNOWN
+    reason: 'not yet asked: what a release excludes'
+    owner: user
+    question: Q-015
+    consequential: true
+storage:
+  results_in_git:
+    status: UNKNOWN
+    reason: 'not yet asked: whether generated results are tracked in git'
+    owner: user
+    question: Q-016
+    consequential: true
+  retention:
+    status: UNKNOWN
+    reason: 'not yet asked: how long evidence is retained'
+    owner: user
+    question: Q-016
+    consequential: true
+license:
+  hardware:
+    status: UNKNOWN
+    reason: 'not yet asked: hardware license approved by the owner'
+    owner: user
+    question: Q-017
+    consequential: true
+  documentation:
+    status: UNKNOWN
+    reason: 'not yet asked: documentation license approved by the owner'
+    owner: user
+    question: Q-017
+    consequential: true
+flow:
+  stage: LAYOUT

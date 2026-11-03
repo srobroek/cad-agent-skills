@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills concept variant (hw/concepts/<variant>/variant.yaml)",
+  "description": "One independent concept variant delivered unchanged: identity, architecture, parts and routes, feasibility from hard outcomes, requirements, limits, source and coarse geometry inventory. A preview is never verification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "architecture",
+    "parts",
+    "requirements",
+    "hard_outcomes",
+    "feasibility",
+    "unknowns",
+    "limits",
+    "source",
+    "geometry"
+  ],
+  "properties": {
+    "id": {"$ref": "common.schema.json#/$defs/variant_id"},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "architecture": {"$ref": "common.schema.json#/$defs/text"},
+    "architecture_doc": {"$ref": "common.schema.json#/$defs/hw_path"},
+    "parts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["PN", "title", "sourcing", "material_profile", "route"],
+        "properties": {
+          "PN": {"$ref": "common.schema.json#/$defs/pn"},
+          "title": {"$ref": "common.schema.json#/$defs/text"},
+          "sourcing": {"$ref": "common.schema.json#/$defs/sourcing"},
+          "material_profile": {
+            "oneOf": [
+              {"$ref": "common.schema.json#/$defs/profile_id"},
+              {"$ref": "common.schema.json#/$defs/fact_open"}
+            ]
+          },
+          "route": {
+            "oneOf": [
+              {"type": "array", "items": {"$ref": "common.schema.json#/$defs/route_kind"}, "minItems": 1},
+              {"$ref": "common.schema.json#/$defs/fact_unknown"}
+            ]
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+    "hard_outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement", "outcome", "criterion", "method"],
+        "properties": {
+          "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
+          "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN"]},
+          "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+          "method": {"$ref": "common.schema.json#/$defs/text"},
+          "source": {"$ref": "common.schema.json#/$defs/source"},
+          "reason": {"$ref": "common.schema.json#/$defs/text"}
+        },
+        "allOf": [
+          {
+            "if": {"required": ["outcome"], "properties": {"outcome": {"enum": ["PASS", "FAIL"]}}},
+            "then": {
+              "required": ["source"],
+              "properties": {"criterion": {"$ref": "common.schema.json#/$defs/criterion"}}
+            }
+          },
+          {
+            "if": {"required": ["outcome"], "properties": {"outcome": {"const": "UNKNOWN"}}},
+            "then": {"required": ["reason"]}
+          }
+        ]
+      },
+      "minItems": 1
+    },
+    "feasibility": {"enum": ["FEASIBLE", "CONDITIONAL", "EXCLUDED"]},
+    "dependencies": {"$ref": "common.schema.json#/$defs/texts"},
+    "unknowns": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/fact_unknown"}},
+    "limits": {"$ref": "common.schema.json#/$defs/texts"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "role", "delivery_sha256", "brief_sha256"],
+      "properties": {
+        "unit": {"$ref": "common.schema.json#/$defs/unit_id"},
+        "role": {"$ref": "common.schema.json#/$defs/role"},
+        "delivery_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "brief_sha256": {"$ref": "common.schema.json#/$defs/sha256"}
+      }
+    },
+    "geometry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "kernel", "files", "units"],
+          "properties": {
+            "status": {"const": "PRESENT"},
+            "kernel": {"$ref": "common.schema.json#/$defs/kernel"},
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "sha256", "role", "format"],
+                "properties": {
+                  "path": {"$ref": "common.schema.json#/$defs/hw_path"},
+                  "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+                  "role": {"enum": ["DEFINITION", "MANUFACTURE", "VISUALIZATION", "PREVIEW", "PROFILE", "PROXY"]},
+                  "format": {"enum": ["STEP", "STL", "GLB", "SVG", "PNG", "DXF"]},
+                  "PN": {"$ref": "common.schema.json#/$defs/pn"},
+                  "component": {"$ref": "common.schema.json#/$defs/component_id"},
+                  "state": {"$ref": "common.schema.json#/$defs/semantic_id"}
+                }
+              },
+              "minItems": 1
+            },
+            "units": {"const": "mm"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {"status": {"const": "NOT_APPLICABLE"}, "reason": {"$ref": "common.schema.json#/$defs/text"}}
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["feasibility"], "properties": {"feasibility": {"const": "FEASIBLE"}}},
+      "then": {
+        "properties": {
+          "hard_outcomes": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "properties": {"outcome": {"enum": ["FAIL", "UNKNOWN"]}},
+                "required": ["outcome"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"required": ["feasibility"], "properties": {"feasibility": {"const": "CONDITIONAL"}}},
+      "then": {
+        "properties": {
+          "hard_outcomes": {
+            "contains": {"type": "object", "properties": {"outcome": {"const": "UNKNOWN"}}, "required": ["outcome"]},
+            "not": {
+              "contains": {"type": "object", "properties": {"outcome": {"const": "FAIL"}}, "required": ["outcome"]}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"required": ["feasibility"], "properties": {"feasibility": {"const": "EXCLUDED"}}},
+      "then": {
+        "properties": {
+          "hard_outcomes": {
+            "contains": {"type": "object", "properties": {"outcome": {"const": "FAIL"}}, "required": ["outcome"]}
+          }
+        }
+      }
+    }
+  ]
+}

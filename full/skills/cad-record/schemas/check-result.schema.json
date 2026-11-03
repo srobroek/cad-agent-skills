@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills check result (result.json)",
+  "description": "The sole observation authority for one check attempt. UNIT binding is pre-integration evidence only and never approves a stage; VERSION binding names vN and its manifest digest. The artifact and implementation inventories exclude result.json and bundle-manifest.json; no file holds its own hash. The reviewer reports a REVIEW implementation (inspected files, no commands).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "id",
+    "check",
+    "attempt",
+    "family",
+    "producer_role",
+    "stage",
+    "binding",
+    "input_files",
+    "implementation",
+    "scope",
+    "outcomes",
+    "findings",
+    "artifacts",
+    "complete",
+    "result",
+    "limitations"
+  ],
+  "properties": {
+    "format": {"const": "cad-agent-skills.check-result"},
+    "schema_version": {"const": 1},
+    "id": {
+      "description": "<check>/<attempt>, stable and equal to the bundle directory below hw/checks/vN/",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*/a[1-9][0-9]*$"
+    },
+    "check": {"$ref": "common.schema.json#/$defs/check_id"},
+    "attempt": {"$ref": "common.schema.json#/$defs/attempt"},
+    "family": {"$ref": "common.schema.json#/$defs/check_family"},
+    "producer_role": {"$ref": "common.schema.json#/$defs/producer_role"},
+    "stage": {"$ref": "common.schema.json#/$defs/stage"},
+    "binding": {"$ref": "common.schema.json#/$defs/binding"},
+    "input_files": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
+    "implementation": {
+      "description": "COMMAND: programs that ran (commands at least one). REVIEW: read-only inspection with no execution; it lists every inspected file with its sha256 and has no commands",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "source_files", "commands", "packages", "platform"],
+          "properties": {
+            "kind": {"const": "COMMAND"},
+            "source_files": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/file_hash"},
+                  {"properties": {"path": {"not": {"pattern": "(^|/)(result|bundle-manifest)\\.json$"}}}}
+                ]
+              }
+            },
+            "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1},
+            "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}},
+            "platform": {"$ref": "common.schema.json#/$defs/platform"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "inspected"],
+          "properties": {
+            "kind": {"const": "REVIEW"},
+            "inspected": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/file_hash"},
+                  {"properties": {"path": {"not": {"pattern": "(^|/)(result|bundle-manifest)\\.json$"}}}}
+                ]
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subjects", "components", "operations", "expected_obligations", "coverage_kind"],
+      "properties": {
+        "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+        "components": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/component_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "operations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "cases": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/case_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "expected_obligations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/obligation_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "coverage_kind": {"enum": ["FULL", "SAMPLED", "PARTIAL"]},
+        "unsampled": {"$ref": "common.schema.json#/$defs/texts"}
+      }
+    },
+    "outcomes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/outcome_entry"}},
+    "findings": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/finding"}},
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "common.schema.json#/$defs/artifact"},
+          {"properties": {"path": {"not": {"pattern": "(^|/)(result|bundle-manifest)\\.json$"}}}}
+        ]
+      }
+    },
+    "complete": {"type": "boolean"},
+    "result": {"$ref": "common.schema.json#/$defs/result"},
+    "limitations": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/text"}},
+    "supersedes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempt", "reason"],
+      "properties": {
+        "attempt": {"$ref": "common.schema.json#/$defs/attempt"},
+        "reason": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "mechanical", "dfm"],
+      "properties": {
+        "verdict": {"enum": ["PASS", "MINOR", "MAJOR"]},
+        "mechanical": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["obligation", "outcome"],
+            "properties": {
+              "obligation": {"$ref": "common.schema.json#/$defs/obligation_id"},
+              "outcome": {"$ref": "common.schema.json#/$defs/outcome"},
+              "findings": {
+                "type": "array",
+                "items": {"$ref": "common.schema.json#/$defs/finding_id"},
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "reason": {"$ref": "common.schema.json#/$defs/text"}
+            },
+            "if": {"properties": {"outcome": {"enum": ["FAIL", "UNKNOWN", "NOT_APPLICABLE", "WAIVED"]}}},
+            "then": {"required": ["reason"]}
+          },
+          "minItems": 1
+        },
+        "dfm": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["obligation", "outcome"],
+            "properties": {
+              "obligation": {"$ref": "common.schema.json#/$defs/obligation_id"},
+              "outcome": {"$ref": "common.schema.json#/$defs/outcome"},
+              "findings": {
+                "type": "array",
+                "items": {"$ref": "common.schema.json#/$defs/finding_id"},
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "reason": {"$ref": "common.schema.json#/$defs/text"}
+            },
+            "if": {"properties": {"outcome": {"enum": ["FAIL", "UNKNOWN", "NOT_APPLICABLE", "WAIVED"]}}},
+            "then": {"required": ["reason"]}
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rev", "approval", "planned_inventory"],
+      "properties": {
+        "rev": {"$ref": "common.schema.json#/$defs/release_rev"},
+        "approval": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "planned_inventory": {"$ref": "common.schema.json#/$defs/file_hash"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["result"], "properties": {"result": {"const": "PASS"}}},
+      "then": {
+        "properties": {
+          "complete": {"const": true},
+          "outcomes": {
+            "minItems": 1,
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": ["outcome"],
+                "properties": {"outcome": {"enum": ["FAIL", "UNKNOWN", "WAIVED"]}}
+              }
+            }
+          },
+          "scope": {"properties": {"coverage_kind": {"enum": ["FULL", "SAMPLED"]}}}
+        }
+      }
+    },
+    {
+      "if": {"required": ["result"], "properties": {"result": {"const": "FAIL"}}},
+      "then": {
+        "properties": {
+          "outcomes": {
+            "contains": {"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "FAIL"}}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"required": ["result"], "properties": {"result": {"const": "NOT_APPLICABLE"}}},
+      "then": {
+        "properties": {"outcomes": {"minItems": 1, "items": {"properties": {"outcome": {"const": "NOT_APPLICABLE"}}}}}
+      }
+    },
+    {
+      "if": {"required": ["complete"], "properties": {"complete": {"const": false}}},
+      "then": {"properties": {"result": {"enum": ["FAIL", "UNKNOWN"]}}}
+    },
+    {
+      "if": {"required": ["producer_role"], "properties": {"producer_role": {"const": "cad-mech-dfm-reviewer"}}},
+      "then": {
+        "required": ["review"],
+        "properties": {
+          "family": {"const": "review.mechanical_dfm"},
+          "implementation": {"properties": {"kind": {"const": "REVIEW"}}}
+        }
+      }
+    },
+    {
+      "if": {"required": ["family"], "properties": {"family": {"const": "review.mechanical_dfm"}}},
+      "then": {"required": ["review"], "properties": {"producer_role": {"const": "cad-mech-dfm-reviewer"}}}
+    },
+    {
+      "if": {"required": ["family"], "properties": {"family": {"const": "release.integrity"}}},
+      "then": {"required": ["release"], "properties": {"binding": {"properties": {"kind": {"const": "VERSION"}}}}}
+    }
+  ]
+}

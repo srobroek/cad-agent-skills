@@ -1,0 +1,100 @@
+id: bambu_x1c
+revision: 2
+title: Bambu Lab X1C, home
+process: FDM
+provider: LOCAL
+machine:
+  identity:
+    status: KNOWN
+    value: Bambu Lab X1 Carbon, serial 01S00C
+    basis: USER_DECLARED
+    sources:
+    - &id001
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  location: home office
+operator:
+  status: KNOWN
+  value: Sjors
+  basis: USER_DECLARED
+  sources:
+  - *id001
+envelope:
+  x:
+    status: KNOWN
+    value:
+      value: 256
+      units: mm
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - &id002
+      kind: DATASHEET
+      reference: Supplier datasheet
+      revision: V5.4
+      url: https://example.com/ds.pdf
+      accessed: '2026-11-02'
+      conditions: ISO 527, 23 °C
+  y:
+    status: KNOWN
+    value:
+      value: 256
+      units: mm
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - *id002
+  z:
+    status: KNOWN
+    value:
+      value: 256
+      units: mm
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - *id002
+materials:
+- material: fdm_petg_polylite
+  status: APPROVED
+  operations:
+  - PRINT
+  source: *id001
+parameters:
+  nozzle_diameter:
+    status: KNOWN
+    value:
+      value: 0.4
+      units: mm
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  enclosure:
+    status: KNOWN
+    value: true
+    basis: USER_DECLARED
+    sources:
+    - *id001
+calibrations:
+- id: hole_5mm
+  characteristic: hole_diameter_deviation
+  scope:
+    material: fdm_petg_polylite
+    feature: vertical hole 5 mm
+    orientation: Z
+    size:
+      value: 5
+      units: mm
+  result:
+    limits:
+      lower: -0.18
+      upper: -0.06
+      units: mm
+    samples: 6
+  source:
+    kind: CALIBRATION
+    reference: coupon set 2026-10
+    artifact: hw/manufacturing/sources/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc/coupons.csv
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  date: '2026-10-20'
+  valid_until: '2027-04-20'
+guidance:
+- copied

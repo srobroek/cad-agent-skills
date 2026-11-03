@@ -1,0 +1,92 @@
+{
+  "format": "cad-agent-skills.release-manifest",
+  "schema_version": 1,
+  "phase": "PROPOSAL",
+  "rev": "I",
+  "frozen": {
+    "version": "v12",
+    "version_manifest": {
+      "path": "hw/versions/v12/manifest.json",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+    },
+    "verdict": {
+      "path": "hw/versions/v12/stage-verdict.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    "decision": "DR-020"
+  },
+  "readiness": {
+    "path": "hw/versions/v13/stage-verdict.json",
+    "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+  },
+  "decisions": [
+    {
+      "path": "hw/decisions/DR-020.yaml",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+    }
+  ],
+  "planned": [
+    {
+      "path": "definition/assembly.step",
+      "source": "hw/versions/v12/definition/assembly.step",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "drawings/STD-0001/sheet-1.pdf",
+      "source": "hw/drawings/v12/STD-0001/sheet-1.pdf",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "role": "DRAWING"
+    },
+    {
+      "path": "bom.yaml",
+      "source": "hw/bom/v12/bom.yaml",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "BOM"
+    },
+    {
+      "path": "docs/LICENSE-hardware.txt",
+      "source": "hw/docs/LICENSE-hardware.txt",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "role": "LICENSE"
+    }
+  ],
+  "scope": {
+    "service_class": "APPEARANCE_CONCEPT",
+    "purpose": "concept definition package",
+    "operating_limits": [
+      "display only"
+    ],
+    "exclusions": [
+      "no functional or physical claim"
+    ]
+  },
+  "claims": [
+    {
+      "requirement": "REQ-001",
+      "facets": [
+        "CAD_VALID"
+      ],
+      "outcome": "PASS"
+    },
+    {
+      "requirement": "REQ-002",
+      "facets": [
+        "PHYSICALLY_VALIDATED"
+      ],
+      "outcome": "UNKNOWN"
+    }
+  ],
+  "waivers": [],
+  "licenses": {
+    "hardware": "CERN-OHL-S-2.0",
+    "documentation": "CC-BY-4.0",
+    "third_party": []
+  },
+  "exclusions": [
+    {
+      "item": "supplier pin datasheet",
+      "reason": "redistribution rights not granted; cited by URL and sha256"
+    }
+  ]
+}

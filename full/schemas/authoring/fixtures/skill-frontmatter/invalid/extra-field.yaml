@@ -1,0 +1,4 @@
+name: cad-record
+description: Creates, validates or imports a cad-agent-skills record. Use for "create the record", "validate hw/", "import
+  my old record".
+allowed-tools: Bash

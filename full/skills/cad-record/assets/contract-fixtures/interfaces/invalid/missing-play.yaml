@@ -1,0 +1,134 @@
+interfaces:
+- id: IF-001
+  title: Arm hinge
+  kind: ROTATING
+  members:
+  - occurrence: base
+    PN: STD-0001
+    feature: hinge_bore
+    role: BORE
+  - occurrence: pin
+    PN: STD-0003
+    feature: pin_shank
+    role: PIN
+  functions:
+  - function: ROTATING
+  critical:
+    status: KNOWN
+    value: true
+    basis: USER_DECLARED
+    sources:
+    - &id001
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  requirements:
+  - REQ-001
+  fit:
+    kind: CLEARANCE
+    designation:
+      status: KNOWN
+      value: H11/c11
+      basis: STANDARD
+      sources:
+      - kind: STANDARD
+        reference: ISO 286-2
+        url: https://www.iso.org/standard/54915.html
+        accessed: '2026-11-03'
+    state: ASSEMBLED
+    source: *id001
+  clearance:
+    minimum:
+      status: KNOWN
+      value:
+        value: 0.2
+        units: mm
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    criterion:
+      id: hinge_clearance
+      property: clearance
+      comparator: GE
+      value: 0.2
+      units: mm
+      state: ASSEMBLED
+      source: *id001
+  variation:
+    stack_case: hinge-stack
+    method: WORST_CASE
+  contact:
+    materials:
+    - fdm_petg_polylite
+    - status: UNKNOWN
+      reason: pin supplier not chosen
+    finish:
+      status: KNOWN
+      value: as printed
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    lubrication:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    load:
+      status: KNOWN
+      value:
+        value: 2.5
+        units: N
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    speed:
+      status: NOT_APPLICABLE
+      reason: no motion in this product
+      reviewed_by: product owner
+    duty:
+      status: KNOWN
+      value: occasional adjustment
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    life:
+      status: UNKNOWN
+      reason: adjustment cycles not stated
+      owner: user
+      question: Q-001
+      consequential: true
+  environment:
+    status: KNOWN
+    value: indoor desk
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  access:
+    tool:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    install:
+      status: KNOWN
+      value: pin inserted by hand
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    service:
+      status: KNOWN
+      value: pin removable
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    inspection:
+      status: KNOWN
+      value: visual
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  assembly_operations:
+  - insert-pin

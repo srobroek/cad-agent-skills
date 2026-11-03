@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills stage verdict (hw/versions/vN/stage-verdict.json)",
+  "description": "One immutable technical-readiness verdict for one stage attempt, written after every required check; no self hash. A PASS accepts only PASS, WAIVED (with its WV-### waiver) and NOT_APPLICABLE results. HUMAN gates add a separate APPROVED gate DR that binds this verdict.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "stage",
+    "version",
+    "version_manifest",
+    "policy",
+    "expected",
+    "results",
+    "bundles",
+    "waivers",
+    "future",
+    "blockers",
+    "review",
+    "complete",
+    "result",
+    "time"
+  ],
+  "properties": {
+    "format": {"const": "cad-agent-skills.stage-verdict"},
+    "schema_version": {"const": 1},
+    "stage": {"$ref": "common.schema.json#/$defs/stage"},
+    "version": {"$ref": "common.schema.json#/$defs/version"},
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "version", "verdict"],
+      "properties": {
+        "stage": {"$ref": "common.schema.json#/$defs/stage"},
+        "version": {"$ref": "common.schema.json#/$defs/version"},
+        "verdict": {"$ref": "common.schema.json#/$defs/file_hash"},
+        "approval": {"$ref": "common.schema.json#/$defs/file_hash"}
+      }
+    },
+    "supersedes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "verdict", "reason"],
+      "properties": {
+        "version": {"$ref": "common.schema.json#/$defs/version"},
+        "verdict": {"$ref": "common.schema.json#/$defs/file_hash"},
+        "reason": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "version_manifest": {"$ref": "common.schema.json#/$defs/file_hash"},
+    "policy": {"$ref": "common.schema.json#/$defs/installed_policy"},
+    "expected": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/obligation_id"},
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check", "attempt", "family", "result", "binding", "result_file", "bundle"],
+        "properties": {
+          "check": {"$ref": "common.schema.json#/$defs/check_id"},
+          "attempt": {"$ref": "common.schema.json#/$defs/attempt"},
+          "family": {"$ref": "common.schema.json#/$defs/check_family"},
+          "result": {
+            "description": "the stage mapping of the check result: WAIVED only for a FAIL or UNKNOWN check covered by a permitted waiver",
+            "$ref": "common.schema.json#/$defs/outcome"
+          },
+          "binding": {"description": "UNIT-bound results are never accepted", "enum": ["VERSION", "CARRIED_FORWARD"]},
+          "result_file": {"$ref": "common.schema.json#/$defs/file_hash"},
+          "bundle": {"$ref": "common.schema.json#/$defs/file_hash"},
+          "carried_from": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["version", "recheck", "reason"],
+            "properties": {
+              "version": {"$ref": "common.schema.json#/$defs/version"},
+              "recheck": {"$ref": "common.schema.json#/$defs/file_hash"},
+              "reason": {"$ref": "common.schema.json#/$defs/text"}
+            }
+          },
+          "waiver": {"$ref": "common.schema.json#/$defs/waiver_id"}
+        },
+        "if": {"properties": {"binding": {"const": "CARRIED_FORWARD"}}},
+        "then": {"required": ["carried_from"]},
+        "else": {"not": {"required": ["carried_from"]}},
+        "allOf": [
+          {
+            "if": {"required": ["result"], "properties": {"result": {"const": "WAIVED"}}},
+            "then": {"required": ["waiver"]},
+            "else": {"not": {"required": ["waiver"]}}
+          }
+        ]
+      }
+    },
+    "bundles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "manifest"],
+        "properties": {
+          "kind": {"enum": ["DRAWING", "BOM", "VERIFICATION"]},
+          "manifest": {"$ref": "common.schema.json#/$defs/file_hash"}
+        }
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "decision"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/waiver_id"},
+          "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+        }
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "future": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/obligation_id"},
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "text"],
+        "properties": {
+          "code": {
+            "enum": [
+              "MISSING_RESULT",
+              "SCHEMA_INVALID",
+              "SCOPE_GAP",
+              "HASH_MISMATCH",
+              "DUE_FAIL",
+              "DUE_UNKNOWN",
+              "REVIEW_MAJOR",
+              "MISSING_RESOURCE",
+              "INSTALLED_MUTATION",
+              "SOURCE_MUTATION",
+              "UNAPPROVED_CHANGE",
+              "EXPIRED",
+              "TIMEOUT",
+              "DELIVERY_FAILED",
+              "OTHER"
+            ]
+          },
+          "text": {"$ref": "common.schema.json#/$defs/text"},
+          "obligation": {"$ref": "common.schema.json#/$defs/obligation_id"}
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "verdict": {"enum": ["PASS", "MINOR", "MAJOR"]},
+        "result": {"$ref": "common.schema.json#/$defs/file_hash"}
+      }
+    },
+    "complete": {"type": "boolean"},
+    "result": {"enum": ["PASS", "FAIL", "BLOCKED"]},
+    "time": {"$ref": "common.schema.json#/$defs/timestamp"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["result"], "properties": {"result": {"const": "PASS"}}},
+      "then": {
+        "properties": {
+          "complete": {"const": true},
+          "blockers": {"maxItems": 0},
+          "results": {"items": {"properties": {"result": {"enum": ["PASS", "WAIVED", "NOT_APPLICABLE"]}}}},
+          "review": {
+            "if": {"properties": {"required": {"const": true}}},
+            "then": {"required": ["verdict", "result"], "properties": {"verdict": {"const": "PASS"}}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"required": ["complete"], "properties": {"complete": {"const": false}}},
+      "then": {"properties": {"result": {"enum": ["FAIL", "BLOCKED"]}}}
+    },
+    {
+      "if": {"required": ["stage"], "properties": {"stage": {"not": {"const": "GROUND"}}}},
+      "then": {"required": ["predecessor"]}
+    }
+  ]
+}
