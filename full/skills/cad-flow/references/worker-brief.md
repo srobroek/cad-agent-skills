@@ -17,7 +17,7 @@ Template: `assets/worker-brief.yaml`. Role duties, skills and write sets: refere
 | `task` | one sentence: the subject and the result wanted |
 | `subjects` | the PNs, components, interfaces, requirements, cases or operations in scope |
 | `input_inventory` | every inventoried `hw/` file with its sha256, and their set digest (cad-record references/record.md "Inventory digest") |
-| `resources.plugin` | `{name, version, manifest}` copied from `.cad-work/lead/preflight.json` |
+| `resources.plugin` | `{name, version}` copied from `.cad-work/lead/preflight.json` |
 | `resources.skills` | the role's skills from references/agent-roles.md plus cad-review (rubric), each with its absolute SKILL.md path and `skill://` URI |
 | `resources.schemas` | every root the unit writes or validates, always `worker-delivery`, and `check-result` when it runs checks |
 | `resources.role_reference` | the absolute path and URI of references/agent-roles.md |
