@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills release manifest (hw/releases/<REV>/release-manifest.json)",
-  "description": "PROPOSAL lists the planned payload inventory and excludes the not-yet-written approval and integrity result. FINAL adds the approval, the package-integrity result and the full inventory, and excludes its own bytes; the outer digest is reported separately, never self-hashed.",
+  "description": "PROPOSAL lists the planned payload inventory and excludes the not-yet-written RELEASE readiness verdict, approval and integrity result. FINAL adds the RELEASE readiness verdict, the approval, the package-integrity result and the full inventory, and excludes its own bytes; the outer digest is reported separately, never self-hashed.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,7 +10,6 @@
     "phase",
     "rev",
     "frozen",
-    "readiness",
     "decisions",
     "planned",
     "scope",
@@ -35,7 +34,10 @@
         "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
       }
     },
-    "readiness": {"$ref": "common.schema.json#/$defs/file_hash"},
+    "readiness": {
+      "description": "FINAL only: the RELEASE stage verdict; a PROPOSAL never hashes it, because that verdict hashes the proposal",
+      "$ref": "common.schema.json#/$defs/file_hash"
+    },
     "decisions": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
     "planned": {
       "type": "array",
@@ -210,13 +212,20 @@
     {
       "if": {"required": ["phase"], "properties": {"phase": {"const": "PROPOSAL"}}},
       "then": {
-        "not": {"anyOf": [{"required": ["approval"]}, {"required": ["integrity"]}, {"required": ["inventory"]}]}
+        "not": {
+          "anyOf": [
+            {"required": ["approval"]},
+            {"required": ["integrity"]},
+            {"required": ["inventory"]},
+            {"required": ["readiness"]}
+          ]
+        }
       }
     },
     {
       "if": {"required": ["phase"], "properties": {"phase": {"const": "FINAL"}}},
       "then": {
-        "required": ["approval", "integrity", "inventory"],
+        "required": ["readiness", "approval", "integrity", "inventory"],
         "properties": {
           "inventory": {
             "contains": {

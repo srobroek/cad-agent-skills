@@ -52,6 +52,7 @@ decision/invalid/gate-approves-failed-verdict.yaml: an approved gate binds a PAS
 decision/invalid/gate-binds-proposal.yaml: a GATE decision binds a STAGE verdict
 decision/invalid/lead-approves-gate.yaml: only a USER or AUTHORITY approves
 decision/invalid/proposal-in-scratch.yaml: a PROPOSAL binding names an immutable proposal under hw/decisions/proposals/DR-###/, never scratch
+decision/invalid/release-without-verdict.yaml: a RELEASE approval binds the proposal and the RELEASE readiness verdict that hashes it
 decision/invalid/supersede-without-refers.yaml: SUPERSEDED refers to the old DR
 interfaces/invalid/face-index-feature.yaml: features are semantic lower ids, never face indices
 interfaces/invalid/missing-play.yaml: play is required (a value or an explicit UNKNOWN/NOT_APPLICABLE)
@@ -86,7 +87,9 @@ product/invalid/rigor-default-pro.yaml: rigor is maker|pro|regulated (lowercase)
 product/invalid/service-class-without-decision.yaml: a known service class requires its decision
 product/invalid/wrong-format.yaml: format must be cad-agent-skills and record_version 1
 release-manifest/invalid/final-without-integrity.json: FINAL requires approval, integrity and inventory
+release-manifest/invalid/final-without-readiness.json: a FINAL manifest names the RELEASE readiness verdict
 release-manifest/invalid/proposal-with-approval.json: a PROPOSAL excludes the not-yet-written approval and integrity
+release-manifest/invalid/proposal-with-readiness.json: a PROPOSAL never hashes the RELEASE readiness verdict (that verdict hashes the proposal)
 release-manifest/invalid/rev-reused-letter.json: REV letters exclude I, O, Q, S, X, Z
 release-manifest/invalid/self-listed.json: the manifest never inventories itself
 release-manifest/invalid/unknown-service-scope.json: a release states a known service class
