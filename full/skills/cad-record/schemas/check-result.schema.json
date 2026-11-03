@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills check result (result.json)",
-  "description": "The sole observation authority for one check attempt. UNIT binding is pre-integration evidence only and never approves a stage; VERSION binding names vN and its manifest digest. The artifact and implementation inventories exclude result.json and bundle-manifest.json; no file holds its own hash.",
+  "description": "The sole observation authority for one check attempt. UNIT binding is pre-integration evidence only and never approves a stage; VERSION binding names vN and its manifest digest. The artifact and implementation inventories exclude result.json and bundle-manifest.json; no file holds its own hash. The reviewer reports a REVIEW implementation (inspected files, no commands).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -40,23 +40,47 @@
     "binding": {"$ref": "common.schema.json#/$defs/binding"},
     "input_files": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
     "implementation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["source_files", "commands", "packages", "platform"],
-      "properties": {
-        "source_files": {
-          "type": "array",
-          "items": {
-            "allOf": [
-              {"$ref": "common.schema.json#/$defs/file_hash"},
-              {"properties": {"path": {"not": {"pattern": "(^|/)(result|bundle-manifest)\\.json$"}}}}
-            ]
+      "description": "COMMAND: programs that ran (commands at least one). REVIEW: read-only inspection with no execution; it lists every inspected file with its sha256 and has no commands",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "source_files", "commands", "packages", "platform"],
+          "properties": {
+            "kind": {"const": "COMMAND"},
+            "source_files": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/file_hash"},
+                  {"properties": {"path": {"not": {"pattern": "(^|/)(result|bundle-manifest)\\.json$"}}}}
+                ]
+              }
+            },
+            "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1},
+            "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}},
+            "platform": {"$ref": "common.schema.json#/$defs/platform"}
           }
         },
-        "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1},
-        "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}},
-        "platform": {"$ref": "common.schema.json#/$defs/platform"}
-      }
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "inspected"],
+          "properties": {
+            "kind": {"const": "REVIEW"},
+            "inspected": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/file_hash"},
+                  {"properties": {"path": {"not": {"pattern": "(^|/)(result|bundle-manifest)\\.json$"}}}}
+                ]
+              },
+              "minItems": 1
+            }
+          }
+        }
+      ]
     },
     "scope": {
       "type": "object",
@@ -220,7 +244,13 @@
     },
     {
       "if": {"required": ["producer_role"], "properties": {"producer_role": {"const": "cad-mech-dfm-reviewer"}}},
-      "then": {"required": ["review"], "properties": {"family": {"const": "review.mechanical_dfm"}}}
+      "then": {
+        "required": ["review"],
+        "properties": {
+          "family": {"const": "review.mechanical_dfm"},
+          "implementation": {"properties": {"kind": {"const": "REVIEW"}}}
+        }
+      }
     },
     {
       "if": {"required": ["family"], "properties": {"family": {"const": "review.mechanical_dfm"}}},

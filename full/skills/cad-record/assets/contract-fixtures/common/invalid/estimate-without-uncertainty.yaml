@@ -92,7 +92,8 @@ finding:
     - motion.sweep
     earliest_stage: LAYOUT
 waiver:
-- decision: DR-015
+- id: WV-001
+  decision: DR-015
   obligation: physical.test@REQ-001
   subject:
     kind: ASSEMBLY

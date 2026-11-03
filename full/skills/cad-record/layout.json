@@ -557,7 +557,7 @@
       "writer": "lead, copying accepted checker bytes verbatim",
       "mutability": "IMMUTABLE",
       "stage": "ANY",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "the result implementation kind is COMMAND"},
       "gate_credit": true,
       "meaning": "checker programs and locks"
     },
@@ -585,7 +585,7 @@
       "writer": "lead, copying accepted checker bytes verbatim",
       "mutability": "IMMUTABLE",
       "stage": "ANY",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "the result implementation kind is COMMAND"},
       "gate_credit": true,
       "meaning": "captured standard output"
     },
@@ -599,7 +599,7 @@
       "writer": "lead, copying accepted checker bytes verbatim",
       "mutability": "IMMUTABLE",
       "stage": "ANY",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "the result implementation kind is COMMAND"},
       "gate_credit": true,
       "meaning": "captured standard error"
     },

@@ -10,7 +10,9 @@ bom-row/invalid/zero-quantity.yaml: quantity is an integer >= 1
 bom/invalid/missing-binding.yaml: a BOM binds the version manifest digest
 bom/invalid/row-invalid.yaml: rows are bom-row roots; a BUY row needs purchase
 bundle-manifest/invalid/check-without-result.json: a CHECK bundle inventories its result.json
+bundle-manifest/invalid/installed-policy-hash.json: installed policy is recorded by path and plugin name/version, never hashed
 bundle-manifest/invalid/lists-itself.json: a bundle manifest excludes itself
+bundle-manifest/invalid/review-recipe-with-commands.json: a REVIEW recipe forbids commands
 bundle-manifest/invalid/unsafe-path.json: paths have no dot segments
 capability-library/invalid/template-invents-envelope.yaml: items are capability-profile roots; a template never states an envelope
 capability-profile/invalid/artifact-without-sha.yaml: a retained artifact needs its sha256
@@ -24,9 +26,13 @@ check-plan/invalid/rss-without-justification.yaml: JUSTIFIED_RSS needs distribut
 check-plan/invalid/safety-check-waivable.yaml: a safety check is never waivable
 check-plan/invalid/sampled-without-justification.yaml: a SAMPLED or CONSTRAINED_PATH sampling states its justification
 check-result/invalid/artifact-lists-result-json.json: artifacts exclude result.json and bundle-manifest.json
+check-result/invalid/command-without-commands.json: a COMMAND implementation needs at least one command
 check-result/invalid/pass-without-criterion.json: a PASS outcome needs criterion, evidence and value
 check-result/invalid/positional-finding-id.json: finding ids are family:anchor:locus, never positional
+check-result/invalid/review-with-commands.json: a REVIEW implementation forbids commands
 check-result/invalid/review-without-coverage.json: a reviewer result needs separate mechanical and DFM coverage
+check-result/invalid/review-without-inspected.json: a REVIEW implementation lists at least one inspected file
+check-result/invalid/reviewer-command-implementation.json: the read-only reviewer reports a REVIEW implementation
 check-result/invalid/unit-binding-missing-brief.json: UNIT binding needs unit, brief and input inventory digests
 check-result/invalid/unknown-reported-pass.json: an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
 check-result/invalid/unregistered-family.json: families are the registered enum
@@ -40,6 +46,7 @@ common/invalid/obligation-bad-anchor.yaml: obligation ids are <family>@<anchor> 
 common/invalid/path-traversal.yaml: project paths have no dot segments
 common/invalid/safety-waiver.yaml: safety or regulatory obligations are never waived
 common/invalid/unknown-unit.yaml: units are the closed symbol set
+common/invalid/waiver-without-id.yaml: a waiver carries its WV-### id
 decision/invalid/approval-without-statement.yaml: an approval records the transcript hash, quote and time
 decision/invalid/gate-approves-failed-verdict.yaml: an approved gate binds a PASS verdict
 decision/invalid/gate-binds-proposal.yaml: a GATE decision binds a STAGE verdict
@@ -97,12 +104,17 @@ stage-policy/invalid/conditional-without-condition.yaml: a CONDITIONAL check nam
 stage-policy/invalid/human-gate-without-subject.yaml: HUMAN and REVIEW gates name their gate subject
 stage-policy/invalid/old-stage-alias.yaml: 'no old stage aliases: FREEZE, not DESIGN_FREEZE'
 stage-policy/invalid/twelve-stages.yaml: exactly 13 stages
+stage-verdict/invalid/installed-policy-hash.json: installed policy is recorded by path and plugin name/version, never hashed
 stage-verdict/invalid/missing-predecessor.json: every stage after GROUND names its predecessor
 stage-verdict/invalid/pass-with-blocker.json: PASS requires no blockers
+stage-verdict/invalid/pass-with-fail-item.json: a PASS verdict accepts only PASS, WAIVED and NOT_APPLICABLE results
 stage-verdict/invalid/pass-with-unknown-result.json: PASS cannot accept a FAIL or UNKNOWN result
 stage-verdict/invalid/provisional-result.json: verdicts are PASS, FAIL or BLOCKED; no provisional stage
 stage-verdict/invalid/review-required-not-passed.json: a required review must be PASS
 stage-verdict/invalid/unit-result-accepted.json: only VERSION or CARRIED_FORWARD results are accepted
+stage-verdict/invalid/waived-without-waiver.json: a WAIVED result names its WV-### waiver
+stage-verdict/invalid/waiver-dr-id.json: waiver ids are WV-###
+stage-verdict/invalid/waiver-on-pass-item.json: a waiver is forbidden on a non-WAIVED result
 variant/invalid/feasible-with-unknown.yaml: FEASIBLE requires no UNKNOWN or FAIL hard outcome
 variant/invalid/geometry-absent-no-reason.yaml: NOT_APPLICABLE geometry states a reason; no fake STEP
 variant/invalid/missing-source.yaml: a variant names its delivering unit and digests
@@ -116,8 +128,12 @@ version-manifest/invalid/geometry-not-mm.json: geometry is millimetres, right-ha
 version-manifest/invalid/includes-check-result.json: inventories hold only hw/versions/vN snapshots; no downstream results
 version-manifest/invalid/includes-itself.json: the manifest and stage verdict are never inventoried
 version-manifest/invalid/pre-cad-no-reason.json: NOT_APPLICABLE geometry states its reason
+worker-brief/invalid/installed-hash.yaml: 'installed skills are never hashed: installed_sha256 is not a field'
+worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name, version and manifest path
 worker-brief/invalid/relative-skill-path.yaml: resource paths are literal absolute paths from preflight
 worker-brief/invalid/reserved-unit.yaml: unit ids exclude lead and stage-*
+worker-brief/invalid/scratch-input.yaml: input inventory files are hw/ paths (set digest)
+worker-brief/invalid/skill-hash.yaml: resource entries carry name, absolute path and URI, never a sha256
 worker-brief/invalid/unknown-role.yaml: roles are the five native roles
 worker-brief/invalid/writable-hw.yaml: a worker writes only under .cad-work/
 worker-delivery/invalid/boundary-violation-pass.json: a boundary violation makes the delivery MAJOR

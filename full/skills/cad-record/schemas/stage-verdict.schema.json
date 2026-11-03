@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills stage verdict (hw/versions/vN/stage-verdict.json)",
-  "description": "One immutable technical-readiness verdict for one stage attempt, written after every required check; no self hash. HUMAN gates add a separate APPROVED gate DR that binds this verdict.",
+  "description": "One immutable technical-readiness verdict for one stage attempt, written after every required check; no self hash. A PASS accepts only PASS, WAIVED (with its WV-### waiver) and NOT_APPLICABLE results. HUMAN gates add a separate APPROVED gate DR that binds this verdict.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -49,15 +49,7 @@
       }
     },
     "version_manifest": {"$ref": "common.schema.json#/$defs/file_hash"},
-    "policy": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["path", "sha256"],
-      "properties": {
-        "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
-        "sha256": {"$ref": "common.schema.json#/$defs/sha256"}
-      }
-    },
+    "policy": {"$ref": "common.schema.json#/$defs/installed_policy"},
     "expected": {
       "type": "array",
       "items": {"$ref": "common.schema.json#/$defs/obligation_id"},
@@ -74,7 +66,10 @@
           "check": {"$ref": "common.schema.json#/$defs/check_id"},
           "attempt": {"$ref": "common.schema.json#/$defs/attempt"},
           "family": {"$ref": "common.schema.json#/$defs/check_family"},
-          "result": {"$ref": "common.schema.json#/$defs/result"},
+          "result": {
+            "description": "the stage mapping of the check result: WAIVED only for a FAIL or UNKNOWN check covered by a permitted waiver",
+            "$ref": "common.schema.json#/$defs/outcome"
+          },
           "binding": {"description": "UNIT-bound results are never accepted", "enum": ["VERSION", "CARRIED_FORWARD"]},
           "result_file": {"$ref": "common.schema.json#/$defs/file_hash"},
           "bundle": {"$ref": "common.schema.json#/$defs/file_hash"},
@@ -87,11 +82,19 @@
               "recheck": {"$ref": "common.schema.json#/$defs/file_hash"},
               "reason": {"$ref": "common.schema.json#/$defs/text"}
             }
-          }
+          },
+          "waiver": {"$ref": "common.schema.json#/$defs/waiver_id"}
         },
         "if": {"properties": {"binding": {"const": "CARRIED_FORWARD"}}},
         "then": {"required": ["carried_from"]},
-        "else": {"not": {"required": ["carried_from"]}}
+        "else": {"not": {"required": ["carried_from"]}},
+        "allOf": [
+          {
+            "if": {"required": ["result"], "properties": {"result": {"const": "WAIVED"}}},
+            "then": {"required": ["waiver"]},
+            "else": {"not": {"required": ["waiver"]}}
+          }
+        ]
       }
     },
     "bundles": {
@@ -108,7 +111,15 @@
     },
     "waivers": {
       "type": "array",
-      "items": {"$ref": "common.schema.json#/$defs/decision_id"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "decision"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/waiver_id"},
+          "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+        }
+      },
       "minItems": 0,
       "uniqueItems": true
     },
@@ -170,15 +181,7 @@
         "properties": {
           "complete": {"const": true},
           "blockers": {"maxItems": 0},
-          "results": {
-            "not": {
-              "contains": {
-                "type": "object",
-                "required": ["result"],
-                "properties": {"result": {"enum": ["FAIL", "UNKNOWN"]}}
-              }
-            }
-          },
+          "results": {"items": {"properties": {"result": {"enum": ["PASS", "WAIVED", "NOT_APPLICABLE"]}}}},
           "review": {
             "if": {"properties": {"required": {"const": true}}},
             "then": {"required": ["verdict", "result"], "properties": {"verdict": {"const": "PASS"}}}

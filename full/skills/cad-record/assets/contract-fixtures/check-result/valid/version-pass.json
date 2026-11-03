@@ -19,6 +19,7 @@
     }
   ],
   "implementation": {
+    "kind": "COMMAND",
     "source_files": [
       {
         "path": "hw/checks/v6/clearance/a1/source/check.py",

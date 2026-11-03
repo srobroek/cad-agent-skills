@@ -813,6 +813,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "id",
         "decision",
         "obligation",
         "subject",
@@ -827,6 +828,7 @@
         "authority"
       ],
       "properties": {
+        "id": {"$ref": "#/$defs/waiver_id"},
         "decision": {"$ref": "#/$defs/decision_id"},
         "obligation": {"$ref": "#/$defs/obligation_id"},
         "subject": {"$ref": "#/$defs/subject"},
@@ -1071,6 +1073,25 @@
         "note": {"$ref": "#/$defs/text"}
       }
     },
-    "gen_header_format": {"type": "string", "pattern": "^cad-agent-skills\\.[a-z][a-z0-9-]*$"}
+    "gen_header_format": {"type": "string", "pattern": "^cad-agent-skills\\.[a-z][a-z0-9-]*$"},
+    "waiver_id": {"type": "string", "pattern": "^WV-[0-9]{3}$"},
+    "plugin": {
+      "description": "installed plugin provenance: name and version read from its installed plugin manifest, and that manifest's resolved absolute path; installed bytes are not hashed",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "manifest"],
+      "properties": {
+        "name": {"enum": ["cad-agent-skills", "cad-agent-skills-lean"]},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"},
+        "manifest": {"$ref": "#/$defs/absolute_path"}
+      }
+    },
+    "installed_policy": {
+      "description": "the installed stage policy a verdict or bundle applied: resolved absolute path plus plugin provenance",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "plugin"],
+      "properties": {"path": {"$ref": "#/$defs/absolute_path"}, "plugin": {"$ref": "#/$defs/plugin"}}
+    }
   }
 }

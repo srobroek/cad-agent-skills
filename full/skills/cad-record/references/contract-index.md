@@ -61,6 +61,7 @@ Validate with `check-jsonschema --schemafile <cad-record>/schemas/<root>.schema.
 | `question_id` | `^Q-[0-9]{3}$` |
 | `assumption_id` | `^ASM-[0-9]{3}$` |
 | `preference_id` | `^PRF-[0-9]{3}$` |
+| `waiver_id` | `^WV-[0-9]{3}$` (`waiver.id` inside a WAIVER DR) |
 | `version` | `^v[1-9][0-9]*$` |
 | `attempt` | `^a[1-9][0-9]*$` |
 | `slug` | `^[a-z][a-z0-9_-]*$` |
@@ -148,7 +149,7 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `producer_role`, `stage` | role or `lead`; stage enum |
 | `binding` | `{kind: UNIT, unit, brief_sha256, input_inventory_sha256}` or `{kind: VERSION, version, version_manifest_sha256}` |
 | `input_files` | `[{path, sha256}]` of every input read |
-| `implementation` | `{source_files, commands[{argv, cwd, exit_code}], packages[{name, version}], platform{os, arch, python}}` |
+| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; the reviewer always reports REVIEW |
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |
 | `findings[]` | `{id, family, subject, severity, outcome, measured, criterion, method, uncertainty, consequence, remedy, alternatives, recheck}` |
@@ -169,11 +170,29 @@ The `common` root validates contract probes only (`probe: cad-agent-skills.commo
 ## Stage verdict (`stage-verdict`)
 
 `stage`, `version`, `predecessor{stage, version, verdict, approval}` (required after GROUND), `supersedes`,
-`version_manifest{path, sha256}`, `policy{path (absolute), sha256}`, `expected[obligation_id]`,
-`results[{check, attempt, family, result, binding VERSION|CARRIED_FORWARD, result_file, bundle, carried_from}]`,
-`bundles[{kind DRAWING|BOM|VERIFICATION, manifest}]`, `waivers[DR]`, `future[obligation_id]` (PLANNED),
-`blockers[{code, text, obligation}]`, `review{required, verdict, result}`, `complete`, `result`, `time`.
-PASS needs `complete`, no blockers, no FAIL or UNKNOWN result, and a PASS review when one is required.
+`version_manifest{path, sha256}`, `policy{path (absolute), plugin{name, version, manifest}}`, `expected[obligation_id]`,
+`results[{check, attempt, family, result, waiver, binding VERSION|CARRIED_FORWARD, result_file, bundle, carried_from}]`,
+`bundles[{kind DRAWING|BOM|VERIFICATION, manifest}]`, `waivers[{id WV-###, decision DR-###}]`,
+`future[obligation_id]` (PLANNED), `blockers[{code, text, obligation}]`, `review{required, verdict, result}`,
+`complete`, `result`, `time`.
+
+`results[].result` is the stage mapping `PASS|FAIL|UNKNOWN|NOT_APPLICABLE|WAIVED`; `WAIVED` maps a FAIL or UNKNOWN
+check covered by a permitted waiver and requires `waiver` (WV-###); `waiver` is forbidden on every other result.
+The check's own `result.json` keeps its FAIL or UNKNOWN. PASS needs `complete`, no blockers, only PASS, WAIVED and
+NOT_APPLICABLE results, and a PASS review when one is required. Waiver existence, scope and expiry are semantic
+checks (references/validation.md).
+
+## Bundle manifest, brief and delivery
+
+- `bundle-manifest`: `kind CHECK|DRAWING|BOM|VERIFICATION`, `binding`, `input[{path, sha256}]`, `recipe` (`kind: COMMAND`
+  `{commands, packages, platform}` or `kind: REVIEW` `{inspected}`), `policy{path, plugin}`, `files[{path, sha256, role}]`
+  without itself, `complete`.
+- `worker-brief`: `resources{plugin{name, version, manifest}, skills[{name, path, uri}], schemas[{name, path}],
+  role_reference{name, path, uri}}` with absolute paths and no hashes of installed files; `input_inventory{sha256,
+  files[{path under hw/, sha256}]}`.
+- `worker-delivery`: `brief_sha256`, `input_inventory_sha256`, `boundary{method, before_sha256, after_sha256, violations}`.
+- Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
+  policy are identified by plugin name, version and resolved absolute path; nothing installed is hashed.
 
 ## Stage policy (`stage-policy`, written by cad-flow)
 

@@ -12,24 +12,30 @@
     "binding": {"$ref": "common.schema.json#/$defs/binding"},
     "input": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
     "recipe": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["commands", "packages", "platform"],
-      "properties": {
-        "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1},
-        "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}},
-        "platform": {"$ref": "common.schema.json#/$defs/platform"}
-      }
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "commands", "packages", "platform"],
+          "properties": {
+            "kind": {"const": "COMMAND"},
+            "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1},
+            "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}},
+            "platform": {"$ref": "common.schema.json#/$defs/platform"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "inspected"],
+          "properties": {
+            "kind": {"const": "REVIEW"},
+            "inspected": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1}
+          }
+        }
+      ]
     },
-    "policy": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["path", "sha256"],
-      "properties": {
-        "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
-        "sha256": {"$ref": "common.schema.json#/$defs/sha256"}
-      }
-    },
+    "policy": {"$ref": "common.schema.json#/$defs/installed_policy"},
     "files": {
       "type": "array",
       "items": {

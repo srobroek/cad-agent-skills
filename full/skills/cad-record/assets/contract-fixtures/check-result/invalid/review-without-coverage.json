@@ -19,35 +19,17 @@
     }
   ],
   "implementation": {
-    "source_files": [
+    "kind": "REVIEW",
+    "inspected": [
       {
-        "path": "hw/checks/v6/clearance/a1/source/check.py",
-        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
-      }
-    ],
-    "commands": [
+        "path": "hw/versions/v6/manifest.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
       {
-        "argv": [
-          "uv",
-          "run",
-          "--locked",
-          "--script",
-          "/p/.cad-work/chk/check.py"
-        ],
-        "exit_code": 0
+        "path": "hw/parts/STD-0001/part.yaml",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
       }
-    ],
-    "packages": [
-      {
-        "name": "cadquery",
-        "version": "2.8.0"
-      }
-    ],
-    "platform": {
-      "os": "macOS 26.1",
-      "arch": "arm64",
-      "python": "3.12.8"
-    }
+    ]
   },
   "scope": {
     "subjects": [
@@ -112,11 +94,6 @@
       "path": "hw/checks/v6/clearance/a1/artifacts/pairs.json",
       "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
       "role": "DATA"
-    },
-    {
-      "path": "hw/checks/v6/clearance/a1/stdout.txt",
-      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
-      "role": "LOG"
     }
   ],
   "complete": true,

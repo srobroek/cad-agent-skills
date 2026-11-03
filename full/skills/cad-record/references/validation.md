@@ -70,11 +70,22 @@ JSON Schema does not prove the items below. The lead or checker writes its own p
 9. Chain and authority: predecessor verdict and gate DR exist and bind; vN is unused and above every
    attempt; approvals are USER or AUTHORITY statements with a transcript hash; PRODUCTION and
    SAFETY_CRITICAL scope names a competent authority.
-10. Immutability and layout: published DRs, verdicts, manifests and results match their recorded hashes;
+10. Waivers in a stage verdict:
+    - Existence: each `WAIVED` result's `WV-###` is the `waiver.id` of an APPROVED WAIVER DR that no later
+      DR rejects or supersedes, and the verdict's `waivers` list equals the set of waivers its results cite.
+    - Scope coverage: the waiver's obligation and subject cover every expected obligation of that check that
+      is not PASS; the check's own `result.json` result is FAIL or UNKNOWN and equals `retained_outcome`; no
+      covered obligation is safety or regulatory, and neither its requirement nor its check plan entry has
+      `waiver_policy: FORBIDDEN`.
+    - Expiry: `expires` is after the verdict `time`, or the `until_change` condition has not occurred.
+    - Every other result's `result` equals the `result` in its `result.json`.
+11. Digests: every `input_inventory` and `boundary` digest recomputes exactly by
+    references/record.md#inventory-digest; a REVIEW implementation's `inspected` hashes match the bytes read.
+12. Immutability and layout: published DRs, verdicts, manifests and results match their recorded hashes;
     every `hw/` file matches a layout entry; no evidence cites `.cad-work/`.
-11. Derived files: BOM rows sorted by path then component, verification rows by requirement, subject and
+13. Derived files: BOM rows sorted by path then component, verification rows by requirement, subject and
     facet; each CSV equals its YAML authority.
-12. Bootstrap: after GROUND, `product.yaml` `id` and `title` are no longer the template values.
+14. Bootstrap: after GROUND, `product.yaml` `id` and `title` are no longer the template values.
 
 ## Reporting
 

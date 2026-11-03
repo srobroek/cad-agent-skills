@@ -10,27 +10,26 @@ subjects:
 input_inventory:
   sha256: '2222222222222222222222222222222222222222222222222222222222222222'
   files:
-  - path: .cad-work/base-part/input/part.yaml
+  - path: hw/parts/STD-0001/part.yaml
     sha256: '6666666666666666666666666666666666666666666666666666666666666666'
 resources:
+  plugin:
+    name: cad-agent-skills
+    version: 0.1.0
+    manifest: /Users/me/.agents/plugins/cad-agent-skills/.claude-plugin/plugin.json
   skills:
   - name: cad-model
     path: skills/cad-model/SKILL.md
     uri: skill://cad-model
-    sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
   - name: cad-design
     path: /Users/me/.agents/skills/cad-design/SKILL.md
-    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
   schemas:
   - name: part
     path: /Users/me/.agents/skills/cad-record/schemas/part.schema.json
-    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
   role_reference:
     name: agent-roles
     path: /Users/me/.agents/skills/cad-flow/references/agent-roles.md
     uri: skill://cad-flow/references/agent-roles.md
-    sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
-  installed_sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 boundary:
   project_root: /Users/me/projects/phone-stand
   scratch: .cad-work/base-part

@@ -26,6 +26,7 @@ This file states the rules the schemas cannot express.
 | part revision | `X[1-9][0-9]*` draft, `[A-HJ-NPRTUVWY]` released | only a changed part's revision increases |
 | release REV | `[A-HJ-NPRTUVWY]` | package revision, distinct from part revisions; a sealed REV is never reused |
 | REQ, IF, DR | `REQ-###`, `IF-###`, `DR-###` | Q, ASM, PRF use `Q-###`, `ASM-###`, `PRF-###` |
+| waiver | `WV-###` | `waiver.id` inside its WAIVER DR; stage verdicts cite it |
 | version | `v[1-9][0-9]*` | one stage attempt, see Versions |
 | check attempt | `a[1-9][0-9]*` | under `hw/checks/vN/<check>/` |
 | case, variant, check | `[a-z][a-z0-9_-]*` | |
@@ -63,8 +64,9 @@ NOT Promote a part revision after FREEZE; promotion happens before the final che
 
 No input contains downstream result bytes or its own future hash.
 
-1. Working input inventory: record, models, params, cases, retained sources and policy. Unit builds and
-   UNIT-bound checks bind the brief and this inventory, never a future vN digest.
+1. Working input inventory: record, models, params, cases and retained sources under `hw/`, digested as in
+   [Inventory digest](#inventory-digest). Unit builds and UNIT-bound checks bind the brief and this digest,
+   never a future vN digest. The installed policy is named by path and plugin version, never hashed.
 2. Version manifest (`hw/versions/vN/manifest.json`), written after geometry build and readback: record
    snapshots, build source and locks, runtime, geometry and manufacturing inventories, units, transforms and
    export tolerance. It excludes itself, check results, the stage verdict, later decisions and every
@@ -75,8 +77,8 @@ No input contains downstream result bytes or its own future hash.
 4. Bundle manifest: inventories the result, source, lock, artifact and log bytes and the input identity;
    excludes itself. Drawing, BOM and verification bundles are separate output bundles bound the same way.
 5. Stage verdict (`hw/versions/vN/stage-verdict.json`): written once after every required check; names
-   the expected obligations, accepted result and bundle hashes, predecessor and its approval, version
-   manifest and policy hash. No self hash.
+   the expected obligations, accepted result and bundle hashes, waivers, predecessor and its approval,
+   version manifest, and the installed policy by path and plugin name and version. No self hash.
 6. Gate DR after a PASS verdict binds that verdict (`binding.kind: STAGE`). Earlier selection, orientation,
    support, waiver, change and import DRs bind an immutable proposal (`PROPOSAL`) retained at
    `hw/decisions/proposals/DR-###/<name>` before the DR is written; scratch is never bound. Approve,
@@ -89,6 +91,51 @@ No input contains downstream result bytes or its own future hash.
 
 A checker may inspect scratch before the manifest exists, then emit its VERSION result against the identical
 inventoried input. Whole-assembly checks rerun on the integrated version; never relabel a UNIT PASS.
+
+## Inventory digest
+
+One digest rule for `input_inventory.sha256` (worker brief), `input_inventory_sha256` (UNIT binding, worker
+delivery) and `boundary.before_sha256` / `boundary.after_sha256` (worker delivery).
+
+- Root: the project root, the directory that holds `hw/`. Every path is relative to it.
+- Line: `<lowercase sha256 hex>  <path>` (two spaces) followed by LF: the `shasum -a 256` and `sha256sum` line.
+- Path: POSIX `/` separators, no `./` prefix, safe-path rules (no backslash or control character, so no
+  tool escapes a line).
+- Order: bytewise by path, `LC_ALL=C sort`.
+- Digest: sha256 of the concatenated lines. The empty set digests to
+  `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- Excluded always: `.git/**` and `.cad-work/**` (all scratch, including the unit's own). Only regular files
+  count; symlinks are not followed and a symlink in scope is a defect for the semantic check; empty
+  directories contribute nothing.
+- Input inventory (set digest): exactly the paths in the brief's `input_inventory.files`, all under `hw/`;
+  each entry's sha256 equals its line's hex.
+- Boundary (tree digest): every regular file under the root except the exclusions, taken before the worker's
+  first write and after its last write. A worker writes only in its own scratch, so the two must be equal;
+  the lead recomputes the after digest on acceptance, and any difference is a boundary violation.
+
+Tree digest, one line from the project root (the digest is the first field of the output):
+
+```sh
+find . -type f ! -path './.git/*' ! -path './.cad-work/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r shasum -a 256 | shasum -a 256
+```
+
+```sh
+find . -type f ! -path './.git/*' ! -path './.cad-work/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r sha256sum | sha256sum
+```
+
+The first line is macOS (`shasum`), the second Linux (`sha256sum`). For a set digest, replace the `find … | sed …`
+prefix with `LC_ALL=C sort <list>` over a file holding one listed path per line.
+
+Worked example: `hw/product.yaml` holds `format: cad-agent-skills` + LF and `hw/parts/STD-0001/part.yaml` holds
+`PN: STD-0001` + LF; `.git/HEAD` and `.cad-work/u1/x.txt` also exist and are excluded. The lines are:
+
+```text
+1822f76462de13a2333ba4c89f162447e6deba13e5c6015bdf32d4bcf314b17d  hw/parts/STD-0001/part.yaml
+3eb0328bd1bb3221a0cd864c6f919614077c3128e46e6c13530533080467102b  hw/product.yaml
+```
+
+and the digest, from either command and from the set digest over those two paths, is
+`9eaffd57ef4b45dece51bde758f86e30961a081fcc3dcc25b1a883e725909557`.
 
 ## Facts
 

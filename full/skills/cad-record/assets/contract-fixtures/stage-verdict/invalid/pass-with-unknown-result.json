@@ -21,7 +21,11 @@
   },
   "policy": {
     "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
-    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0",
+      "manifest": "/Users/me/.agents/plugins/cad-agent-skills/.claude-plugin/plugin.json"
+    }
   },
   "expected": [
     "geometry.clearance@IF-001#hinge_bore"
