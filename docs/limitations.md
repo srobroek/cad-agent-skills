@@ -57,6 +57,13 @@ model routing and resource loads remain unproved until live smoke runs per host.
   `XDG_STATE_HOME` and `XDG_CACHE_HOME`, another OpenCode process on the host can "recover" the cell's busy session:
   in round 3 a restarted background service appended restart notices to the lead and aborted it ("Execution was
   interrupted repeatedly and will not be resumed automatically"). `/tmp/opencode` stays shared even with those set.
+- Kiro CLI 3.0.0 does not reliably apply a role profile's shell rules to output redirections: in some sessions it
+  matched a command without its `> file` part, so a redirect into `hw/`, `.git/` or a host directory ran although the
+  profile denies it. The lead's boundary digest catches a redirect into `hw/` (worker delivery Accept step 8); one into
+  `.git/` or a host directory is not caught.
+- Claude Code 2.1.318 `claude plugin marketplace add --scope project` declares the marketplace in the project settings
+  but still records it at user level and lists it from other projects (where the plugin stays disabled), so two cells
+  that register the same marketplace are not isolated from each other.
 
 `uv lock --script` needs package-index/network access to resolve and lock
 dependencies. A lock does not imply offline availability. Runtime CAD
