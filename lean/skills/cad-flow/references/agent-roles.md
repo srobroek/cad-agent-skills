@@ -24,7 +24,9 @@ never cad-flow SKILL.md or another lead reference. Grading uses the rubric owned
    at acceptance. A checker whose `input_inventory` lists an earlier result's `source/check.py` and its lock may start its `check.py` from
    that copy (cad-verify implementation kind, step 2). Each expected check gets its result file under `output/checks/<check>/`, started
    from the brief's check-result template, bound `VERSION` when the brief names a `version`, else `UNIT`; its `source_files` name
-   `source/<file>` beside the result's target with each program's sha256.
+   `source/<file>` beside the result's target with each program's sha256. Results come only from the final program run: after the last
+   edit to a program or its lock, rerun it fully, rewrite and revalidate every result and artifact it produces, then deliver. A program
+   edited after its results were written makes the unit rerun before delivering.
 7. Grade the whole delivery PASS, MINOR or MAJOR with the [cad-review rubric](../../cad-review/references/rubric.md).
 8. Writers write `.cad-work/<unit>/delivery.json` from the brief's worker-delivery template (prose root
    [worker-delivery](../../cad-record/references/prose-contract.md#worker-delivery), fields below) and check it against that table → every
