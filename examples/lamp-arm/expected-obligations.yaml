@@ -17,7 +17,7 @@ conditions:
 # Conditions whose truth depends on the run's own frozen design. The run's obligations.yaml must list the family
 # exactly when the condition holds on its frozen inputs, and record the reason when it does not.
 design_dependent:
-  delivery.integrity: "the attempt merges at least one worker delivery, a published checker or reviewer result included"
+  delivery.integrity: "the attempt dispatches at least one worker unit, in its stage work or in run-checks"
   motion.sweep: "the assembly has a joint that is not FIXED (expected: three revolute joints)"
   motion.play: "a joint, coupling or interface states play or backlash"
   motion.access: "an assembly, tool or service operation needs access (expected for REQ-007)"
@@ -88,7 +88,7 @@ stages:
   - selection.sourcing@product
   - material.properties@product
   future: []
-  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id; Q-023 LED module data, Q-024 machine shop capability and Q-026 creep data block INTENT only through a criterion INTENT settles (cad-select references/selection.md "Scope of each unknown")
+  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id; Q-023 LED module data, the machine shop's machines, envelope and stock (Q-024, Q-030, Q-031) and Q-026 creep data block INTENT only through a criterion INTENT settles (cad-select references/selection.md "Scope of each unknown")
   gate: APPROVED after `approve INTENT <vN> choose <option>`
   must_show:
   - polymer, metal, purchased-pivot and hybrid candidates, the old v0.1.1 layout as one candidate only
@@ -426,7 +426,7 @@ stages:
 # Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
 acceptable_ends:
 - "STOPPED_AT_RELEASE: RELEASE readiness BLOCKED on the safety physical tests; nothing published"
-- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example machine shop capability Q-024, due at PARTS); nothing advanced past it"
+- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example the machine shop's machines Q-024, due at PARTS); nothing advanced past it"
 never:
 - "SEALED: any hw/releases/<REV> for this FUNCTIONAL_DEMO scope without physical test results of a built unit"
 open_at_end:

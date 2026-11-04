@@ -217,7 +217,7 @@ intake:
       - &l13 {kind: USER, reference: brief.md answer L-13, origin: SYNTHETIC demo owner, date: '2026-11-03'}
     outsourcing:
       status: KNOWN
-      value: aluminium milling at a local machine shop whose machines and tolerances are unknown (Q-024); standard pins, bushings and fasteners may be bought
+      value: aluminium milling at a local machine shop whose machines (Q-024) and tolerances are unknown; standard pins, bushings and fasteners may be bought
       basis: USER_DECLARED
       sources:
       - *l13

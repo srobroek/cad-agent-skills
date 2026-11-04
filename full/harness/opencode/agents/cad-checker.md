@@ -11,15 +11,15 @@ permission:
     .cad-work/**: allow
   bash:
     "*": deny
-    "uv lock --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --script /*/.cad-work/*/check.py": allow
-    "uv run --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/check.py": allow
-    "uv run --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/check.py *": allow
-    "/*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/delivery.json*": allow
-    "/*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
-    "\"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/delivery.json*": allow
-    "\"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
-    "/*/.cad-work/lead/validator/bin/python -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
-    "\"/*/.cad-work/lead/validator/bin/python\" -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
+    "TMPDIR=/*/.cad-work/*/tmp uv lock --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --script /*/.cad-work/*/check.py": allow
+    "TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py": allow
+    "TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py *": allow
+    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/delivery.json*": allow
+    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
+    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/delivery.json*": allow
+    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
+    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/python -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
+    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/python\" -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
     "shasum -a 256 *": allow
     "sha256sum *": allow
     "shasum -a 256": allow

@@ -107,12 +107,12 @@ intake:
       consequential: false
     corrosion:
       status: NOT_APPLICABLE
-      reason: dry indoor use and no metal part is chosen yet; revisit when a metal part is selected
+      reason: 'ruled out by A-07: dry indoor air, no chemicals'
       reviewed_by: SYNTHETIC demo owner
   motion:
     speed:
       status: NOT_APPLICABLE
-      reason: positioned slowly by hand; no speed requirement
+      reason: 'ruled out by A-08: the angle is changed by hand a few times a day; no speed requirement'
       reviewed_by: SYNTHETIC demo owner
     range:
       status: KNOWN

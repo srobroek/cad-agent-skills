@@ -28,7 +28,7 @@ profiles:
     status: UNKNOWN
     reason: the owner prints PETG (L-13); the exact grade and its approval wait for a sourced profile in hw/manufacturing/materials.yaml
     owner: lead (sourcing unit at INTENT)
-    question: Q-025
+    question: Q-028
     consequential: true
   parameters: {}
   calibrations: []
@@ -54,17 +54,17 @@ profiles:
     status: UNKNOWN
     reason: the shop's operators are not known
     owner: lead (sourcing unit at INTENT)
-    question: Q-024
+    question: Q-029
     consequential: false
   envelope:
-    x: &shop_envelope {status: UNKNOWN, reason: machine envelope not known, owner: lead (sourcing unit at INTENT), question: Q-024, consequential: true}
+    x: &shop_envelope {status: UNKNOWN, reason: machine envelope not known, owner: lead (sourcing unit at INTENT), question: Q-030, consequential: true}
     y: *shop_envelope
     z: *shop_envelope
   materials:
     status: UNKNOWN
     reason: the owner says the shop mills aluminium 6061-T6 (L-13); stock identity and approval wait for a sourced profile and the shop's statement
     owner: lead (sourcing unit at INTENT)
-    question: Q-024
+    question: Q-031
     consequential: true
   parameters: {}
   calibrations: []
