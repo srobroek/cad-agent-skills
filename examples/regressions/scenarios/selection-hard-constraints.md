@@ -12,7 +12,7 @@ requirement, and a phone stand where a printed polymer qualifies.
 
 | File | Schema | Role |
 |---|---|---|
-| [`valid/selection/selection-use-case-unconfirmed.yaml`](../valid/selection/selection-use-case-unconfirmed.yaml) | exit 0 | intake DRAFT: every candidate CONDITIONAL; recommendation CONDITIONAL only |
+| [`valid/selection/selection-use-case-unconfirmed.yaml`](../valid/selection/selection-use-case-unconfirmed.yaml) | exit 0 | intake DRAFT: every candidate CONDITIONAL; recommendation NONE, no route |
 | [`valid/selection/selection-printable-excluded.yaml`](../valid/selection/selection-printable-excluded.yaml) | exit 0 | PLA EXCLUDED on REQ-010, PA6-CF and sheet hybrid CONDITIONAL, machined 6082 FEASIBLE and recommended |
 | [`valid/selection/selection-polymer-qualified.yaml`](../valid/selection/selection-polymer-qualified.yaml) | exit 0 | printed PETG FEASIBLE on sourced evidence: FINAL with DR-008 |
 | [`invalid/selection/selection-score-revives-excluded.yaml`](../invalid/selection/selection-score-revives-excluded.yaml) | exit 1 (`expected-errors.yaml`) | the excluded PLA candidate scored and recommended |
@@ -24,7 +24,8 @@ requirement, and a phone stand where a printed polymer qualifies.
 
 ## Expected
 
-1. An unconfirmed use case yields a CONDITIONAL report naming the open question; no FINAL recommendation.
+1. An unconfirmed use case leaves every candidate CONDITIONAL: the recommendation is NONE, names no route and lists the
+   open question with its owner as a limit.
 2. A printed route that fails a hard requirement is EXCLUDED; a missing capability or creep datum keeps a candidate
    CONDITIONAL.
 3. A machined, sheet, purchased or hybrid alternative is assessed on the same hard outcomes; only FEASIBLE candidates

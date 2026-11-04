@@ -197,16 +197,14 @@ candidates:
   - 6082 values are typical, not allowables
   reversal: re-assess on a changed load or temperature
 recommendation:
-  status: CONDITIONAL
-  primary: asa-print
-  fallback: cnc-6082
+  status: NONE
   governing_requirements:
   - REQ-011
   reasons:
   - 'the intake is DRAFT: head mass and reach are open (Q-019)'
   - no candidate can be FEASIBLE until REQ-011 has a criterion
   limits:
-  - conditional report only; no final recommendation before Q-019 is answered
+  - 'no route recommended: no candidate is FEASIBLE while Q-019 (lamp head mass and reach, owner: product owner) is UNKNOWN'
   reversal: re-assess both candidates once Q-019 is answered
   what_would_change:
   - the confirmed head mass and reach

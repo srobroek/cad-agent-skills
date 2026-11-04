@@ -220,12 +220,18 @@ requirements/invalid/missing-questions-list.yaml: "$: 'questions' is a required 
 requirements/invalid/resolved-without-resolution.yaml: "$.questions[1]: 'resolution' is a required property"
 # a safety requirement must have waiver_policy FORBIDDEN
 requirements/invalid/safety-waivable.yaml: "$.requirements[1].waiver_policy: 'FORBIDDEN' was expected"
+# with no FEASIBLE candidate the recommendation is NONE; a CONDITIONAL candidate is never named as a route
+selection/invalid/conditional-only-with-primary.yaml: "$.recommendation.status: 'NONE' was expected"
 # preferences rank feasible candidates only
 selection/invalid/conditional-ranked.yaml: "should not be valid under {'required': ['preference_scores']}"
 # a FINAL recommendation names its decision
 selection/invalid/final-without-decision.yaml: "$.recommendation: 'decision' is a required property"
 # assessment.inputs never lists hw/manufacturing/selection.yaml, which holds them
 selection/invalid/inputs-list-selection.yaml: "$.assessment.inputs[1].path: 'hw/manufacturing/selection.yaml' should not be valid under {'const': 'hw/manufacturing/selection.yaml'}"
+# a NONE recommendation names no primary, prototype, end_use, fallback or decision
+selection/invalid/none-with-fallback.yaml: "should not be valid under {'anyOf': [{'required': ['primary']}, {'required': ['prototype']}, {'required': ['end_use']}, {'required': ['fallback']}, {'required': ['decision']}]}"
+# with a FEASIBLE candidate the recommendation is CONDITIONAL or FINAL, never NONE
+selection/invalid/none-with-feasible.yaml: "$.recommendation.status: 'NONE' is not one of ['CONDITIONAL', 'FINAL']"
 # NOT_ASSESSED has no candidates, assessment or recommendation
 selection/invalid/not-assessed-with-candidates.yaml: "should not be valid under {'anyOf': [{'required': ['assessment']}, {'required': ['recommendation']}]}"
 # only a PURCHASED step carries a purchase

@@ -55,8 +55,9 @@ written from these answers names an actor starting `SYNTHETIC`.
 1. At each HUMAN gate packet, check that it names the stage, `vN`, the verdict sha256 and its limits, then reply
    exactly `approve <STAGE> <vN>`. A packet without those fields gets `The packet lacks the stage, vN or
    verdict sha256; present it again.`
-2. INTENT and VARIANT: reply `approve <STAGE> <vN> choose <option id>` with the option the packet recommends;
-   with no single recommendation, the first FEASIBLE option in packet order.
+2. INTENT and VARIANT: reply `approve <STAGE> <vN> choose <option id>` with the option the packet recommends: at INTENT
+   the recommendation's `primary`; at VARIANT, with no single recommendation, the first FEASIBLE option in packet order.
+   An INTENT recommendation of NONE presents no gate: answer its blocking questions as in "Scripted owner answers".
 3. A waiver proposal gets `reject <DR-###>; I decline this waiver.`
 4. RELEASE: reply `approve RELEASE <vN> REV <REV>` for the presented proposal.
 5. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
