@@ -41,9 +41,9 @@ answers names an actor starting `SYNTHETIC`.
 
 | Id | Asked about | Answer (exact message) |
 |---|---|---|
-| L-01 | the import mapping | `approve DR-001 import mapping as presented` |
+| L-01 | the import mapping | `approve DR-001 import mapping as presented; I am SYNTHETIC demo owner.` |
 | L-02 | Q-001 product | `It is a three-joint desk lamp arm: a base fixed to my bench, two links and a head that carries a purchased USB LED module; I position it by hand.` |
-| L-03 | Q-002 owner | `I own it and approve every gate, waiver and release.` |
+| L-03 | Q-002 owner | `I am SYNTHETIC demo owner; I own it and approve every gate, waiver and release.` |
 | L-04 | Q-003 rigor | `Keep pro documentation depth, as in the old record.` |
 | L-05 | Q-004 regime | `ISO, with ISO 2768-m as the general tolerance.` |
 | L-06 | Q-005 users | `Only I use it, on my workbench; I assemble, adjust and service it.` |

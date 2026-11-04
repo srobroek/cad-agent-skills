@@ -17,6 +17,11 @@ one project are unsupported.
    `.cad-work/lead/sessions/<old stamp>/claim.yaml`, then write the new claim with
    `recovery: {reference (their confirmation), operator, previous_session, time}`.
 
+`session` is the host's native id for this conversation, the id its resume command takes: the Claude Code session id, Codex thread id,
+OpenCode session id, Kiro session id or OMP session id (`$PI_SESSION_ID`). Read it from the environment or the host's own session listing;
+never invent one. When the host exposes none to the lead, write `UNAVAILABLE-<started stamp>` and report that resume matching and fork
+detection are unavailable on this host.
+
 NOT Treat the claim's age, a PID or a quiet terminal as proof that its owner stopped.
 
 ## Session directory

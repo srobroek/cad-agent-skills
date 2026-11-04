@@ -63,6 +63,10 @@ stage work bind an immutable proposal: write `hw/decisions/proposals/DR-###/<nam
 stage work is written before `freeze-inputs`; one approved after an attempt's snapshot is written in the successor attempt's stage work,
 never into that snapshot.
 
+The INTENT selection and the VARIANT choice are approved by their gate's `choose` reply
+([Record a gate decision](#record-a-gate-decision)); a PROPOSED SELECTION or VARIANT decision that feeds that gate gets no separate approval
+request.
+
 APPROVED and REJECTED need one of these explicit statements from the user or the named authority:
 
 | Statement                                                                                                                                         | Decision                                    |

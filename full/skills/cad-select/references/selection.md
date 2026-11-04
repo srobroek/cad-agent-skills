@@ -15,13 +15,20 @@ Ask only questions that resolve this product's actual intended function and cons
 - Failure consequences, supervision, standards and safety constraints.
 - Quantity, budget, lead time, repair, maintenance, available tools/operators and outsourcing.
 - Whether appearance, fit, a limited supervised demonstration, a representative working prototype, production or safety-critical service is
-  intended. Ask focused questions in batches, not a generic questionnaire dump: every open template question in one message, grouped by
-  domain; after each reply, record every answered fact, validate each changed file once
-  ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4), then ask the remaining and follow-up
-  questions together in one message. Record answers, refusals and unresolved items; an answer is a KNOWN fact with a `USER` source
-  ([cad-record Facts](../../cad-record/references/record.md#facts)) and its question is never asked again. Resolve what changes
-  requirements, architecture, route feasibility or safety; keep other unknowns explicit and bounded
-  ([Scope of each unknown](#scope-of-each-unknown)).
+  intended.
+
+### Ask and finish intake
+
+1. Ask every open template question in one message, grouped by domain; skip none. Ask focused questions, not a generic questionnaire dump.
+2. After the reply, record every answered fact as KNOWN with a `USER` source
+   ([cad-record Facts](../../cad-record/references/record.md#facts)); record "I don't know", a refusal and each question the reply
+   leaves out as a typed UNKNOWN with owner and question ([Scope of each unknown](#scope-of-each-unknown)); that question is done.
+   Validate each changed file once ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4).
+3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; record its reply as in step 2.
+4. Go to `freeze-inputs`. Never ask an answered or recorded question again. The owner's name is recorded as the owner states it, and
+   every decision from the owner's statements names that `actor.name`.
+
+Resolving material-, route- and safety-driving questions before a final recommendation (below) governs INTENT, never the GROUND exit.
 
 Before any material comparison, inspect the relevant existing product record and ask what is missing for those needs. Do not infer use from
 CAD geometry or from the phrase “prototype”.
@@ -126,8 +133,8 @@ A starter profile is a sourced comparison aid, not lot identification, process a
 procurement identity and all relevant conditions. Typical supplier data and standard minima remain `typical_not_allowable`; structural
 calculations require an independently justified allowable with competent authority, conditions and derivation.
 
-Store the assessed options and recommendation in the U1 selection schema. For a consequential choice, prepare the exact immutable proposal
-and a `SELECTION` decision with `PROPOSAL` binding. The lead checks schema, input inventory and evidence, then presents the proposal to the
-authorized human. A final selection requires an explicit user/authority approval recorded as a new immutable decision; selection work does
-not itself alter a part, requirement, interface, material library or design. Until approval, report WAITING FOR HUMAN DECISION and make no
-design change.
+Store the assessed options and recommendation in the U1 selection schema. The lead checks schema, input inventory and evidence; the INTENT
+gate packet presents the options, and its `choose` reply approves the selection
+([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates)); no separate SELECTION approval is
+asked. Selection work does not itself alter a part, requirement, interface, material library or design; until the gate is APPROVED, report
+WAITING_FOR_USER and make no design change.

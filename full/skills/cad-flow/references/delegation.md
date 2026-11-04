@@ -28,7 +28,8 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 
 1. After the whole batch returns, take the tree digest again, then accept or reject each delivery ([worker-delivery](worker-delivery.md)).
 2. Merge accepted bytes verbatim ([merge-deliveries](worker-delivery.md#merge-deliveries)). A rejected delivery goes back to the same role
-   as a new unit whose brief states the defect, or the stage stops.
+   as a new unit, or the stage stops: a new unit id and `.cad-work/<unit>/`, a new brief that states the defect, and a new native subagent
+   call with a fresh context per step 4. Never send the rework to a returned task (a follow-up, message, resume or steer of its id).
 3. A worker proposal is applied only by the lead: inside the open stage's own controlled files the lead edits the record itself, discloses
    the edit and re-dispatches every unit whose inputs changed; touching approved scope is a [change](change-impact.md).
 4. A consequential unknown a delivery reports becomes a record question with owner in the next stage-work step.
