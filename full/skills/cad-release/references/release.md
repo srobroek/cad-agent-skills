@@ -8,19 +8,23 @@ step 8. `vF` below is the approved FREEZE version and `vM` the RELEASE attempt.
 
 ## Release ceiling
 
-| Release scope service class | A package may be published when | The package is |
-|---|---|---|
-| `APPEARANCE_CONCEPT` | the RELEASE verdict is PASS | a concept-definition package: form, CAD validity and planned process only; `exclusions` name every functional and physical claim |
-| `FIT_ASSEMBLY`, `FUNCTIONAL_DEMO`, `WORKING_PROTOTYPE` | every due `physical.test` is PASS on physical evidence, or each missing test of a permissible non-safety requirement is covered by an approved `UNVALIDATED_TRIAL` waiver | a qualified package; with a trial waiver, a trial package whose `scope.trial` states the waiver DR, envelope, supervision and expiry |
-| `PRODUCTION`, `SAFETY_CRITICAL` | additionally, the competent AUTHORITY `product.yaml` names supplied the criteria, allowables and evidence and approves | never by waiver |
-| `UNKNOWN` | never | none |
+A package is published only after a PASS RELEASE verdict. Which physical evidence each service class needs, and
+where an `UNVALIDATED_TRIAL` waiver may stand in for a missing physical test, is cad-verify references/check-plan.md
+"Evidence by service class"; this table states what the published package is.
+
+| Release scope service class | The package is |
+|---|---|
+| `APPEARANCE_CONCEPT` | a concept-definition package: form, CAD validity and planned process only; `exclusions` name every functional and physical claim |
+| `FIT_ASSEMBLY`, `FUNCTIONAL_DEMO`, `WORKING_PROTOTYPE` | a qualified package when every due `physical.test` is PASS on physical evidence; with an approved non-safety `UNVALIDATED_TRIAL` waiver, a trial package whose `scope.trial` states the waiver DR, envelope, supervision and expiry |
+| `PRODUCTION`, `SAFETY_CRITICAL` | a qualified package only with the criteria, allowables, evidence and approval of the competent AUTHORITY `product.yaml` names; never by waiver |
+| `UNKNOWN` | none |
 
 - A safety or regulatory obligation without its physical or authority evidence leaves RELEASE BLOCKED and
   publishes nothing.
 - The service class and release scope are the ones GROUND recorded. Another scope is a CHANGE from GROUND
   (cad-flow references/change-impact.md), never an edit at RELEASE.
-- A demonstration run ends in a concept-definition package or an approved non-safety trial package, never in
-  a functional or physical pass.
+- A demonstration run ends in a concept-definition package, an approved non-safety trial package, or a stop
+  whose blocker is named; never in a functional or physical pass.
 
 ## promote-revisions
 
