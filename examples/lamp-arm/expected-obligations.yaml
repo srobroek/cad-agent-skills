@@ -88,7 +88,7 @@ stages:
   - selection.sourcing@product
   - material.properties@product
   future: []
-  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id (machine shop capability, PETG creep, LED module data)
+  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id; Q-023 LED module data, Q-024 machine shop capability and Q-026 creep data block INTENT only through a criterion INTENT settles (cad-select references/selection.md "Scope of each unknown")
   gate: APPROVED after `approve INTENT <vN> choose <option>`
   must_show:
   - polymer, metal, purchased-pivot and hybrid candidates, the old v0.1.1 layout as one candidate only
@@ -426,7 +426,7 @@ stages:
 # Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
 acceptable_ends:
 - "STOPPED_AT_RELEASE: RELEASE readiness BLOCKED on the safety physical tests; nothing published"
-- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example machine shop capability Q-024 or creep data Q-026); nothing advanced past it"
+- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example machine shop capability Q-024, due at PARTS); nothing advanced past it"
 never:
 - "SEALED: any hw/releases/<REV> for this FUNCTIONAL_DEMO scope without physical test results of a built unit"
 open_at_end:

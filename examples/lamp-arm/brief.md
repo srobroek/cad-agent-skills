@@ -86,5 +86,6 @@ answers names an actor starting `SYNTHETIC`.
 No package is published. REQ-004 (pose holding) and REQ-006 and REQ-009 are safety requirements whose physical
 evidence no run produces, and their waivers are forbidden; a correct run therefore stops with a named blocker no
 later than RELEASE (`physical.test@REQ-004` UNKNOWN `PHYSICAL_EVIDENCE_REQUIRED`), or earlier on an honest UNKNOWN
-such as the machine shop's capability or PETG creep data. It never lowers the service class, never seals a
-`FUNCTIONAL_DEMO` package without physical tests, and never presents an analysis or simulation as physical evidence.
+such as the machine shop's capability (Q-024, due at PARTS); missing creep data (Q-026) are a limit, never a blocker,
+before RELEASE. It never lowers the service class, never seals a `FUNCTIONAL_DEMO` package without physical tests,
+and never presents an analysis or simulation as physical evidence.
