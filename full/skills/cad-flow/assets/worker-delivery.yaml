@@ -35,7 +35,7 @@ logs:
   sha256: '0000000000000000000000000000000000000000000000000000000000000000'
 boundary:
   method: tree digest before first and after last write
-  # tree digest per cad-record references/record.md "Inventory digest"; the two must be equal
+  # Tree digest per [cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest); the two must be equal.
   before_sha256: '0000000000000000000000000000000000000000000000000000000000000000'
   after_sha256: '0000000000000000000000000000000000000000000000000000000000000000'
   violations: []

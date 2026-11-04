@@ -1,8 +1,8 @@
 # Worker delivery
 
 Owner: cad-flow. How the lead accepts or rejects `.cad-work/<unit>/delivery.json` (root `worker-delivery`) and
-merges accepted bytes. Workers fill the delivery per references/agent-roles.md "Delivery fields"; the template
-is `assets/worker-delivery.yaml`.
+merges accepted bytes. Workers fill the delivery per [agent-roles Delivery fields](agent-roles.md#delivery-fields); the template
+is [worker-delivery YAML](../assets/worker-delivery.yaml).
 
 ## Read-only reviewer
 
@@ -15,7 +15,7 @@ recipe, an inventory of those bytes only. The checks below then apply unchanged.
 
 ## Accept
 
-Run in order; the first failure rejects the delivery with that reason (`units.yaml` state REJECTED).
+Run in order; the first failure rejects the delivery with that reason (`units.yaml` state REJECTED; [delegation](delegation.md)).
 
 1. `delivery.json` exists and validates against the worker-delivery root → exit 0.
 2. `unit` and `role` equal the brief; `brief_sha256` equals the sha256 of `brief.yaml`;
@@ -25,22 +25,19 @@ Run in order; the first failure rejects the delivery with that reason (`units.ya
    the verdict grades the subject, so any verdict passes this step and a FAIL, UNKNOWN or MAJOR result is
    published as delivered.
 4. `build.status` is SUCCEEDED with a matching log, or NOT_APPLICABLE with a reason. A unit that built geometry
-   also delivers a passing `geometry.readback` result; an exit code alone is no success.
+   also delivers a passing `geometry.readback` result ([cad-model Readback](../../cad-model/references/exports.md#readback)); an exit code alone is no success.
 5. Every `expected.outputs` target is delivered exactly once and nothing else; each `source` lies under
    `<root>/.cad-work/<unit>/output/` and hashes to its `sha256`.
-6. Every `expected.checks` entry has a result file that hashes to its sha256, validates against the check-result
-   root, binds this unit's brief and input digests (or the brief's `version`), names the delivered `family` and
-   `result`, and has an `implementation` of the right kind: COMMAND with `source_files` whose hashes match the
-   programs on disk, or REVIEW (reviewer only) whose `inspected` entries match the brief inventory.
+6. Every `expected.checks` entry has a result file that hashes to its sha256, validates against the [cad-record check-result root](../../cad-record/schemas/check-result.schema.json), binds this unit's brief and input digests (or the brief's `version`), names the delivered `family` and `result`, and has an `implementation` of the right kind: COMMAND with `source_files` whose hashes match the programs on disk, or REVIEW (reviewer only) whose `inspected` entries match the brief inventory.
 7. Every log hashes to its sha256.
-8. The lead's tree digests before dispatch and after return (cad-record references/record.md "Inventory digest")
+8. The lead's tree digests before dispatch and after return ([cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest))
    equal `boundary.before_sha256` and `after_sha256`; `violations` is empty; the unit directory holds only
    `brief.yaml`, `input/**`, `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock` and `delivery.json`; every other unit of the
    batch still matches its own delivery.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared
-   `hw/` file; proposals are never merged as outputs (references/delegation.md "Integrate").
+   `hw/` file; proposals are never merged as outputs ([delegation Integrate](delegation.md#integrate)).
 
-Record ACCEPTED with the delivery sha256. A rejected unit is never patched: re-dispatch it as a new unit or stop.
+Record ACCEPTED with the delivery sha256. A rejected unit is never patched: re-dispatch it as a new unit or stop ([delegation](delegation.md)).
 
 ## merge-deliveries
 

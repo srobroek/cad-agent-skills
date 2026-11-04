@@ -27,13 +27,13 @@ holds this session's approval statements, and at finish its claim, preflight and
 
 ## Resolve resources
 
-1. Each of the eight skills (cad-flow, cad-record, cad-select, cad-design, cad-model, cad-verify, cad-review,
-   cad-release): the directory of the SKILL.md the host loaded (OMP: the path behind `skill://<name>`), resolved
-   with `realpath`, and `test -f <dir>/SKILL.md`.
-2. `test -f` each derived path: `<cad-record>/schemas/<root>.schema.json` for the 28 roots,
-   `<cad-record>/layout.json`, `<cad-flow>/assets/stages.yaml`, `<cad-flow>/assets/worker-brief.yaml`,
-   `<cad-flow>/assets/worker-delivery.yaml` and `<cad-flow>/references/agent-roles.md`.
-3. Plugin provenance (cad-record common `plugin`): `name` and `version` are the `metadata.plugin` and
+1. Resolve each of the eight skills (cad-flow, cad-record, cad-select, cad-design, cad-model, cad-verify, cad-review,
+   cad-release): use the SKILL.md directory loaded by the host (OMP: the path behind `skill://<name>`), resolve it
+   with `realpath`, and test `-f <dir>/SKILL.md`.
+2. Test `-f` each derived path: `<cad-record>/schemas/<root>.schema.json` for the 28 roots,
+   [cad-record's layout](../../cad-record/layout.json), `<cad-flow>/assets/stages.yaml`, `<cad-flow>/assets/worker-brief.yaml`,
+   `<cad-flow>/assets/worker-delivery.yaml` and [cad-flow agent-roles](agent-roles.md).
+3. Plugin provenance ([cad-record common plugin](../../cad-record/schemas/common.schema.json#/$defs/plugin)): `name` and `version` are the `metadata.plugin` and
    `metadata.version` values in the frontmatter of the resolved `<cad-flow>/SKILL.md`, on every host. Either
    value missing → stop as an installation defect.
 4. The host can dispatch all five roles (cad-concept-designer, cad-part-designer, cad-checker,
@@ -43,7 +43,7 @@ holds this session's approval statements, and at finish its claim, preflight and
    exits 0.
 
 A failure in steps 1–6 stops the session as an installation defect: report the path and the observation as an
-open question for the operator, never repair it (SKILL.md install rule).
+open question for the operator, never repair it ([cad-flow install rule](../SKILL.md#rules)).
 
 ## Probe tools
 
@@ -52,7 +52,7 @@ open question for the operator, never repair it (SKILL.md install rule).
 | `uv --version` | yes |
 | `uvx --from check-jsonschema==0.39.0 check-jsonschema --version` | yes |
 | `uv python find 3.12` | yes |
-| each optional tool a cad-verify or cad-release reference names for a planned check | no |
+| each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a planned check | no |
 
 A missing required tool stops with `MISSING_RESOURCE`. A missing optional tool is recorded; its checks become
 UNKNOWN `UNSUPPORTED_METHOD`, never a fallback method.
