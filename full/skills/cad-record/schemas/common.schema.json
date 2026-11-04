@@ -408,6 +408,8 @@
         "J",
         "J_m",
         "kJ_m2",
+        "g_10min",
+        "cm3_10min",
         "W",
         "kW",
         "W_m_K",
@@ -1057,8 +1059,8 @@
         "cwd": {"$ref": "#/$defs/absolute_path"},
         "exit_code": {"type": "integer"},
         "timeout_s": {"type": "number", "exclusiveMinimum": 0},
-        "stdout": {"$ref": "#/$defs/project_path"},
-        "stderr": {"$ref": "#/$defs/project_path"}
+        "stdout": {"description": "the published log a record cites, never scratch (a check bundle's stdout.txt)", "$ref": "#/$defs/hw_path"},
+        "stderr": {"description": "the published log a record cites, never scratch (a check bundle's stderr.txt)", "$ref": "#/$defs/hw_path"}
       }
     },
     "load": {

@@ -45,7 +45,9 @@ FDM obligation.
 Per made operation (every route kind except PURCHASED):
 
 1. `capability` names a real profile, not a template, whose provider, machine or operator is identified.
-2. The profile approves the operation's stock or material state, and the component fits its envelope.
+2. The profile approves the operation's stock or material state in the consumable form the operation feeds (filament or
+   wire diameter, sheet, bar or tube size, resin or powder grade), and the component fits its envelope; a form the approval
+   or the stock leaves unstated is UNKNOWN `REQUIRED_UNKNOWN`.
 3. Each operation criterion is within the profile's demonstrated capability for that feature and state.
 4. Calibrations the criterion relies on are unexpired at the verdict time.
 5. The route is ordered and complete: `depends_on`, input and output states, and the plan items the kind needs (orientation for FDM and

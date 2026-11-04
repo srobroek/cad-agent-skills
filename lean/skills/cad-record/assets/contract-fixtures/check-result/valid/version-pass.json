@@ -35,7 +35,8 @@
           "--script",
           "/p/.cad-work/chk/check.py"
         ],
-        "exit_code": 0
+        "exit_code": 0,
+        "stdout": "hw/checks/v6/clearance/a1/stdout.txt"
       }
     ],
     "packages": [

@@ -9,7 +9,7 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
 
 | Kind      | Who                                                                                                       | Contents                                                                                                                 |
 | --------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `COMMAND` | every family except `review.mechanical_dfm`; the lead's result of any family stopped at acceptance        | `source_files` (the retained programs under `source/`), `commands` (argv, cwd, exit code), pinned `packages`, `platform` |
+| `COMMAND` | every family except `review.mechanical_dfm`; the lead's result of any family stopped at acceptance or of a lost or stalled unit ([families](families.md)) | `source_files` (the retained programs under `source/`), `commands` (argv, cwd, exit code, published `stdout` and `stderr`), pinned `packages`, `platform` |
 | `REVIEW`  | the `review.mechanical_dfm` reviewer, always                                                              | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts                  |
 
 1. A COMMAND producer writes its own program as a PEP 723 script, a unit at `.cad-work/<unit>/check.py` and the lead at
@@ -21,7 +21,11 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
    ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3):
    `hw/checks/vN/<check>/<attempt>/source/`, or for `drawing.coverage` `hw/drawings/vN/<SUBJECT>/source/`
    ([cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage)). The lead retains
-   its own program and lock as `source/checks.py` and `source/checks.py.lock` of every result it produces.
+   its own program and lock as `source/checks.py` and `source/checks.py.lock` of every result it produces. A command's
+   `stdout` and `stderr` name published logs, never a scratch path: in a check bundle `stdout.txt` and `stderr.txt` beside the
+   result's target (layout `check.stdout`, `check.stderr`), as `source_files` name `source/<file>`; any other result names
+   only a log its own bundle publishes. The lead copies the delivered logs there at merge
+   ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3).
 2. A checker may start from the retained `source/check.py` and lock of the latest accepted result of the same family (one
    a stage verdict lists) for a re-attempt, a rework or a later stage, when its brief's input inventory lists both. The
    copy is its own program: it re-checks the copy against the current method and its brief, relocks and re-runs it, and

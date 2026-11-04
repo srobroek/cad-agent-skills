@@ -82,7 +82,8 @@ No input contains downstream result bytes or its own future hash.
    `bundle-manifest.json`; a REVIEW `inspected` list may name other, earlier checks' result and bundle
    files, never its own. A UNIT result is never integrated stage evidence by itself.
 4. Bundle manifest: inventories the result, source, lock, artifact and log bytes and the input identity;
-   excludes itself. Drawing, BOM and verification bundles are separate output bundles bound the same way.
+   excludes itself ([Bundle manifest](#bundle-manifest)). Drawing, BOM and verification bundles are separate output
+   bundles bound the same way.
    The verification index is the input of its `verification.index` check, so no row cites that check's
    obligation or result.
 5. Stage verdict (`hw/versions/vN/stage-verdict.json`): written once after every required check; names
@@ -165,6 +166,29 @@ Worked example: `hw/product.yaml` holds `format: cad-agent-skills` + LF and `hw/
 
 and the digest, from either command and from the set digest over those two paths, is
 `9eaffd57ef4b45dece51bde758f86e30961a081fcc3dcc25b1a883e725909557`.
+
+## Bundle manifest
+
+One rule for every check bundle's `bundle-manifest.json` (root `bundle-manifest`, `kind: CHECK`), a REVIEW result's
+included. Drawing, BOM and verification bundle manifests follow their owners:
+[cad-release drawings](../../cad-release/references/drawings.md), [cad-release BOM](../../cad-release/references/bom.md) and
+[cad-verify index-verification](../../cad-verify/references/check-plan.md#index-verification).
+
+- Writer and moment: the lead, once per bundle, after every other file of the bundle is final: for a worker result at
+  merge, once its result, `source/` programs and logs are copied
+  ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries)); for a
+  lead result at publication ([cad-flow stages — run-checks](../../cad-flow/references/stages.md#run-checks) step 3). It
+  is composed and validated in scratch, copied into the bundle last and never rewritten.
+- `binding` and `input`: the result's `binding` and `input_files`.
+- `recipe`: the result's `implementation` without `source_files`: `{kind: COMMAND, commands, packages, platform}` or
+  `{kind: REVIEW, inspected}`.
+- `policy`: the `policy` of the lead's `preflight.json`.
+- `files`: every regular file under the bundle directory `hw/checks/vN/<check>/<attempt>/` except `bundle-manifest.json`,
+  sorted by path, each with the sha256 of its bytes and its role: RESULT for `result.json`; SOURCE for a `source_files`
+  entry, LOCK when it ends `.lock`; LOG for a command's `stdout` or `stderr` and an artifact of role LOG; ARTIFACT for any
+  other `artifacts[]` entry. These are exactly the result file, its `source_files`, its `artifacts[]` and its commands'
+  logs: a file the result names that the bundle lacks, or a bundle file the result does not name, stops publication.
+- `complete`: the result's `complete`.
 
 ## Facts
 

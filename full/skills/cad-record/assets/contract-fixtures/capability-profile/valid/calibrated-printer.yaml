@@ -55,6 +55,14 @@ envelope:
 materials:
 - material: fdm_petg_polylite
   status: APPROVED
+  diameter:
+    status: KNOWN
+    value:
+      value: 1.75
+      units: mm
+    basis: USER_DECLARED
+    sources:
+    - *id001
   operations:
   - PRINT
   source: *id001

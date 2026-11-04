@@ -22,12 +22,15 @@ bom-row/invalid/zero-quantity.yaml: '$.quantity: 0 is less than the minimum of 1
 check-result/invalid/artifact-lists-coverage-json.json: '$.artifacts[2].path: ''hw/drawings/v6/STD-0001/coverage.json'' should not be valid under {''pattern'': ''(^|/)(result|bundle-manifest|coverage|package-integrity)\\.json$''}'
 # artifacts exclude result.json and bundle-manifest.json
 check-result/invalid/artifact-lists-result-json.json: '$.artifacts[2].path: ''hw/checks/v6/clearance/a1/result.json'' should not be valid under {''pattern'': ''(^|/)(result|bundle-manifest|coverage|package-integrity)\\.json$''}'
+# a command's stdout and stderr name published logs beside the result, never scratch
+check-result/invalid/command-log-scratch.json: "$.implementation.commands[0].stdout: '.cad-work/chk/output/stdout.txt' does not match '^hw/"
 # a COMMAND implementation needs at least one command
 check-result/invalid/command-without-commands.json: '$.implementation.commands: [] should be non-empty'
 # the package-integrity result never hashes or inspects release-manifest.json, which hashes it
 check-result/invalid/integrity-hashes-release-manifest.json: '$.input_files[2].path: ''hw/releases/A/release-manifest.json'' should not be valid under {''pattern'': ''(^|/)release-manifest\\.json$''}'
-# the lead writes a review.mechanical_dfm result only for a review stopped at acceptance: every outcome UNKNOWN NOT_RUN
-check-result/invalid/lead-review-not-stopped.json: "$.outcomes[0].unknown_code: 'NOT_RUN' was expected"
+# the lead writes a review.mechanical_dfm result only for a review stopped at acceptance or a lost or stalled reviewer unit:
+# every outcome UNKNOWN NOT_RUN or TIMEOUT
+check-result/invalid/lead-review-not-stopped.json: "$.outcomes[0].unknown_code: 'MISSING_INPUT' is not one of ['NOT_RUN', 'TIMEOUT']"
 # a PASS outcome needs criterion, evidence and value
 check-result/invalid/pass-without-criterion.json: "$.outcomes[0]: 'criterion' is a required property"
 # finding ids are family:anchor:locus, never positional
