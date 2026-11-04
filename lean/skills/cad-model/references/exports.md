@@ -100,7 +100,7 @@ Manifest fields this build supplies (prose root `version-manifest`, cad-record r
 - `record` and `source_artifacts`: the snapshot files, retained sources in `source_artifacts`; `build`: the programs
   as `source` and their locks as `locks`.
 - `runtime.environments[]`: one per kernel with `kernel`, `python`, `packages` from its lock and `lock`; `platform`;
-  `commands` (argv, cwd, exit code, stdout and stderr paths).
+  `commands` (argv, cwd and exit code; the build logs stay scratch diagnostics, so no `stdout` or `stderr`).
 - `geometry`: `units: mm`, `frame: RIGHT_HANDED_Z_UP`, every export except `manufacturing.yaml` in `files` with
   `role`, `format` and `PN`, `component` and `state` where they apply; `occurrences` with world `translation` and
   `rotation` at the nominal pose and `step_name`; `export_tolerance`; `readback`.
