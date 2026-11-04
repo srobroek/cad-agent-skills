@@ -16,6 +16,7 @@ actor:
   name: SYNTHETIC demo owner (scripted answer L-01)
 time: '2026-11-03T10:05:00Z'
 statement:
-  transcript_sha256: 6141ca16d511039393211a154ec3cc30859995fa1ad917d930a9408715eec2a3
+  path: hw/decisions/statements/DR-001.txt
+  transcript_sha256: 4e91a39982d3643113714275d475f83d67774a76240ad13ce40d31c70e7118bc
   quote: approve DR-001 import mapping as presented; I am SYNTHETIC demo owner.
   time: '2026-11-03T10:05:00Z'

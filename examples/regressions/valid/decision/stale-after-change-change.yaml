@@ -16,9 +16,9 @@ actor:
   name: product owner
 time: '2026-11-03T09:30:00Z'
 statement:
-  transcript_sha256: 5f90bd0e2e3a407049475ea19c76a64590c584a072ec9a09dbef9d14566f1f8c
+  path: hw/decisions/statements/DR-018.txt
+  transcript_sha256: 22dce65fdf60de0009e5e714aab687114c2c645f64f8b86fc35cf8f8569bfa52
   quote: approve the change of the STD-0002 arm to ASA
-  time: '2026-11-03T09:30:00Z'
 change:
   reason: service temperature near a window exceeds the PETG comfort range
   affected:

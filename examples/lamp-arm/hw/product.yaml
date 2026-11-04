@@ -231,7 +231,7 @@ risk:
     basis: USER_DECLARED
     sources:
     - &l14 {kind: USER, reference: brief.md answer L-14, origin: SYNTHETIC demo owner, date: '2026-11-03'}
-  severity: MINOR
+  severity: {status: UNKNOWN, reason: the owner does not know consequence severity, owner: user, question: Q-013, consequential: true}
   forbidden_outcomes:
     status: KNOWN
     value:

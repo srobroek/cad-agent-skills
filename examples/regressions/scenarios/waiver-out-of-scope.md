@@ -19,18 +19,18 @@ bore.
 
 ## Procedure under test
 
-- cad-flow `write-verdict` step 2
+- cad-flow `write-verdict` step 3
 - cad-flow references/gates.md "Waivers" steps 1–2
 - cad-record semantic check 10
 
 ## Expected
 
-1. Semantic check 10 FAILs the verdict: WV-001 does not cover `process.fdm@STD-0001.body/print#hinge_bore`; the
-   correct verdict is FAIL with `DUE_FAIL`.
-2. The bore waiver fails the decision root (a waiver needs `expires` or `until_change`); it is never written.
-3. Even bounded, a bore waiver is refused: REQ-003 is mandatory and the support finding is MAJOR; the remedy is a
+1. `write-verdict` rejects WV-001 for `process.fdm@STD-0001.body/print#hinge_bore` while composing the verdict. It covers no bore obligation; the entry remains FAIL and the verdict is FAIL with `DUE_FAIL`.
+2. If a published verdict still maps the out-of-scope waiver, the successor's `record.semantic` item 10 fails it.
+3. The bore waiver fails the decision root (a waiver needs `expires` or `until_change`); it is never written.
+4. Even bounded, a bore waiver is refused: REQ-003 is mandatory and the support finding is MAJOR; the remedy is a
    DETAIL rework (reaming or reorientation).
-4. A bare "ok, waive the bore too" is no approval of an exact waiver packet (cad-flow references/gates.md).
+5. A bare "ok, waive the bore too" is no approval of an exact waiver packet (cad-flow references/gates.md).
 
 ## Regression fails when
 

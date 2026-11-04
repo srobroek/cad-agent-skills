@@ -17,9 +17,9 @@ actor:
   name: product owner
 time: '2026-11-03T14:00:00Z'
 statement:
-  transcript_sha256: 3dd31c846340745e9c92091d08314d0af1d7cece2c3c2fd6ee8abd3f0b0578a2
+  path: hw/decisions/statements/DR-030.txt
+  transcript_sha256: 7b72b9a7c2c73427d605d2915648f28c28494b7657311a5bf11433f19b4a68d0
   quote: 'approve waiver WV-003: supervised demo trial until 2026-12-15 without the angle-hold test'
-  time: '2026-11-03T14:00:00Z'
 waiver:
   id: WV-003
   decision: DR-030

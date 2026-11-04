@@ -1,0 +1,1 @@
+FUNCTIONAL_DEMO: a supervised bench demonstration of reach and pose holding, run by me for up to three months; not unsupervised or everyday use.
