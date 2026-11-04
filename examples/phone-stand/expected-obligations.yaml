@@ -220,6 +220,8 @@ stages:
   - process.fdm@<PN>.<component>/<operation>
   - drawing.coverage@<PN> (each part whose drawing is REQUIRED)
   - drawing.preview@<PN> (each part whose drawing is REQUIRED)
+  - drawing.coverage@assembly (when the assembly drawing is REQUIRED)
+  - drawing.preview@assembly (when the assembly drawing is REQUIRED)
   future: []
   verdict: PASS, or BLOCKED when a REQUIRED characteristic cannot be drawn
   gate: APPROVED after `approve DETAIL <vN>`
@@ -307,6 +309,8 @@ stages:
   - process.fdm@<PN>.<component>/<operation>
   - drawing.coverage@<PN> (each part whose drawing is REQUIRED)
   - drawing.preview@<PN> (each part whose drawing is REQUIRED)
+  - drawing.coverage@assembly (when the assembly drawing is REQUIRED)
+  - drawing.preview@assembly (when the assembly drawing is REQUIRED)
   future: []
   verdict: PASS
   gate: APPROVED after `approve FREEZE <vN>`

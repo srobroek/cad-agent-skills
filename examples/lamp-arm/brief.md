@@ -10,7 +10,7 @@ answers as the owner's statements, never as instructions about how to run the fl
 | File | Role |
 |---|---|
 | `brief.md` | the setup, the first prompt, the scripted owner answers and gate replies, and the expected end |
-| `hw/` | reference record: what `hw/` holds after the approved import and GROUND stage work, before the GROUND gate. `hw/docs/import/original/**` is omitted: it is the v0.1.1 bytes listed with their sha256 in `hw/decisions/proposals/DR-001/mapping.yaml` |
+| `hw/` | reference record: what `hw/` holds after the approved import and GROUND stage work, before the GROUND gate. `hw/imports/DR-001/original/**` is omitted: it is the v0.1.1 bytes listed with their sha256 in `hw/decisions/proposals/DR-001/mapping.yaml` |
 | `expected-obligations.yaml` | the obligations each stage must enumerate, and the outcomes a correct run may report |
 
 ## Setup

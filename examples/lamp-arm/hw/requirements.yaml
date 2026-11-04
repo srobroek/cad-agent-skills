@@ -1,5 +1,5 @@
 # Reference record for examples/lamp-arm: hw/requirements.yaml after the approved import (DR-001) and GROUND stage
-# work, before the GROUND gate. The v0.1.1 requirements are readable history only (hw/docs/import/original); the
+# work, before the GROUND gate. The v0.1.1 requirements are readable history only (hw/imports/DR-001/original); the
 # requirements below are the owner's restatement (L-19), with facets from the FUNCTIONAL_DEMO row of cad-verify
 # "Evidence by service class". SPECIFY completes methods, cases and the check plan.
 requirements:

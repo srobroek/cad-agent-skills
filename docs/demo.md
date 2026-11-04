@@ -50,7 +50,7 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 
 | Stage | Send | Observe |
 |---|---|---|
-| GROUND | L-01 for the import, then L-02 to L-21 | the old record inventoried and mapped in scratch, presented, then moved byte for byte into `hw/docs/import/original/`; no imported file gets gate credit; payload, reach, heat, duty, creep, life, electrical supply and risk asked |
+| GROUND | L-01 for the import, then L-02 to L-21 | the old record inventoried and mapped in scratch, presented, then moved byte for byte into `hw/imports/DR-001/original/`; no imported file gets gate credit; payload, reach, heat, duty, creep, life, electrical supply and risk asked |
 | INTENT | the INTENT reply | polymer, metal, purchased-pivot and hybrid candidates, the old layout as one candidate; machine shop stock, setup and tolerance, joint contact and wear, and PETG creep sourced or UNKNOWN |
 | SPECIFY | the SPECIFY reply | PHYSICALLY_VALIDATED facets on REQ-001 to REQ-009; physical tests PLANNED; REQ-004, REQ-006 and REQ-009 safety, never waivable |
 | LAYOUT to DETAIL | the gate replies | full joint sweeps, cable path, hex-key access, purchased pins and bushings with retention and service |

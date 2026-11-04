@@ -66,7 +66,7 @@ stages:
   gate: APPROVED after `approve GROUND <vN>`
   must_show:
   - the import inventory and dry-run mapping presented before any imported byte lands in hw/; the IMPORT decision from L-01
-  - the original files kept byte-identical under hw/docs/import/original with their sha256
+  - the original files kept byte-identical under hw/imports/DR-001/original with their sha256
   - service class FUNCTIONAL_DEMO from a QUESTION decision with a SYNTHETIC actor, separate from rigor pro
   - payload, reach, heat, duty, creep, cyclic life, electrical supply and risk asked before any material or route is named
   - the record matches examples/lamp-arm/hw in content; ids, wording and order may differ
@@ -253,6 +253,8 @@ stages:
   - fit.limits@<IF> (design dependent)
   - drawing.coverage@<PN> (design dependent)
   - drawing.preview@<PN> (design dependent)
+  - drawing.coverage@assembly (when the assembly drawing is REQUIRED)
+  - drawing.preview@assembly (when the assembly drawing is REQUIRED)
   - preview.render@assembly
   - preview.render@<PN>
   future: []
@@ -363,6 +365,8 @@ stages:
   - load.hand@case.<LOAD case>
   - drawing.coverage@<PN> (design dependent)
   - drawing.preview@<PN> (design dependent)
+  - drawing.coverage@assembly (when the assembly drawing is REQUIRED)
+  - drawing.preview@assembly (when the assembly drawing is REQUIRED)
   - preview.render@assembly
   - bom.derivation@product
   - verification.index@product
