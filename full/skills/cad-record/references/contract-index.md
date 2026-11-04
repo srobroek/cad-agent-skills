@@ -14,7 +14,7 @@ Validate with `check-jsonschema --schemafile <cad-record>/schemas/<root>.schema.
 | `requirements` | requirements, preferences, assumptions, questions | `hw/requirements.yaml` |
 | `interfaces` | functional interface contracts | `hw/interfaces.yaml` |
 | `part` | one part: sourcing, model, components, manufacture, intent, procurement, drawing | `hw/parts/{PN}/part.yaml` |
-| `assembly` | occurrence tree, joints, couplings, operations, service | `hw/assembly.yaml` |
+| `assembly` | occurrence tree, joints, couplings, operations, service, optional `drawing` (the part drawing-intent shape, `part.schema.json#/$defs/drawing`) | `hw/assembly.yaml` |
 | `bom-row` | one derived BOM row | items of `bom.rows` |
 | `bom` | derived BOM for vN | `hw/bom/{V}/bom.yaml`, `hw/releases/{REV}/bom.yaml` |
 | `verification-row` | one derived requirement x subject x facet row | items of `verification.rows` |
@@ -252,6 +252,8 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `record.variant_geometry`: `hw/concepts/{VARIANT}/geometry/{NAME}`
 - `record.decision`: `hw/decisions/{DR}.yaml` → `decision`
 - `record.decision_proposal`: `hw/decisions/proposals/{DR}/{NAME}`
+- `record.import_original`: `hw/imports/{DR}/original/**` (immutable byte-identical originals of an approved import,
+  legacy programs included; no gate credit, never executed; `product.import.original_snapshot` names its root)
 - `notes.docs`: `hw/docs/**`
 - `version.record`: `hw/versions/{V}/record/**`
 - `version.source`: `hw/versions/{V}/source/**`
