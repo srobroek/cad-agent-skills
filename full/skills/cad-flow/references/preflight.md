@@ -39,10 +39,10 @@ holds this session's approval statements, and at finish its claim, preflight and
 4. The host can dispatch all five roles (cad-concept-designer, cad-part-designer, cad-checker,
    cad-mech-dfm-reviewer, cad-sourcing-researcher) by name.
 5. No resolved path lies under `<root>/hw/` or `<root>/.cad-work/`.
-6. `uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile <cad-record>/schemas/stage-policy.schema.json <cad-flow>/assets/stages.yaml`
-   exits 0.
 
-A failure in steps 1–6 stops the session as an installation defect: report the path and the observation as an
+Run the tests of steps 1, 2 and 5 as one shell command. The stage policy's shape is checked by `record.schema` in every
+attempt ([cad-record validation](../../cad-record/references/validation.md#schema-validation)), not here.
+A failure in steps 1–5 stops the session as an installation defect: report the path and the observation as an
 open question for the operator, never repair it ([cad-flow install rule](../SKILL.md#rules)).
 
 ## Probe tools
@@ -52,15 +52,18 @@ open question for the operator, never repair it ([cad-flow install rule](../SKIL
 | `uv --version` | yes |
 | `uvx --from check-jsonschema==0.39.0 check-jsonschema --version` | yes |
 | `uv python find 3.12` | yes |
-| each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a planned check | no |
+| each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a check `hw/check-plan.yaml` already plans; none at GROUND | no |
+
+Run the required probes as one shell command.
 
 A missing required tool stops with `MISSING_RESOURCE`. A missing optional tool is recorded; its checks become
 UNKNOWN `UNSUPPORTED_METHOD`, never a fallback method.
 
 ## Host isolation
 
-- OMP: `omp config get task.isolation.enabled --json` prints `false`; otherwise stop and ask the user to set it,
-  because an isolated worker writes into a clone the lead never reads.
+- OMP host only: `omp config get task.isolation.enabled --json` prints `false`; otherwise stop and ask the user to
+  set it, because an isolated worker writes into a clone the lead never reads. Every other host runs no `omp`
+  command and records `isolation: NOT_APPLICABLE`.
 - Every host: the first delivery appears at `<root>/.cad-work/<unit>/delivery.json`; a delivery elsewhere stops
   dispatch.
 

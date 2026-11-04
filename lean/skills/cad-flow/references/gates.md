@@ -57,7 +57,22 @@ NOT Rewrite a decision: approve, reject and supersede are new DRs that refer to 
 
 SELECTION, VARIANT, ORIENTATION, SUPPORT, WAIVER, CHANGE, REQUIREMENT, INTERFACE, ASSUMPTION, QUESTION and IMPORT
 decisions made during stage work bind an immutable proposal: write `hw/decisions/proposals/DR-###/<name>`
-first, then the DR with a PROPOSAL binding ([cad-record decision schema](../../cad-record/schemas/decision.schema.json#/$defs/binding)). APPROVED and REJECTED need the same explicit statement as a gate. A controlled-record field that cites an approval is written in the successor attempt's stage work, never into the approved attempt's snapshot.
+first, then the DR with a PROPOSAL binding
+([cad-record decision schema](../../cad-record/schemas/decision.schema.json#/$defs/binding)). A record field that cites
+a DR approved during stage work is written before `freeze-inputs`; one approved after an attempt's snapshot is
+written in the successor attempt's stage work, never into that snapshot.
+
+APPROVED and REJECTED need one of these explicit statements from the user or the named authority:
+
+| Statement | Decision |
+|---|---|
+| the owner's answer to the question the proposal records, stating the value it proposes (a service class, requirement value, assumption or answer) | APPROVED from that answer; ask nothing more |
+| a reply starting `approve DR-###` or `reject DR-###` that names this DR; a waiver adds `waiver WV-###` | APPROVED or REJECTED |
+
+1. Save the statement bytes as for a gate ([Record a gate decision](#record-a-gate-decision), step 1), then write the DR.
+2. Present every other pending proposal of the stage in one message, each ending with its exact form.
+
+MUST Ask once more with the exact form when a reply names no DR, names another DR or is a bare "ok".
 
 ## Waivers
 

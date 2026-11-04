@@ -68,9 +68,11 @@ stages:
   - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker
   - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
   - open questions with owners for tap force, sun exposure, service life, dimensional stability, holding and tipping, printer envelope and material approvals
+  - the gate packet lists Q-023 printer envelope and Q-024 material approvals as limits due at INTENT, and the out-of-scope unknowns (consequential false) as owned open questions; none blocks GROUND (cad-select references/selection.md "Scope of each unknown")
   must_not:
   - choose a material, process, printer setting, tolerance or clearance
   - turn an "I don't know" answer into a value or a default
+  - ask again a question already answered, or ask for a separate approval of the service class A-12 already states
 - stage: INTENT
   expected:
   - record.schema@product

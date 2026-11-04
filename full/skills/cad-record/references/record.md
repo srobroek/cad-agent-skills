@@ -34,7 +34,7 @@ This file states the rules the schemas cannot express.
 | feature, region, operation, occurrence, joint | `[a-z][a-z0-9_]*` | semantic names |
 | unit | `[a-z][a-z0-9_-]*`, not `lead`, not `stage-*` | `.cad-work/<unit>/` |
 | obligation | `<family>@<anchor>` | anchor grammar in references/contract-index.md |
-| finding | `<family>:<anchor>:<feature-or-operation>` | stable, never positional |
+| finding | `<family>:<anchor>:<feature-or-operation>`; `record.semantic:item-<n>:<locus>` | stable, never positional; locus and item per references/validation.md#reporting |
 
 NOT Derive identity from a timestamp, array index, random value or OCCT face/edge/solid index.
 NOT Promote a part revision after FREEZE; promotion happens before the final checks.
@@ -166,6 +166,9 @@ Every fact is `KNOWN`, `UNKNOWN` or `NOT_APPLICABLE` (common.schema.json `fact`)
 - A source names a URL with its access date or a retained artifact with its sha256 (datasheet, standard,
   calibration, test, supplier), plus document, revision and the conditions it actually states.
   Retained bytes live at `hw/manufacturing/sources/<sha256>/<original-name>` or `hw/parts/<PN>/sources/**`.
+- A `USER` source is a statement of the owner or of the authority `product.yaml` names, made in a session:
+  `origin` names them, `reference` the question it answers; the basis is `USER_DECLARED`. It is a sourced fact;
+  nobody asks for its provenance or asks the question again.
 - A test temperature, method, orientation or conditioning the supplier does not state stays UNKNOWN; a use
   that depends on it is blocked, never filled in.
 - Density is never strength; typical is never allowable; a standard minimum stays typical_not_allowable.
@@ -200,7 +203,7 @@ cad-record directory from the brief or preflight.
    record unchanged.
 3. Otherwise the record is legacy or foreign: run references/import.md (dry run, owner IMPORT DR, apply);
    no byte lands in `hw/` before that approval.
-4. Validate per references/validation.md: every schema command exits 0 and the `record.semantic` result has
-   no FAIL or UNKNOWN. UNKNOWN facts with open questions are intake input, not validation failures.
-5. Report the path taken (`COPIED`, `EXISTING` or `IMPORTED`), the validation result paths and every open
-   question for GROUND intake.
+4. Run no check here: `record.schema` and `record.semantic` cover the whole record once per attempt in cad-flow
+   `run-checks`. During intake, validate each changed file that has a schema root once per owner reply
+   (references/validation.md#schema-validation). UNKNOWN facts with open questions are intake input, not failures.
+5. Report the path taken (`COPIED`, `EXISTING` or `IMPORTED`) and every open question for GROUND intake.

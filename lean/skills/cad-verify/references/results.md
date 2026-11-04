@@ -86,8 +86,9 @@ of a changed design no longer applies ([cad-flow change impact — Stale evidenc
 
 ## Findings
 
-- Every FAIL or UNKNOWN outcome has at least one finding with id `<family>:<anchor>:<locus>`; repeated symptoms with
-  one evidenced cause are one finding.
+- Every FAIL or UNKNOWN outcome has at least one finding with id `<family>:<anchor>:<locus>`
+  ([cad-record record — IDs](../../cad-record/references/record.md#ids)); repeated symptoms with one evidenced cause
+  are one finding.
 - Fields: subject, severity ([cad-review rubric — Finding severity](../../cad-review/references/rubric.md#finding-severity)), outcome, measured value or the reason
   it is unknown, criterion and its source, method, uncertainty, consequence, remedy with alternatives, and `recheck`
   (families, earliest stage, scope).
