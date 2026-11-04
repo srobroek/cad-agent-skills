@@ -17,6 +17,11 @@ orientation, conditioning, test method, temperature and service environment to t
 per cad-record; never complete absent source data by inference. A profile property can be quoted as a source claim even when typical/minimum
 status is limited; report that limitation alongside the value.
 
+Record each property a source states in a value form of the material-profile root (`properties[].value`): a typed quantity in a unit of
+the closed set, a rating with the source's scale for a qualitative grade, or an UNKNOWN whose `reason` quotes a value in a unit outside
+that set or an entry such as N/A. A property in one of these forms is a complete record of it, not a contract gap. A rating is never
+converted to a number or ordered beyond what its scale states.
+
 Check property relevance, not just availability: stiffness versus yield, sustained loading versus creep/relaxation, cycling versus fatigue,
 contact pairs versus wear/friction, service heat versus temperature-dependence, moisture/chemical/UV exposure versus compatibility, and
 thermal expansion versus fit. Evaluate filled polymers for layer strength, abrasive wear, nozzle/tool needs and mating wear. Avoid silently
@@ -38,9 +43,11 @@ their UNKNOWN fields and guidance describe what to gather, not a capability. Pre
 populated from the real equipment/provider; never cite a template for route feasibility.
 
 For a real route, identify the specific local machine/operator or outsourced supplier, approved exact material and stock, equipment limits,
-setup/workholding, tools and all operations. Record sourced parameters separately from demonstrated performance. Achieved dimensional
-capability, feature limits, finish and process behavior need current calibration or supplier evidence scoped to material, geometry/feature,
-orientation, setup, tool and method. Machine resolution and nominal envelope do not prove tolerance, finish or a process plan.
+setup/workholding, tools and all operations. The consumable form of a stock, such as a filament diameter or a sheet thickness, belongs to
+its approval and falls due at PARTS ([selection — Write criteria a stage can evidence](selection.md#write-criteria-a-stage-can-evidence)).
+Record sourced parameters separately from demonstrated performance. Achieved dimensional capability, feature limits, finish and process
+behavior need current calibration or supplier evidence scoped to material, geometry/feature, orientation, setup, tool and method. Machine
+resolution and nominal envelope do not prove tolerance, finish or a process plan.
 
 Check all route operations, critical features and relevant components. For FDM address orientation, layer direction, walls, holes, bridges,
 support contact/removal, warping, seams and calibrated feature results. For resin address orientation, supports, drainage, cleaning, curing

@@ -168,8 +168,12 @@ material-profile/invalid/family-with-known-grade.yaml: "$.grade.status: 'UNKNOWN
 material-profile/invalid/lowercase-enum.yaml: "$.form: 'printed' is not one of ['PRINTED', 'BULK', 'WROUGHT', 'CAST', 'MOULDED', 'SHEET', 'ROD', 'FILM', 'PURCHASED', 'UNKNOWN']"
 # every property of a PRINTED profile states its specimen orientation (UNKNOWN allowed)
 material-profile/invalid/printed-without-orientation.yaml: "$.properties[0].conditions: 'orientation' is a required property"
+# a qualitative rating names the scale that defines its grades
+material-profile/invalid/rating-without-scale.yaml: "$.properties[0].value.value: 'scale' is a required property"
 # a typical_not_allowable profile never holds an ALLOWABLE value
 material-profile/invalid/typical-claims-allowable.yaml: "should not be valid under {'required': ['basis'], 'properties': {'basis': {'const': 'ALLOWABLE'}}}"
+# a unit outside the closed set is refused, never guessed; such a value is UNKNOWN quoting the source
+material-profile/invalid/unit-outside-closed-set.yaml: "$.properties[0].value.value.units: 'g/10min' is not one of"
 # an APPROVED orientation requires its decision
 part/invalid/approved-orientation-no-decision.yaml: "$.intent.route[0].orientation: 'decision' is a required property"
 # ASSEMBLY_ZERO frame requires import provenance

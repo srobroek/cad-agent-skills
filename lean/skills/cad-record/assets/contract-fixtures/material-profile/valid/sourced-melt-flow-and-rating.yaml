@@ -1,0 +1,88 @@
+id: fdm_petg_polylite
+revision: 2
+title: PolyLite PETG
+level: GRADE
+family: FDM filament / PETG
+grade:
+  status: KNOWN
+  value: PolyLite PETG
+  basis: SUPPLIER_TYPICAL
+  sources:
+  - &tds
+    kind: DATASHEET
+    reference: PolyLite PETG Technical Data Sheet, V5.4
+    revision: PolyLite PETG Technical Data Sheet, V5.4
+    url: https://cdn.shopify.com/s/files/1/0548/7299/7945/files/PolyLite_PETG_TDS_EN_V5.4.pdf?v=1731954068
+    accessed: '2026-11-02'
+form: PRINTED
+process_state:
+  process: FDM
+  conditioning: UNKNOWN
+typical_not_allowable: true
+properties:
+- name: melt_mass_flow_rate
+  value:
+    status: KNOWN
+    value: {value: 10.8, units: g_10min}
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - kind: DATASHEET
+      reference: PolyLite PETG Technical Data Sheet, V5.4
+      url: https://cdn.shopify.com/s/files/1/0548/7299/7945/files/PolyLite_PETG_TDS_EN_V5.4.pdf?v=1731954068
+      accessed: '2026-11-02'
+      conditions: 'Melt index | 240°C, 2.16kg | 10.8 g/10min'
+  conditions:
+    test_standard:
+      status: UNKNOWN
+      reason: the source row names its test conditions but no test standard
+    temperature:
+      status: KNOWN
+      value: {value: 240, units: deg_C}
+      basis: SUPPLIER_TYPICAL
+      sources:
+      - *tds
+    conditioning: UNKNOWN
+    orientation:
+      status: NOT_APPLICABLE
+      reason: a melt-flow test of the filament, not of a printed specimen
+      reviewed_by: cad-sourcing-researcher
+    notes: test load 2.16 kg, as the source row states
+- name: resistance_weak_acids
+  value:
+    status: KNOWN
+    value:
+      rating: Good
+      scale: 'source key: Good = may get minor attack after long periods of storage with chemical at ambient temperature; Fair = can be
+        used for short time contact with chemical at ambient temperature; Poor = becomes unstable on contact with chemical at ambient
+        temperature'
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - *tds
+  conditions:
+    test_standard:
+      status: UNKNOWN
+      reason: the source states no test method, concentration or exposure time
+    temperature:
+      status: UNKNOWN
+      reason: the source key says ambient temperature without a value
+    conditioning: UNKNOWN
+    orientation:
+      status: UNKNOWN
+      reason: the source does not state the specimen form or orientation
+- name: flame_retardancy
+  value:
+    status: UNKNOWN
+    reason: "the source row reads 'Flame retardancy | N/A | N/A': no rating and no method"
+  conditions:
+    test_standard:
+      status: UNKNOWN
+      reason: the source row states N/A
+    temperature:
+      status: UNKNOWN
+      reason: the source row states no test condition
+    conditioning: UNKNOWN
+    orientation:
+      status: UNKNOWN
+      reason: the source row states no specimen
+guidance:
+- typical comparison values only; a rating is the source's grade on its own key, never a quantity

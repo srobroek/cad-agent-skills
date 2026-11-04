@@ -18,9 +18,10 @@ TRIGGER
 1. Follow `references/selection.md` → `intake-use-case` in GROUND to establish the use case before comparing candidates. Ask focused
    questions about purpose, users, environment, load magnitude/direction/cycles, motion/duty/life, heat, moisture, chemicals, UV, corrosion,
    accuracy, finish, failure consequence/standards, quantity, budget, lead time, maintenance/repair, equipment, operators and outsourcing.
-2. Record requirements, preferences, assumptions and open questions as distinct collections; write each criterion so a stage can evidence
-   it and open no question on a release-scope exclusion (`references/selection.md` → `Write criteria a stage can evidence`). Confirm service
-   class separately from documentation rigor; block a final recommendation on a material-driving or safety-critical unknown.
+2. Record each reply whole in one batch at GROUND (`references/selection.md` → `Ask and finish intake` step 2): its facts, volunteered ones
+   included, and its requirements, preferences, assumptions and open questions as distinct collections, each criterion one a stage can
+   evidence (→ `Write criteria a stage can evidence`). Never re-open an answered fact or question a release-scope exclusion. Confirm
+   service class separately from documentation rigor; block a final recommendation on a material-driving or safety-critical unknown.
 3. Read `references/selection.md` and `references/materials.md` (OMP: `skill://cad-select/references/selection.md`,
    `skill://cad-select/references/materials.md`). Use the cad-record skill, schema roots and literal absolute paths supplied in the active
    brief; they are read-only.
@@ -29,8 +30,9 @@ TRIGGER
 5. Follow `references/selection.md` → `select-candidates` in INTENT before sourcing-research units are dispatched to form complete
    material/process/architecture routes per part and contacting pair.
 6. After researcher deliveries are merged, follow `references/selection.md` → `assess-selection` in INTENT. Assess a criterion at INTENT
-   only when INTENT holds its evidence, else mark it PLANNED with its due stage. Eliminate hard-constraint FAILs before comparing
-   preferences; keep mandatory UNKNOWNs conditional and never let a score revive them.
+   only when INTENT holds its evidence, else mark it PLANNED with its due stage; a material settles by identity, its consumable form at
+   PARTS. Eliminate hard-constraint FAILs before comparing preferences; keep mandatory UNKNOWNs conditional and never let a score revive
+   them.
 7. Record assessed candidates and the recommendation in the selection record per `references/selection.md` → `Recommend`, plus limits,
    accepted tradeoffs and reversal triggers. A NONE recommendation still ends INTENT in a BLOCKED verdict whose report asks each blocking
    question by its id.
