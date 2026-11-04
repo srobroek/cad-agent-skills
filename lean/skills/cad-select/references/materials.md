@@ -1,0 +1,25 @@
+# Material and capability evidence
+
+Owner: cad-select for interpretation and comparison. cad-record owns fields, schemas, paths and general fact rules. Use the material-profile schema root for profiles and the material-library prose root for their wrapper; use the capability-profile and capability-library prose roots for capability templates and actual profiles (`cad-record/references/prose-contract.md`). See `cad-record/references/contract-index.md` and `cad-record/references/record.md` through the active brief's absolute path.
+
+## Sourced starter profiles
+
+The 17 profiles in `cad-record/assets/manufacturing/material-profiles/` preserve the source identities, source wording and quoted values, units, conditions, profile unknowns and caveats. Enum values alone are translated to U1's CAPS contract. `assets/manufacturing/material-profiles/README.md` explains source limitations and use. Treat every starter as typical comparison material, never as a purchased-lot identity, approved process/material combination, physical-performance evidence or design allowable.
+
+Before relying on a profile, match its exact material grade, manufacturer, product form, temper/process state, print or heat treatment, orientation, conditioning, test method, temperature and service environment to the proposed use. Record unknown or inapplicable conditions per cad-record; never complete absent source data by inference. A profile property can be quoted as a source claim even when typical/minimum status is limited; report that limitation alongside the value.
+
+Check property relevance, not just availability: stiffness versus yield, sustained loading versus creep/relaxation, cycling versus fatigue, contact pairs versus wear/friction, service heat versus temperature-dependence, moisture/chemical/UV exposure versus compatibility, and thermal expansion versus fit. Evaluate filled polymers for layer strength, abrasive wear, nozzle/tool needs and mating wear. Avoid silently inheriting properties from a similar grade or a bulk specimen into a printed part.
+
+Typical supplier values and standard minima are not allowable values. A design allowable requires traceable grade and applicable product/process condition, qualified authority, supported conditions and an explicit derivation. Do not infer strength from density, allowable stress from a typical datasheet, life from a static value, or optical transmission from a material name or print appearance.
+
+For clear or transparent function, require a purchased transparent part or traceable identified transparent stock, stated thickness, optical criterion, supplier and a process approved for that criterion. A clear-labelled feedstock is not evidence of transmission; FDM is not an optical route.
+
+## Capability templates and real capability
+
+`cad-record/assets/manufacturing/capability-templates.yaml` contains 17 process-family prompts for actual machine/provider/operator, approved materials, envelope, operating parameters, tools/workholding and scoped calibrations. Templates are explicitly `template: true`; their UNKNOWN fields and guidance describe what to gather, not a capability. Preserve them as templates until copied, identified and populated from the real equipment/provider; never cite a template for route feasibility.
+
+For a real route, identify the specific local machine/operator or outsourced supplier, approved exact material and stock, equipment limits, setup/workholding, tools and all operations. Record sourced parameters separately from demonstrated performance. Achieved dimensional capability, feature limits, finish and process behavior need current calibration or supplier evidence scoped to material, geometry/feature, orientation, setup, tool and method. Machine resolution and nominal envelope do not prove tolerance, finish or a process plan.
+
+Check all route operations, critical features and relevant components. For FDM address orientation, layer direction, walls, holes, bridges, support contact/removal, warping, seams and calibrated feature results. For resin address orientation, supports, drainage, cleaning, curing and aging. For CNC address stock, axes, setup/workholding, tool reach/radii, thin walls, drilling/tapping, finish and inspection. For laser address exact stock/coating/thickness, machine approval, extraction, kerf, edge effects and secondary work; do not infer waterjet/plasma behavior from laser. Check forming, joining, casting, moulding, extrusion and other routes against their specific capability and process evidence. For BUY, verify supplier identity, dimensions, rating, material, interfaces, mounting, retention, availability and operating limits; do not apply made-part DFM checks.
+
+No capability evidence means UNKNOWN, not an optimistic estimate. An unsupported required operation or provider claim remains a coverage gap; report it to the lead rather than substituting unrelated process assumptions.

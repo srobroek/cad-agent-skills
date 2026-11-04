@@ -1,0 +1,110 @@
+root: base
+occurrences:
+- id: base
+  PN: STD-0001
+  rev: X1
+  placement:
+    translation:
+    - 0
+    - 0
+    - 0
+    rotation:
+    - 1
+    - 0
+    - 0
+    - 0
+- id: arm
+  PN: STD-0002
+  rev: X1
+  parent: base
+  placement:
+    translation:
+    - 0
+    - 10
+    - 40
+    rotation:
+    - 1
+    - 0
+    - 0
+    - 0
+- id: pin
+  PN: STD-0003
+  rev: A
+  parent: base
+  placement:
+    translation:
+    - 0
+    - 10
+    - 40
+    rotation:
+    - 0.7071067811865476
+    - 0
+    - 0.7071067811865476
+    - 0
+joints:
+- id: hinge
+  kind: REVOLUTE
+  parent: base
+  child: arm
+  origin:
+  - 0
+  - 10
+  - 40
+  axis:
+  - 1
+  - 0
+  - 0
+  zero: 0
+  interface: IF-001
+couplings: []
+operations:
+- id: insert-pin
+  kind: INSERT
+  occurrences:
+  - pin
+  into: base
+  direction:
+  - 1
+  - 0
+  - 0
+  tool_access:
+  - tool: hand
+    approach:
+    - 1
+    - 0
+    - 0
+    reach:
+      status: KNOWN
+      value:
+        value: 30
+        units: mm
+      basis: USER_DECLARED
+      sources:
+      - &id001
+        kind: USER
+        reference: owner interview
+        origin: product owner
+        date: '2026-11-03'
+    envelope:
+      status: KNOWN
+      value: finger access from +X
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  retention:
+    status: KNOWN
+    value: friction fit, see IF-001
+    basis: USER_DECLARED
+    sources:
+    - *id001
+service:
+- id: replace-arm
+  description: remove pin and arm
+  operations:
+  - insert-pin
+  access:
+    status: KNOWN
+    value: pin pushed out from -X
+    basis: USER_DECLARED
+    sources:
+    - *id001
