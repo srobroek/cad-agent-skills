@@ -13,8 +13,11 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
 | `REVIEW`  | `review.mechanical_dfm` only, always        | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts                  |
 
 1. A COMMAND producer writes its own program `.cad-work/<unit>/check.py` as a PEP 723 script, locks it with
-   `uv lock --script <absolute path>` and runs it with `uv run --locked --script <absolute path>`; the lead retains the program and lock
-   under `hw/checks/vN/<check>/<attempt>/source/`, or for `drawing.coverage` under `hw/drawings/vN/<SUBJECT>/source/`
+   `uv lock --script <absolute path>` and runs it with `uv run --locked --script <absolute path>`. Program and lock stay at the unit root,
+   never delivery outputs ([cad-flow agent-roles — Every role](../../cad-flow/references/agent-roles.md#every-role) step 6); at merge the
+   lead copies them into the result bundle's `source/`
+   ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3):
+   `hw/checks/vN/<check>/<attempt>/source/`, or for `drawing.coverage` `hw/drawings/vN/<SUBJECT>/source/`
    ([cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage)).
 2. The checker never runs or imports a producer's `build.py` or `check.py` as its method; producer exports are inputs only.
 3. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
@@ -62,6 +65,8 @@ Result: FAIL when any outcome is FAIL; else UNKNOWN when any is UNKNOWN or `comp
   `INCOMPLETE` over those intervals unless a computed bound covers them.
 - `PARTIAL`: any scope item missing; the result is never PASS.
 - Excluding a pair, pose, component or feature from the scope is a `SCOPE_GAP`, never a smaller PASS.
+- `FULL` on continuous travel violates
+  [cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 8.
 
 ## Facets
 

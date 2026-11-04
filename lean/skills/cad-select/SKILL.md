@@ -29,8 +29,8 @@ TRIGGER
    material/process/architecture routes per part and contacting pair.
 6. After researcher deliveries are merged, follow `references/selection.md` → `assess-selection` in INTENT. Eliminate hard-constraint FAILs
    before comparing preferences; keep mandatory UNKNOWNs conditional and never let a score revive them.
-7. Record assessed candidates and a conditional or final recommendation in the selection record. State primary, prototype, end-use and
-   fallback routes where useful, plus limits, accepted tradeoffs and reversal triggers.
+7. Record assessed candidates and the recommendation in the selection record per `references/selection.md` → `Recommend`, plus limits,
+   accepted tradeoffs and reversal triggers.
 8. Record the assessed selection and immutable proposal before the human gate. Present exact tradeoffs for approval; do not change the
    product design or promote the proposal to a final choice without explicit human approval.
 

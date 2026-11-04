@@ -173,7 +173,9 @@ Wrapper: `profiles` (yes, `[capability-profile]`). Each item conforms to [capabi
 ## selection
 
 Authored record YAML, no header. Hard requirement outcomes decide feasibility; preferences rank feasible candidates
-only; a FINAL recommendation names its approving decision.
+only; the recommendation is NONE, with no route, exactly when no candidate is FEASIBLE
+([cad-select Recommend](../../cad-select/references/selection.md#recommend)); a FINAL recommendation names its
+approving decision.
 
 | Field | Req | Type and rule |
 | --- | --- | --- |
@@ -205,9 +207,10 @@ Candidate:
   needs `reason text`.
 - Feasibility: FEASIBLE has no FAIL or UNKNOWN hard outcome; CONDITIONAL has at least one UNKNOWN and no FAIL;
   EXCLUDED has at least one FAIL. A score or weighting never ranks a FAIL feasible.
-- Recommendation: `{status CONDITIONAL|FINAL, primary slug, governing_requirements requirement_ids, reasons texts,
-  limits texts, reversal text, what_would_change texts}` required; optional `prototype`, `end_use`, `fallback`
-  (`slug`); `decision decision_id` when FINAL.
+- Recommendation: `{status NONE|CONDITIONAL|FINAL, governing_requirements requirement_ids, reasons texts, limits
+  texts, reversal text, what_would_change texts}` required; `primary` (`slug`) iff not NONE; optional `prototype`,
+  `end_use`, `fallback` (`slug`), never when NONE; `decision decision_id` when FINAL, never when NONE. `status` is
+  NONE iff no candidate is FEASIBLE.
 
 ## variant
 
