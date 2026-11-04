@@ -11,13 +11,14 @@ TRIGGER
 
 ## Workflow
 
-1. Establish the use case before comparing candidates. Ask focused questions about purpose, users, environment, load magnitude/direction/cycles, motion/duty/life, heat, moisture, chemicals, UV, corrosion, accuracy, finish, failure consequence/standards, quantity, budget, lead time, maintenance/repair, equipment, operators and outsourcing.
+1. Follow `references/selection.md` → `intake-use-case` in GROUND to establish the use case before comparing candidates. Ask focused questions about purpose, users, environment, load magnitude/direction/cycles, motion/duty/life, heat, moisture, chemicals, UV, corrosion, accuracy, finish, failure consequence/standards, quantity, budget, lead time, maintenance/repair, equipment, operators and outsourcing.
 2. Record requirements, preferences, assumptions and open questions as distinct collections. Confirm service class separately from documentation rigor; block a final recommendation on a material-driving or safety-critical unknown.
 3. Read `references/selection.md` and `references/materials.md` (OMP: `skill://cad-select/references/selection.md`, `skill://cad-select/references/materials.md`). Use the cad-record skill, schema roots and literal absolute paths supplied in the active brief; they are read-only.
 4. Check every cited material profile, provider and capability against its actual identity, form, process state and service conditions; keep unsupported facts UNKNOWN.
-5. Compare complete material/process/architecture routes per part and contacting pair. Eliminate hard-constraint FAILs before comparing preferences; keep mandatory UNKNOWNs conditional and never let a score revive them.
-6. Record assessed candidates and a conditional or final recommendation in the selection record. State primary, prototype, end-use and fallback routes where useful, plus limits, accepted tradeoffs and reversal triggers.
-7. Record the assessed selection and immutable proposal before the human gate. Present exact tradeoffs for approval; do not change the product design or promote the proposal to a final choice without explicit human approval.
+5. Follow `references/selection.md` → `select-candidates` in INTENT before sourcing-research units are dispatched to form complete material/process/architecture routes per part and contacting pair.
+6. After researcher deliveries are merged, follow `references/selection.md` → `assess-selection` in INTENT. Eliminate hard-constraint FAILs before comparing preferences; keep mandatory UNKNOWNs conditional and never let a score revive them.
+7. Record assessed candidates and a conditional or final recommendation in the selection record. State primary, prototype, end-use and fallback routes where useful, plus limits, accepted tradeoffs and reversal triggers.
+8. Record the assessed selection and immutable proposal before the human gate. Present exact tradeoffs for approval; do not change the product design or promote the proposal to a final choice without explicit human approval.
 
 ## Rules
 

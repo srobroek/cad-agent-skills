@@ -1,0 +1,44 @@
+id: DR-030
+kind: WAIVER
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-030/waiver.yaml
+  sha256: 48b099d4b73cb6c24d1ea34fbf24d931dc2aca3bde0456d4d9b97359c164f8f6
+title: Supervised demo trial without the angle-hold test
+scope: physical.test@REQ-002 for the FUNCTIONAL_DEMO release
+rationale: the demo is supervised, short and non-safety; the test runs after the demo
+limits:
+- REQ-002 hold angle is untested
+- supervised demo use only
+- expires 2026-12-15
+actor:
+  kind: USER
+  name: product owner
+time: '2026-11-03T14:00:00Z'
+statement:
+  transcript_sha256: 3dd31c846340745e9c92091d08314d0af1d7cece2c3c2fd6ee8abd3f0b0578a2
+  quote: 'approve waiver WV-003: supervised demo trial until 2026-12-15 without the angle-hold test'
+  time: '2026-11-03T14:00:00Z'
+waiver:
+  id: WV-003
+  decision: DR-030
+  obligation: physical.test@REQ-002
+  subject:
+    kind: REQUIREMENT
+    requirement: REQ-002
+  criterion: angle drift <= 2 deg under 2.5 N for 24 h (REQ-002)
+  classification: UNVALIDATED_TRIAL
+  retained_outcome: UNKNOWN
+  safety_or_regulatory: false
+  limitation: the hold angle is not established on real parts; the release claims no physical validation of REQ-002
+  operating_envelope: desk demo, phones up to 2.5 N, angle checked by the presenter
+  supervision: the presenter attends the stand during the demo
+  expires: '2026-12-15'
+  reason: FUNCTIONAL_DEMO permits a non-safety trial; the test needs printed v14 parts
+  consequence: the phone may slowly lower its angle during the demo
+  authority:
+    name: product owner
+    role: OWNER
+    basis: owner of REQ-002 and of the demo
+    scope: FUNCTIONAL_DEMO release of the phone stand

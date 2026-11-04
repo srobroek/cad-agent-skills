@@ -1,0 +1,45 @@
+id: DR-021
+kind: WAIVER
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-021/waiver.yaml
+  sha256: c355110d8aa211ac56b43e67b492680ac66fe4ea8010faa6668d8e52ebaa2a06
+title: Accept a visible seam on the base front face
+scope: process.fdm@STD-0001.body/print#front_face only
+rationale: appearance-only deviation from REQ-005; the owner accepts it for the demo build
+limits:
+- front_face carries a visible seam
+- no other obligation is covered
+actor:
+  kind: USER
+  name: product owner
+time: '2026-11-03T11:00:00Z'
+statement:
+  transcript_sha256: b04b9ca8f938a8709a88ec34f3635f819d992fe7dbda43325b045fd6db1d84a9
+  quote: approve waiver WV-001 for the seam on the STD-0001 front face
+  time: '2026-11-03T11:00:00Z'
+waiver:
+  id: WV-001
+  decision: DR-021
+  obligation: process.fdm@STD-0001.body/print#front_face
+  subject:
+    kind: FEATURE
+    PN: STD-0001
+    feature: front_face
+    component: body
+    operation: print
+  criterion: no visible seam on front_face (REQ-005)
+  classification: NON_SAFETY_DEVIATION
+  retained_outcome: FAIL
+  safety_or_regulatory: false
+  limitation: a visible seam line remains on the front face
+  operating_envelope: appearance only; no load, fit or motion depends on front_face
+  until_change: front_face geometry, the print orientation or the slicer seam rule changes
+  reason: the seam cannot be moved off the curved face without changing the approved orientation
+  consequence: a cosmetic seam is visible to the user
+  authority:
+    name: product owner
+    role: OWNER
+    basis: owner of the appearance requirement REQ-005
+    scope: REQ-005 appearance

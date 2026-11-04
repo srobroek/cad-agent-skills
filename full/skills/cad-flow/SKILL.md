@@ -1,6 +1,9 @@
 ---
 name: cad-flow
 description: Leads a cad-agent-skills product design through thirteen gated stages and five worker roles. Use for "design this product", "continue the design", "approve the gate".
+metadata:
+  plugin: cad-agent-skills
+  version: "0.1.0"
 ---
 
 # CAD Flow Lead

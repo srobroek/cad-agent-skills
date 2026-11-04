@@ -1,0 +1,345 @@
+status: ASSESSED
+assessment:
+  input_sha256: 6c0969008f17372ff4405189b1e7d7f3dc2e44e9c71dcc4a5c946b85823b4738
+  method: hard outcomes per requirement, then preferences over FEASIBLE candidates only
+  date: '2026-11-03'
+candidates:
+- id: pla-print
+  title: All printed PLA
+  architecture: printed arm and bracket, printed pivot
+  parts:
+  - PN: LMP-0002
+    sourcing: MAKE
+    material_profile: fdm_pla_polylite
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  - PN: LMP-0007
+    sourcing: MAKE
+    material_profile: fdm_pla_polylite
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  hard_outcomes:
+  - requirement: REQ-010
+    outcome: FAIL
+    criterion: &id002
+      id: hdt_margin
+      property: heat_deflection_temperature
+      comparator: GE
+      value: 70
+      units: deg_C
+      source: &id001
+        kind: USER
+        reference: owner interview
+        origin: product owner
+        date: '2026-11-03'
+      conditions: 0.45 MPa; lamp head 60 deg_C plus 10 deg_C margin (REQ-010)
+    method: supplier HDT 55 deg_C at 0.45 MPa against 70 deg_C
+    source:
+      kind: DATASHEET
+      reference: PolyLite PLA technical data sheet
+      url: https://example.com/polylite-pla.pdf
+      accessed: '2026-11-02'
+  feasibility: EXCLUDED
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 2
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: quotes not yet sourced
+    lead_time:
+      status: UNKNOWN
+      reason: provider lead time not sourced
+    maintenance:
+      status: KNOWN
+      value: replace pivot bushing on wear
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - PLA softens near the lamp head
+  reversal: re-assess on a changed load or temperature
+  preference_scores:
+  - preference: PRF-011
+    score: 0.95
+    reason: cheapest filament and fastest print
+- id: pa12cf-print
+  title: Printed PA6-CF
+  architecture: printed arm and bracket, printed pivot
+  parts:
+  - PN: LMP-0002
+    sourcing: MAKE
+    material_profile: fdm_pa6_cf20_fiberon
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  - PN: LMP-0007
+    sourcing: MAKE
+    material_profile: fdm_pa6_cf20_fiberon
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  hard_outcomes:
+  - requirement: REQ-010
+    outcome: PASS
+    criterion: *id002
+    method: supplier HDT 186 deg_C at 0.45 MPa
+    source:
+      kind: DATASHEET
+      reference: Fiberon PA6-CF20 TDS
+      url: https://example.com/pa6cf.pdf
+      accessed: '2026-11-02'
+  - requirement: REQ-011
+    outcome: UNKNOWN
+    criterion:
+      status: UNKNOWN
+      reason: creep limit at 60 deg_C over 5 years not yet sourced
+      owner: product owner
+      question: Q-020
+      consequential: true
+    method: creep of the printed pivot under sustained torque
+    reason: no sourced creep data at 60 deg_C
+  feasibility: CONDITIONAL
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 2
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: quotes not yet sourced
+    lead_time:
+      status: UNKNOWN
+      reason: provider lead time not sourced
+    maintenance:
+      status: KNOWN
+      value: replace pivot bushing on wear
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - moisture conditioning of PA6-CF unstated by the supplier
+  reversal: re-assess on a changed load or temperature
+- id: cnc-6082
+  title: Machined 6082 arm and bracket
+  architecture: machined arm and bracket, reamed pivot, anodised
+  parts:
+  - PN: LMP-0002
+    sourcing: MAKE
+    material_profile: al_6082_t6_hydro
+    route:
+    - kind: CNC
+      capability: cnc_router_local
+      provider: LOCAL
+  - PN: LMP-0007
+    sourcing: MAKE
+    material_profile: al_6082_t6_hydro
+    route:
+    - kind: CNC
+      capability: cnc_router_local
+      provider: LOCAL
+    - kind: REAMING
+      capability: hand_ream_h7
+      provider: LOCAL
+    - kind: COATING
+      capability: anodiser_outsourced
+      provider: OUTSOURCED
+  hard_outcomes:
+  - requirement: REQ-010
+    outcome: PASS
+    criterion: *id002
+    method: aluminium alloy far above 70 deg_C; no polymer softening mode
+    source: &id003
+      kind: DATASHEET
+      reference: Hydro 6082 T6 datasheet
+      url: https://example.com/hydro-6082.pdf
+      accessed: '2026-11-02'
+  - requirement: REQ-011
+    outcome: PASS
+    criterion: &id004
+      id: pivot_hold
+      property: pivot_holding_torque
+      comparator: GE
+      value: 1.6
+      units: N_m
+      source: *id001
+      conditions: 3 N head at 400 mm reach, safety factor 1.33 (REQ-011)
+    method: hand calculation of the clamped pivot against 6082 T6 typical yield; to be rechecked with an allowable
+      at ANALYSIS
+    source: *id003
+  - requirement: REQ-013
+    outcome: PASS
+    criterion: &id005
+      id: capability_identified
+      property: provider_capability_identified
+      comparator: EQUALS
+      value: true
+      source:
+        kind: POLICY
+        reference: cad-select references/selection.md select-candidates
+        origin: cad-agent-skills 0.1.0
+        document: cad-select references/selection.md select-candidates
+      conditions: every made operation names a real local or outsourced capability profile (REQ-013)
+    method: cnc_router_local, hand_ream_h7 and anodiser_outsourced profiles are in hw/manufacturing/capabilities.yaml
+    source:
+      kind: POLICY
+      reference: capability library
+      origin: workshop owner
+      document: hw/manufacturing/capabilities.yaml
+  feasibility: FEASIBLE
+  preference_scores:
+  - preference: PRF-010
+    score: 0.6
+    reason: only feasible candidate; heavier than the hybrid would be
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 2
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: quotes not yet sourced
+    lead_time:
+      status: UNKNOWN
+      reason: provider lead time not sourced
+    maintenance:
+      status: KNOWN
+      value: replace pivot bushing on wear
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - 6082 values are typical, not allowables
+  reversal: re-assess on a changed load or temperature
+- id: sheet-hybrid
+  title: Bent DC01 arm with purchased pivot bushing
+  architecture: laser-cut and bent steel arm, purchased iglidur pivot bushing
+  parts:
+  - PN: LMP-0002
+    sourcing: MAKE
+    material_profile: steel_dc01_salzgitter
+    route:
+    - kind: LASER
+      capability:
+        status: UNKNOWN
+        reason: sheet laser provider not identified
+      provider: OUTSOURCED
+    - kind: SHEET_FORMING
+      capability:
+        status: UNKNOWN
+        reason: press brake provider not identified
+      provider: OUTSOURCED
+  - PN: LMP-0012
+    sourcing: BUY
+    material_profile:
+      status: UNKNOWN
+      reason: bushing material from supplier pending
+    route:
+    - kind: PURCHASED
+      purchase:
+        identity:
+          status: KNOWN
+          value: igus GFM-0810-06
+          basis: SUPPLIER_TYPICAL
+          sources:
+          - kind: DATASHEET
+            reference: igus iglidur G flange bearing
+            url: https://example.com/igus-gfm.pdf
+            accessed: '2026-11-02'
+        specification:
+          status: KNOWN
+          value: iglidur G flange bushing 8 x 10 x 6
+          basis: SUPPLIER_TYPICAL
+          sources:
+          - kind: DATASHEET
+            reference: igus iglidur G flange bearing
+            url: https://example.com/igus-gfm.pdf
+            accessed: '2026-11-02'
+        ratings:
+          status: UNKNOWN
+          reason: pv limit at 60 deg_C not retained
+  hard_outcomes:
+  - requirement: REQ-010
+    outcome: PASS
+    criterion: *id002
+    method: steel and the iglidur G bushing (max 130 deg_C long term) above 70 deg_C
+    source:
+      kind: DATASHEET
+      reference: igus iglidur G flange bearing
+      url: https://example.com/igus-gfm.pdf
+      accessed: '2026-11-02'
+  - requirement: REQ-011
+    outcome: PASS
+    criterion: *id004
+    method: bushing friction torque from supplier pv data and preload
+    source:
+      kind: DATASHEET
+      reference: igus iglidur G flange bearing
+      url: https://example.com/igus-gfm.pdf
+      accessed: '2026-11-02'
+  - requirement: REQ-013
+    outcome: UNKNOWN
+    criterion: *id005
+    method: sheet laser and press brake providers
+    reason: no provider identified for LASER or SHEET_FORMING
+  feasibility: CONDITIONAL
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 2
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: quotes not yet sourced
+    lead_time:
+      status: UNKNOWN
+      reason: provider lead time not sourced
+    maintenance:
+      status: KNOWN
+      value: replace pivot bushing on wear
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - sheet laser and press brake providers still to be identified
+  reversal: re-assess on a changed load or temperature
+recommendation:
+  status: CONDITIONAL
+  primary: pla-print
+  fallback: sheet-hybrid
+  governing_requirements:
+  - REQ-010
+  - REQ-011
+  - REQ-013
+  reasons:
+  - pla-print scores highest on cost and lead time
+  limits:
+  - 6082 strength values are typical; ANALYSIS needs an allowable
+  - final only after the INTENT gate approval
+  reversal: switch to sheet-hybrid when a sheet provider capability is sourced and it ranks first
+  what_would_change:
+  - sourced PA6-CF creep data at 60 deg_C
+  - a sheet laser and press brake capability

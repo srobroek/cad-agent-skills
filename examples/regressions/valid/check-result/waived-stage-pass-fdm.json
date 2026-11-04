@@ -1,0 +1,376 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "fdm/a1",
+  "check": "fdm",
+  "attempt": "a1",
+  "family": "process.fdm",
+  "producer_role": "cad-checker",
+  "stage": "DETAIL",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v9",
+    "version_manifest_sha256": "eaa3fb53c32acda3dc63385ce813b8a66e707acdf2f641e1ce28b31ba21fa3ce"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v9/manifest.json",
+      "sha256": "eaa3fb53c32acda3dc63385ce813b8a66e707acdf2f641e1ce28b31ba21fa3ce"
+    },
+    {
+      "path": "hw/versions/v9/manufacturing/STD-0001/part.step",
+      "sha256": "ae926ba64303acfd8dc91812b170b9fe980905f59ef5101ae7b32999829d8beb"
+    },
+    {
+      "path": "hw/versions/v9/manufacturing/STD-0002/part.step",
+      "sha256": "d2ae4eab04f3c24eb16dcef420fe5392ca77e239c6aec9421230d9d77b18d974"
+    },
+    {
+      "path": "hw/versions/v9/record/parts/STD-0001/part.yaml",
+      "sha256": "dbb88f7fccead8c49d93f950cbefe3c1970cf0da4ad392b96627c1a86366f128"
+    },
+    {
+      "path": "hw/versions/v9/record/parts/STD-0002/part.yaml",
+      "sha256": "b7036fc3da77a7278192eacd3c3d06e989635cf36fdf956e1cf992d9c5418fe5"
+    },
+    {
+      "path": "hw/versions/v9/record/manufacturing/capabilities.yaml",
+      "sha256": "b0dcab883f942bb8b0bec5dc7d5d30914e5b245159e975681881b264ff592dc3"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v9/fdm/a1/source/check.py",
+        "sha256": "9d7b9b9b8feda5f02c17cce17ec29e3053356dc8f79e4dfaa79f4a5c93b6627c"
+      },
+      {
+        "path": "hw/checks/v9/fdm/a1/source/check.py.lock",
+        "sha256": "4bfcfec074e9c16b2459ec19449a7ca0e0d2d0024e892b78193ca491e0f0a895"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-fdm-v9/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "STD-0001"
+      },
+      {
+        "kind": "PART",
+        "PN": "STD-0002"
+      }
+    ],
+    "components": [
+      "body"
+    ],
+    "operations": [
+      "print"
+    ],
+    "expected_obligations": [
+      "process.fdm@STD-0001.body/print",
+      "process.fdm@STD-0001.body/print#front_face",
+      "process.fdm@STD-0001.body/print#hinge_bore",
+      "process.fdm@STD-0002.body/print",
+      "process.fdm@STD-0002.body/print#pivot_boss"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "process.fdm@STD-0001.body/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0001",
+        "operation": "print",
+        "component": "body"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "PASS",
+      "value": {
+        "text": "every process.fdm item met"
+      },
+      "criterion": {
+        "id": "fdm_items",
+        "property": "process_fdm_items",
+        "comparator": "EQUALS",
+        "value": "met under capability bambu_x1c and the approved orientation and supports",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v9/fdm/a1/artifacts/fdm.json",
+          "sha256": "89618ee820058a87c62472417748d385b3b6aa5dfdd97e1bf947a284e86b2624"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0001.body/print#front_face",
+      "requirement": "REQ-005",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0001",
+        "feature": "front_face",
+        "component": "body",
+        "operation": "print"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "text": "seam line crosses front_face at 3 layer changes"
+      },
+      "criterion": {
+        "id": "front_face_seam_free",
+        "property": "visible_seam",
+        "comparator": "EQUALS",
+        "value": false,
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "REQ-005 appearance, viewed from the user side"
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v9/fdm/a1/artifacts/fdm.json",
+          "sha256": "89618ee820058a87c62472417748d385b3b6aa5dfdd97e1bf947a284e86b2624"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0001.body/print#hinge_bore",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0001",
+        "feature": "hinge_bore",
+        "component": "body",
+        "operation": "print"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "PASS",
+      "value": {
+        "text": "every process.fdm item met"
+      },
+      "criterion": {
+        "id": "fdm_items",
+        "property": "process_fdm_items",
+        "comparator": "EQUALS",
+        "value": "met under capability bambu_x1c and the approved orientation and supports",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v9/fdm/a1/artifacts/fdm.json",
+          "sha256": "89618ee820058a87c62472417748d385b3b6aa5dfdd97e1bf947a284e86b2624"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0002.body/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0002",
+        "operation": "print",
+        "component": "body"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "PASS",
+      "value": {
+        "text": "every process.fdm item met"
+      },
+      "criterion": {
+        "id": "fdm_items",
+        "property": "process_fdm_items",
+        "comparator": "EQUALS",
+        "value": "met under capability bambu_x1c and the approved orientation and supports",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v9/fdm/a1/artifacts/fdm.json",
+          "sha256": "89618ee820058a87c62472417748d385b3b6aa5dfdd97e1bf947a284e86b2624"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0002.body/print#pivot_boss",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0002",
+        "feature": "pivot_boss",
+        "component": "body",
+        "operation": "print"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "PASS",
+      "value": {
+        "text": "every process.fdm item met"
+      },
+      "criterion": {
+        "id": "fdm_items",
+        "property": "process_fdm_items",
+        "comparator": "EQUALS",
+        "value": "met under capability bambu_x1c and the approved orientation and supports",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v9/fdm/a1/artifacts/fdm.json",
+          "sha256": "89618ee820058a87c62472417748d385b3b6aa5dfdd97e1bf947a284e86b2624"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.fdm:STD-0001.body/print#front_face:seam",
+      "family": "process.fdm",
+      "obligation": "process.fdm@STD-0001.body/print#front_face",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0001",
+        "feature": "front_face",
+        "component": "body",
+        "operation": "print"
+      },
+      "severity": "MINOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "seam line crosses front_face at 3 layer changes"
+      },
+      "criterion": {
+        "id": "front_face_seam_free",
+        "property": "visible_seam",
+        "comparator": "EQUALS",
+        "value": false,
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "REQ-005 appearance, viewed from the user side"
+      },
+      "requirements": [
+        "REQ-005"
+      ],
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "seam position from the slicer profile placement rule, not a slicer run",
+      "consequence": "visible seam on the user-facing surface; no load or fit effect",
+      "remedy": "move the seam by reorienting, or accept a waiver for the appearance criterion",
+      "alternatives": [
+        {
+          "text": "rotate 90 deg about Z",
+          "tradeoff": "hinge bore axis vertical; changes support plan"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "process.fdm"
+        ],
+        "earliest_stage": "DETAIL"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v9/fdm/a1/artifacts/fdm.json",
+      "sha256": "89618ee820058a87c62472417748d385b3b6aa5dfdd97e1bf947a284e86b2624",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v9/fdm/a1/stdout.txt",
+      "sha256": "92dfd08d97c9e104df900de2ec97defe44d9df44ea029f3561d609bdf8a8c831",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "geometry against the capability profile; no slicer or print trial: those are physical.test obligations"
+  ]
+}

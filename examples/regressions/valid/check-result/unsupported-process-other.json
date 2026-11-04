@@ -1,0 +1,156 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "other/a1",
+  "check": "other",
+  "attempt": "a1",
+  "family": "process.other",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v4",
+    "version_manifest_sha256": "904f3a0308c3b49115036c90499b9c61292e8147bb13b6dfa3e3050554dca3e1"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v4/manifest.json",
+      "sha256": "904f3a0308c3b49115036c90499b9c61292e8147bb13b6dfa3e3050554dca3e1"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v4/other/a1/source/check.py",
+        "sha256": "bb01bdb95db10c2fa4cbe92697c1b6b3f6e823e98f1eda175b15ce3ed8d49f86"
+      },
+      {
+        "path": "hw/checks/v4/other/a1/source/check.py.lock",
+        "sha256": "3b6b1caf81bc0b777c82f690c809f5a3bd3720641b144cf73b3206f80ded37c7"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-other-v4/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "LMP-0009"
+      }
+    ],
+    "components": [
+      "clip"
+    ],
+    "operations": [
+      "bend"
+    ],
+    "expected_obligations": [
+      "process.other@LMP-0009.clip/bend"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "process.other@LMP-0009.clip/bend",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0009",
+        "operation": "bend",
+        "component": "clip"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "UNKNOWN",
+      "reason": "the check plan has no criterion list for hand-bent spring wire; no other process criteria substitute",
+      "unknown_code": "UNSUPPORTED_METHOD",
+      "criterion": {
+        "status": "UNKNOWN",
+        "reason": "no criterion list for this process",
+        "owner": "product owner",
+        "question": "Q-022",
+        "consequential": true
+      },
+      "method": {
+        "name": "process.other needs the operation description plus a check-plan criterion list for that process (cad-verify references/process-checks.md)"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.other:LMP-0009.clip/bend:coverage",
+      "family": "process.other",
+      "obligation": "process.other@LMP-0009.clip/bend",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0009",
+        "operation": "bend",
+        "component": "clip"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "no method"
+      },
+      "criterion": {
+        "status": "UNKNOWN",
+        "reason": "no criterion list"
+      },
+      "method": {
+        "name": "process.other needs the operation description plus a check-plan criterion list for that process (cad-verify references/process-checks.md)"
+      },
+      "uncertainty": "none",
+      "consequence": "manufacturability of the clip is unassessed",
+      "remedy": "add a check-plan entry with bend radius, springback and wire grade criteria for this process, or replace the clip by a purchased spring",
+      "recheck": {
+        "families": [
+          "process.other"
+        ],
+        "earliest_stage": "SPECIFY"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v4/other/a1/stdout.txt",
+      "sha256": "71e09284ef671a77db137fb01903fd650ba480b67e9fcbb27720dd560685f69d",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "UNKNOWN",
+  "limitations": [
+    "the imported record is readable but uncertified: its legacy evidence is not stage evidence"
+  ]
+}

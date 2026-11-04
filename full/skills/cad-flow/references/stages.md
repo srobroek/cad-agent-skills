@@ -53,8 +53,7 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    (cad-model references/model-contract.md and references/exports.md) → geometry `PRESENT`. Otherwise record
    geometry `NOT_APPLICABLE` with the reason: GROUND to VARIANT "no assembly definition yet", CRITIQUE
    "reviews the predecessor version", RELEASE "payload is the FREEZE version".
-3. Stage the snapshot and geometry in `.cad-work/stage-vN/`, copy them to `hw/versions/vN/`, and write
-   `manifest.json` (root `version-manifest`) last → the manifest validates.
+3. Stage the snapshot and geometry under `.cad-work/stage-vN/` and copy them following [cad-model's Version build contract](../../cad-model/references/exports.md#version-build), then write `manifest.json` (root `version-manifest`) last → the manifest validates.
 4. An interrupted copy with unchanged inputs completes with identical bytes; changed inputs leave `vN`
    without a manifest, never resumed and never reused.
 
@@ -133,8 +132,8 @@ Each owner reference defines the step under a heading with the procedure ID.
 
 | ID | Owner reference | Output |
 |---|---|---|
-| `record-bootstrap` | cad-record SKILL.md workflow (bootstrap, or references/import.md) | `hw/` from the template or an approved import |
-| `intake-use-case` | cad-select references/use-case.md | intake, service, risk, authority, release scope, questions |
+| `record-bootstrap` | cad-record references/record.md (`skill://cad-record/references/record.md#record-bootstrap`) | `hw/` from the template or an approved import |
+| `intake-use-case` | cad-select references/selection.md | intake, service, risk, authority, release scope, questions |
 | `select-candidates` | cad-select references/selection.md | candidates and the facts to source |
 | `assess-selection` | cad-select references/selection.md | `selection.yaml` assessment and recommendation |
 | `specify-requirements` | cad-verify references/check-plan.md | requirement criteria, methods, facets, due stages |

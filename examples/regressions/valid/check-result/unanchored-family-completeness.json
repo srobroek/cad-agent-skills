@@ -1,0 +1,170 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "check-plan-completeness/a1",
+  "check": "check-plan-completeness",
+  "attempt": "a1",
+  "family": "check_plan.completeness",
+  "producer_role": "cad-checker",
+  "stage": "SPECIFY",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v3",
+    "version_manifest_sha256": "8a8b0bbe2afac52aa592210ee572c27934ae8a8f72d57ebe7ab4184f95548873"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v3/manifest.json",
+      "sha256": "8a8b0bbe2afac52aa592210ee572c27934ae8a8f72d57ebe7ab4184f95548873"
+    },
+    {
+      "path": "hw/versions/v3/record/check-plan.yaml",
+      "sha256": "3e61ad0bf3078b3bd6baa00d6ec92a4249b42c07d43a22bbc6be1305b18c2fbc"
+    },
+    {
+      "path": "hw/versions/v3/record/requirements.yaml",
+      "sha256": "f2864ea62a94c94872745c506e8f8001b446f74a32251a1ea9312bba2a433e25"
+    },
+    {
+      "path": "hw/versions/v3/record/interfaces.yaml",
+      "sha256": "d0dc7e5cbb7f6b3f0385b2e50adc6c10a8072150295ec80727ef2016da08a47c"
+    },
+    {
+      "path": "hw/versions/v3/record/manufacturing/selection.yaml",
+      "sha256": "60dcda12c552061aaa26a7886ceb44da4580e837db44678543ec849135e9bb6d"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v3/check-plan-completeness/a1/source/check.py",
+        "sha256": "bca0fea6ac53b6964b59a3f550819a9e6192a34d36dc1cf80a80f5eb56ec3a19"
+      },
+      {
+        "path": "hw/checks/v3/check-plan-completeness/a1/source/check.py.lock",
+        "sha256": "36e365132544a19b3392a9e320a56b1e9e26e38df7a5197f52e3f617b98ae17a"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-plan-v3/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "check_plan.completeness@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "check_plan.completeness@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "text": "plan families whose stage condition holds have no check: geometry.interference, motion.play, motion.access, assembly.operations, capability.route, fit.limits, fit.stack, mass.properties, load.hand"
+      },
+      "criterion": {
+        "id": "plan_complete",
+        "property": "check_plan_complete",
+        "comparator": "EQUALS",
+        "value": true,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/check-plan.md plan-checks",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/check-plan.md plan-checks"
+        }
+      },
+      "method": {
+        "name": "check_plan.completeness rules (cad-verify references/check-plan.md plan-checks)"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v3/check-plan-completeness/a1/artifacts/check-plan-completeness.json",
+          "sha256": "a9146410ca213cb691734cfa24fdf73e9d6251ae77943d5ca9fbd2721b6d6de7"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "check_plan.completeness:product:missing_family",
+      "family": "check_plan.completeness",
+      "obligation": "check_plan.completeness@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "9 plan families without a check"
+      },
+      "criterion": {
+        "id": "plan_complete",
+        "property": "check_plan_complete",
+        "comparator": "EQUALS",
+        "value": true,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/check-plan.md plan-checks",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/check-plan.md plan-checks"
+        }
+      },
+      "method": {
+        "name": "check_plan.completeness rules (cad-verify references/check-plan.md plan-checks)"
+      },
+      "uncertainty": "record fact",
+      "consequence": "each would enumerate as <family>@product UNKNOWN UNSUPPORTED_METHOD and block its stage",
+      "remedy": "add the missing checks and their STACK, LOAD and MASS cases, then re-run SPECIFY as a new attempt",
+      "recheck": {
+        "families": [
+          "check_plan.completeness"
+        ],
+        "earliest_stage": "SPECIFY"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v3/check-plan-completeness/a1/artifacts/check-plan-completeness.json",
+      "sha256": "a9146410ca213cb691734cfa24fdf73e9d6251ae77943d5ca9fbd2721b6d6de7",
+      "role": "DATA"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": []
+}
