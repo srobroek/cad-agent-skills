@@ -69,7 +69,7 @@ stages:
   - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker
   - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
   - each fact a reply leaves open recorded as a typed UNKNOWN with owner and question (cad-select references/selection.md "Ask and finish intake" step 2) for screen-tap force, sun exposure, service life and wear, dimensional stability, the printer envelope and the material approvals; holding, friction, tipping and durability are release_scope exclusions from A-15, not new questions
-  - the gate packet lists Q-023 printer envelope and Q-024 material approvals as limits due at INTENT, and the out-of-scope unknowns (consequential false) as owned open questions; none blocks GROUND (cad-select references/selection.md "Scope of each unknown")
+  - the gate packet lists the printer envelope and the material approvals as limits due at INTENT, and the out-of-scope unknowns (consequential false) as owned open questions; none blocks GROUND (cad-select references/selection.md "Scope of each unknown")
   must_not:
   - choose a material, process, printer setting, tolerance or clearance
   - turn an "I don't know" answer into a value or a default

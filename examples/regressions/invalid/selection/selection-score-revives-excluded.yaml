@@ -1,6 +1,15 @@
 status: ASSESSED
 assessment:
-  input_sha256: 6c0969008f17372ff4405189b1e7d7f3dc2e44e9c71dcc4a5c946b85823b4738
+  inputs:
+  - path: hw/manufacturing/capabilities.yaml
+    sha256: 16d61578eac1da16044e51fe44c7f936e4229c5d420f984d5054d80641cd07a3
+  - path: hw/manufacturing/materials.yaml
+    sha256: 1310effc8842851986c030bd6ba1ef1c7eb55a454cea15f9ea66bb8a5ff741f7
+  - path: hw/product.yaml
+    sha256: a791218fca458394aad05b4a5372f80870958586ac6708daaefac5249df4fa2b
+  - path: hw/requirements.yaml
+    sha256: da758cbbb69ab655ae2c551d214648ca0dd46ddead0de54cb55a1550a1be86ee
+  input_sha256: 5a786b96e01218fd2d981c780c2054c1db323965504bf32d4badb9625eaf3992
   method: hard outcomes per requirement, then preferences over FEASIBLE candidates only
   date: '2026-11-03'
 candidates:
