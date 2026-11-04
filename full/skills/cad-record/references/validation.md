@@ -87,6 +87,10 @@ JSON Schema does not prove the items below. The lead or checker writes its own p
 13. Derived files: BOM rows sorted by path then component, verification rows by requirement, subject and
     facet; each CSV equals its YAML authority.
 14. Bootstrap: after GROUND, `product.yaml` `id` and `title` are no longer the template values.
+15. Version runtime: each `runtime.environments[].lock` equals one `build.locks` entry (path and sha256), no
+    two environments share a lock, and every built PN's `model.kernel` has the environment of that kernel.
+16. Self-referencing evidence: no verification row cites a `verification.index` result file, and no variant,
+    integrity result or index carries the digest of a file that hashes it (references/record.md hash graph).
 
 ## Reporting
 
