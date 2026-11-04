@@ -193,7 +193,8 @@ NOT_APPLICABLE is `{status, reason}`.
 check covered by a permitted waiver and requires `waiver` (WV-###); `waiver` is forbidden on every other result.
 The check's own `result.json` keeps its FAIL or UNKNOWN. PASS needs `complete`, no blockers, only PASS, WAIVED and
 NOT_APPLICABLE results, and a PASS review when one is required. Waiver existence, scope and expiry are semantic
-checks (references/validation.md).
+checks (references/validation.md). A required review graded MINOR or MAJOR is a blocker with code `REVIEW_MINOR`
+or `REVIEW_MAJOR`.
 
 ## Bundle manifest, brief and delivery
 
