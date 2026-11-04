@@ -167,6 +167,13 @@ Result files outside `hw/checks/`: drawing `coverage.json` uses family `drawing.
 `release.integrity`, check `package-integrity`, attempt `a1` and VERSION binding. A redo is a new vN or REV.
 The `common` root validates contract probes only (`probe: cad-agent-skills.common`); no runtime file uses it.
 
+## Version manifest runtime (`version-manifest`)
+
+`runtime` PRESENT is `{status, environments[{kernel cadquery|build123d, python, packages[{name, version}], lock{path
+under hw/versions/vN/source/, sha256}}], platform, commands}`: one locked uv environment per kernel that ran, at
+least one, never two with the same kernel; each `lock` is one of `build.locks` (references/validation.md item 15).
+NOT_APPLICABLE is `{status, reason}`.
+
 ## Stage verdict (`stage-verdict`)
 
 `stage`, `version`, `predecessor{stage, version, verdict, approval}` (required after GROUND), `supersedes`,

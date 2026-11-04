@@ -130,10 +130,12 @@ verification-row/invalid/planned-with-results.yaml: PLANNED rows carry no result
 verification-row/invalid/unknown-without-code.yaml: UNKNOWN requires reason and unknown_code
 verification/invalid/row-invented-pass.yaml: rows are verification-row roots; PASS needs results and a real criterion
 verification/invalid/wrong-format.yaml: format names the verification root
+version-manifest/invalid/duplicate-kernel.json: runtime has at most one environment per kernel
 version-manifest/invalid/geometry-not-mm.json: geometry is millimetres, right-handed Z-up
 version-manifest/invalid/includes-check-result.json: inventories hold only hw/versions/vN snapshots; no downstream results
 version-manifest/invalid/includes-itself.json: the manifest and stage verdict are never inventoried
 version-manifest/invalid/pre-cad-no-reason.json: NOT_APPLICABLE geometry states its reason
+version-manifest/invalid/runtime-single-kernel.json: runtime records environments[], never a top-level kernel, python or packages
 worker-brief/invalid/installed-hash.yaml: 'installed skills are never hashed: installed_sha256 is not a field'
 worker-brief/invalid/lock-outside-scratch.yaml: a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
 worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name and version

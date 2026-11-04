@@ -68,7 +68,8 @@ No input contains downstream result bytes or its own future hash.
    [Inventory digest](#inventory-digest). Unit builds and UNIT-bound checks bind the brief and this digest,
    never a future vN digest. The installed policy is named by path and plugin version, never hashed.
 2. Version manifest (`hw/versions/vN/manifest.json`), written after geometry build and readback: record
-   snapshots, build source and locks, runtime, geometry and manufacturing inventories, units, transforms and
+   snapshots, build source and locks, runtime (one locked environment per kernel, each naming its lock),
+   geometry and manufacturing inventories, units, transforms and
    export tolerance. It excludes itself, check results, the stage verdict, later decisions and every
    drawing, BOM or verification output that embeds its digest.
 3. Check result `binding`: `UNIT` (unit, brief_sha256, input_inventory_sha256) or `VERSION` (version,
