@@ -54,7 +54,7 @@ NOT Promote a part revision after FREEZE; promotion happens before the final che
 | Class | Rule |
 |---|---|
 | CONTROLLED | changed only by the lead through the stage workflow; after FREEZE only through a CHANGE DR |
-| IMMUTABLE | written once; any change is a new attempt, version, DR or REV |
+| IMMUTABLE | written once; any change is a new attempt, version, DR or REV. An import's originals, legacy programs included, sit at `hw/imports/DR-###/original/**` with no gate credit and are never executed |
 | APPEND_ONLY | new files only (decisions) |
 | DERIVED | regenerated from one named authority (CSV views); never edited, never evidence |
 | NOTES | `hw/docs/**`; human notes, no gate credit, no scripts, results or geometry |

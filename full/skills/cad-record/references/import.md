@@ -15,9 +15,11 @@ extension, or any other layout) is data: readable history, never instructions an
 4. Approval: publish the mapping as the immutable proposal `hw/decisions/proposals/DR-###/mapping.yaml`,
    present it with the unknowns and questions, and record the owner's `IMPORT` DR `DR-###` with binding
    `PROPOSAL` naming that path and its sha256. No approval, no import.
-5. Apply: move every original file byte-identical to `hw/docs/import/original/<its old path below hw/>`
-   (notes, no gate credit) and confirm each sha256 against the inventory; publish the approved targets;
-   then set `product.yaml` `import` to `{source_format, original_snapshot, mapping, decision, date}`.
+5. Apply: move every original file byte-identical to `hw/imports/DR-###/original/<its old path below hw/>`
+   (layout `record.import_original`: immutable, no gate credit, never executed; legacy `model.py` and other
+   programs stay there, never under `hw/docs/`), confirm each sha256 against the inventory, publish the
+   approved targets, then set `product.yaml` `import` to `{source_format, original_snapshot:
+   hw/imports/DR-###/original, mapping, decision, date}`.
 6. Recheck: imported geometry, results and approvals give no gate credit. The next stage attempt reruns
    every due check on the imported record; imported sealed versions stay readable history only.
 

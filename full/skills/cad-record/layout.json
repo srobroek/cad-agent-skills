@@ -268,6 +268,20 @@
       "meaning": "the immutable proposal bytes (selection, orientation, support, waiver, change, import mapping) a PROPOSAL-bound DR names"
     },
     {
+      "id": "record.import_original",
+      "path": "hw/imports/{DR}/original/**",
+      "kind": "RECORD",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-record",
+      "writer": "lead, when applying the approved IMPORT DR named by {DR}",
+      "mutability": "IMMUTABLE",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "an IMPORT DR is APPROVED and applied"},
+      "gate_credit": false,
+      "meaning": "byte-identical original files of an imported record, at their old path below hw/, including legacy programs; readable history, never executed, never evidence"
+    },
+    {
       "id": "notes.docs",
       "path": "hw/docs/**",
       "kind": "NOTES",
