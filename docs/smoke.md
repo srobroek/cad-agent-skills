@@ -51,10 +51,13 @@ Capture every output to `$SMOKE_LOG/<harness>-<variant>/`, outside the project.
 2. Install the variant at project scope with the commands in [install.md](install.md) for this harness. For Claude
    Code and OMP, the marketplace route is the release route; a run with `--plugin-dir` is recorded as a local run.
 3. Start the harness in `SMOKE_PROJECT` with the start command below. One session, one lead: every reply resumes the
-   same session id, and a second session for the project (a fork, or a reply sent to an older id) fails the cell. If
-   the host or provider fails mid-turn, save the failure. For OpenCode, `run --session` cannot resume without a
-   message: send one neutral, recorded line (for example, `Continue from the last recorded state.`) and record this
-   deviation, or restart in a fresh project and mark the original cell `BLOCKED`.
+   same session id, and a second session for the project (a fork, or a reply sent to an older id) fails the cell.
+   Never set an operator-side outer deadline shorter than the harness turn limit. If provider credentials fail in a
+   headless turn, resume once with a neutral, recorded line; never resend scripted answers. For OMP, recover an
+   interrupted turn and its subagents with `--restore <session-file>` and keep the same session id. If provider
+   failure prevents clean recovery, record the deviation and restart in a fresh project. For OpenCode, `run --session`
+   cannot resume without a message: send one neutral, recorded line (for example, `Continue from the last recorded
+   state.`), record this deviation, or restart in a fresh project and mark the original cell `BLOCKED`.
 4. Discovery: list skills and agents with the listing below → exactly the eight skills `cad-flow`,
    `cad-record`, `cad-select`, `cad-design`, `cad-model`, `cad-verify`, `cad-review`, `cad-release` and the five roles
    `cad-concept-designer`, `cad-part-designer`, `cad-checker`, `cad-mech-dfm-reviewer`, `cad-sourcing-researcher`,
@@ -90,7 +93,7 @@ discovery forms were verified on 2026-11-04 with Claude Code 2.1.316, Codex CLI 
 | Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; from `SMOKE_PROJECT` (`exec resume` has no `-C`): `codex exec resume <thread-id> "<reply>"` | `$cad-flow` |
 | OpenCode | start `opencode serve --port <p>` with the isolated environment below | `opencode run --server http://127.0.0.1:<p> --format json "<prompt>"`; every reply uses `opencode run --server http://127.0.0.1:<p> --session <session-id> "<reply>"` | `/cad-flow` |
 | Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
-| OMP | `omp --config "$MODEL_ROLES" --config "$MODELS"` | the same with `-p "<prompt>"`; `--resume <session-id> -p "<reply>"` | `/cad-flow` |
+| OMP | `omp --profile cad-smoke --no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h` | `omp --profile cad-smoke --no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h -p "<prompt>"`; resume an interrupted print turn with `omp --profile cad-smoke --no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h --restore <session-file>` | `/cad-flow` |
 
 | Harness | Skills | Roles |
 |---|---|---|
@@ -112,7 +115,14 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 | Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. The toolbox wrapper rewrites the config: pre-create an empty `.builder-mcp-setup-complete` to prevent the builder-mcp server; it still adds `approvals_reviewer` and telemetry, which must be recorded as deviations. |
 | OpenCode | `OPENCODE_CONFIG_DIR` set to an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`; run persistent `opencode serve --port <p>` with provider credentials and region in its environment and fixed model `--model <provider/model#variant>`; runs and role listing use that server URL. |
 | Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
-| OMP | `--no-rules --no-context-files --no-extensions --skills 'cad-*'` |
+| OMP | Use a fresh named `--profile cad-smoke`, plus `--no-rules --no-context-files --no-extensions --skills 'cad-*'`; overlay `mcp.enableProjectConfig: false` via `--config` to exclude project `.mcp.json`. |
+
+OMP's named profile isolates user-level OMP settings, plugins, MCP configuration and session storage under
+`~/.omp/profiles/cad-smoke/`; it does not isolate project `.omp` discovery, so run only in a fresh project that
+contains the installed plugin. Disable ambient extension discovery and rules with the flags above. The user-level
+advisor configuration lives with that profile; explicitly record any advisor, memory, TTSR, MCP server or bash
+interceptor still active as a deviation. Profile plus flags do not guarantee isolation from project or externally
+installed policy.
 
 The Claude Code and OMP flags are in each CLI's `--help` (versions above).
 `CODEX_HOME` is the Codex configuration-home variable. Its fresh config must
@@ -136,6 +146,11 @@ values. This prevents inherited host variables (for example,
 - Codex CLI: custom agents inherit the parent sandbox and approval mode. Use
   the fresh `CODEX_HOME` and the `--ignore-rules` route above; a blocked step is
   a finding, never a reason to grant broader access.
+- Codex CLI: sandbox escalation handling (including the `auto_review` guardian) is a recorded deviation. Record each
+  escalation and guardian decision; never treat approval as a workaround for the documented sandbox boundary.
+- OMP: use the fresh `cad-smoke` profile and isolation flags above. `omp config get task.isolation.enabled --json`
+  prints `false`; do not install or mutate OMP plugins in the cell. The project-scoped plugin stays under the fresh
+  project. Record the profile's external session store as an allowed cache and remove the temporary profile after.
 - Kiro CLI V3: grant only exact V3 tool ids, never `--trust-all-tools`. In 3.0.0, `--no-interactive` denied
   `execute_bash` even when the exact id was trusted, so the headless route needs `--trust-all-tools` and is not used;
   run the cell interactively in `tmux` and approve each call. The ids: `read_file`, `list_directory`, `file_search`,
@@ -146,10 +161,6 @@ values. This prevents inherited host variables (for example,
   tool and MCP server) is a recorded deviation: the installed role files no longer equal the release. Kiro's
   workspace-trust prompt writes `~/.kiro/workspace-roots/`; record this user-level side effect and remove the entry
   after the cell.
-- OMP: `omp config get task.isolation.enabled --json` prints `false` before the run; a local run adds
-  `--plugin-dir "$CAD_AGENT_SKILLS_SRC/<variant>"`. A project-scope install still writes its files to the user cache
-  `installPath`, shared by every project on the account: run one OMP cell per account at a time and uninstall only
-  after it finishes. Never run `omp agents unpack`; it writes bundled agents into the project.
 
 ## Evidence to capture
 
@@ -164,7 +175,7 @@ values. This prevents inherited host variables (for example,
 | gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`, the quoted reply equals the scripted text |
 | native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only |
 | deliveries | `.cad-work/<unit>/delivery.json` | validates against `worker-delivery`; boundary digests equal; accepted bytes merged verbatim |
-| writes | the transcript's tool calls | no write to an installed skill, schema or role file and none outside `hw/` and `.cad-work/` |
+| writes | the transcript's tool calls | no write to an installed file and no record/evidence write outside `hw/` and `.cad-work/`; uv/package caches, bytecode, session stores and other named host caches may be elsewhere and are recorded |
 | schema results | step 8 output | every command exits 0 |
 | obligations | step 9 comparison | no missing or extra family; no `must_not` |
 | transcript | the harness session export or JSONL | kept unedited |
