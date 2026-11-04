@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills verification row",
-  "description": "One derived requirement x subject x facet row. Outcomes are copied from check results, never invented; PLANNED marks a facet due at a later stage.",
+  "description": "One derived requirement x subject x facet x criterion row, sorted by requirement, subject anchor, facet and criterion (references/validation.md item 13). Outcomes are copied from check results, never invented; PLANNED marks a facet due at a later stage; a row with no obligation is UNKNOWN INCOMPLETE, a scope gap.",
   "type": "object",
   "additionalProperties": false,
   "required": ["requirement", "subject", "method", "criterion", "facet", "due", "outcome", "obligations"],
@@ -22,7 +22,7 @@
           {"not": {"pattern": "^verification\\.index@"}}
         ]
       },
-      "minItems": 1,
+      "minItems": 0,
       "uniqueItems": true
     },
     "results": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
@@ -50,6 +50,10 @@
     {
       "if": {"required": ["outcome"], "properties": {"outcome": {"const": "PLANNED"}}},
       "then": {"not": {"required": ["results"]}}
+    },
+    {
+      "if": {"required": ["obligations"], "properties": {"obligations": {"maxItems": 0}}},
+      "then": {"properties": {"outcome": {"const": "UNKNOWN"}, "unknown_code": {"const": "INCOMPLETE"}}}
     }
   ]
 }

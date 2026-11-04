@@ -5,6 +5,31 @@ Owner: cad-flow. Runs first in every lead session, before any write under `hw/`.
 `.cad-work/lead/preflight.json` (scratch, no root). One shared local filesystem is supported; several hosts writing one project are
 unsupported.
 
+## Identify the host
+
+Runs before every other preflight command.
+
+1. `harness` is the host this conversation runs in, known from its own system prompt and tool names: `OMP`, `CLAUDE`, `CODEX`,
+   `OPENCODE` or `KIRO`. Never infer it from environment variables or the process tree: a shell another host started passes on that
+   host's variables.
+2. `session` is the native id of this conversation, read only from the row of `harness` by printing that one variable (on Codex
+   `printf '%s\n' "${CODEX_THREAD_ID-}"`), never by listing or searching the environment. Unset or empty → `UNAVAILABLE-<started stamp>`.
+
+   | `harness`  | `session` source                                                             |
+   | ---------- | ---------------------------------------------------------------------------- |
+   | `OMP`      | `$PI_SESSION_ID`                                                             |
+   | `CLAUDE`   | `$CLAUDE_CODE_SESSION_ID`                                                    |
+   | `CODEX`    | `$CODEX_THREAD_ID`                                                           |
+   | `OPENCODE` | `$OPENCODE_SESSION_ID`                                                       |
+   | `KIRO`     | none: Kiro exports no session variable; always `UNAVAILABLE-<started stamp>` |
+
+3. A variable of another row (`PI_*`, `CLAUDE_*`, `CODEX_*`, `OPENCODE_*`) is never `session` and never evidence of `harness`; never
+   invent an id. An `UNAVAILABLE-*` session reports that resume matching and fork detection are unavailable on this host.
+4. `isolation` is `NOT_APPLICABLE`, and no `omp` command runs, on every harness except OMP.
+5. Harness `OMP` only: `omp config get task.isolation.enabled --json` prints `false` → `isolation: DISABLED`; otherwise stop and ask
+   the user to set it, because an isolated worker writes into a clone the lead never reads.
+6. Every harness: the first delivery appears at `<root>/.cad-work/<unit>/delivery.json`; a delivery elsewhere stops dispatch.
+
 ## Claim the project
 
 1. `root` is `pwd -P` of the product project: the directory that holds, or will hold, `hw/`.
@@ -18,17 +43,12 @@ unsupported.
    `.cad-work/lead/sessions/<old stamp>/claim.yaml`, then write the new claim with
    `recovery: {reference (their confirmation), operator, previous_session, time}`.
 
-`session` is the host's native id for this conversation, the id its resume command takes: the Claude Code session id, Codex thread id,
-OpenCode session id, Kiro session id or OMP session id (`$PI_SESSION_ID`). Read it from the environment or the host's own session listing;
-never invent one. When the host exposes none to the lead, write `UNAVAILABLE-<started stamp>` and report that resume matching and fork
-detection are unavailable on this host.
-
 NOT Treat the claim's age, a PID or a quiet terminal as proof that its owner stopped.
 
 ## Session directory
 
 `<stamp>` is the claim's `started` without `-` and `:` (`20261103T101500Z`). `.cad-work/lead/sessions/<stamp>/` holds this session's
-approval statements, and at finish its claim, preflight and unit log. Nothing in `.cad-work/lead/sessions/` is ever deleted.
+claim, preflight and unit log at finish. Nothing in `.cad-work/lead/sessions/` is ever deleted.
 
 ## Resolve resources
 
@@ -37,7 +57,8 @@ approval statements, and at finish its claim, preflight and unit log. Nothing in
 2. Test `-f` each derived path: `<cad-record>/schemas/<root>.schema.json` for `common` and the ten schema roots that
    [cad-record's prose contract](../../cad-record/references/prose-contract.md) lists, that prose contract itself,
    [cad-record's layout](../../cad-record/layout.json), `<cad-flow>/assets/stages.yaml`, `<cad-flow>/assets/worker-brief.yaml`,
-   `<cad-flow>/assets/worker-delivery.yaml` and [cad-flow agent-roles](agent-roles.md).
+   `<cad-flow>/assets/worker-delivery.yaml`, [cad-flow agent-roles](agent-roles.md) and
+   [cad-review's rubric](../../cad-review/references/rubric.md) `<cad-review>/references/rubric.md`.
 3. Plugin provenance ([cad-record common plugin](../../cad-record/schemas/common.schema.json#/$defs/plugin)): `name` and `version` are the
    `metadata.plugin` and `metadata.version` values in the frontmatter of the resolved `<cad-flow>/SKILL.md`, on every host. Either value
    missing → stop as an installation defect.
@@ -64,19 +85,16 @@ Run the required probes as one shell command.
 A missing required tool stops with `MISSING_RESOURCE`. A missing optional tool is recorded; its checks become UNKNOWN `UNSUPPORTED_METHOD`,
 never a fallback method.
 
-## Host isolation
-
-- OMP host only: `omp config get task.isolation.enabled --json` prints `false`; otherwise stop and ask the user to set it, because an
-  isolated worker writes into a clone the lead never reads. Every other host runs no `omp` command and records `isolation: NOT_APPLICABLE`.
-- Every host: the first delivery appears at `<root>/.cad-work/<unit>/delivery.json`; a delivery elsewhere stops dispatch.
-
 ## preflight.json
 
 Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`, `schemas [{name, path}]`, `layout`,
-`policy {path, plugin}`, `role_reference`, `templates`, `tools [{name, argv, version}]`, `isolation`, `time`. Every path is absolute. Briefs
-and verdicts copy resource paths and provenance from this file only.
+`policy {path, plugin}`, `role_reference`, `rubric`, `templates`, `tools [{name, argv, version}]`, `isolation`, `time`. Every path is
+absolute. Briefs and verdicts copy resource paths and provenance from this file only.
 
 ## Finish
+
+Run at session end. With an `UNAVAILABLE-*` session, also run it before ending every turn, whether it ends `WAITING_FOR_USER`, on a stop
+or with a report: a later turn cannot prove it is this session, so it claims anew.
 
 1. Stop this session's units that still run (`.cad-work/lead/units.yaml`); never another session's.
 2. Copy `claim.yaml` to `.cad-work/lead/sessions/<stamp>/claim.yaml` with `state: RELEASED` and `released` (UTC), and copy `preflight.json`

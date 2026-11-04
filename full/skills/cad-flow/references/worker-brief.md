@@ -6,8 +6,7 @@ Template: [worker-brief template](../assets/worker-brief.yaml). Role duties, ski
 ## Compose
 
 1. `mkdir .cad-work/<unit>` must succeed; an existing directory is an existing unit ([delegation](delegation.md)).
-2. Copy every file the unit reads byte-identically to `.cad-work/<unit>/input/<its project-relative path>`; a
-   `record.semantic` unit also gets the session statement files the inventoried DRs hash.
+2. Copy every file the unit reads byte-identically to `.cad-work/<unit>/input/<its project-relative path>`.
 3. Fill the fields below, validate against the worker-brief root → exit 0, record its sha256 in
    `.cad-work/lead/units.yaml` ([delegation](delegation.md#dispatch-units)). The brief is never edited after dispatch; a change is a new unit.
 
@@ -19,7 +18,8 @@ Template: [worker-brief template](../assets/worker-brief.yaml). Role duties, ski
 | `subjects` | the PNs, components, interfaces, requirements, cases or operations in scope |
 | `input_inventory` | every inventoried `hw/` file with its sha256, and their set digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) |
 | `resources.plugin` | `{name, version}` copied from [preflight](preflight.md#preflightjson) |
-| `resources.skills` | the role's skills from [agent-roles](agent-roles.md) plus [cad-review's rubric](../../cad-review/references/rubric.md), each with its absolute SKILL.md path and `skill://` URI |
+| `resources.skills` | the role's skills from [agent-roles](agent-roles.md), each with its absolute SKILL.md path and `skill://` URI |
+| `resources.rubric` | `{name: rubric, path, uri}`: the `rubric` path of `preflight.json` and `skill://cad-review/references/rubric.md` ([cad-review's rubric](../../cad-review/references/rubric.md)) |
 | `resources.schemas` | every root the unit writes or validates, always `worker-delivery`, and `check-result` when it runs checks |
 | `resources.role_reference` | the absolute path and URI of [agent-roles](agent-roles.md) |
 | `resources.layout`, `resources.policy` | a unit that runs `record.semantic`: the `layout` and `policy.path` values of `preflight.json` |

@@ -103,9 +103,9 @@
     "text": {"type": "string", "minLength": 1},
     "texts": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/text"}},
     "obligation": {
-      "description": "<family>@<anchor> with <placeholders> allowed, optionally followed by a parenthesised condition",
+      "description": "<family>@<anchor>: family is a registered check family (the cad-record common check_family enum), with <placeholders> allowed in the anchor, optionally followed by a parenthesised condition",
       "type": "string",
-      "pattern": "^[a-z][a-z_]*\\.[a-z][a-z_]*@([^ <>()]|<[^<>]+>)+( \\([^()]+\\))?$"
+      "pattern": "^(?:record\\.schema|record\\.semantic|record\\.ownership|record\\.inputs|delivery\\.integrity|intake\\.use_case|selection\\.feasibility|selection\\.sourcing|material\\.properties|requirements\\.completeness|interfaces\\.completeness|check_plan\\.completeness|variant\\.integrity|geometry\\.build|geometry\\.readback|geometry\\.export|geometry\\.identity|geometry\\.manufacture|geometry\\.interference|geometry\\.clearance|motion\\.sweep|motion\\.play|motion\\.access|assembly\\.operations|fit\\.limits|fit\\.stack|process\\.fdm|process\\.resin|process\\.cnc|process\\.laser|process\\.waterjet|process\\.plasma|process\\.sheet_forming|process\\.joining|process\\.casting|process\\.moulding|process\\.extrusion|process\\.secondary|process\\.other|capability\\.route|purchase\\.identity|optical\\.route|mass\\.properties|load\\.hand|load\\.fea|drawing\\.coverage|drawing\\.preview|preview\\.render|bom\\.derivation|verification\\.index|review\\.mechanical_dfm|physical\\.test|release\\.inventory|release\\.integrity)@([^ <>()]|<[^<>]+>)+( \\([^()]+\\))?$"
     },
     "stage_entry": {
       "type": "object",

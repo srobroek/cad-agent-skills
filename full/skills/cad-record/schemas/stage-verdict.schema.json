@@ -49,6 +49,13 @@
       }
     },
     "version_manifest": {"$ref": "common.schema.json#/$defs/file_hash"},
+    "obligations": {
+      "description": "hw/versions/vN/obligations.yaml, written by enumerate-obligations before any check; present once written, required on PASS",
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/file_hash"},
+        {"properties": {"path": {"pattern": "^hw/versions/v[1-9][0-9]*/obligations\\.yaml$"}}}
+      ]
+    },
     "policy": {"$ref": "common.schema.json#/$defs/installed_policy"},
     "expected": {
       "type": "array",
@@ -179,6 +186,7 @@
     {
       "if": {"required": ["result"], "properties": {"result": {"const": "PASS"}}},
       "then": {
+        "required": ["obligations"],
         "properties": {
           "complete": {"const": true},
           "blockers": {"maxItems": 0},

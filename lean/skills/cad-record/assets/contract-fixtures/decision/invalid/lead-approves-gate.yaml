@@ -19,6 +19,7 @@ actor:
   name: cad-flow lead
 time: '2026-11-03T10:15:00Z'
 statement:
+  path: hw/decisions/statements/DR-007.txt
   transcript_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
   quote: 'Approved: LAYOUT v6 with digest cccc…'
   time: '2026-11-03T10:15:00Z'

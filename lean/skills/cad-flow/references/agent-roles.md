@@ -1,15 +1,15 @@
 # Agent roles
 
 Owner: cad-flow. The one contract for the five worker roles: duties, inputs, write boundary, outputs and reply. Each native role file links
-here and repeats no rule. A worker reads this file, its brief and the skills its brief lists; never cad-flow SKILL.md or another lead
-reference. Grading uses the rubric owned by cad-review: [the rubric reference](../../cad-review/references/rubric.md).
+here and repeats no rule except the install guard. A worker reads this file, its brief, and the skills and rubric its brief lists;
+never cad-flow SKILL.md or another lead reference. Grading uses the rubric owned by cad-review:
+[the rubric reference](../../cad-review/references/rubric.md).
 
 ## Every role
 
 1. Read the brief at the absolute path in your task. Every resource is the literal absolute path or `skill://` URI in `resources`; never
    search the product directory or guess an install path.
-2. LOAD the SKILL.md of each `resources.skills` entry the role table names; from cad-review read only the
-   [rubric](../../cad-review/references/rubric.md) unless you are the reviewer.
+2. LOAD the SKILL.md of each `resources.skills` entry, and read the cad-review rubric at `resources.rubric`.
 3. Read the `input_inventory` files from their copies at `.cad-work/<unit>/input/<path>`, and the `boundary.read_only` paths; nothing else.
    A needed file outside them → stop.
 4. Writers: take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) before your first
@@ -59,11 +59,16 @@ its result; that is the evidence, not a stop ([cad-flow worker delivery](worker-
 
 - Concept designer: NOT compare, rank or select variants ([cad-design](../../cad-design/references/concepts.md#compare-variants)).
 - Part designer: NOT change an interface, the assembly or another PN; shared changes are proposals.
-- Reviewer: read-only, runs nothing, writes nothing ([cad-review rubric](../../cad-review/references/rubric.md)). Its reply carries the
-  review result document as one fenced `json` block with `implementation.kind: REVIEW` and `inspected` listing every file read with its
-  sha256 from the brief inventory. The lead writes those bytes unchanged and writes the delivery for it.
+- Reviewer: read-only: runs no build or check program and writes nothing
+  ([cad-review rubric](../../cad-review/references/rubric.md)). On Codex, which has no file-read tool without the shell, it reads
+  through shell read commands and stays read-only by instruction; the lead's tree digest before dispatch and after return
+  ([worker delivery — Read-only reviewer](worker-delivery.md#read-only-reviewer)) is the check. Its reply carries the review result
+  document as one fenced `json` block with `implementation.kind: REVIEW` and `inspected` listing every file read with its sha256 from
+  the brief inventory. The lead writes those bytes unchanged and writes the delivery for it.
 - Sourcing researcher: profiles are proposals to the shared libraries ([cad-select materials](../../cad-select/references/materials.md));
-  NOT purchase, select, approve or write a shared record.
+  NOT purchase, select, approve or write a shared record. Retain each source's original bytes with
+  `curl -fsSL -o <root>/.cad-work/<unit>/output/<path> <url>`, never a web-fetch text conversion; hash them with `shasum -a 256` (or
+  `sha256sum`).
 
 ## Rules for every role
 

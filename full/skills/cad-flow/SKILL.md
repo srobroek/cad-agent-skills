@@ -22,12 +22,12 @@ ASK approval of each change to approved scope, each waiver, and the release inve
 
 ## Workflow
 
-1. LOAD [preflight](references/preflight.md) (`skill://cad-flow/references/preflight.md`); claim the lead lock, resolve
-   resources → `claim.yaml` ACTIVE for this session and `preflight.json` with absolute paths only.
+1. LOAD [preflight](references/preflight.md) (`skill://cad-flow/references/preflight.md`); identify the host, claim the lead lock,
+   resolve resources → `claim.yaml` ACTIVE for this session and `preflight.json` with absolute paths only.
 2. LOAD [stages](references/stages.md) (`skill://cad-flow/references/stages.md`); run `resume-state` against
    `assets/stages.yaml` → the stage, its attempt vN and the next procedure ID.
-3. Run the stage's `procedure` IDs in order, loading the stage `owner` skill for stage-work IDs
-   → one immutable `hw/versions/vN/stage-verdict.json` that validates.
+3. Run the stage's `procedure` IDs in order; before each stage-work ID LOAD the SKILL.md of the skill that owns it in the
+   [stage-work table](references/stages.md#stage-work-procedure-ids) → one immutable `hw/versions/vN/stage-verdict.json` that validates.
 4. At `dispatch-units` LOAD [delegation](references/delegation.md) (`skill://cad-flow/references/delegation.md`),
    [worker brief](references/worker-brief.md) (`skill://cad-flow/references/worker-brief.md`) and [agent roles](references/agent-roles.md)
    (`skill://cad-flow/references/agent-roles.md`) → one batch, each native task ID logged.
@@ -38,7 +38,8 @@ ASK approval of each change to approved scope, each waiver, and the release inve
 7. On a change, FAIL or MAJOR LOAD [change impact](references/change-impact.md) (`skill://cad-flow/references/change-impact.md`)
    → the stage reopened, stale results listed, a CHANGE decision when approved scope changes.
 8. On a stop condition run [the stop procedure](references/stages.md#stop-procedure) → blocker recorded, user told, no further writes.
-9. Finish per [preflight](references/preflight.md) → claim copied into the session directory, only this session's lock released.
+9. Run [preflight Finish](references/preflight.md#finish) when it falls due → claim copied into the session directory, only this
+   session's lock released.
 
 ## Rules
 
@@ -59,4 +60,6 @@ L1 `<STAGE> vN: PASS|FAIL|BLOCKED — WAITING_FOR_USER|APPROVED|REJECTED|NOT_REQ
    Blockers — code, obligation, what unblocks it — only if non-empty
    Limits — UNKNOWN, PLANNED, waivers, sampled coverage, absent physical evidence, synthetic approvals
    Files — one absolute path per line
-CAP 200w clean · 400w with blockers
+   Gate — at `present-gate` only: the whole [gates packet](references/gates.md#present-gate), its `gate_subject`, verdict path and
+   sha256 and manifest sha256 each on its own line, ending with the exact approval form
+CAP 200w clean · 400w with blockers; the Gate block is outside the cap

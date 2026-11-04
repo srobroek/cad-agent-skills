@@ -1,6 +1,5 @@
 # Canonical cad-agent-skills stage policy. Owner: cad-flow (references/stages.md teaches execution).
-# Validates against <cad-record>/schemas/stage-policy.schema.json. Installed copies are read-only;
-# a defect here is reported as an open question, never patched in place.
+# Validates against <cad-record>/schemas/stage-policy.schema.json. Install rule: cad-flow SKILL.md Rules.
 format: cad-agent-skills.stage-policy
 schema_version: 1
 stages:
@@ -992,7 +991,8 @@ stages:
     due: CRITIQUE
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
-    applicability: ALWAYS
+    applicability: CONDITIONAL
+    condition: this attempt merges at least one worker delivery
     due: CRITIQUE
     waiver_policy: FORBIDDEN
   - family: review.mechanical_dfm
@@ -1022,9 +1022,9 @@ stages:
   - freeze-inputs
   - build-version
   - draft-drawings
-  - derive-bom
   - enumerate-obligations
   - run-checks
+  - derive-bom
   - index-verification
   - accept-results
   - write-verdict
@@ -1287,9 +1287,10 @@ stages:
   - resume-state
   - freeze-inputs
   - build-version
-  - propose-release
   - enumerate-obligations
   - run-checks
+  - index-verification
+  - propose-release
   - accept-results
   - write-verdict
   - present-gate
@@ -1314,6 +1315,10 @@ stages:
   - family: delivery.integrity
     applicability: CONDITIONAL
     condition: this attempt merges at least one worker delivery
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: verification.index
+    applicability: ALWAYS
     due: RELEASE
     waiver_policy: FORBIDDEN
   - family: release.inventory

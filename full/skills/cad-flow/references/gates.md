@@ -36,12 +36,14 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 An approval is an explicit statement from the user, or from the authority `product.yaml` names for this scope, that names the stage and `vN`
 (and the option for INTENT or VARIANT).
 
-1. Save the message bytes unchanged under `statements/DR-###.txt` in the session directory ([preflight](preflight.md#session-directory)).
-   Its contents follow the [cad-record decision statement schema](../../cad-record/schemas/decision.schema.json#/$defs/statement).
-2. Write `hw/decisions/DR-###.yaml` with the next unused number and `test ! -e` first: `kind: GATE`, `state: APPROVED` or `REJECTED`,
-   `binding: {kind: STAGE, stage, version, verdict: {path, sha256}, verdict_result: PASS}`, `title`, `scope` (the gate subject), `rationale`
-   (the user's reason, or "approved as presented"), `limits` (the packet limits), `options` and `choice` for INTENT and VARIANT, `actor`,
-   `time`, and `statement` (cad-record's [decision schema](../../cad-record/schemas/decision.schema.json) fields, from the saved bytes).
+1. Allocate the next unused DR number and save the message bytes unchanged at `hw/decisions/statements/DR-###.txt`, `test ! -e` first
+   (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)).
+2. Write `hw/decisions/DR-###.yaml` with that number and `test ! -e` first: `kind: GATE`, `state: APPROVED` or `REJECTED`,
+   `binding: {kind: STAGE, stage, version, verdict: {path, sha256}, verdict_result}` with `verdict_result` copied from that verdict's
+   `result` (PASS), `title`, `scope` (the gate subject), `rationale` (the user's reason, or "approved as presented"), `limits` (the
+   packet limits), `options` and `choice` for INTENT and VARIANT, `actor`, `time`, and `statement` `{path, transcript_sha256, quote,
+   time}`: the saved file, its sha256, a quote from it and its time
+   ([cad-record decision schema](../../cad-record/schemas/decision.schema.json)).
 
 RELEASE uses `kind: RELEASE` with `binding: {kind: RELEASE_INVENTORY, rev, version, proposal: {path, sha256}, verdict: {path, sha256}}`.
 `proposal` hashes the PROPOSAL manifest; `verdict` hashes the PASS RELEASE readiness verdict. The proposal omits `readiness` (forbidden in
@@ -91,8 +93,9 @@ A waiver qualifies readiness for a stated scope; it is never evidence, and the o
 | a bounded non-safety deviation from a non-mandatory criterion                               | `NON_SAFETY_DEVIATION`                             |
 
 1. Allocate the next unused waiver id `WV-###` and write the proposal `hw/decisions/proposals/DR-###/waiver.yaml` with every field of
-   [cad-record's common waiver definition](../../cad-record/schemas/common.schema.json#/$defs/waiver), including `expires`, `supervision`
-   and `until_change` for an UNVALIDATED_TRIAL, and `safety_or_regulatory: false`.
+   [cad-record's common waiver definition](../../cad-record/schemas/common.schema.json#/$defs/waiver), `safety_or_regulatory: false`, and
+   its end: `expires`, or `until_change` (the files whose byte change ends it, each with its sha256); an UNVALIDATED_TRIAL always has
+   `expires` and `supervision`.
 2. Present it; on explicit approval write the WAIVER decision with its `waiver` block whose `id` is that `WV-###` and whose `decision` is
    this DR.
 3. PRODUCTION and SAFETY_CRITICAL scope needs the competent AUTHORITY with supplied criteria, allowables and evidence

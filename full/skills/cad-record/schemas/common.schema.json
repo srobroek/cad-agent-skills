@@ -277,8 +277,12 @@
     "severity": {"enum": ["CRITICAL", "MAJOR", "MINOR", "INFO"]},
     "consequence_severity": {"enum": ["NEGLIGIBLE", "MINOR", "MAJOR", "CRITICAL"]},
     "outcome": {
-      "description": "one obligation outcome; UNKNOWN and WAIVED are never PASS",
+      "description": "one stage-mapped obligation outcome; WAIVED only in a stage verdict or index, never written by a check result; UNKNOWN and WAIVED are never PASS",
       "enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE", "WAIVED"]
+    },
+    "observed_outcome": {
+      "description": "one outcome a check result observes; a result never writes WAIVED, which only a stage verdict maps",
+      "enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]
     },
     "result": {"description": "aggregate check result", "enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]},
     "unknown_code": {
@@ -843,12 +847,19 @@
         "operating_envelope": {"$ref": "#/$defs/text"},
         "supervision": {"$ref": "#/$defs/text"},
         "expires": {"$ref": "#/$defs/date"},
-        "until_change": {"$ref": "#/$defs/text"},
+        "until_change": {
+          "description": "files whose byte change ends the waiver: it holds while every listed file still has its sha256",
+          "type": "array",
+          "items": {"$ref": "#/$defs/file_hash"},
+          "minItems": 1
+        },
         "reason": {"$ref": "#/$defs/text"},
         "consequence": {"$ref": "#/$defs/text"},
         "authority": {"$ref": "#/$defs/authority"}
       },
-      "anyOf": [{"required": ["expires"]}, {"required": ["until_change"]}]
+      "anyOf": [{"required": ["expires"]}, {"required": ["until_change"]}],
+      "if": {"required": ["classification"], "properties": {"classification": {"const": "UNVALIDATED_TRIAL"}}},
+      "then": {"required": ["expires", "supervision"]}
     },
     "measured": {
       "oneOf": [
@@ -896,7 +907,7 @@
         "obligation": {"$ref": "#/$defs/obligation_id"},
         "subject": {"$ref": "#/$defs/subject"},
         "severity": {"$ref": "#/$defs/severity"},
-        "outcome": {"$ref": "#/$defs/outcome"},
+        "outcome": {"$ref": "#/$defs/observed_outcome"},
         "measured": {"$ref": "#/$defs/measured"},
         "criterion": {"$ref": "#/$defs/criterion_or_unknown"},
         "requirements": {"$ref": "#/$defs/requirement_ids"},
@@ -953,7 +964,7 @@
         "requirement": {"$ref": "#/$defs/requirement_id"},
         "subject": {"$ref": "#/$defs/subject"},
         "facet": {"$ref": "#/$defs/facet"},
-        "outcome": {"$ref": "#/$defs/outcome"},
+        "outcome": {"$ref": "#/$defs/observed_outcome"},
         "value": {
           "oneOf": [
             {"$ref": "#/$defs/quantity"},
@@ -975,8 +986,6 @@
         "evidence": {"type": "array", "items": {"$ref": "#/$defs/file_hash"}, "minItems": 1},
         "configuration": {"$ref": "#/$defs/text"},
         "sampling": {"$ref": "#/$defs/sampling"},
-        "waiver": {"$ref": "#/$defs/decision_id"},
-        "limitation": {"$ref": "#/$defs/text"},
         "findings": {"type": "array", "items": {"$ref": "#/$defs/finding_id"}, "minItems": 1, "uniqueItems": true}
       },
       "allOf": [
@@ -998,10 +1007,6 @@
         {
           "if": {"required": ["outcome"], "properties": {"outcome": {"const": "NOT_APPLICABLE"}}},
           "then": {"required": ["reason", "reviewed_by"]}
-        },
-        {
-          "if": {"required": ["outcome"], "properties": {"outcome": {"const": "WAIVED"}}},
-          "then": {"required": ["waiver", "limitation"]}
         }
       ]
     },
