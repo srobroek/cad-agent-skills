@@ -2,9 +2,9 @@
 # Same convention as cad-record contract-fixtures/expected-errors.yaml; keys are relative to examples/regressions/.
 # Every valid/<root>/* case exits 0 and every invalid/<root>/* case exits 1 against <cad-record>/schemas/<root>.schema.json;
 # a valid case may still fail the semantic check its scenario names.
-invalid/check-result/review-with-commands-critique.json: 'a REVIEW implementation forbids commands: the read-only reviewer runs nothing'
-invalid/decision/waiver-out-of-scope-unbounded.yaml: a waiver needs expires or until_change; an unbounded waiver is never written
-invalid/selection/selection-score-revives-excluded.yaml: an EXCLUDED candidate carries no preference scores; a score cannot revive a hard FAIL
-invalid/stage-verdict/release-without-physical-pass.json: a PASS readiness verdict accepts only PASS, WAIVED and NOT_APPLICABLE results; physical.test is UNKNOWN
-invalid/stage-verdict/review-minor-pass.json: a stage whose required review is MINOR cannot PASS
-invalid/stage-verdict/stale-after-change-no-recheck.json: a CARRIED_FORWARD result names carried_from with its record.inputs recheck
+invalid/check-result/review-with-commands-critique.json: 'Additional properties are not allowed (''commands'' was unexpected)'
+invalid/decision/waiver-out-of-scope-unbounded.yaml: "'until_change' is a required property"
+invalid/selection/selection-score-revives-excluded.yaml: "should not be valid under {'required': ['preference_scores']}"
+invalid/stage-verdict/release-without-physical-pass.json: "'UNKNOWN' is not one of ['PASS', 'WAIVED', 'NOT_APPLICABLE']"
+invalid/stage-verdict/review-minor-pass.json: "$.review.verdict: 'PASS' was expected"
+invalid/stage-verdict/stale-after-change-no-recheck.json: "'carried_from' is a required property"
