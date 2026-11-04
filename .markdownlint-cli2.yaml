@@ -1,6 +1,34 @@
+# markdownlint-cli2 configuration for every Markdown file in the repository, full/ and lean/ alike.
 config:
   default: true
+  # Prose wraps at 140 columns; tables and code blocks keep their natural width.
   MD013:
     line_length: 140
     tables: false
     code_blocks: false
+  # Compact agentic tables and wide documentation tables use different separator styles on purpose.
+  MD060: false
+
+ignores:
+  - "node_modules/**"
+
+# The first matching override applies, so the agent entry repeats the agentic list exceptions.
+overrides:
+  # Agent files open with frontmatter and a role statement, not a top-level heading. They also use
+  # the write-agentic TRIGGER format, whose `+`/`-` markers carry meaning (MD004) and sit directly under
+  # their keyword lines (MD032).
+  - filter:
+      - "*/agents/*.md"
+      - "*/harness/*/agents/*.md"
+    config:
+      MD041: false
+      MD004: false
+      MD032: false
+    combine: merge
+  # Skills use the same TRIGGER format.
+  - filter:
+      - "*/skills/**/*.md"
+    config:
+      MD004: false
+      MD032: false
+    combine: merge

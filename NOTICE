@@ -1,14 +1,32 @@
 CAD Agent Skills attribution
 ============================
 
-This project derives documentation and skill material in part from
-srobroek/cad-agent, whose NOTICE records its historical import from
-srobroek/omp-plugins. The source repositories are:
+This repository's skill and agent material derives in part from the public
+srobroek/cad-agent and srobroek/omp-plugins repositories:
 
-  https://github.com/srobroek/cad-agent
-  https://github.com/srobroek/omp-plugins
+  <https://github.com/srobroek/cad-agent>
+  <https://github.com/srobroek/omp-plugins>
 
-The cad-agent source is licensed under Apache-2.0, as is this repository.
-This NOTICE records provenance only and does not modify the license. No
-AgentCAD scripts are copied into this repository. Third-party material and
-later additions retain their applicable notices and licenses.
+The cad-agent project records its historical import of skill material from
+omp-plugins. This project reorganizes and adapts that instruction material into
+a different skill, role and record contract. It does not include cad-agent's
+runnable helper scripts or tooling, or the separately attributed AgentCAD
+scripts documented by cad-agent's original NOTICE files.
+
+The full variant's material profiles cite individual supplier and standards
+source documents in their `sources[].url`, `reference` and `revision` fields.
+The source families include Hydro; Polymaker and Fiberon/Polymaker; Fiberlogy;
+PLEXIGLAS/POLYVANTIS; Makrolon/Covestro and Exolon; Outokumpu; Salzgitter;
+Ensinger; Formlabs; and ISO standards. The cited product and standard titles,
+source paths, editions, access dates and conditions remain in each profile.
+See [the profile README](full/skills/cad-record/assets/manufacturing/material-profiles/README.md)
+for common caveats and each source field for its specific attribution. Some
+sources have incomplete conditions; ISO material was accessed through
+third-party previews. Profile attribution does not establish rights to
+redistribute those source documents.
+
+Attribution records provenance only. It does not change a license or infer
+that every source has the same terms; consult the cited source and its
+applicable terms before redistribution or use. The repository's `LICENSE`
+remains as provided. This notice makes no additional relicensing claim.
+Separate third-party material retains its applicable notices and licenses.
