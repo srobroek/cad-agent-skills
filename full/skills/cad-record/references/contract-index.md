@@ -149,7 +149,7 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `producer_role`, `stage` | role or `lead`; stage enum |
 | `binding` | `{kind: UNIT, unit, brief_sha256, input_inventory_sha256}` or `{kind: VERSION, version, version_manifest_sha256}` |
 | `input_files` | `[{path, sha256}]` of every input read |
-| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; the reviewer always reports REVIEW |
+| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; `inspected` lists every file read, including other checks' `result.json` and `bundle-manifest.json`; the reviewer always reports REVIEW |
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |
 | `findings[]` | `{id, family, subject, severity, outcome, measured, criterion, method, uncertainty, consequence, remedy, alternatives, recheck}` |
@@ -166,6 +166,13 @@ Result files outside `hw/checks/`: drawing `coverage.json` uses family `drawing.
 `drawing-<subject in lowercase>` and attempt `a1`; `acceptance/package-integrity.json` uses family
 `release.integrity`, check `package-integrity`, attempt `a1` and VERSION binding. A redo is a new vN or REV.
 The `common` root validates contract probes only (`probe: cad-agent-skills.common`); no runtime file uses it.
+
+## Version manifest runtime (`version-manifest`)
+
+`runtime` PRESENT is `{status, environments[{kernel cadquery|build123d, python, packages[{name, version}], lock{path
+under hw/versions/vN/source/, sha256}}], platform, commands}`: one locked uv environment per kernel that ran, at
+least one, never two with the same kernel; each `lock` is one of `build.locks` (references/validation.md item 15).
+NOT_APPLICABLE is `{status, reason}`.
 
 ## Stage verdict (`stage-verdict`)
 

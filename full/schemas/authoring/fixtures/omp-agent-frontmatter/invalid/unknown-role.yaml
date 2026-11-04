@@ -1,7 +1,7 @@
 name: cad-analyst
 description: Independent checker for one assigned check unit.
 model: '@task'
-thinking-level: high
+thinkingLevel: high
 tools:
 - read
 - grep
