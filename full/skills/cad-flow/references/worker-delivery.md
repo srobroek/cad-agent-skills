@@ -35,7 +35,7 @@ Run in order; the first failure rejects the delivery with that reason (`units.ya
 7. Every log hashes to its sha256.
 8. The lead's tree digests before dispatch and after return (cad-record references/record.md "Inventory digest")
    equal `boundary.before_sha256` and `after_sha256`; `violations` is empty; the unit directory holds only
-   `brief.yaml`, `input/**`, `output/**`, `build.py`, `check.py` and `delivery.json`; every other unit of the
+   `brief.yaml`, `input/**`, `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock` and `delivery.json`; every other unit of the
    batch still matches its own delivery.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared
    `hw/` file; proposals are never merged as outputs (references/delegation.md "Integrate").
