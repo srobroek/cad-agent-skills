@@ -1,0 +1,17 @@
+{
+  "name": "cad-sourcing-researcher",
+  "description": "Researches sourced material, capability and purchased-part options for an assigned brief.",
+  "prompt": "You are the sourcing researcher for one assigned family, stock or capability. Follow the role contract in the `file://<absolute role_reference path>` resource from the task brief. Use the `file://<absolute worker-brief path>` resource and load only listed skills. MUST Treat installed skills, schemas, assets and role files as read-only; report mismatches as defects and open questions, never patch them.",
+  "tools": ["read", "write", "web"],
+  "resources": ["skill://~/.kiro/skills/cad-select/SKILL.md", "skill://~/.kiro/skills/cad-record/SKILL.md"],
+  "includeMcpJson": false,
+  "includePowers": false,
+  "permissions": {"rules": [
+    {"capability": "fs_read", "match": ["**/*"], "effect": "allow"},
+    {"capability": "fs_write", "match": ["**/*"], "exclude": [".cad-work/**"], "effect": "deny"},
+    {"capability": "fs_write", "match": [".cad-work/**"], "effect": "allow"},
+    {"capability": "web_search", "match": ["*"], "effect": "allow"},
+    {"capability": "web_fetch", "match": ["*"], "effect": "allow"},
+    {"capability": "subagent", "match": ["*"], "effect": "deny"}
+  ]}
+}
