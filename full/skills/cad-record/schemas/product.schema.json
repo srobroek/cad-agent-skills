@@ -245,7 +245,13 @@
       "required": ["source_format", "original_snapshot", "mapping", "decision", "date"],
       "properties": {
         "source_format": {"$ref": "common.schema.json#/$defs/text"},
-        "original_snapshot": {"$ref": "common.schema.json#/$defs/hw_path"},
+        "original_snapshot": {
+          "description": "layout record.import_original root for this import's DR; never under hw/docs/",
+          "allOf": [
+            {"$ref": "common.schema.json#/$defs/hw_path"},
+            {"pattern": "^hw/imports/DR-[0-9]{3}/original$"}
+          ]
+        },
         "mapping": {"$ref": "common.schema.json#/$defs/hw_path"},
         "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
         "date": {"$ref": "common.schema.json#/$defs/date"}

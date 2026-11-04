@@ -1,6 +1,7 @@
 # Intended error of each invalid contract fixture (data index, not an instance).
 # CI asserts every <root>/invalid/* file fails against schemas/<root>.schema.json; this index states why it must fail.
-assembly/invalid/drawing-operations.yaml: 'assembly operations have one authority: top-level operations only'
+assembly/invalid/drawing-operations.yaml: 'assembly operations have one authority: top-level operations only; drawing is drawing intent, not operations'
+assembly/invalid/drawing-without-reason.yaml: assembly drawing intent has the part drawing shape; status needs its reason
 assembly/invalid/insert-without-direction.yaml: INSERT requires into and direction
 assembly/invalid/revolute-without-limits.yaml: a non-FIXED joint requires axis and limits
 assembly/invalid/rotation-not-quaternion.yaml: placement rotation is a 4-element quaternion
@@ -86,6 +87,7 @@ part/invalid/make-without-manufacture.yaml: a MAKE part requires manufacture
 part/invalid/purchased-with-capability.yaml: a PURCHASED operation forbids capability
 product/invalid/consequential-unknown-without-question.yaml: a consequential UNKNOWN requires owner and question
 product/invalid/flow-stage-field.yaml: 'additionalProperties: product carries no workflow stage (flow)'
+product/invalid/import-snapshot-in-docs.yaml: an import's originals live at hw/imports/DR-###/original, never under hw/docs/
 product/invalid/known-fact-without-source.yaml: a KNOWN fact requires sources
 product/invalid/rigor-default-pro.yaml: rigor is maker|pro|regulated (lowercase) or an UNKNOWN fact; PRO matches neither
 product/invalid/service-class-without-decision.yaml: a known service class requires its decision
