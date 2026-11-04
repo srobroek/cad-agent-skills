@@ -1,7 +1,8 @@
 # Reference record for examples/phone-stand: hw/requirements.yaml after GROUND stage work, before the GROUND gate.
 # Requirements, preferences, assumptions and questions stay distinct. Kinds and facets follow the APPEARANCE_CONCEPT
 # row of cad-verify "Evidence by service class"; holding, tipping and durability stay out of scope (product.yaml
-# release_scope.exclusions) and open questions for a later scope. SPECIFY completes methods, cases and the check plan.
+# release_scope.exclusions), and service life stays an open question for a later scope. SPECIFY completes methods,
+# cases and the check plan.
 requirements:
 - id: REQ-001
   title: Viewing angle range
@@ -299,12 +300,6 @@ questions:
   status: OPEN
 - id: Q-021
   question: 'Which dimensional stability over time does the stand need?'
-  owner: user
-  material_to_choice: false
-  safety_relevant: false
-  status: OPEN
-- id: Q-022
-  question: 'For a later daily-use scope, which holding torque or angle drift is acceptable, and which tipping margin with a phone on it?'
   owner: user
   material_to_choice: false
   safety_relevant: false
