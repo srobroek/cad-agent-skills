@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills material profile",
-  "description": "One material profile: family or grade, form, process state and per-property value with source, basis, test standard, temperature, conditioning, orientation and uncertainty. Conditions a supplier never states stay explicit UNKNOWN. A typical_not_allowable profile holds typical or standard-minimum data, never design allowables; density is never strength.",
+  "description": "One material profile: family or grade, form, process state and per-property value with source, basis, test standard, temperature, conditioning, orientation and uncertainty. A property value is a typed quantity in a unit of the closed common set, a qualitative rating with its scale, or an explicit UNKNOWN or NOT_APPLICABLE. Conditions a supplier never states stay explicit UNKNOWN. A typical_not_allowable profile holds typical or standard-minimum data, never design allowables; density is never strength.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -56,7 +56,10 @@
         "required": ["name", "value", "conditions"],
         "properties": {
           "name": {"$ref": "common.schema.json#/$defs/semantic_id"},
-          "value": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+          "value": {
+            "description": "a quantity_fact in a unit of the closed common set, or a rating_fact; a value the source states in a unit outside that set, or a source entry such as N/A or a blank, is UNKNOWN whose reason quotes the source entry",
+            "oneOf": [{"$ref": "common.schema.json#/$defs/quantity_fact"}, {"$ref": "#/$defs/rating_fact"}]
+          },
           "conditions": {
             "type": "object",
             "additionalProperties": false,
@@ -108,5 +111,29 @@
         }
       }
     }
-  ]
+  ],
+  "$defs": {
+    "rating_fact": {
+      "description": "a KNOWN qualitative rating: the grade a source states and the scale that defines its grades; never a quantity and never converted to one",
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/fact_known"},
+        {
+          "properties": {
+            "value": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["rating", "scale"],
+              "properties": {
+                "rating": {"description": "the grade exactly as the source states it", "$ref": "common.schema.json#/$defs/text"},
+                "scale": {
+                  "description": "the source's key for its grades, quoted, or the standard that defines them",
+                  "$ref": "common.schema.json#/$defs/text"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
 }

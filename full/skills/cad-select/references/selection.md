@@ -21,13 +21,20 @@ Ask only questions that resolve this product's actual intended function and cons
 
 1. Ask every open template question in one message, grouped by domain; skip none. Each asked question carries exactly one question id, and
    each id covers one template question. Ask focused questions, not a generic questionnaire dump.
-2. After the reply, record every answered fact as KNOWN with a `USER` source
-   ([cad-record Facts](../../cad-record/references/record.md#facts)); record "I don't know", a refusal and each question the reply
-   leaves out as a typed UNKNOWN with owner and question ([Scope of each unknown](#scope-of-each-unknown)); that question is done.
-   Validate each changed file once ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4).
+2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
+   ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4):
+   - Every fact the reply states, including a fact no question asked, as KNOWN with a `USER` source
+     ([cad-record Facts](../../cad-record/references/record.md#facts)). Read each answer against every intake field its template question
+     names: a field the answer states in any words is KNOWN from it, a field it rules out is NOT_APPLICABLE with that answer as `reason`,
+     and a field one answer records is never another question.
+   - Every requirement, preference and assumption those facts state
+     ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
+   - "I don't know", a refusal and each intake field the reply neither states nor rules out, as a typed UNKNOWN with owner and question
+     ([Scope of each unknown](#scope-of-each-unknown)); that question is done.
 3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; each follow-up gets a new question id.
-   Record its reply as in step 2. A follow-up or added question never covers a topic `release_scope.exclusions` excludes; a template
-   answer on such a topic is recorded per [Scope of each unknown](#scope-of-each-unknown).
+   Record its reply as in step 2. A topic `release_scope.exclusions` excludes that no intake field holds, such as a protection, access or
+   fit claim the request or a reply names, gets no question and no UNKNOWN: the exclusion is its whole record. An intake field on such a
+   topic is recorded per [Scope of each unknown](#scope-of-each-unknown).
 4. Go to `freeze-inputs`. Never ask an answered or recorded question again. The owner's name is recorded as the owner states it, and
    every decision from the owner's statements names that `actor.name`.
 
@@ -36,10 +43,12 @@ Resolving material-, route- and safety-driving questions before a final recommen
 Before any material comparison, inspect the relevant existing product record and ask what is missing for those needs. Do not infer use from
 CAD geometry or from the phrase “prototype”.
 
-Capture **requirements**, **preferences**, **assumptions** and **open questions** separately in `hw/requirements.yaml`. Do not turn an
-assumption into a requirement or use an unanswered question as evidence. Resolve questions whose answers can change a material, route,
-architecture, safety conclusion or mandatory criterion before making a final recommendation; otherwise label the recommendation CONDITIONAL
-and bound the unresolved choice ([Recommend](#recommend)).
+Capture **requirements**, **preferences**, **assumptions** and **open questions** separately in `hw/requirements.yaml`; GROUND writes all
+four (step 2). Do not turn an assumption into a requirement or use an unanswered question as evidence. INTENT reads requirements and never
+writes them; after the GROUND gate, a requirement or criterion to add or change follows
+[cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure). Resolve questions whose answers can change a
+material, route, architecture, safety conclusion or mandatory criterion before making a final recommendation; otherwise label the
+recommendation CONDITIONAL and bound the unresolved choice ([Recommend](#recommend)).
 
 Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses
 documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of
@@ -49,14 +58,26 @@ that DR in this attempt.
 
 ### Write criteria a stage can evidence
 
-Write each criterion as a property that a facet the service class admits can evidence
-([cad-verify check-plan — Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class)):
+Write each constraint the owner states that a facet the service class admits can evidence
+([cad-verify check-plan — Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class)) as a whole
+requirement by [cad-verify check-plan — specify-requirements](../../cad-verify/references/check-plan.md#specify-requirements) steps 1-6,
+each criterion a property such a facet evidences:
 
 - A finish or appearance requirement, when the class admits no PHYSICALLY_VALIDATED facet: a finish condition of the process plan (base
   facet PROCESS_PLANNED), never an achieved surface quality. Word it as planned and give it a plan-property criterion such as
   `support_on_visible_faces EQUALS false`.
-- The owner's equipment, materials on hand and outsourcing: one MANUFACTURING requirement whose criteria are route properties, such as
-  `make_capability_profile EQUALS <profile>` and `make_material ONE_OF [<materials on hand>]`.
+- The owner's equipment, materials on hand and outsourcing: one MANUFACTURING requirement whose criteria are route properties in this form.
+  `make_capability_profile EQUALS <profile id>` (`ONE_OF` for several machines or providers) names the capability profile GROUND writes in
+  `hw/manufacturing/capabilities.yaml` from the owner's statement, each field the owner leaves unstated a typed UNKNOWN.
+  `make_material ONE_OF [<material profile ids>]` names the owner's materials on hand by identity.
+- A material criterion settles at INTENT by identity: a candidate whose material profile is one `make_material` names passes it. Whether the
+  machine runs that material in the consumable form the owner holds, such as a filament diameter or a stock size, is
+  [cad-verify process-checks — capability.route](../../cad-verify/references/process-checks.md#capabilityroute) step 2 at PARTS; until then
+  it is a candidate limit due at PARTS, never an INTENT outcome, question or reason to keep a candidate CONDITIONAL.
+- Every quantity the owner states is recorded typed, never dropped: in the intake fact its template question fills, where one does; also
+  as a criterion of the requirement it constrains when a facet the class admits evidences it, each stated dimension its own criterion; and
+  as an assumption with `bounds`, `owner` and `validation` when it bounds what the product serves rather than the product, such as the
+  heaviest item it must carry.
 - Quantity, budget and lead time: `product.yaml` intake facts, never a requirement, because no facet evidences them; each candidate's
   `economics` states its figures against them ([Compare the feasible routes](#compare-the-feasible-routes)).
 
@@ -77,6 +98,10 @@ An UNKNOWN takes the first row when the owner can answer it and the third when s
 blocked only by an UNKNOWN hard outcome: a criterion whose value the owner has not given, or a criterion INTENT settles whose evidence is
 missing. A fact that only a later criterion or case uses, such as a printer envelope or creep data, blocks nothing at INTENT: it is a limit
 there and falls due at the stage whose obligation uses it.
+
+Record each fact sourcing establishes (third row) as its own typed UNKNOWN with its own question, even when one source may settle several;
+never fold two such subjects into one UNKNOWN or question. Each unstated field of a capability profile the owner names is its own subject:
+machine identity, operator, envelope and material approvals each get their own.
 
 Set each question's `material_to_choice` and `safety_relevant` by the same table.
 
@@ -134,7 +159,9 @@ criterion only when INTENT holds its evidence:
   evidences has no `due` stage: its outcome is UNKNOWN.
 
 A route that needs a material, machine, tool or provider the owner neither has nor has approved acquiring is never FEASIBLE: its outcome on
-the owner's equipment requirement is FAIL where the owner's statements exclude it, else UNKNOWN with the owner's question.
+the owner's equipment requirement is FAIL where the owner's statements exclude it, else UNKNOWN with the owner's question. A material the
+owner names by its grade is one the owner has; its consumable form falls due at PARTS
+([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
 
 Classify the whole candidate using the selection schema: FEASIBLE has no FAIL or UNKNOWN outcome and may hold PLANNED ones; CONDITIONAL has
 at least one UNKNOWN and no FAIL; EXCLUDED has a FAIL. Neither UNKNOWN nor PLANNED is a pass. A score, preference, low price, availability

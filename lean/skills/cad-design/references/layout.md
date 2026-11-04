@@ -52,6 +52,9 @@ Output: `hw/assembly.yaml` (root `assembly`), member placement in `hw/interfaces
    `axis` in the parent frame, `limits` over the full stated travel of the requirement (`mm` or `deg`), `zero` the
    nominal pose, `interface` the IF it realizes, and `source`. A rigid attachment (captured nut, bonded foot,
    fastened bracket) is a placement under its parent or a `FIXED` joint, never a moving joint that demands a bore.
+   A joint that realizes the motion of a MOTION case in `hw/check-plan.yaml` takes that case's joint id
+   ([cad-verify plan-checks](../../cad-verify/references/check-plan.md#plan-checks) step 3); a differing joint is a check-plan
+   change.
 4. `couplings[]`: joints moved together by a gear, linkage, cam, belt or screw, with `relation` and `ratio`.
 5. `operations[]`: the one assembly-operations authority. Each install, fasten, press-fit, heat-set, retaining-ring,
    join, close, adjust, inspect and disassemble step names `kind`, `occurrences`, `into`, `interfaces`,

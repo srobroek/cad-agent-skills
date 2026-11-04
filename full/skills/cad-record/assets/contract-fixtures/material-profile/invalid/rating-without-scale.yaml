@@ -1,0 +1,40 @@
+id: fdm_petg_polylite
+revision: 2
+title: PolyLite PETG
+level: GRADE
+family: FDM filament / PETG
+grade:
+  status: KNOWN
+  value: PolyLite PETG
+  basis: SUPPLIER_TYPICAL
+  sources:
+  - &tds
+    kind: DATASHEET
+    reference: PolyLite PETG Technical Data Sheet, V5.4
+    url: https://cdn.shopify.com/s/files/1/0548/7299/7945/files/PolyLite_PETG_TDS_EN_V5.4.pdf?v=1731954068
+    accessed: '2026-11-02'
+form: PRINTED
+process_state:
+  process: FDM
+  conditioning: UNKNOWN
+typical_not_allowable: true
+properties:
+- name: resistance_weak_acids
+  value:
+    status: KNOWN
+    value:
+      rating: Good
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - *tds
+  conditions:
+    test_standard:
+      status: UNKNOWN
+      reason: the source states no test method
+    temperature:
+      status: UNKNOWN
+      reason: the source key says ambient temperature without a value
+    conditioning: UNKNOWN
+    orientation:
+      status: UNKNOWN
+      reason: the source does not state the specimen orientation

@@ -45,8 +45,7 @@ For a `cad-part-designer` or `cad-concept-designer` unit:
    `.cad-work/<unit>/input/hw/` and the unit's own models, and takes two arguments: the export directory and the
    work directory. Lock it (`.cad-work/<unit>/build.py.lock`, layout `scratch.unit_build_lock`), then run it with
    stdout and stderr in `.cad-work/<unit>/output/logs/`, in the `uv run` form of
-   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) with the unit's cache and
-   these arguments:
+   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) with these arguments:
 
    ```text
    <root>/.cad-work/<unit>/output/build/version <root>/.cad-work/<unit>/output/build/work
@@ -83,8 +82,8 @@ Run by the lead in cad-flow `build-version`. The stage tree mirrors the publishe
    work directories as arguments.
 4. Lock each program, then run `source/cadquery/build.py` first and `source/build123d/build.py` second, each with
    its own work directory, in the `uv run` form of
-   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) with the lead's cache, on
-   the program `<root>/.cad-work/stage-vN/version/source/<kernel>/build.py` and these arguments:
+   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) on the program
+   `<root>/.cad-work/stage-vN/version/source/<kernel>/build.py` and these arguments:
 
    ```text
    <root>/.cad-work/stage-vN/version/record <root>/.cad-work/stage-vN/version <root>/.cad-work/stage-vN/build/<kernel>
@@ -100,7 +99,7 @@ Manifest fields this build supplies (root `version-manifest`):
 - `record` and `source_artifacts`: the snapshot files, retained sources in `source_artifacts`; `build`: the programs
   as `source` and their locks as `locks`.
 - `runtime.environments[]`: one per kernel with `kernel`, `python`, `packages` from its lock and `lock`; `platform`;
-  `commands` (argv, cwd, exit code, stdout and stderr paths).
+  `commands` (argv, cwd and exit code; the build logs stay scratch diagnostics, so no `stdout` or `stderr`).
 - `geometry`: `units: mm`, `frame: RIGHT_HANDED_Z_UP`, every export except `manufacturing.yaml` in `files` with
   `role`, `format` and `PN`, `component` and `state` where they apply; `occurrences` with world `translation` and
   `rotation` at the nominal pose and `step_name`; `export_tolerance`; `readback`.
