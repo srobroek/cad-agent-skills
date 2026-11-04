@@ -36,6 +36,7 @@ check-result/invalid/review-without-coverage.json: a reviewer result needs separ
 check-result/invalid/review-without-inspected.json: a REVIEW implementation lists at least one inspected file
 check-result/invalid/reviewer-command-implementation.json: the read-only reviewer reports a REVIEW implementation
 check-result/invalid/unit-binding-missing-brief.json: UNIT binding needs unit, brief and input inventory digests
+check-result/invalid/semantic-finding-without-item.json: a record.semantic finding id names its semantic item (record.semantic:item-<n>:<locus>), never the product anchor
 check-result/invalid/unknown-reported-pass.json: an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
 check-result/invalid/unregistered-family.json: families are the registered enum
 # check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the

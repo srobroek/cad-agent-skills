@@ -53,6 +53,12 @@ JSON Schema does not prove the items below. The lead or checker writes its own p
 `.cad-work/<unit>/` with an explicit uv script lock, runs it against the inventoried input, and publishes a
 `record.semantic` check result; an independent checker reads that program before its result counts.
 
+The program reads the inventoried `hw/` files, this skill's schemas, `layout.json`, the stage policy and the
+session statements the DRs hash, all named in the brief ([cad-flow worker brief](../../cad-flow/references/worker-brief.md)).
+An item over a collection the record does not have yet (assembly occurrences before LAYOUT, deliveries, versions,
+BOM, verification index, runtime) holds, its item-table row saying `no instance`. An input the brief lacks makes the
+items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
+
 1. Finite numbers: reject NaN and ±infinity anywhere, including YAML `.nan`, `.inf` and `-.inf`, before any
    other use; serialize JSON with non-finite numbers refused.
 2. Uniqueness: every ID inside its collection and across files (PN, REQ, IF, DR, Q, ASM, PRF, case, check,
@@ -94,6 +100,20 @@ JSON Schema does not prove the items below. The lead or checker writes its own p
 
 ## Reporting
 
-- Each schema command and each semantic item is one outcome with its obligation, criterion and evidence;
-  a command that did not run is UNKNOWN with `NOT_RUN`, never PASS.
-- A FAIL names the file, JSON path and message as a finding (`record.schema:<anchor>:<locus>`).
+`record.schema@product` and `record.semantic@product` each get one aggregate outcome, the only outcome of their
+check result ([cad-verify results — Outcomes](../../cad-verify/references/results.md#outcomes)):
+
+| Aggregate | When |
+|---|---|
+| `PASS` | every schema command exits 0; every semantic item holds |
+| `FAIL` | any command exits non-zero, or any item is violated |
+| `UNKNOWN` | otherwise, when a command did not run or an item could not be assessed: the `unknown_code` all those share, else `INCOMPLETE` |
+
+- Item table: `artifacts/items.json` in the check bundle, role `REPORT`; one row per command (file, root, exit
+  code, stderr) or per semantic item (item number, outcome, files, message). It is the aggregate's `evidence`;
+  the aggregate's `value` is the tally as text (`16 of 16 items hold`).
+- Each non-PASS command or item is one finding: `record.schema:product:<locus>` or
+  `record.semantic:item-<n>:<locus>`. `<locus>` is the file path lower-cased with every character outside `a-z0-9_`
+  as `-` (`hw-product-yaml`), or the offending ID for an item that spans files. A FAIL finding names the file, JSON
+  path and message.
+- A command that did not run is UNKNOWN `NOT_RUN`, never PASS.

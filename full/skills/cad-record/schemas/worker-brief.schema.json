@@ -139,6 +139,14 @@
             "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
             "uri": {"type": "string", "pattern": "^skill://cad-[a-z]+(/[A-Za-z0-9._/-]+)?$"}
           }
+        },
+        "layout": {
+          "description": "the installed cad-record layout.json, for a unit that runs record.semantic",
+          "$ref": "common.schema.json#/$defs/absolute_path"
+        },
+        "policy": {
+          "description": "the installed cad-flow assets/stages.yaml, for a unit that runs record.semantic",
+          "$ref": "common.schema.json#/$defs/absolute_path"
         }
       }
     },

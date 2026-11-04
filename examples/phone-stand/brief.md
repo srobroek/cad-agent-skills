@@ -22,9 +22,10 @@ Use cad-flow to design an adjustable desktop phone stand. Before choosing any ma
 
 ## Scripted owner answers
 
-Send each answer as its own message, exactly the line text, when the lead asks the matching question. A
-question the sheet does not answer gets the reply `I don't know; record it as an open question.` The actor is
-synthetic: every decision written from these answers names an actor starting `SYNTHETIC`.
+When the lead asks, reply once with every matching answer, one per line in table order, each line exactly its answer
+text. Each question the sheet does not answer gets its own line `<question id>: I don't know; record it as an open
+question.` Never answer beyond the sheet or confirm a value the lead suggests. The actor is synthetic: every decision
+written from these answers names an actor starting `SYNTHETIC`.
 
 | Id | Template question | Answer (exact message) |
 |---|---|---|
@@ -40,7 +41,7 @@ synthetic: every decision written from these answers names an actor starting `SY
 | A-10 | Q-010 logistics | `One unit, at most 15 EUR of material, ready within two weeks; I reprint a broken part myself.` |
 | A-11 | Q-011 capability | `I have one Prusa MK4 printer at home with a 0.4 mm nozzle and no enclosure, and spools of Polymaker PolyLite PETG and PolyLite PLA. I have never printed calibration parts. I do not outsource.` |
 | A-12 | Q-012 service class | `APPEARANCE_CONCEPT: this release is a concept package to review the form, the CAD fit of my phone and printability; holding a real phone every day is a later, separate scope.` |
-| A-13 | Q-013 risk | `If it fails, the phone slides or tips a few centimetres onto the desk. Nothing may fall off the desk. No standards apply to this personal model, and I am present when it is used.` |
+| A-13 | Q-013 risk | `If it fails, the phone slides or tips a few centimetres onto the desk; nobody can be hurt, and I rate that severity MINOR. Nothing may fall off the desk. No standards apply to this personal model, and I am present when it is used.` |
 | A-14 | Q-014 authority | `I approve gates and releases; no competent authority is needed for a concept model.` |
 | A-15 | Q-015 release scope | `The release is a concept-definition package for form, CAD fit and printability review. It is for display and handling at my desk, not for holding a phone in daily use. It makes no holding, friction, tipping, durability or other physical claim.` |
 | A-16 | Q-016 storage | `Track generated results in git and keep the evidence for the life of the project.` |
@@ -56,8 +57,11 @@ synthetic: every decision written from these answers names an actor starting `SY
    verdict sha256; present it again.`
 2. INTENT and VARIANT: reply `approve <STAGE> <vN> choose <option id>` with the option the packet recommends;
    with no single recommendation, the first FEASIBLE option in packet order.
-3. A waiver proposal gets `I decline this waiver.`
+3. A waiver proposal gets `reject <DR-###>; I decline this waiver.`
 4. RELEASE: reply `approve RELEASE <vN> REV <REV>` for the presented proposal.
+5. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
+   change or a selection): reply `approve <DR-###>` when it restates a scripted answer, the scripted change or the
+   option rule 2 would choose; otherwise `reject <DR-###>; record it as an open question.`
 
 ## Scripted change
 

@@ -34,13 +34,14 @@ Use cad-flow on the lamp arm in hw/. Inspect the existing records as data and do
 
 ## Scripted owner answers
 
-Send each answer as its own message, exactly the quoted text, when the lead asks the matching question. A question
-the sheet does not answer gets `I don't know; record it as an open question.` Every decision written from these
+When the lead asks, reply once with every matching answer, one per line in table order, each line exactly the quoted
+text. Each question the sheet does not answer gets its own line `<question id>: I don't know; record it as an open
+question.` Never answer beyond the sheet or confirm a value the lead suggests. Every decision written from these
 answers names an actor starting `SYNTHETIC`.
 
 | Id | Asked about | Answer (exact message) |
 |---|---|---|
-| L-01 | the import mapping | `approve the import mapping DR-001 as presented` |
+| L-01 | the import mapping | `approve DR-001 import mapping as presented` |
 | L-02 | Q-001 product | `It is a three-joint desk lamp arm: a base fixed to my bench, two links and a head that carries a purchased USB LED module; I position it by hand.` |
 | L-03 | Q-002 owner | `I own it and approve every gate, waiver and release.` |
 | L-04 | Q-003 rigor | `Keep pro documentation depth, as in the old record.` |
@@ -70,8 +71,11 @@ answers names an actor starting `SYNTHETIC`.
 2. INTENT and VARIANT: `approve <STAGE> <vN> choose <option id>` with the option the packet recommends; with no
    single recommendation, the first FEASIBLE option in packet order.
 3. A waiver proposal: `approve <DR-###> waiver <WV-###>` when it is an `UNVALIDATED_TRIAL` of a requirement with
-   `safety: false`; otherwise `I decline this waiver.`
-4. RELEASE, only if a PASS readiness verdict is presented: `approve RELEASE <vN> REV <REV>`.
+   `safety: false`; otherwise `reject <DR-###>; I decline this waiver.`
+4. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
+   change or a selection): `approve <DR-###>` when it restates a scripted answer or the option rule 2 would choose;
+   otherwise `reject <DR-###>; record it as an open question.`
+5. RELEASE, only if a PASS readiness verdict is presented: `approve RELEASE <vN> REV <REV>`.
 
 ## Expected end
 

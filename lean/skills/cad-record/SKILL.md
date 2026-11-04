@@ -24,7 +24,7 @@ ASK explicit owner approval of an import mapping before any imported byte lands 
 2. LOAD references/record.md (`skill://cad-record/references/record.md`) for paths, IDs, versions,
    the hash graph and facts.
 3. Bootstrap, keep or import `hw/`: run procedure `record-bootstrap` in references/record.md
-   (`skill://cad-record/references/record.md#record-bootstrap`) → `hw/` validates and its open questions are listed.
+   (`skill://cad-record/references/record.md#record-bootstrap`) → `hw/` exists and its open questions are listed.
 4. LOAD references/validation.md (`skill://cad-record/references/validation.md`) to validate any record file,
    result, manifest, brief or delivery → each command exits 0 and the semantic result has no FAIL or UNKNOWN.
 5. LOAD references/import.md (`skill://cad-record/references/import.md`) only when `record-bootstrap` routes

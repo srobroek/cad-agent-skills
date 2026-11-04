@@ -14,13 +14,25 @@ Ask only questions that resolve this product's actual intended function and cons
 - Failure consequences, supervision, standards and safety constraints.
 - Quantity, budget, lead time, repair, maintenance, available tools/operators and outsourcing.
 - Whether appearance, fit, a limited supervised demonstration, a representative working prototype, production or safety-critical service is intended.
-Ask focused questions and record answers, refusals and unresolved items, not a generic questionnaire dump. Resolve what changes requirements, architecture, route feasibility or safety; keep other unknowns explicit and bounded.
+Ask focused questions in batches, not a generic questionnaire dump: every open template question in one message, grouped by domain; after each reply, record every answered fact, validate each changed file once ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4), then ask the remaining and follow-up questions together in one message. Record answers, refusals and unresolved items; an answer is a KNOWN fact with a `USER` source ([cad-record Facts](../../cad-record/references/record.md#facts)) and its question is never asked again. Resolve what changes requirements, architecture, route feasibility or safety; keep other unknowns explicit and bounded ([Scope of each unknown](#scope-of-each-unknown)).
 
 Before any material comparison, inspect the relevant existing product record and ask what is missing for those needs. Do not infer use from CAD geometry or from the phrase “prototype”.
 
 Capture **requirements**, **preferences**, **assumptions** and **open questions** separately in `hw/requirements.yaml`. Do not turn an assumption into a requirement or use an unanswered question as evidence. Resolve questions whose answers can change a material, route, architecture, safety conclusion or mandatory criterion before making a final recommendation; otherwise label the recommendation CONDITIONAL and bound the unresolved choice.
 
-Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of rigor. Do not infer either from CAD or example geometry.
+Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of rigor. Do not infer either from CAD or example geometry. Record the class as a QUESTION decision whose statement is the owner's answer naming it ([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates)); `service.class` cites that DR in this attempt.
+
+### Scope of each unknown
+
+Set `consequential` on each UNKNOWN intake fact once the service class and `release_scope` are recorded; until then every UNKNOWN is consequential. Apart from the service class itself, GROUND records every unknown and none of them blocks it; the GROUND gate packet lists each consequential one as a limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate)). Each blocks only where it falls due:
+
+| The UNKNOWN feeds | Record | Blocks |
+|---|---|---|
+| a criterion, case or choice of a requirement kind the service class admits ([cad-verify check-plan — Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class)) that `release_scope.exclusions` does not exclude, or any SAFETY or REGULATORY requirement | `consequential: true`, owner, question | the first obligation that needs it: INTENT keeps every candidate it touches CONDITIONAL ([assess-selection](#assess-selection)); SPECIFY `requirements.completeness` is UNKNOWN `REQUIRED_UNKNOWN` while a criterion needs it; a check whose case needs it is UNKNOWN `REQUIRED_UNKNOWN`; else it stays a release limit |
+| only an excluded requirement kind or a later scope | `consequential: false`, owner, question, the exclusion as `reason` | nothing: an owned open question |
+| an in-scope fact a later stage establishes: a capability envelope, material profile or supplier fact ([select-candidates](#select-candidates)), or a product behaviour such as creep, temperature rise or wear rate | `consequential: true`, owner, question; `reason` names the stage that establishes it | that stage's obligation stays UNKNOWN until its check establishes the fact |
+
+Set each question's `material_to_choice` and `safety_relevant` by the same table.
 
 ## select-candidates
 ### Form whole candidate routes

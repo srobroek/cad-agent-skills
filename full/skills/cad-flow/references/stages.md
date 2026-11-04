@@ -151,7 +151,7 @@ Stop on any condition below; the code is the verdict blocker when an attempt has
 |---|---|
 | foreign lead claim, no authorized recovery, a missing skill, schema, role or tool | before a manifest: no verdict; else `MISSING_RESOURCE` |
 | an installed file differs from what its contract states | `INSTALLED_MUTATION` |
-| a safety- or material-driving UNKNOWN, a due UNKNOWN | `DUE_UNKNOWN` |
+| a due obligation with an UNKNOWN outcome; an UNKNOWN fact stops work only through the obligation where it falls due ([cad-select — Scope of each unknown](../../cad-select/references/selection.md#scope-of-each-unknown)) | `DUE_UNKNOWN` |
 | a due FAIL | `DUE_FAIL` |
 | missing result or incomplete producer | `MISSING_RESULT` |
 | scope or coverage gap | `SCOPE_GAP` |
