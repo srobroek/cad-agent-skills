@@ -53,8 +53,8 @@ never identical bytes; a STEP header timestamp may differ between runs.
 
 ## Kernels and environments
 
-- One kernel per `model.py`. A model imports only its kernel, that environment's OCP, the standard library and a
-  package its build program's header pins (bd_warehouse 0.4.0 serves build123d; cq_warehouse is not on PyPI).
+- One kernel per `model.py`. A model imports only its kernel, that environment's OCP and the standard library; it models a fastener head
+  natively from its retained standard, because no warm set holds a parts-library package (cq_warehouse is not on PyPI).
 - The two OCP builds clash: never import both kernels in one process, pass a shape between environments or add the
   other kernel's OCP. Geometry crosses environments only as STEP files; CadQuery parts are read in the build123d
   environment with `import_step` for assembly, readback and drawings.
@@ -64,12 +64,13 @@ never identical bytes; a STEP header timestamp may differ between runs.
 | `cadquery` | 3.12 | `cadquery==2.8.0`, `cadquery-ocp==7.9.3.1.1`, `vtk==9.6.2` |
 | `build123d` | 3.12 | `build123d==0.13.0`, `cadquery-ocp-novtk==8.0.1.1.0` |
 
-Every program starts with an inline script header (PEP 723) pinning one row exactly, plus any extra pinned package:
+Every program starts with an inline script header (PEP 723) that declares exactly one warm set of
+[cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands): one kernel row above plus the pinned PyYAML.
 
 ```python
 # /// script
 # requires-python = "==3.12.*"
-# dependencies = ["build123d==0.13.0", "cadquery-ocp-novtk==8.0.1.1.0"]
+# dependencies = ["build123d==0.13.0", "cadquery-ocp-novtk==8.0.1.1.0", "pyyaml==6.0.3"]
 # ///
 ```
 
