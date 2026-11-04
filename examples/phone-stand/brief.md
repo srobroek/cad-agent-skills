@@ -40,13 +40,13 @@ written from these answers names an actor starting `SYNTHETIC`.
 | A-09 | Q-009 accuracy | `The angle only needs to repeat within about 2 degrees; visible faces should be smooth and matte without support marks; I know of no precision fit.` |
 | A-10 | Q-010 logistics | `One unit, at most 15 EUR of material, ready within two weeks; I reprint a broken part myself.` |
 | A-11 | Q-011 capability | `I have one Prusa MK4 printer at home with a 0.4 mm nozzle and no enclosure, and spools of Polymaker PolyLite PETG and PolyLite PLA. I have never printed calibration parts. I do not outsource.` |
-| A-12 | Q-012 service class | `APPEARANCE_CONCEPT: this release is a concept package to review the form, the CAD fit of my phone and printability; holding a real phone every day is a later, separate scope.` |
+| A-12 | Q-012 service class | `APPEARANCE_CONCEPT: this release is a concept package to review the form, CAD validity and printability only; it makes no fit or function claim, and holding a real phone every day is a later, separate scope.` |
 | A-13 | Q-013 risk | `If it fails, the phone slides or tips a few centimetres onto the desk; nobody can be hurt, and I rate that severity MINOR. Nothing may fall off the desk. No standards apply to this personal model, and I am present when it is used.` |
 | A-14 | Q-014 authority | `I approve gates and releases; no competent authority is needed for a concept model.` |
-| A-15 | Q-015 release scope | `The release is a concept-definition package for form, CAD fit and printability review. It is for display and handling at my desk, not for holding a phone in daily use. It makes no holding, friction, tipping, durability or other physical claim.` |
+| A-15 | Q-015 release scope | `The release is a concept-definition package for form, CAD validity and printability review only. It is for display and handling at my desk, not for holding a phone in daily use. It makes no fit, functional, holding, friction, tipping, durability, safety, regulatory or other physical claim.` |
 | A-16 | Q-016 storage | `Track generated results in git and keep the evidence for the life of the project.` |
 | A-17 | Q-017 licenses | `Use CERN-OHL-P-2.0 for the hardware and CC-BY-4.0 for the documentation.` |
-| A-18 | footprint | `It must fit in a 120 mm by 120 mm square on my desk.` |
+| A-18 | footprint | `Its footprint must stay within a 120 mm by 120 mm square on my desk.` |
 | A-19 | preferences | `I prefer one material, matte black, and no metal hardware if a printed design can do without it.` |
 | A-20 | stability | `Whether it tips or slips with a phone on it matters for the later daily-use version, not for this concept.` |
 
@@ -79,5 +79,6 @@ envelope, and redoes every later stage as new attempts; it never edits an approv
 
 A sealed concept-definition package `hw/releases/A/` for service class `APPEARANCE_CONCEPT`, with its outer
 digest reported outside the package. Its claims are the CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED outcomes of REQ-001 to
-REQ-005, copied from the verification index; it claims no physical result. Holding torque,
-friction, tipping in use and durability are release exclusions; service life stays an open question for a later scope.
+REQ-005, copied from the verification index; REQ-002 is a form dimension of the cradle, and the package claims no fit and no physical
+result. Fit of a phone in the stand, holding torque, friction, tipping in use and durability are release exclusions; service life stays an
+open question for a later scope.

@@ -4,6 +4,6 @@ proposed:
   service_class: APPEARANCE_CONCEPT
 basis: owner answer A-12 in examples/phone-stand/brief.md
 consequences:
-- this release scope covers form, CAD fit and printability only
+- this release scope covers form, CAD validity and printability only, with no fit or function claim
 - physical.test stays inapplicable while no requirement carries the PHYSICALLY_VALIDATED facet
-- holding torque, friction, tipping in use and durability are release exclusions; a functional scope is a CHANGE from GROUND
+- fit of a phone in the stand, holding torque, friction, tipping in use and durability are release exclusions; a functional scope is a CHANGE from GROUND

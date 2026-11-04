@@ -1,1 +1,1 @@
-APPEARANCE_CONCEPT: this release is a concept package to review the form, the CAD fit of my phone and printability; holding a real phone every day is a later, separate scope.
+APPEARANCE_CONCEPT: this release is a concept package to review the form, CAD validity and printability only; it makes no fit or function claim, and holding a real phone every day is a later, separate scope.
