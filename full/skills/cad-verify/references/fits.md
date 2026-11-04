@@ -1,7 +1,6 @@
 # Fits and stacks
 
-Owner: cad-verify. Methods for `fit.limits` and `fit.stack`. Interface fit and variation fields are the cad-record
-`interfaces` root; STACK cases are the `check-plan` root.
+Owner: cad-verify. Methods for `fit.limits` and `fit.stack`. Interface fit and variation fields are the [cad-record interfaces root](../../cad-record/schemas/interfaces.schema.json); STACK cases are the [cad-record check-plan root](../../cad-record/schemas/check-plan.schema.json).
 
 ## fit.limits
 

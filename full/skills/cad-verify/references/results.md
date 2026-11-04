@@ -1,8 +1,7 @@
 # Check results
 
-Owner: cad-verify. How a producer fills one check result (root `check-result`; field list in cad-record
-references/contract-index.md "Check result envelope"). Paths, bindings and the hash graph are cad-record's; acceptance
-and publication are cad-flow's (references/worker-delivery.md, references/stages.md `run-checks`).
+Owner: cad-verify. How a producer fills one check result (root `check-result`; field list in [cad-record contract index — Check result envelope](../../cad-record/references/contract-index.md#check-result-envelope-check-result)). Paths, bindings and the hash graph are cad-record's; acceptance
+and publication are cad-flow's ([worker delivery](../../cad-flow/references/worker-delivery.md), [stages — run-checks](../../cad-flow/references/stages.md#run-checks)).
 
 ## Implementation kind
 
@@ -33,7 +32,7 @@ One outcome per obligation in `scope.expected_obligations`, nothing more (cad-re
 | `NOT_APPLICABLE` | `reason` and `reviewed_by` (role and unit); never for a missing method or input |
 
 A result never writes `WAIVED`: the producer records what it observed, and the stage verdict maps an approved
-waiver (cad-flow references/stages.md `write-verdict`).
+waiver ([cad-flow stages — write-verdict](../../cad-flow/references/stages.md#write-verdict)).
 
 | Situation | `unknown_code` |
 |---|---|
@@ -82,19 +81,19 @@ The `physical.test` method. A PASS needs, retained under `artifacts/` with role 
 
 Before RELEASE the obligation is future: PLANNED in the verdict, never an outcome. At RELEASE, no qualifying test is
 UNKNOWN `PHYSICAL_EVIDENCE_REQUIRED`; only an approved `UNVALIDATED_TRIAL` waiver the service class permits
-(references/check-plan.md "Evidence by service class") maps it to WAIVED in the verdict, and it is never PASS. A test
-of a changed design no longer applies (cad-flow references/change-impact.md "Stale evidence").
+([check-plan — Evidence by service class](check-plan.md#evidence-by-service-class)) maps it to WAIVED in the verdict, and it is never PASS. A test
+of a changed design no longer applies ([cad-flow change impact — Stale evidence](../../cad-flow/references/change-impact.md#stale-evidence)).
 
 ## Findings
 
 - Every FAIL or UNKNOWN outcome has at least one finding with id `<family>:<anchor>:<locus>`; repeated symptoms with
   one evidenced cause are one finding.
-- Fields: subject, severity (cad-review references/rubric.md "Finding severity"), outcome, measured value or the reason
+- Fields: subject, severity ([cad-review rubric — Finding severity](../../cad-review/references/rubric.md#finding-severity)), outcome, measured value or the reason
   it is unknown, criterion and its source, method, uncertainty, consequence, remedy with alternatives, and `recheck`
   (families, earliest stage, scope).
 - A finding never weakens, reinterprets or replaces the criterion; a better criterion is a change proposal.
 
 ## Freshness
 
-A result is stale under cad-flow references/change-impact.md "Stale evidence" and reruns; it is carried into a later
-verdict only under "Carry-forward" there. A producer never relabels, edits or re-dates a published result.
+A result is stale under [cad-flow change impact — Stale evidence](../../cad-flow/references/change-impact.md#stale-evidence) and reruns; it is carried into a later
+verdict only under [Carry-forward](../../cad-flow/references/change-impact.md#carry-forward). A producer never relabels, edits or re-dates a published result.

@@ -1,7 +1,6 @@
 # Mass and loads
 
-Owner: cad-verify. Methods for `mass.properties` and `load.hand`. MASS and LOAD cases are the cad-record `check-plan`
-root; material facts and bases are the `material-profile` root, selected under cad-select references/materials.md.
+Owner: cad-verify. Methods for `mass.properties` and `load.hand`. MASS and LOAD cases are the [cad-record check-plan root](../../cad-record/schemas/check-plan.schema.json); material facts and bases are the [cad-record material-profile root](../../cad-record/schemas/material-profile.schema.json), selected under [cad-select materials](../../cad-select/references/materials.md).
 
 ## mass.properties
 

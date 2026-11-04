@@ -1,8 +1,7 @@
 # Process checks
 
 Owner: cad-verify. Methods for `capability.route`, `optical.route`, `purchase.identity` and the 13 `process.*`
-families. Material and route choice is cad-select's; route fields are the cad-record `part` root (`intent.route[]`,
-operation `capability`, `setup`, `orientation`, `supports`, `allowances`, `inspection`, `purchase`).
+families. Material and route choice is [cad-select's](../../cad-select/SKILL.md); route fields are the [cad-record part root](../../cad-record/schemas/part.schema.json) (`intent.route[]`, operation `capability`, `setup`, `orientation`, `supports`, `allowances`, `inspection`, `purchase`).
 
 ## Route kind to family
 
