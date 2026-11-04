@@ -58,7 +58,9 @@ boundary:
   writable:
   - .cad-work/example-part/output
   - .cad-work/example-part/build.py
+  - .cad-work/example-part/build.py.lock
   - .cad-work/example-part/check.py
+  - .cad-work/example-part/check.py.lock
   - .cad-work/example-part/delivery.json
   locked:
   - hw/interfaces.yaml

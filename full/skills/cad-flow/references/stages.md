@@ -53,8 +53,7 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    (cad-model references/model-contract.md and references/exports.md) → geometry `PRESENT`. Otherwise record
    geometry `NOT_APPLICABLE` with the reason: GROUND to VARIANT "no assembly definition yet", CRITIQUE
    "reviews the predecessor version", RELEASE "payload is the FREEZE version".
-3. Stage the snapshot and geometry in `.cad-work/stage-vN/`, copy them to `hw/versions/vN/`, and write
-   `manifest.json` (root `version-manifest`) last → the manifest validates.
+3. Stage the snapshot and geometry under `.cad-work/stage-vN/` and copy them following [cad-model's Version build contract](../../cad-model/references/exports.md#version-build), then write `manifest.json` (root `version-manifest`) last → the manifest validates.
 4. An interrupted copy with unchanged inputs completes with identical bytes; changed inputs leave `vN`
    without a manifest, never resumed and never reused.
 

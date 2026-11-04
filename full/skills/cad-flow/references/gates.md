@@ -43,8 +43,7 @@ that names the stage and `vN` (and the option for INTENT or VARIANT).
    and `statement: {transcript_sha256 (of the saved bytes), quote (the approving sentence), time}`.
 3. Validate against the decision root → exit 0.
 
-RELEASE uses `kind: RELEASE` with `binding: {kind: RELEASE_INVENTORY, rev, version, proposal}` naming the
-release proposal of the PASS readiness verdict; `publish-release` runs only after it is APPROVED.
+RELEASE uses `kind: RELEASE` with `binding: {kind: RELEASE_INVENTORY, rev, version, proposal: {path, sha256}, verdict: {path, sha256}}`. `proposal` hashes the PROPOSAL manifest; `verdict` hashes the PASS RELEASE readiness verdict. The proposal omits `readiness` (forbidden in PROPOSAL and required in FINAL); `publish-release` runs only after the decision is APPROVED.
 
 A REJECTED decision keeps the stage open; the next attempt follows references/change-impact.md.
 
