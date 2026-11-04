@@ -2,7 +2,8 @@
 # Requirements, preferences, assumptions and questions stay distinct. Kinds and facets follow the APPEARANCE_CONCEPT
 # row of cad-verify "Evidence by service class" (APPEARANCE and MANUFACTURING kinds; no fit or function claim): fit,
 # holding, tipping and durability stay out of scope (product.yaml release_scope.exclusions), and service life stays an
-# open question for a later scope. SPECIFY completes methods, cases and the check plan.
+# open question for a later scope. GROUND writes the requirements whole; SPECIFY checks them complete and plans cases
+# and checks.
 requirements:
 - id: REQ-001
   title: Viewing angle range
@@ -311,7 +312,7 @@ questions:
   safety_relevant: false
   status: OPEN
 - id: Q-024
-  question: 'Which sourced PolyLite PETG and PolyLite PLA profiles does the printer run, and are both approved on it?'
+  question: 'Which materials does prusa_mk4_home run, from a retained supplier specification?'
   owner: lead (at INTENT)
   material_to_choice: true
   safety_relevant: false

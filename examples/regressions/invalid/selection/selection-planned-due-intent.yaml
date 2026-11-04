@@ -187,6 +187,7 @@ candidates:
   - REQ-005 no support contact on visible faces is PLANNED, due PARTS; no surface quality is claimed
   - REQ-001 to REQ-003 are PLANNED, due LAYOUT
   - material cost and print time are UNKNOWN until PARTS slices the parts
+  - the consumable form of the owner's spool against prusa_mk4_home falls due at PARTS (cad-verify capability.route step 2)
   reversal: re-assess on a changed requirement, spool or printer
 - id: pla-print
   title: Printed PolyLite PLA base and cradle
@@ -276,6 +277,7 @@ candidates:
   - REQ-005 no support contact on visible faces is PLANNED, due PARTS; no surface quality is claimed
   - REQ-001 to REQ-003 are PLANNED, due LAYOUT
   - material cost and print time are UNKNOWN until PARTS slices the parts
+  - the consumable form of the owner's spool against prusa_mk4_home falls due at PARTS (cad-verify capability.route step 2)
   reversal: re-assess on a changed requirement, spool or printer
 - id: asa-print
   title: Printed PolyLite ASA base and cradle

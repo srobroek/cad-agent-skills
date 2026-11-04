@@ -11,13 +11,13 @@ permission:
     .cad-work/**: allow
   bash:
     "*": deny
-    "uv lock --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --script /*/.cad-work/*/extract.py": allow
-    "uv run --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/extract.py": allow
-    "uv run --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/extract.py *": allow
-    "/*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/delivery.json*": allow
-    "/*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
-    "\"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/delivery.json*": allow
-    "\"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
+    "TMPDIR=/*/.cad-work/*/tmp uv lock --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --script /*/.cad-work/*/extract.py": allow
+    "TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/extract.py": allow
+    "TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/extract.py *": allow
+    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/delivery.json*": allow
+    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
+    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/delivery.json*": allow
+    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
     "curl -fsSL -o /*/.cad-work/*/output/* --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 *": allow
     "curl -fsSL --create-dirs -o /*/.cad-work/*/output/* --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 *": allow
     "shasum -a 256 *": allow
