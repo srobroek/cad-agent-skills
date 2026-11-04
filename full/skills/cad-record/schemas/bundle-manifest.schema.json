@@ -45,7 +45,7 @@
         "properties": {
           "path": {
             "allOf": [
-              {"$ref": "common.schema.json#/$defs/project_path"},
+              {"$ref": "common.schema.json#/$defs/hw_path"},
               {"not": {"pattern": "(^|/)bundle-manifest\\.json$"}}
             ]
           },

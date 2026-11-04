@@ -1,8 +1,9 @@
 # Build guide: `<product title>` REV `<REV>`
 
 Template owner: cad-release (references/release.md `propose-release`). The lead fills every `<…>` field from the
-frozen record of `<vF>` and deletes these two template paragraphs. An UNKNOWN fact prints `UNKNOWN` with its
-reason; a physical test prints `PLANNED` or `WAIVED`; nothing in this guide is stated beyond the record.
+frozen record of `<vF>` and the RELEASE verification index of `<vM>`, and deletes these two template paragraphs. An
+UNKNOWN fact prints `UNKNOWN` with its reason; a physical test prints its outcome in the `<vM>` index (`PASS`,
+`WAIVED` or `UNKNOWN`); nothing in this guide is stated beyond the record.
 
 This guide accompanies a reviewed model-generated definition package. Its drawings are not producer-ready and
 claim conformance to no standard. Its geometry, simulation and review results are not physical validation.
@@ -30,7 +31,7 @@ claim conformance to no standard. Its geometry, simulation and review results ar
 
 | Requirement | Facets | Outcome |
 |---|---|---|
-| `<REQ-###>` | `<facets>` | `<PASS, WAIVED, UNKNOWN or PLANNED, as the verification index states>` |
+| `<REQ-###>` | `<facets>` | `<PASS, WAIVED or UNKNOWN, as the <vM> verification index states>` |
 
 ## Parts
 
@@ -71,7 +72,7 @@ One entry per `assembly.yaml` service task: `<task id>`, `<description>`, operat
 
 ## Not established by this package
 
-- `<each UNKNOWN fact, PLANNED physical test and open question with its owner>`
+- `<each UNKNOWN fact, UNKNOWN or WAIVED physical test and open question with its owner>`
 
 ## Licenses
 

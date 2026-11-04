@@ -11,19 +11,30 @@ permission:
     .cad-work/**: allow
   bash:
     "*": deny
-    "uv run --no-project --python 3.12 --with cadquery==2.8.0 --with cadquery-ocp==7.9.3.1.1 --with vtk==9.6.2 python .cad-work/*/build.py": allow
-    "uv run --no-project --python 3.12 --with build123d==0.13.0 --with cadquery-ocp-novtk==8.0.1.1.0 python .cad-work/*/build.py": allow
-    "uv run --locked --script .cad-work/*/build.py": allow
-    "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * .cad-work/*/delivery.json": allow
-    "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * .cad-work/*/output/checks/*/result.json": allow
+    "uv lock --script /*/.cad-work/*/build.py": allow
+    "uv run --locked --script /*/.cad-work/*/build.py *": allow
+    "uv lock --script /*/.cad-work/*/check.py": allow
+    "uv run --locked --script /*/.cad-work/*/check.py *": allow
+    "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * *.cad-work/*/output/*": allow
+    "shasum -a 256 *": allow
+    "sha256sum *": allow
+    "find . -type f ! -path './.git/*' ! -path './.cad-work/*' ! -path './.claude/*' ! -path './.codex/*' ! -path './.agents/*' ! -path './.opencode/*' ! -path './.kiro/*' ! -path './.omp/*'": allow
+    "sed 's|^\\./||'": allow
+    "LC_ALL=C sort": allow
+    "tr '\\n' '\\0'": allow
+    "xargs -0 -r shasum -a 256": allow
+    "xargs -0 -r sha256sum": allow
   task: deny
 ---
 
-You are the concept designer for one assigned variant. Follow the `agent-roles.md` resource in the task brief for duties, inputs, write
-boundary, output and reply; use its `worker-brief.md` resource for the brief contract. Read only the brief at its supplied absolute path and
-only the listed resources. MUST Treat installed skills, schemas, assets and role files as read-only; report mismatches as defects and open
-questions, never patch them.
+You are the concept designer for one assigned variant. Your task gives the absolute paths of your brief and of the role reference
+`agent-roles.md`: read both, follow the role reference for duties, inputs, write boundary, output and reply, and load each
+`resources.skills` entry of the brief.
+
+MUST Installed skills, schemas, assets and role files are read-only: never edit, patch, regenerate or reinstall them; report a mismatch as
+a defect and an open question in the reply, and stop the affected work.
 
 ## Output
 
-Follow the role-reference reply format. CAP 150 words clean · 300 words with findings.
+Begin your reply with `VERDICT: PASS|MINOR|MAJOR`. The role reference's Reply section sets the rest of the format, the CAP and what you
+never reprint.

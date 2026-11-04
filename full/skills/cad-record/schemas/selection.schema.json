@@ -10,10 +10,30 @@
     "assessment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["input_sha256", "method", "date"],
+      "required": ["inputs", "input_sha256", "method", "date"],
       "properties": {
+        "inputs": {
+          "description": "every hw/ file the assessment read, with its sha256; never hw/manufacturing/selection.yaml, which holds this list, or a decision written from this assessment",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/hw_path"},
+                  {"not": {"const": "hw/manufacturing/selection.yaml"}}
+                ]
+              },
+              "sha256": {"$ref": "common.schema.json#/$defs/sha256"}
+            }
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
         "input_sha256": {
-          "description": "set digest (references/record.md#inventory-digest) of the hw/ files the assessment read; it never lists hw/manufacturing/selection.yaml, which holds this digest, or a decision written from this assessment",
+          "description": "set digest (references/record.md#inventory-digest) over inputs",
           "$ref": "common.schema.json#/$defs/sha256"
         },
         "method": {"$ref": "common.schema.json#/$defs/text"},

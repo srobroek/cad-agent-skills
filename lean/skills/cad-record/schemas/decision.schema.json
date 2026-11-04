@@ -50,10 +50,17 @@
     "actor": {"$ref": "common.schema.json#/$defs/actor"},
     "time": {"$ref": "common.schema.json#/$defs/timestamp"},
     "statement": {
+      "description": "the user's or authority's message bytes, saved unchanged at path before the DR is written; transcript_sha256 hashes those bytes",
       "type": "object",
       "additionalProperties": false,
-      "required": ["transcript_sha256", "quote", "time"],
+      "required": ["path", "transcript_sha256", "quote", "time"],
       "properties": {
+        "path": {
+          "allOf": [
+            {"$ref": "common.schema.json#/$defs/hw_path"},
+            {"pattern": "^hw/decisions/statements/DR-[0-9]{3}\\.txt$"}
+          ]
+        },
         "transcript_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
         "quote": {"$ref": "common.schema.json#/$defs/text"},
         "time": {"$ref": "common.schema.json#/$defs/timestamp"}

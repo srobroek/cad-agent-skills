@@ -268,6 +268,20 @@
       "meaning": "the immutable proposal bytes (selection, orientation, support, waiver, change, import mapping) a PROPOSAL-bound DR names"
     },
     {
+      "id": "record.decision_statement",
+      "path": "hw/decisions/statements/{DR}.txt",
+      "kind": "RECORD",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-flow",
+      "writer": "lead, saving the statement bytes unchanged before writing the DR that hashes them",
+      "mutability": "IMMUTABLE",
+      "stage": "GROUND",
+      "condition": {"kind": "CONDITIONAL", "when": "a DR is APPROVED or REJECTED"},
+      "gate_credit": true,
+      "meaning": "the user's or authority's message that approves or rejects a DR; statement.transcript_sha256 hashes it"
+    },
+    {
       "id": "record.import_original",
       "path": "hw/imports/{DR}/original/**",
       "kind": "RECORD",
@@ -350,6 +364,20 @@
       "condition": {"kind": "ALWAYS"},
       "gate_credit": true,
       "meaning": "the one immutable stage verdict of this attempt"
+    },
+    {
+      "id": "version.obligations",
+      "path": "hw/versions/{V}/obligations.yaml",
+      "kind": "GENERATED",
+      "schema": null,
+      "format": "YAML",
+      "owner": "cad-flow",
+      "writer": "lead",
+      "mutability": "IMMUTABLE",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "the attempt reached enumerate-obligations"},
+      "gate_credit": true,
+      "meaning": "expected, future and inapplicable obligations of this attempt with reasons, written before any check; the verdict hashes it"
     },
     {
       "id": "version.release_proposal",
@@ -686,6 +714,34 @@
       "condition": {"kind": "CONDITIONAL", "when": "the part or assembly drawing is REQUIRED"},
       "gate_credit": true,
       "meaning": "inventory of the drawing bundle"
+    },
+    {
+      "id": "drawing.source",
+      "path": "hw/drawings/{V}/{SUBJECT}/source/**",
+      "kind": "GENERATED",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-release",
+      "writer": "lead, copying accepted drawing unit bytes verbatim",
+      "mutability": "IMMUTABLE",
+      "stage": "DETAIL",
+      "condition": {"kind": "CONDITIONAL", "when": "the part or assembly drawing is REQUIRED"},
+      "gate_credit": true,
+      "meaning": "the drawing program and its uv script lock that produced the sheets and coverage"
+    },
+    {
+      "id": "drawing.artifacts",
+      "path": "hw/drawings/{V}/{SUBJECT}/artifacts/**",
+      "kind": "GENERATED",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-release",
+      "writer": "lead, copying accepted drawing unit bytes verbatim",
+      "mutability": "IMMUTABLE",
+      "stage": "DETAIL",
+      "condition": {"kind": "CONDITIONAL", "when": "the part or assembly drawing is REQUIRED"},
+      "gate_credit": true,
+      "meaning": "retained drawing evidence such as the font check, listed by the drawing bundle manifest"
     },
     {
       "id": "bom.yaml",

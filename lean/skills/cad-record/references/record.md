@@ -81,22 +81,24 @@ No input contains downstream result bytes or its own future hash.
    The verification index is the input of its `verification.index` check, so no row cites that check's
    obligation or result.
 5. Stage verdict (`hw/versions/vN/stage-verdict.json`): written once after every required check; names
-   the expected obligations, accepted result and bundle hashes, waivers, predecessor and its approval,
-   version manifest, and the installed policy by path and plugin name and version. No self hash.
+   the expected obligations and their `obligations.yaml`, accepted result and bundle hashes, waivers, predecessor
+   and its approval, version manifest, and the installed policy by path and plugin name and version. No self hash.
 6. Gate DR after a PASS verdict binds that verdict (`binding.kind: STAGE`). Earlier selection, orientation,
    support, waiver, change and import DRs bind an immutable proposal (`PROPOSAL`) retained at
    `hw/decisions/proposals/DR-###/<name>` before the DR is written; scratch is never bound. Approve,
    reject and supersede are new DRs; an old DR's status derives from the DRs that refer to it.
 7. A successor attempt names its approved predecessor; a retry names the accepted causal baseline and the
    superseded failure. Impact reopens dependents explicitly; no step of the chain is skipped.
-8. Release: the PROPOSAL manifest (`hw/versions/vN/release-proposal.json`) lists the planned payload and
-   names the frozen FREEZE version and verdict; it excludes the not-yet-written RELEASE readiness verdict,
-   approval and integrity result, because the RELEASE checks and verdict hash the proposal. The RELEASE
-   approval DR then binds both the proposal and that readiness verdict (`RELEASE_INVENTORY`). The FINAL
-   manifest adds the readiness verdict, the approval, the package-integrity result and the full inventory,
-   and excludes itself; its digest is reported outside it. The package-integrity result is hashed by the
-   FINAL manifest, so it never hashes or inspects any `release-manifest.json`; it checks the staged payload
-   against the proposal's planned inventory.
+8. Release: the PROPOSAL manifest (`hw/versions/vN/release-proposal.json`) is written after the RELEASE
+   `index-verification`. It lists the planned payload, including every RELEASE result bundle and the verification
+   index published before it, and names the frozen FREEZE version and verdict. It excludes the `release.inventory`
+   result, which reads it, and the not-yet-written RELEASE readiness verdict, approval and integrity result, because
+   those hash the proposal. The RELEASE approval DR then binds both the proposal and that readiness verdict
+   (`RELEASE_INVENTORY`). The FINAL manifest adds the readiness verdict, the approval, the package-integrity result
+   and the full inventory, which includes the staged copies of the approval DR, the readiness verdict and the
+   `release.inventory` bundle, and excludes itself; its digest is reported outside it. The package-integrity result
+   is hashed by the FINAL manifest, so it never hashes or inspects any `release-manifest.json`; it checks the staged
+   payload against the proposal's planned inventory and the files the approval and readiness verdict bind.
 9. Worker outputs: a delivery's `outputs` hash each delivered file, so a delivered file (such as
    `variant.yaml`) never holds its delivery digest; it names its unit, role and brief digest, and the lead
    records the accepted delivery digest in `units.yaml`.
@@ -108,7 +110,7 @@ inventoried input. Whole-assembly checks rerun on the integrated version; never 
 
 One digest rule for `input_inventory.sha256` (worker brief), `input_inventory_sha256` (UNIT binding, worker
 delivery), `boundary.before_sha256` / `boundary.after_sha256` (worker delivery) and `assessment.input_sha256`
-(selection, a set digest that never lists `hw/manufacturing/selection.yaml` itself).
+(selection, the set digest over `assessment.inputs`, which never lists `hw/manufacturing/selection.yaml` itself).
 
 - Root: the project root, the directory that holds `hw/`. Every path is relative to it.
 - Line: `<lowercase sha256 hex>  <path>` (two spaces) followed by LF: the `shasum -a 256` and `sha256sum` line.
@@ -117,9 +119,10 @@ delivery), `boundary.before_sha256` / `boundary.after_sha256` (worker delivery) 
 - Order: bytewise by path, `LC_ALL=C sort`.
 - Digest: sha256 of the concatenated lines. The empty set digests to
   `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
-- Excluded always: `.git/**` and `.cad-work/**` (all scratch, including the unit's own). Only regular files
-  count; symlinks are not followed and a symlink in scope is a defect for the semantic check; empty
-  directories contribute nothing.
+- Excluded always: `.git/**`, `.cad-work/**` (all scratch, including the unit's own) and the installed host
+  directories `.claude/**`, `.codex/**`, `.agents/**`, `.opencode/**`, `.kiro/**` and `.omp/**`, which a host may
+  rewrite during a run. Only regular files count; symlinks are not followed and a symlink in scope is a defect for
+  the semantic check; empty directories contribute nothing.
 - Input inventory (set digest): exactly the paths in the brief's `input_inventory.files`, all under `hw/`;
   each entry's sha256 equals its line's hex.
 - Boundary (tree digest): every regular file under the root except the exclusions, taken before the worker's
@@ -129,18 +132,18 @@ delivery), `boundary.before_sha256` / `boundary.after_sha256` (worker delivery) 
 Tree digest, one line from the project root (the digest is the first field of the output):
 
 ```sh
-find . -type f ! -path './.git/*' ! -path './.cad-work/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r shasum -a 256 | shasum -a 256
+find . -type f ! -path './.git/*' ! -path './.cad-work/*' ! -path './.claude/*' ! -path './.codex/*' ! -path './.agents/*' ! -path './.opencode/*' ! -path './.kiro/*' ! -path './.omp/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r shasum -a 256 | shasum -a 256
 ```
 
 ```sh
-find . -type f ! -path './.git/*' ! -path './.cad-work/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r sha256sum | sha256sum
+find . -type f ! -path './.git/*' ! -path './.cad-work/*' ! -path './.claude/*' ! -path './.codex/*' ! -path './.agents/*' ! -path './.opencode/*' ! -path './.kiro/*' ! -path './.omp/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r sha256sum | sha256sum
 ```
 
 The first line is macOS (`shasum`), the second Linux (`sha256sum`). For a set digest, replace the `find … | sed …`
 prefix with `LC_ALL=C sort <list>` over a file holding one listed path per line.
 
 Worked example: `hw/product.yaml` holds `format: cad-agent-skills` + LF and `hw/parts/STD-0001/part.yaml` holds
-`PN: STD-0001` + LF; `.git/HEAD` and `.cad-work/u1/x.txt` also exist and are excluded. The lines are:
+`PN: STD-0001` + LF; `.git/HEAD`, `.cad-work/u1/x.txt` and `.kiro/agents/cad-checker.json` also exist and are excluded. The lines are:
 
 ```text
 1822f76462de13a2333ba4c89f162447e6deba13e5c6015bdf32d4bcf314b17d  hw/parts/STD-0001/part.yaml

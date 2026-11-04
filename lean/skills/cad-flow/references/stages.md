@@ -12,7 +12,7 @@ policy row. Paths, IDs and the hash graph follow cad-record ([layout](../../cad-
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `order`, `predecessor` | One linear chain GROUND → RELEASE. A stage starts only after its predecessor has a PASS verdict and a satisfied gate.               |
 | `gate`                 | `HUMAN`: an APPROVED decision ([gates](gates.md)). `REVIEW`: the verdict's required review is PASS. `NONE`: the PASS verdict alone. |
-| `owner`                | The skill to LOAD for the stage-work procedure IDs.                                                                                 |
+| `owner`                | The stage's accountable skill. Each stage-work ID loads the skill of its owner reference ([Stage-work procedure IDs](#stage-work-procedure-ids)). |
 | `procedure`            | Run every ID in listed order; each ID is defined below.                                                                             |
 | `checks[]`             | Families this stage enumerates: `ALWAYS` applies; `CONDITIONAL` applies when `condition` holds on the frozen inputs.                |
 | `due`                  | Equal to the stage: the obligation is `expected` and resolves now. A later stage: it is listed in `future` as PLANNED.              |
@@ -65,8 +65,8 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 2. Take anchors from [cad-verify's check plan](../../cad-verify/references/check-plan.md). A family the check plan does not anchor uses
    `<family>@product`.
 3. `due` equal to the stage → `expected`; a later `due` → `future`.
-4. Write `.cad-work/stage-vN/obligations.yaml` (expected, future, inapplicable entries with reasons) before any check runs; the verdict's
-   `expected` and `future` equal it.
+4. Write `hw/versions/vN/obligations.yaml` once, `test ! -e` first, before any check runs: `expected` and `future` obligation IDs and
+   `inapplicable` entries `{family, reason}`. The verdict's `expected` and `future` equal it, and its `obligations` hashes it.
 5. An expected obligation with no check-plan method or no available tool is UNKNOWN `UNSUPPORTED_METHOD`; never substitute a method.
 
 ### run-checks
@@ -86,8 +86,8 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    or method is a new `vN`.
 6. A result is `CARRIED_FORWARD` only under [change-impact Carry-forward](change-impact.md#carry-forward).
 7. Fast or smoke runs stay in scratch as diagnostics and never enter a result.
-8. A family whose subject a later procedure ID produces runs in that step
-   ([cad-verify index-verification](../../cad-verify/references/check-plan.md#index-verification)).
+8. A family whose subject a later procedure ID produces runs in that step; a family that reads such a subject or its result runs after
+   it, at the end of the last such step ([cad-verify index-verification](../../cad-verify/references/check-plan.md#index-verification)).
 
 ### accept-results
 
@@ -99,18 +99,26 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 
 ### write-verdict
 
-1. Compose `hw/versions/vN/stage-verdict.json` ([cad-record stage-verdict schema](../../cad-record/schemas/stage-verdict.schema.json)):
-   `predecessor` is the approved predecessor verdict and its approval; `supersedes` the attempt this one replaces; `expected`, `future`,
-   `results`, `bundles`, `blockers`; `review.required` is true when the stage lists `review.mechanical_dfm` due now; `policy` is
-   `{path, plugin}` from [preflight](preflight.md#preflightjson); predecessor approvals follow
-   [cad-record decision bindings](../../cad-record/schemas/decision.schema.json#/$defs/binding); `time` is UTC.
+1. Compose the verdict as `.cad-work/stage-vN/stage-verdict.json`
+   ([cad-record stage-verdict schema](../../cad-record/schemas/stage-verdict.schema.json)): `stage` and `version` vN;
+   `version_manifest`, the path and sha256 of `hw/versions/vN/manifest.json`, and `obligations`, those of `obligations.yaml` once written;
+   `policy` `{path, plugin}` from [preflight](preflight.md#preflightjson); `predecessor` `{stage, version, verdict, approval}`, the
+   approved predecessor verdict and its gate DR
+   ([cad-record decision bindings](../../cad-record/schemas/decision.schema.json#/$defs/binding));
+   for a retry, `supersedes` `{version, verdict, reason}` of the attempt it replaces; `expected`, `future`, `results`, `bundles`,
+   `waivers`, `blockers`; `review` with `required` true when the stage lists `review.mechanical_dfm` due now, plus its `verdict` and
+   result file; `complete` true only when every expected obligation has an accepted outcome from a finished run; `time` in UTC.
 2. Each `results[]` entry carries the check's result, except a FAIL or UNKNOWN check whose every non-PASS outcome an approved
    [cad-record waiver](../../cad-record/schemas/common.schema.json#/$defs/waiver) covers: its entry is `WAIVED` with that `waiver: WV-###`,
    and `waivers` lists `{id, decision}` for each waiver used.
-3. `result`: PASS when complete, without blockers, every entry PASS, WAIVED or NOT_APPLICABLE and a required review PASS
+3. Before writing, check the composed verdict against [cad-record validation](../../cad-record/references/validation.md#semantic-check)
+   items 7 (waiver expiry at its `time`) and 10. A waiver that fails either covers nothing: its entries keep the check's result and
+   `waivers` drops it.
+4. `result`: PASS when complete, without blockers, every entry PASS, WAIVED or NOT_APPLICABLE and a required review PASS
    ([cad-review rubric](../../cad-review/references/rubric.md)). FAIL when a due obligation is evidenced FAIL or the required review is
    MINOR or MAJOR; BLOCKED otherwise.
-4. `test ! -e` the target, validate against the linked cad-record stage-verdict schema, and write once → never rewritten.
+5. `test ! -e hw/versions/vN/stage-verdict.json`, validate the composed file against the linked cad-record stage-verdict schema, and copy
+   it there once → never rewritten.
 
 ### present-gate
 
@@ -129,7 +137,8 @@ stage work names none.
 
 ## Stage-work procedure IDs
 
-Each owner reference defines the step under a heading with the procedure ID.
+Before running an ID, LOAD the SKILL.md of the skill its owner reference belongs to; that reference defines the step under a heading with
+the procedure ID.
 
 | ID                     | Owner reference                                                                                   | Output                                                       |
 | ---------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -150,7 +159,7 @@ Each owner reference defines the step under a heading with the procedure ID.
 | `confirm-cases`        | [cad-verify confirm-cases](../../cad-verify/references/check-plan.md#confirm-cases)               | every due case approved with an available method             |
 | `index-verification`   | [cad-verify index-verification](../../cad-verify/references/check-plan.md#index-verification)     | verification bundle, then its `verification.index` check     |
 | `promote-revisions`    | [cad-release promote-revisions](../../cad-release/references/release.md#promote-revisions)        | promoted part revisions before final checks                  |
-| `propose-release`      | [cad-release propose-release](../../cad-release/references/release.md#propose-release)            | `hw/versions/vN/release-proposal.json`                       |
+| `propose-release`      | [cad-release propose-release](../../cad-release/references/release.md#propose-release)            | `hw/versions/vN/release-proposal.json`, then its `release.inventory` check |
 | `publish-release`      | [cad-release publish-release](../../cad-release/references/release.md#publish-release)            | staged copy, `release.integrity`, final manifest             |
 
 ## Stop procedure
@@ -170,6 +179,7 @@ Stop on any condition below; the code is the verdict blocker when an attempt has
 | inventoried input changed during the attempt                                                                                                                                                                               | `SOURCE_MUTATION`                                      |
 | change without its approval                                                                                                                                                                                                | `UNAPPROVED_CHANGE`                                    |
 | required review MAJOR                                                                                                                                                                                                      | `REVIEW_MAJOR`                                         |
+| required review MINOR                                                                                                                                                                                                      | `REVIEW_MINOR`                                         |
 | expired calibration or waiver                                                                                                                                                                                              | `EXPIRED`                                              |
 | timeout                                                                                                                                                                                                                    | `TIMEOUT`                                              |
 | rejected or failed worker delivery                                                                                                                                                                                         | `DELIVERY_FAILED`                                      |

@@ -44,16 +44,17 @@ FREEZE, before `freeze-inputs`; nothing is promoted after FREEZE.
 
 ## propose-release
 
-RELEASE, after `build-version`; geometry is the FREEZE version's.
+RELEASE, after `index-verification` has published the `vM` verification index and its `verification.index` result;
+geometry is the FREEZE version's.
 
 1. Confirm the chain: the predecessor FREEZE verdict `vF` is PASS with an APPROVED GATE decision. Confirm
    `product.yaml` `service.class`, `release_scope` and `license` are KNOWN; an UNKNOWN one is a due UNKNOWN for
    `release.inventory`: stop with `DUE_UNKNOWN` and its question.
 2. REV: the next letter of `[A-HJ-NPRTUVWY]` unused by every `hw/releases/*`, every `rev` in
    `hw/versions/*/release-proposal.json` and every RELEASE decision; a rejected or failed REV stays consumed.
-3. Build guide: fill `<skill-dir>/assets/build-guide.md` from the frozen record into
-   `hw/docs/release-<REV>/build-guide.md`; every statement comes from the record, an UNKNOWN prints UNKNOWN,
-   a physical test prints PLANNED or WAIVED. License texts the owner approved sit beside it.
+3. Build guide: fill `<skill-dir>/assets/build-guide.md` from the frozen record and the `vM` verification index into
+   `hw/docs/release-<REV>/build-guide.md`; every statement comes from the record, an UNKNOWN prints UNKNOWN, a
+   physical test prints its `vM` index outcome. License texts the owner approved sit beside it.
 4. Planned payload, one entry `{path, source, sha256, bytes, role}` per file, sorted by `path`:
 
    | Package path | Source | Role |
@@ -62,19 +63,21 @@ RELEASE, after `build-version`; geometry is the FREEZE version's.
    | `manufacturing/<PN>/**` | `hw/versions/vF/manufacturing/<PN>/**`, except `manufacturing.yaml` | MANUFACTURE |
    | `drawings/<SUBJECT>/**` | `hw/drawings/vF/<SUBJECT>/**` | DRAWING |
    | `record/version/**` | `hw/versions/vF/{manifest.json,stage-verdict.json,record/**,source/**}` | RECORD |
+   | `record/release/manifest.json` | `hw/versions/vM/manifest.json`, which the RELEASE results bind | RECORD |
    | `record/decisions/**` | every `hw/decisions/DR-###.yaml` and cited proposal the chain GROUND to `vF` names | RECORD |
-   | `checks/<vX>/<check>/<attempt>/**` | every result bundle a verdict of that chain lists | CHECK |
+   | `checks/<vX>/<check>/<attempt>/**` | every result bundle a verdict of that chain lists, and every `vM` result bundle published before this step | CHECK |
    | `bom.yaml`, `bom.csv` | `hw/bom/vF/` | BOM |
-   | `verification.yaml`, `verification.csv` | `hw/verification/vF/` | VERIFICATION |
+   | `verification.yaml`, `verification.csv` | `hw/verification/vM/` | VERIFICATION |
    | `docs/build-guide.md` | `hw/docs/release-<REV>/build-guide.md` | DOCUMENT |
    | `docs/LICENSE-*` | the approved license texts | LICENSE |
 
    A retained source whose redistribution right is not granted is never copied: it goes to `exclusions` with
    its citation, sha256 and the restriction. Scratch, previews and other notes are never payload.
-5. `claims`: from `hw/verification/vF/verification.yaml`
-   ([cad-verify `index-verification`](../../cad-verify/references/check-plan.md#index-verification)), one claim per
-   requirement and outcome, its facets grouped, the outcome copied unchanged (PASS, WAIVED, UNKNOWN or PLANNED). A
-   FAIL row blocks the proposal.
+5. `claims`: from `hw/verification/vM/verification.yaml`
+   ([cad-verify `index-verification`](../../cad-verify/references/check-plan.md#index-verification)), which holds the
+   frozen outcomes and this attempt's `physical.test` outcomes: one claim per requirement and outcome, its facets
+   grouped, the outcome copied unchanged (PASS, WAIVED or UNKNOWN; nothing is future at RELEASE). A FAIL row, or a
+   `verification.index` result other than PASS, blocks the proposal.
 6. `scope`: `service_class`, `purpose`, `operating_limits` and `exclusions` copied from `product.yaml`; `trial`
    only when an `UNVALIDATED_TRIAL` waiver is in use, copied from its WAIVER decision.
 7. `frozen` (`vF`, its manifest and verdict hashes, its GATE decision), `decisions` (every DR the package
@@ -82,6 +85,8 @@ RELEASE, after `build-version`; geometry is the FREEZE version's.
    `redistributed`), `exclusions` (every cited item not packaged, with its reason).
 8. Write `hw/versions/vM/release-proposal.json` with `phase: PROPOSAL`, `test ! -e` first → it validates
    against the `release-manifest` root; written once.
+9. Dispatch the `release.inventory` check ([below](#releaseinventory)) on the proposal; its result is published
+   before `accept-results`.
 
 ## release.inventory
 
@@ -92,9 +97,9 @@ per criterion:
 1. Every planned source exists under `hw/`, outside scratch, and matches its sha256 and bytes.
 2. The payload holds what the release ceiling row needs: definition STEP of the assembly and every made part,
    the manufacturing outputs each route names, sheets and coverage for every REQUIRED drawing subject, the BOM
-   and verification bundles of `vF`, the record and decisions, every cited check bundle, the build guide and
-   the license texts.
-3. `claims` equal the verification index; no FAIL row exists; no UNKNOWN, PLANNED or WAIVED row is upgraded.
+   bundle of `vF` and the verification bundle of `vM`, the record and decisions, every cited check bundle, the
+   build guide and the license texts.
+3. `claims` equal the `vM` verification index; no FAIL row exists; no UNKNOWN, PLANNED or WAIVED row is upgraded.
 4. `scope` equals `product.yaml` and the GROUND service class; `trial` is present exactly when an
    `UNVALIDATED_TRIAL` waiver is used, and that waiver is approved, in scope and unexpired.
 5. Licenses are owner-approved; a third-party item is copied only with its redistribution right.
@@ -114,11 +119,13 @@ a second verdict: it never changes the RELEASE verdict or its readiness.
    `HASH_MISMATCH`; a frozen input that must change is a CHANGE and a new version.
 2. Stage: `mkdir .cad-work/stage-vM/release-<REV>` (it must not exist; else step 7). Copy each planned source
    byte for byte to its package path, following no symlink, then copy the approved RELEASE decision to
-   `record/decisions/`. Rehash every staged file against its expected sha256.
+   `record/decisions/`, the `vM` readiness verdict to `record/release/stage-verdict.json` and the
+   `release.inventory` result bundle to `checks/vM/<check>/<attempt>/`. Rehash every staged file against its
+   expected sha256.
 3. Integrity: run `release.integrity` (below) on the staged copy and write its result to
    `acceptance/package-integrity.json` in the staging directory. A result other than PASS publishes nothing.
 4. Final manifest: the proposal's fields with `phase: FINAL`, plus `readiness` (the `vM` stage verdict path and
-   sha256), `approval {decision, file}`, `inventory` (every staged file, including the decision copy and
+   sha256), `approval {decision, file}`, `inventory` (every staged file, including the step 2 copies and
    `acceptance/package-integrity.json` with role ACCEPTANCE, excluding `release-manifest.json`) and
    `integrity {path, sha256, result: PASS}`. It validates against the `release-manifest` root and every
    inventory sha256 equals the staged bytes; otherwise publish nothing.
@@ -141,7 +148,9 @@ with every `shasum -a 256` (or `sha256sum`) command and its exit code. The resul
 manifest digest) and carries `release {rev, approval, planned_inventory}` with the proposal's path and sha256.
 
 1. Every planned entry exists at its package path with its sha256 and bytes.
-2. The only other file is the approved decision copy (this result is written after the audit).
+2. The only other files are the step 2 copies of [publish-release](#publish-release): the approved decision, the
+   readiness verdict whose sha256 that decision binds, and the `release.inventory` bundle, whose manifest that
+   verdict hashes and whose files that manifest lists, each with that sha256 (this result is written after the audit).
 3. No symlink, no unsafe path, no file outside the staging directory.
 4. `artifacts` list every staged file with its sha256, excluding `acceptance/package-integrity.json` and
    `release-manifest.json`.

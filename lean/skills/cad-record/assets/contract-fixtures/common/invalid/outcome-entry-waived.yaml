@@ -1,0 +1,11 @@
+probe: cad-agent-skills.common
+outcome_entry:
+- obligation: motion.sweep@assembly
+  subject:
+    kind: ASSEMBLY
+  facet: CAD_VALID
+  outcome: WAIVED
+  method:
+    name: joint sweep
+  waiver: DR-015
+  limitation: cycle life unverified

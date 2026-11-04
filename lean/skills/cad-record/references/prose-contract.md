@@ -115,7 +115,7 @@ optional; `state text` and `criterion criterion_or_unknown` required except on M
 | `MOTION` | `joints [semantic_id]≥1 unique`; `sampling sampling` (CONSTRAINED_PATH and SAMPLED state a `justification`); `steps [{joint semantic_id, step quantity}]≥1`; `pairs` `ALL` or `[[semantic_id, semantic_id]]≥1` (each pair exactly two); `play_extremes` boolean; optional `tool_state`, `service_state` `text` |
 | `STACK` | `contributors [contributor]≥1`; `method WORST_CASE\|JUSTIFIED_RSS`; `rss` when `JUSTIFIED_RSS`; optional `interface interface_id`. Contributor `{id semantic_id, subject subject, sign 1\|-1, nominal quantity, tolerance quantity, state dimension_state, source source}`, optional `effects texts`. `rss {distribution text, independence text, centering text, sigma number > 0, confidence number in (0, 1], capability text, decision decision_id}`, all required |
 | `LOAD` | `loads [load]≥1`; `boundary_conditions [boundary condition]≥1`; `material`; `failure_modes texts`; `method HAND\|FEA`; `validity text` |
-| `FEA` | `solver {name text, version text, documentation text}`, optional `capability profile_id`; `loads [load]≥1`; `boundary_conditions [boundary condition]≥1`; `material`; `mesh {element text, seed quantity, threads integer ≥ 1, refinement texts}`; `convergence {quantity semantic_id, tolerance quantity, levels integer ≥ 2}`; `units =mm-N-MPa`; `limits texts`; optional `contact texts` |
+| `FEA` | `solver {name text, version text, documentation text}` required, optional `capability profile_id` inside `solver`; `loads [load]≥1`; `boundary_conditions [boundary condition]≥1`; `material`; `mesh {element text, seed quantity, threads integer ≥ 1, refinement texts}`; `convergence {quantity semantic_id, tolerance quantity, levels integer ≥ 2}`; `units =mm-N-MPa`; `limits texts`; optional `contact texts` |
 | `MASS` | `densities [{subject subject, density quantity_fact}]≥1`; `outputs [MASS\|CENTRE_OF_MASS\|INERTIA]≥1 unique`; optional `stability text` |
 
 Boundary condition: `{id semantic_id, kind FIXED|PINNED|SYMMETRY|CONTACT|SPRING|OTHER, subject subject, description
@@ -178,7 +178,7 @@ only; a FINAL recommendation names its approving decision.
 | Field | Req | Type and rule |
 | --- | --- | --- |
 | `status` | yes | `NOT_ASSESSED\|ASSESSED\|CONFIRMED` |
-| `assessment` | iff ASSESSED or CONFIRMED | `{input_sha256 sha256, method text, date date}` required; `decision decision_id` when CONFIRMED. `input_sha256` is the set digest of the `hw/` files the assessment read, never listing `hw/manufacturing/selection.yaml` or a decision written from this assessment |
+| `assessment` | iff ASSESSED or CONFIRMED | `{inputs, input_sha256 sha256, method text, date date}` required; `decision decision_id` when CONFIRMED. `inputs [{path hw_path, sha256 sha256}]≥1 unique`, all required: every `hw/` file the assessment read, never `hw/manufacturing/selection.yaml` or a decision written from this assessment; `input_sha256` is the set digest over `inputs` |
 | `candidates` | yes | `[candidate]`; empty when NOT_ASSESSED, ≥1 otherwise |
 | `recommendation` | iff ASSESSED or CONFIRMED | recommendation object (below); `status` FINAL when CONFIRMED |
 
@@ -245,13 +245,13 @@ digest. `<vN>/` below is a path prefix matching `hw/versions/v[1-9][0-9]*/`.
 | `version` | yes | `version` |
 | `stage` | yes | `stage` |
 | `predecessor` | when `stage` is not GROUND | `{stage stage, version version, verdict file_hash}`, all required |
-| `record` | yes | `[file_hash]≥1`, each path under `<vN>/record/` |
+| `record` | yes | `[file_hash]≥1`, each path under `<vN>/record/` and never ending in `manifest.json` or `stage-verdict.json` |
 | `cases` | yes | `[case_id] unique` |
-| `build` | yes | `{status =PRESENT, source, locks}` with `source` and `locks` each `[file_hash]≥1` under `<vN>/source/`; or `{status =NOT_APPLICABLE, reason text}` |
+| `build` | yes | `{status =PRESENT, source, locks}` with `source` and `locks` each `[file_hash]≥1` under `<vN>/source/`, no path ending in `manifest.json` or `stage-verdict.json`; or `{status =NOT_APPLICABLE, reason text}` |
 | `source_artifacts` | yes | `[file_hash]`, each path under `<vN>/record/` |
 | `runtime` | yes | `{status =PRESENT, environments, platform platform, commands [command]≥1}` or `{status =NOT_APPLICABLE, reason text}` |
 | `geometry` | yes | `{status =PRESENT, units =mm, frame =RIGHT_HANDED_Z_UP, files, occurrences, export_tolerance, readback}` or `{status =NOT_APPLICABLE, reason text}` |
-| `manufacturing` | yes | `[{PN pn, relationship SAME\|DIFFERENT, components [component_id] unique, files [file_hash]≥1}]` required, each file under `<vN>/manufacturing/`; optional `state semantic_id`, `orientation quaternion` |
+| `manufacturing` | yes | `[{PN pn, relationship SAME\|DIFFERENT, components [component_id] unique, files [file_hash]≥1}]` required, each file under `<vN>/manufacturing/` and never ending in `manifest.json` or `stage-verdict.json`; optional `state semantic_id`, `orientation quaternion` |
 
 - `runtime.environments`: `[{kernel kernel, python text, packages [package]≥1, lock file_hash}]≥1`, all required,
   `lock` under `<vN>/source/`, at most one environment per kernel; never a top-level kernel, python or packages.
@@ -276,7 +276,7 @@ Generated JSON inventory of one result or output bundle; it excludes itself.
 | `input` | yes | `[file_hash]≥1` |
 | `recipe` | yes | `{kind =COMMAND, commands [command]≥1, packages [package], platform platform}`, all required; or `{kind =REVIEW, inspected [file_hash]≥1}`, which has no commands |
 | `policy` | yes | `installed_policy`: path and plugin name and version, never a hash |
-| `files` | yes | `[{path, sha256 sha256, role}]≥1` required, optional `bytes` integer ≥ 0; `path` is a `project_path` never ending in `bundle-manifest.json`; role `RESULT\|SOURCE\|LOCK\|ARTIFACT\|LOG\|DOCUMENT\|DATA\|IMAGE`; a CHECK bundle lists at least one RESULT file |
+| `files` | yes | `[{path, sha256 sha256, role}]≥1` required, optional `bytes` integer ≥ 0; `path` is an `hw_path` (never scratch) never ending in `bundle-manifest.json`; role `RESULT\|SOURCE\|LOCK\|ARTIFACT\|LOG\|DOCUMENT\|DATA\|IMAGE`; a CHECK bundle lists at least one RESULT file |
 | `complete` | yes | boolean |
 
 ## bom
@@ -304,7 +304,7 @@ authority; `verification.csv` derives from this file only.
 | `version` | yes | `version` |
 | `stage` | yes | `stage` |
 | `version_manifest_sha256` | yes | `sha256` |
-| `rows` | yes | `[verification-row]`, sorted by requirement, subject and facet |
+| `rows` | yes | `[verification-row]`, sorted by requirement, subject anchor, facet, then criterion `id`, else `property`, an UNKNOWN criterion last |
 
 ## verification-row
 
@@ -320,7 +320,7 @@ a facet due at a later stage.
 | `facet` | yes | `facet` |
 | `due` | yes | `stage` |
 | `outcome` | yes | `PASS\|FAIL\|UNKNOWN\|NOT_APPLICABLE\|WAIVED\|PLANNED` |
-| `obligations` | yes | `[obligation_id]≥1 unique`; never a `verification.index@…` obligation, and no row cites that check's result file |
+| `obligations` | yes | `[obligation_id] unique`; never a `verification.index@…` obligation, and no row cites that check's result file; empty only with `outcome` UNKNOWN and `unknown_code` `INCOMPLETE` (a scope gap) |
 | `results` | when PASS, FAIL, NOT_APPLICABLE or WAIVED; never when PLANNED | `[file_hash]≥1` |
 | `waiver` | when WAIVED | `decision_id` |
 | `reason`, `unknown_code` | when UNKNOWN | `text`, `unknown_code` |
@@ -361,7 +361,7 @@ Generated YAML: the self-contained assignment of one worker.
 | `task` | yes | `text` |
 | `subjects` | yes | `subjects` |
 | `input_inventory` | yes | `{sha256 sha256, files}`: `sha256` is the set digest over `files`; `files [{path hw_path, sha256 sha256}]≥1` required, optional `bytes` integer ≥ 0 |
-| `resources` | yes | `{plugin plugin, skills, schemas, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
+| `resources` | yes | `{plugin plugin, skills, rubric, schemas, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
 | `boundary` | yes | `{project_root absolute_path, scratch scratch_path, writable [scratch_path]≥1 unique, locked [hw_path] unique}` required, optional `read_only [project_path] unique`; a worker writes only under `.cad-work/` |
 | `expected` | yes | `{outputs [{target hw_path, kind text}], checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique` |
 | `lead` | yes | `{session text}` required, optional `task_id text` |
@@ -371,6 +371,8 @@ Generated YAML: the self-contained assignment of one worker.
 - `resources.schemas`: `[{name, path absolute_path}]`, all required; `name` is `common` or one of the ten schema roots
   listed at the top. A prose root is never listed; its contract reaches the worker through the cad-record skill.
 - `resources.role_reference`: `{name text, path absolute_path}` required, optional `uri` (same pattern).
+- `resources.rubric`: `{name =rubric, path absolute_path}` required, `path` ending in `/cad-review/references/rubric.md`; optional
+  `uri =skill://cad-review/references/rubric.md`.
 - `resources.plugin` is name and version from the cad-flow SKILL.md metadata; no manifest path, no hash.
 
 ## worker-delivery

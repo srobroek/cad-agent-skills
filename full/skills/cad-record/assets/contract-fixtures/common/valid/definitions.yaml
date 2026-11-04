@@ -146,6 +146,28 @@ waiver:
     role: OWNER
     basis: owner
     scope: non-safety trial
+- id: WV-002
+  decision: DR-016
+  obligation: geometry.clearance@IF-001#hinge_bore
+  subject:
+    kind: INTERFACE
+    interface: IF-001
+  criterion: hinge clearance >= 0.2 mm
+  classification: NON_SAFETY_DEVIATION
+  retained_outcome: FAIL
+  safety_or_regulatory: false
+  limitation: hinge clearance 0.15 mm accepted for a cosmetic cover
+  operating_envelope: cover only, no load path
+  until_change:
+  - path: hw/parts/STD-0001/part.yaml
+    sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+  reason: cosmetic cover fit
+  consequence: cover may rub
+  authority:
+    name: Sjors
+    role: OWNER
+    basis: owner
+    scope: non-safety deviation
 authority:
 - name: Sjors
   role: OWNER

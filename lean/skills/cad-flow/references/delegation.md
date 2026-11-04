@@ -21,7 +21,9 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 3. Take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) and log it for the batch.
 4. Dispatch every independent unit in one batch through the host's native subagent call naming the role, with a fresh context. The task text
    is only the role, the absolute brief path and the absolute role reference path; never the lead transcript or a forked conversation.
-5. Log each returned native task id; wait on and steer only those ids.
+5. Log each returned native task id; wait on and steer only those ids. Wait for every unit of the batch within the same turn, with the
+   host's foreground or blocking wait where it offers one; never end a turn or present a gate while a dispatched unit still runs. A unit
+   lost to a turn end is `STOPPED` and goes out again as a new unit ([Integrate](#integrate) step 2).
 6. Write nothing outside `.cad-work/` while a unit of the batch runs: any other write changes the tree digest.
 
 ## Integrate

@@ -38,9 +38,10 @@ resources:
   - name: cad-record
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/SKILL.md
     uri: skill://cad-record
-  - name: cad-review
-    path: /RESOLVED/BY/PREFLIGHT/skills/cad-review/SKILL.md
-    uri: skill://cad-review
+  rubric:
+    name: rubric
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-review/references/rubric.md
+    uri: skill://cad-review/references/rubric.md
   schemas:
   - name: part
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/schemas/part.schema.json
