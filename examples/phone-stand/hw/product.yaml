@@ -275,7 +275,7 @@ release_scope:
   exclusions:
     status: KNOWN
     value:
-    - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL, SERVICE, SAFETY and REGULATORY requirements are outside this APPEARANCE_CONCEPT scope
+    - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL, SERVICE, SAFETY, REGULATORY and OTHER requirements are outside this APPEARANCE_CONCEPT scope
     - no fit claim, in CAD or physical; the stated phone envelope sizes the cradle form (REQ-002), and no fit of a phone in the stand is evaluated
     - no functional, holding-force, friction, tipping, durability or other physical claim
     - no safety or regulatory claim; the harm the risk names (the phone slides or tips onto the desk, or the phone or the stand falls off the desk) is not evaluated in this scope

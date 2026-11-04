@@ -74,9 +74,13 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    parallel.
 3. Start the harness in `SMOKE_PROJECT` with the start command below. One session, one lead: every reply resumes the
    same session id, and a second session for the project (a fork, or a reply sent to an older id) fails the cell.
-   Never set an operator-side deadline shorter than the harness turn limit. OMP can exceed an hour per turn; `--max-time 2h`
-   provides a recoverable ceiling for this smoke. If credentials fail mid-turn, resume once with a neutral, recorded line;
-   never resend scripted answers. For OMP, interactive `--restore <session-id>` continues the interrupted turn and its
+   Never set an operator-side deadline shorter than the harness turn limit. For OMP 18.13.2, size `--max-time` to
+   the cell's remaining harness budget and reserve enough for the end-of-session reply and evidence validation. Do not
+   use a shorter per-turn ceiling. A headless `--max-time` cutoff may exit 0 with empty stdout, and `--restore
+   <session-id>` reports nothing left unfinished and resumes nothing. Treat that cutoff as a stop, send `end the
+   session` on the same session id and record the early stop. Ctrl-C leaves a pending call that `--restore` can resume;
+   do not use Ctrl-C to extend the cell budget. If credentials fail mid-turn, resume once with a neutral, recorded
+   line; never resend scripted answers. Interactive `--restore <session-id>` resumes an interrupted turn and its
    subagents under the same session id; it refuses `-p`. For OpenCode, `run --session` cannot resume without a message:
    send one neutral, recorded line (for example, `Continue from the last recorded state.`) and record this deviation, or
    restart in a fresh project and mark the original cell `BLOCKED`. A turn must not end while a dispatched unit still
@@ -95,10 +99,16 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    `approve GROUND <vN>`.
 7. INTENT: the lead dispatches at least one worker unit (sourcing for the printer and spools) through the host's
    native subagent call, logs its native task id, accepts or rejects the delivery, writes the INTENT verdict and
-   presents its packet. Send the scripted INTENT reply. An INTENT recommendation of NONE ends its attempt BLOCKED with
-   no packet; answer the questions its report asks as the brief says. Once the INTENT decision is recorded, or the
-   lead reports a stop that asks nothing the brief answers, reply exactly `end the session`, the brief's last
-   scripted turn.
+   presents its packet. Send `approve INTENT v<N> choose <candidate>, then end the session`. Record the exact sent bytes:
+   [cad-flow's gate-decision procedure](../full/skills/cad-flow/references/gates.md#record-a-gate-decision) step 3
+   defines this reply as recording the decision without advancing; [cad-flow's Finish procedure](../full/skills/cad-flow/references/preflight.md#finish)
+   releases the claim in the same turn. Judge the cell at the recorded INTENT decision and verify the claim session
+   copy is `RELEASED` and `.cad-work/lead/active/` is absent. The ordinary gate advances to the successor in the same
+   turn ([cad-flow's advance](../full/skills/cad-flow/references/stages.md#advance)); ignore successor-stage work for
+   this cell. An INTENT recommendation of NONE ends its attempt BLOCKED with no packet; answer the questions its report
+   asks as the brief says. If the lead reports a stop that asks nothing the brief answers before the decision is
+   recorded, reply exactly `end the session`, the brief's last scripted turn.
+
 8. Validate, from `SMOKE_PROJECT`, with the run's own preflight tools under `.cad-work/lead/validator/bin/`
    ([cad-record validation](../full/skills/cad-record/references/validation.md#schema-validation)). First load every
    YAML file under `hw/` with the pinned loader:
@@ -139,19 +149,39 @@ in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrapper
 | Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
 | OMP | `omp_cell` in `SMOKE_PROJECT` | `omp_cell -p "<prompt>"`; `omp_cell --resume <session-id> -p "<reply>"`; recover interactively with `omp_cell --restore <session-id>` | `/cad-flow` |
 
+### Skills and role listing commands
+
 | Harness | Skills | Roles |
 |---|---|---|
 | Claude Code | `claude_smoke -p --no-session-persistence --output-format stream-json --verbose --max-turns 1 "Reply OK."`: `skills` array of first `system` `init` event, names prefixed `<plugin>:` | `agents` array of same event |
-| Codex CLI | `codex debug prompt-input` in `SMOKE_PROJECT`: each `- cad-<name>:` skill entry | each native `spawn_agent` call in the transcript, or fallback |
+| Codex CLI | `codex debug prompt-input` in `SMOKE_PROJECT`: each `- cad-<name>:` skill entry | `.cad-work/lead/units.yaml` `task_text` is the source for exact role, brief and role-reference text; verify it against the role name, absolute brief path and absolute role-reference path. Inspect each rollout's native `spawn_agent` event for `fork_turns: "none"` |
 | OpenCode | fallback (v2.2.5 has no skill listing command; `opencode agent list` does not exist) | run `opencode debug agents --server http://127.0.0.1:<p>`, save JSON, retry until it parses, then use `jq -r '.[].name' <file>` |
 | Kiro CLI V3 | interactive `/context show`; headless: fallback | `kiro-cli agent list` in `SMOKE_PROJECT`: rows marked `Workspace` (it also prints global profiles) |
 | OMP | `omp_smoke read skill://<name>/SKILL.md` per skill: header shows resolved path | fallback over `<installPath>/agents/*.md`, with `installPath` from `omp_smoke plugin list --json` (`.marketplace[].entries[].installPath`) |
 
+### Observed smoke findings
+
+`opencode run` can exit 1 after a clean final reply. Judge the turn from the unedited JSONL transcript's final
+`step-finish` event and complete reply, not from the exit code alone; record both.
+
+For Codex Bedrock A/B, the tested `gpt-6.1-terra` and `gpt-6-luna` returned 404 in `us-east-2` and `us-west-2` but
+answered in `us-east-1`. Record the provider region and verify selected models there before the cell; catalog presence
+does not establish regional availability.
+
+Codex CLI 0.166.0 runs commands through `/bin/zsh -lc`. In zsh, `path` is a reserved array tied to `PATH`; do not use it
+as a shell variable because assignment can break command lookup.
+
+Kiro CLI V3's approval driver used `--poll 1.0` by default; the round-4 driver used `--poll 0.25`. On one full cell,
+approval waits were 6.93% of harness time at the default and 5.33% after switching; the later interval included a
+75.93 s driver stall. Record the poll setting and observed wait share; this does not establish improvement or a target.
+When `invoke_sub_agent` returns reply text only, the task id is unavailable to the lead; map each brief path to its
+session-store `sub_agent_start` and `sub_agent_complete` records. An AIM-managed injector rewrote installed role JSON
+at launch in the observed Kiro environment; compare role hashes before and after launch and record any mutation as a
+deviation.
+
 Fallback, where the host has no listing: enumerate the installed files the install wrote (skills
 `<skills dir>/<name>/SKILL.md`; roles the role files), read each frontmatter `name` (Codex TOML `name`, Kiro JSON
 `name`; OpenCode roles use file names) and record the command and its output → each expected name once.
-
-### Environment isolation
 
 | Harness | Settings for the cell |
 |---|---|
@@ -159,9 +189,17 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 | Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. A vendor wrapper around the CLI rewrites a fresh config: if it injects MCP servers, suppress them or record them; it also adds `approvals_reviewer` and telemetry settings, which must be recorded as deviations. |
 | OpenCode | For the server and every client command: `OPENCODE_CONFIG_DIR` an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`, and `XDG_DATA_HOME`, `XDG_STATE_HOME` and `XDG_CACHE_HOME` per-cell directories outside the project and evidence, so the session database, logs and state are the cell's own. The server prints `server password <random>`: keep it in a mode `0600` file outside the project and evidence, pass it to every client as `OPENCODE_PASSWORD`, and redact it in the server log. Pass provider credentials and region in environment variables (logins stored with `opencode auth` live in the default data directory) and fix the model with `--model <provider/model#variant>` on each `run`. |
 | Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
-| OMP | `omp_smoke` from the procedure: temporary HOME, named profile `cad-smoke`, `OMP_SKIP_SETUP=1`; the profile settings below turn off memory, advisor, autolearn, TTSR and project MCP config; `omp_cell` adds the model-role overlay and `--no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h`. |
 
-Claude Code wrapper, with `CLAUDE_AUTH` the absolute path of the auth-only settings file:
+| Harness | Per-agent model override | Host reference |
+|---|---|---|
+| Claude Code | `claude --agents` or each subagent file's `model` frontmatter field; an Agent call's `model` overrides the file and configured default | [Claude Code subagent docs](https://code.claude.com/docs/en/sub-agents#supported-frontmatter-fields) |
+| Codex CLI | Each custom agent's top-level `model` key in its agent TOML; when unset, the subagent inherits the parent model | [Codex CLI subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) |
+| OpenCode | Each agent's `model` in `opencode.json` or Markdown frontmatter; a subagent with no model inherits the primary agent's model | [OpenCode agents](https://opencode.ai/docs/agents/) |
+| Kiro CLI V3 | Each agent profile's `model` field; an explicit CLI `--model` overrides the agent value | [Kiro agent configuration](https://kiro.dev/docs/custom-agents/configuration-reference/) |
+| OMP | `task.agentModelOverrides[agentName]`, agent frontmatter `model`, then the parent model; aliases resolve through `modelRoles`. A `:level` suffix on an OMP role alias sets effort and overrides the frontmatter `thinkingLevel` | [OMP task-agent discovery](https://github.com/can1357/oh-my-pi/blob/main/docs/task-agent-discovery.md#effort-level-suffix) |
+
+These host mechanisms do not recommend a model or effort tier. Round-4 A/B results do not support changing role
+defaults; see [limitations](limitations.md#model-routing-evidence).
 
 ```sh
 claude_smoke() {
@@ -276,7 +314,7 @@ isolation, not an OS boundary.
 | lead claim and session | `.cad-work/lead/active/claim.yaml` during the run, the session copy after | one ACTIVE claim whose `session` is the host's native id (or `UNAVAILABLE-<stamp>` with the limit reported), released at finish |
 | GROUND and INTENT verdicts | `hw/versions/<vN>/stage-verdict.json` and their sha256 | each validates; PASS before its gate is presented |
 | gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`, the quoted reply equals the scripted text |
-| native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only; no turn ends while a dispatched unit still runs. On Kiro, whose `invoke_sub_agent` returns only the reply text to the lead, `task_id` `UNAVAILABLE: <what the call returned>` passes when the operator maps each unit to its `subSessionId`: the `sub_agent_start` and `sub_agent_complete` records in the session store's `messages.jsonl` (`~/.kiro/sessions/<workspace>/<session>/`) whose prompt names that unit's brief path |
+| native dispatch | native transcript/events and `.cad-work/lead/units.yaml` | each unit's role, native task id (or `UNAVAILABLE` with the host limit stated), brief sha256, state and exact `task_text`. Codex: compare logged `task_text` with the role name, absolute brief path and absolute `agent-roles.md` reference; inspect each rollout's native `spawn_agent` event for `fork_turns: "none"`, even when `message` is encrypted. Kiro: when `invoke_sub_agent` returns reply text only, log `UNAVAILABLE: <what the call returned>` and map each brief path to `sub_agent_start` and `sub_agent_complete` records in the session store's `messages.jsonl` (`~/.kiro/sessions/<workspace>/<session>/`). No turn ends while a dispatched unit still runs |
 | deliveries | `.cad-work/<unit>/delivery.json` | full: validates against `worker-delivery`; lean, which has no worker-delivery schema: conforms to the prose contract ([prose-contract](../lean/skills/cad-record/references/prose-contract.md#worker-delivery)); both: boundary digests equal; accepted bytes merged verbatim |
 | writes | the transcript's tool calls | no write to an installed file and no record/evidence write outside `hw/` and `.cad-work/`; uv/package caches, bytecode, session stores and other named host caches may be elsewhere and are recorded |
 | schema results | step 8 output | every command exits 0 |
