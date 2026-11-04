@@ -42,10 +42,10 @@ model routing and resource loads remain unproved until live smoke runs per host.
 - Claude Code has no per-role filesystem isolation: a worker's shell and file tools reach every path the session can.
   In the round-2 smoke a checker wrote and then deleted `/tmp/live.txt` and `/tmp/inv.txt`; only the worker's own
   `boundary.violations` report and the lead's rejection of the delivery caught it.
-- Kiro (round 3): an AIM machine agent's `creds-agent` injector rewrote all five installed `.kiro/agents/cad-*.json`
-  at the first `kiro-cli chat --v3` launch, adding `@creds-agent` to `tools` and `allowedTools`, an
-  `mcpServers.creds-agent` entry and an `mcp creds-agent/*` allow rule. The role files a run dispatches then differ from
-  the release; the smoke records this as a deviation. No `creds-agent` tool was called.
+- Kiro (round 3): a machine-managed agent on the host rewrote all five installed `.kiro/agents/cad-*.json` at the first
+  `kiro-cli chat --v3` launch, adding a tool to `tools` and `allowedTools`, an `mcpServers` entry and an `mcp <server>/*`
+  allow rule. The role files a run dispatches then differ from the release; the smoke records this as a deviation. The
+  injected tool was never called.
 - Codex CLI 0.166.0 runs every command through the user's login shell (`/bin/zsh -lc`), so the user's zsh startup files
   apply despite a scrubbed environment, and zsh semantics apply to POSIX forms: a lead loop `while read -r expected path`
   overwrote zsh's `path` array and broke `PATH` (`command not found: sha256sum`).
