@@ -46,16 +46,21 @@ env -i HOME="$HOME" PATH="$PATH" TERM="$TERM" <needed credential and region vari
 Include only variables required for that host. Record the exact environment variable names (never secret values).
 Capture every output to `$SMOKE_LOG/<harness>-<variant>/`, outside the project.
 
-For OMP, create `OMP_HOME=$(mktemp -d)` and these directories:
+For OMP, run every OMP command of the cell, including install, listing and cleanup, through one wrapper with a temporary
+HOME and the named profile `cad-smoke`:
 
 ```sh
-mkdir -p "$OMP_HOME/home" "$OMP_HOME/.omp" "$OMP_HOME/.config" "$OMP_HOME/home/.local/share" \
-  "$OMP_HOME/home/.cache" "$OMP_HOME/home/.local/state"
+OMP_HOME=$(mktemp -d) && mkdir "$OMP_HOME/home"
+OMP_PATH=<directories of the real omp, uv and git binaries>:/usr/bin:/bin
+omp_smoke() {
+  env -i HOME="$OMP_HOME/home" PATH="$OMP_PATH" TERM="$TERM" OMP_PROFILE=cad-smoke OMP_SKIP_SETUP=1 \
+    <needed provider credential variables> omp "$@"
+}
 ```
 
-Set `HOME="$OMP_HOME/home"`, `PI_CONFIG_DIR=.omp`, `OMP_PROFILE=cad-smoke`, `XDG_CONFIG_HOME="$OMP_HOME/.config"`,
-and XDG data/cache/state roots under `$OMP_HOME/home`. Export these variables to each OMP process, retaining only the
-provider credentials the host requires. Project `.omp` discovery remains active, so use only the fresh project/plugin.
+`OMP_PATH` names real binaries, never version-manager shims: a mise shim reads the user's home configuration and fails
+under the temporary HOME (for mise, use `dirname "$(mise which omp)"`). Settings, credentials and what still loads are
+under "Environment isolation" below. Project `.omp/` discovery remains active, so use only the fresh project and plugin.
 
 1. Fresh project: `SMOKE_PROJECT=$(mktemp -d)`, then `git -C "$SMOKE_PROJECT" init`. Confirm `hw/` and
    `.cad-work/` are absent. Never reuse a project between cells.
@@ -65,10 +70,12 @@ provider credentials the host requires. Project `.omp` discovery remains active,
    same session id, and a second session for the project (a fork, or a reply sent to an older id) fails the cell.
    Never set an operator-side deadline shorter than the harness turn limit. OMP can exceed an hour per turn; `--max-time 2h`
    provides a recoverable ceiling for this smoke. If credentials fail mid-turn, resume once with a neutral, recorded line;
-   never resend scripted answers. For OMP, `--restore <session-file>` continues the interrupted turn and its subagents under
-   the same session id. For OpenCode, `run --session` cannot resume without a message: send one neutral, recorded line (for
-   example, `Continue from the last recorded state.`) and record this deviation, or restart in a fresh project and mark the
-   original cell `BLOCKED`.
+   never resend scripted answers. For OMP, interactive `--restore <session-id>` continues the interrupted turn and its
+   subagents under the same session id; it refuses `-p`. For OpenCode, `run --session` cannot resume without a message:
+   send one neutral, recorded line (for example, `Continue from the last recorded state.`) and record this deviation, or
+   restart in a fresh project and mark the original cell `BLOCKED`. A turn must not end while a dispatched unit still
+   runs ([delegation](../full/skills/cad-flow/references/delegation.md#dispatch-units) step 5); on headless Claude Code
+   this also needs the background-task setting under "Environment isolation".
 4. Discovery: list skills and agents with the listing below → exactly the eight skills `cad-flow`,
    `cad-record`, `cad-select`, `cad-design`, `cad-model`, `cad-verify`, `cad-review`, `cad-release` and the five roles
    `cad-concept-designer`, `cad-part-designer`, `cad-checker`, `cad-mech-dfm-reviewer`, `cad-sourcing-researcher`,
@@ -96,23 +103,24 @@ provider credentials the host requires. Project `.omp` discovery remains active,
 
 Confirm each command against the installed CLI's `--help` and record any difference as a smoke finding. The
 discovery forms were verified on 2026-11-04 with Claude Code 2.1.316, Codex CLI 0.166.0, OpenCode 2.2.5, Kiro CLI
-3.0.0 and OMP 18.13.2.
+3.0.0 and OMP 18.13.2; the Claude Code isolation, auth and background-task forms again with 2.1.318, and the OMP forms
+in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrappers under "Environment isolation".
 
 | Harness | Interactive start | Headless start and resume | Prompt prefix |
 |---|---|---|---|
-| Claude Code | `claude` in `SMOKE_PROJECT` | `claude -p --max-turns 200 "<prompt>"`; `claude --resume <session-id> -p "<reply>"` | `/cad-agent-skills:cad-flow` or `/cad-agent-skills-lean:cad-flow` |
+| Claude Code | `claude_smoke` in `SMOKE_PROJECT` | `claude_smoke -p --max-turns 200 "<prompt>"`; `claude_smoke --resume <session-id> -p --max-turns 200 "<reply>"` | `/cad-agent-skills:cad-flow` or `/cad-agent-skills-lean:cad-flow` |
 | Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; from `SMOKE_PROJECT` (`exec resume` has no `-C`): `codex exec resume <thread-id> "<reply>"` | `$cad-flow` |
 | OpenCode | start `opencode serve --port <p>` in the isolated environment, with fixed `--model <provider/model#variant>` | `opencode run --standalone --format json --model <provider/model#variant> "<prompt>"`; replies use `opencode run --standalone --model <provider/model#variant> --session <session-id> "<reply>"` | `/cad-flow` |
 | Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
-| OMP | `env -i OMP_HOME="$OMP_HOME" HOME="$OMP_HOME/home" PI_CONFIG_DIR=.omp OMP_PROFILE=cad-smoke XDG_CONFIG_HOME="$OMP_HOME/.config" XDG_DATA_HOME="$OMP_HOME/home/.local/share" XDG_CACHE_HOME="$OMP_HOME/home/.cache" XDG_STATE_HOME="$OMP_HOME/home/.local/state" PATH="$PATH" TERM="$TERM" <needed provider credentials> omp --profile cad-smoke --config "$OMP_HOME/home/.omp/profiles/cad-smoke/agent/config.yml" --config "$OMP_HOME/home/smoke-config.yml" --no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h` | Same environment/profile/configs with `omp -p --max-time 2h "<prompt>"`; recover with `omp --restore <session-file> --max-time 2h` | `/cad-flow` |
+| OMP | `omp_cell` in `SMOKE_PROJECT` | `omp_cell -p "<prompt>"`; `omp_cell --resume <session-id> -p "<reply>"`; recover interactively with `omp_cell --restore <session-id>` | `/cad-flow` |
 
 | Harness | Skills | Roles |
 |---|---|---|
-| Claude Code | `claude -p --output-format stream-json --verbose --max-turns 1 "Reply OK."`: `skills` array of first `system` `init` event, names prefixed `<plugin>:` | `agents` array of same event |
+| Claude Code | `claude_smoke -p --no-session-persistence --output-format stream-json --verbose --max-turns 1 "Reply OK."`: `skills` array of first `system` `init` event, names prefixed `<plugin>:` | `agents` array of same event |
 | Codex CLI | `codex debug prompt-input` in `SMOKE_PROJECT`: each `- cad-<name>:` skill entry | each native `spawn_agent` call in the transcript, or fallback |
 | OpenCode | fallback (v2.2.5 has no skill listing command; `opencode agent list` does not exist) | run `opencode debug agents --standalone`, save JSON, retry until it parses, then use `jq -r '.[].name' <file>` |
 | Kiro CLI V3 | interactive `/context show`; headless: fallback | `kiro-cli agent list` in `SMOKE_PROJECT`: rows marked `Workspace` (it also prints global profiles) |
-| OMP | `omp read skill://<name>/SKILL.md` per skill: header shows resolved path | fallback over `<installPath>/agents/*.md`, with `installPath` from `omp plugin list --json` |
+| OMP | `omp_smoke read skill://<name>/SKILL.md` per skill: header shows resolved path | fallback over `<installPath>/agents/*.md`, with `installPath` from `omp_smoke plugin list --json` (`.marketplace[].entries[].installPath`) |
 
 Fallback, where the host has no listing: enumerate the installed files the install wrote (skills
 `<skills dir>/<name>/SKILL.md`; roles the role files), read each frontmatter `name` (Codex TOML `name`, Kiro JSON
@@ -122,37 +130,78 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 
 | Harness | Settings for the cell |
 |---|---|
-| Claude Code | `--setting-sources project,local --strict-mcp-config` |
+| Claude Code | Start, resume and list through `claude_smoke` below: `--setting-sources project,local --strict-mcp-config`, an auth-only `--settings` file, and `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`. `claude plugin` install and cleanup commands run without the wrapper. |
 | Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. The toolbox wrapper rewrites the config: pre-create an empty `.builder-mcp-setup-complete` to prevent the builder-mcp server; it still adds `approvals_reviewer` and telemetry, which must be recorded as deviations. |
 | OpenCode | Set `OPENCODE_CONFIG_DIR` to an empty directory and `OPENCODE_DISABLE_CLAUDE_CODE=1`. Use `--standalone` on each `opencode run` and agent listing; that starts a private server and avoids the background service. Pass provider credentials and region in environment variables and fix the model with `--model <provider/model#variant>`. |
 | Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
-| OMP | Temporary HOME, OMP root and XDG roots; named profile `cad-smoke`; profile config disables memory, advisor, autolearn and TTSR; no unrelated project MCP config; flags disable rules, context and extensions; `--skills 'cad-*' --max-time 2h`. |
+| OMP | `omp_smoke` from the procedure: temporary HOME, named profile `cad-smoke`, `OMP_SKIP_SETUP=1`; the profile settings below turn off memory, advisor, autolearn, TTSR and project MCP config; `omp_cell` adds the model-role overlay and `--no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h`. |
 
-With `PI_CONFIG_DIR=.omp` and `OMP_PROFILE=cad-smoke`, the profile config is
-`$OMP_HOME/home/.omp/profiles/cad-smoke/agent/config.yml`. Create it with:
+Claude Code wrapper, with `CLAUDE_AUTH` the absolute path of the auth-only settings file:
 
-```yaml
-memory:
-  backend: off
-advisor:
-  enabled: false
-autolearn:
-  enabled: false
-ttsr:
-  enabled: false
+```sh
+claude_smoke() {
+  env -i HOME="$HOME" PATH="$PATH" TERM="$TERM" CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 <needed credential variables> \
+    claude --setting-sources project,local --strict-mcp-config --settings "$CLAUDE_AUTH" "$@"
+}
 ```
 
-Create `$OMP_HOME/home/smoke-config.yml`:
+- `--setting-sources project,local` drops the user settings, and with them provider auth kept in
+  `~/.claude/settings.json`: round 2 failed with AWS authentication errors (403) on Bedrock. `CLAUDE_AUTH` holds only
+  the provider credential key and the `env` keys auth needs, copied from the user settings (round 2 on Bedrock:
+  `awsCredentialExport`, and `env` with `CLAUDE_CODE_USE_BEDROCK`, `AWS_REGION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` and
+  `CLAUDE_CODE_ENABLE_AUTO_MODE`). Keep the file outside the project and the evidence directory, mode `0600`; record
+  its key names, never its values. Built-in plugins still load (2.1.318: `cc-plugin-agents-md`, `cc-plugin-privacy`,
+  `cc-plugin-plugin-authoring`), and the toolbox wrapper still merges its telemetry environment into `--settings`;
+  record both as deviations.
+- Headless `-p` stops background tasks 10 minutes after the last turn ends ("Background tasks still running 10m after
+  the last turn … stopping them"). `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` removes that ceiling; it is not in
+  `claude --help`. It does not excuse the lead: a turn that ends while a dispatched unit still runs breaks
+  [delegation](../full/skills/cad-flow/references/delegation.md#dispatch-units) step 5 and fails the native dispatch row.
+- `--max-turns` is hidden from `claude --help` (2.1.316 and 2.1.318) but parsed: a non-number fails with
+  `option '--max-turns <turns>' argument … is invalid`.
+- Claude Code has no per-role filesystem isolation; see [limitations](limitations.md#observed-host-limitations).
 
-```yaml
-mcp:
-  enableProjectConfig: false
+OMP: the temporary HOME hides the user's `~/.omp` (settings, stored logins, plugins, extensions, rules, memory,
+advisor roster, sessions) and the other hosts' user roots (`~/.claude`, `~/.codex` and so on) that OMP can read.
+`OMP_PROFILE=cad-smoke` keeps all OMP state under `$OMP_HOME/home/.omp/profiles/cad-smoke/`: `omp_smoke config path`
+prints its `agent` directory, sessions go to `agent/sessions/`, logs to `logs/` and plugin installs to `plugins/`.
+`OMP_SKIP_SETUP=1` skips the first-run provider sign-in screen of the interactive start. Before the install, set the
+profile settings, then read them back from the project, where project settings also apply:
+
+```sh
+omp_smoke config set memory.backend off
+omp_smoke config set advisor.enabled false
+omp_smoke config set autolearn.enabled false
+omp_smoke config set ttsr.enabled false
+omp_smoke config set mcp.enableProjectConfig false
+(cd "$SMOKE_PROJECT" && for k in memory.backend advisor.enabled autolearn.enabled ttsr.enabled \
+  mcp.enableProjectConfig task.isolation.enabled; do printf '%s=' "$k"; omp_smoke config get "$k"; done)
 ```
 
-Pass both files with `--config`. The temporary HOME and XDG roots isolate user-level OMP settings, plugins, sessions and
-caches. The project-scoped plugin remains discoverable in the fresh project. Flags disable OMP rules, context files and
-ambient extensions. Record any advisor, memory, TTSR, MCP server or bash interceptor that remains active. Do not install
-or mutate plugins during the cell. These controls are discovery isolation, not an OS boundary.
+Each value read back is `off` or `false`. A fresh profile defaults to `ttsr.enabled: true` and
+`mcp.enableProjectConfig: true`; the other settings default to off and are set to make the record explicit.
+`config set` refuses an unknown key (`Unknown setting`). Start the lead through `omp_cell`, with `OMP_ROLES` the
+model-role overlay (`modelRoles` and `enabledModels`):
+
+```sh
+omp_cell() {
+  omp_smoke --config "$OMP_ROLES" --no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h "$@"
+}
+```
+
+Stored OMP logins stay in the user's profile and are not visible, so pass provider credentials as environment
+variables. For Bedrock, pass `AWS_PROFILE` and an absolute `AWS_CONFIG_FILE` (and `AWS_SHARED_CREDENTIALS_FILE` for
+static keys), because `~/.aws` now resolves under the temporary HOME. A `credential_process` that itself reads the
+user's home fails there (observed: `toolbox: Unable to run codex`). Point `AWS_CONFIG_FILE` at a copy of the profile,
+outside the project and the evidence directory, whose line is
+`credential_process = /usr/bin/env HOME=<real home> <original command>`.
+
+In a scratch run of these wrappers (OMP 18.13.2), no advisor, memory, TTSR, MCP server, user plugin, extension or bash
+interceptor loaded. The tools were `read`, `bash`, `edit`, `eval`, `glob`, `grep`, `task`, `wait`, `todo`,
+`web_search` and `write`. Still active, and recorded as deviations: startup probes of local model servers (Ollama,
+LM Studio, llama.cpp on localhost), the online model-catalog refresh and the update notice; never update OMP during the
+cell. Record anything else that loads. Do not install or mutate plugins during the cell. These controls are discovery
+isolation, not an OS boundary.
 
 - Codex CLI: custom agents inherit the parent sandbox and approval mode. Use
   the fresh `CODEX_HOME` and the `--ignore-rules` route above; a blocked step is
@@ -180,11 +229,11 @@ or mutate plugins during the cell. These controls are discovery isolation, not a
 | tag, commit, variant, plugin name and version | prerequisites; preflight report | the reported plugin and version equal the variant and tag installed |
 | CLI version, model roles | `--version`; the written role list | recorded before the first prompt |
 | discovered skills and roles | step 4 listing, verbatim | eight skills and five roles, each once |
-| resolved resources | `.cad-work/lead/preflight.json` | every path absolute and existing; no installed file under `hw/` or `.cad-work/` |
+| resolved resources | `.cad-work/lead/preflight.json`; the `.cad-work/<unit>/input/` copies | every path absolute and existing; no write to an installed file; a copy of an installed file under `.cad-work/<unit>/input/` is allowed only when byte-identical to it (equal sha256) |
 | lead claim and session | `.cad-work/lead/active/claim.yaml` during the run, the session copy after | one ACTIVE claim whose `session` is the host's native id (or `UNAVAILABLE-<stamp>` with the limit reported), released at finish |
 | GROUND and INTENT verdicts | `hw/versions/<vN>/stage-verdict.json` and their sha256 | each validates; PASS before its gate is presented |
 | gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`, the quoted reply equals the scripted text |
-| native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only |
+| native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only; no turn ends while a dispatched unit still runs |
 | deliveries | `.cad-work/<unit>/delivery.json` | validates against `worker-delivery`; boundary digests equal; accepted bytes merged verbatim |
 | writes | the transcript's tool calls | no write to an installed file and no record/evidence write outside `hw/` and `.cad-work/`; uv/package caches, bytecode, session stores and other named host caches may be elsewhere and are recorded |
 | schema results | step 8 output | every command exits 0 |
