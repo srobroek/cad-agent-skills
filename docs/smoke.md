@@ -156,7 +156,7 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 | Harness | Settings for the cell |
 |---|---|
 | Claude Code | Start, resume and list through `claude_smoke` below: `--setting-sources project,local --strict-mcp-config`, an auth-only `--settings` file, and `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`. `claude plugin` install and cleanup commands run without the wrapper. |
-| Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. The toolbox wrapper rewrites the config: pre-create an empty `.builder-mcp-setup-complete` to prevent the builder-mcp server; it still adds `approvals_reviewer` and telemetry, which must be recorded as deviations. |
+| Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. A vendor wrapper around the CLI rewrites a fresh config: if it injects MCP servers, suppress them or record them; it also adds `approvals_reviewer` and telemetry settings, which must be recorded as deviations. |
 | OpenCode | For the server and every client command: `OPENCODE_CONFIG_DIR` an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`, and `XDG_DATA_HOME`, `XDG_STATE_HOME` and `XDG_CACHE_HOME` per-cell directories outside the project and evidence, so the session database, logs and state are the cell's own. The server prints `server password <random>`: keep it in a mode `0600` file outside the project and evidence, pass it to every client as `OPENCODE_PASSWORD`, and redact it in the server log. Pass provider credentials and region in environment variables (logins stored with `opencode auth` live in the default data directory) and fix the model with `--model <provider/model#variant>` on each `run`. |
 | Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
 | OMP | `omp_smoke` from the procedure: temporary HOME, named profile `cad-smoke`, `OMP_SKIP_SETUP=1`; the profile settings below turn off memory, advisor, autolearn, TTSR and project MCP config; `omp_cell` adds the model-role overlay and `--no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h`. |
@@ -175,9 +175,8 @@ claude_smoke() {
   the provider credential key and the `env` keys auth needs, copied from the user settings (round 2 on Bedrock:
   `awsCredentialExport`, and `env` with `CLAUDE_CODE_USE_BEDROCK`, `AWS_REGION`, `ANTHROPIC_DEFAULT_HAIKU_MODEL` and
   `CLAUDE_CODE_ENABLE_AUTO_MODE`). Keep the file outside the project and the evidence directory, mode `0600`; record
-  its key names, never its values. Built-in plugins still load (2.1.318: `cc-plugin-agents-md`, `cc-plugin-privacy`,
-  `cc-plugin-plugin-authoring`), and the toolbox wrapper still merges its telemetry environment into `--settings`;
-  record both as deviations.
+  its key names, never its values. Built-in plugins shipped with the CLI build still load (2.1.318), and a vendor
+  wrapper around the CLI still merges its telemetry environment into `--settings`; record both as deviations.
 - Headless `-p` stops background tasks 10 minutes after the last turn ends ("Background tasks still running 10m after
   the last turn … stopping them"). `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` removes that ceiling; it is not in
   `claude --help`. It does not excuse the lead: a turn that ends while a dispatched unit still runs breaks
@@ -217,7 +216,7 @@ omp_cell() {
 Stored OMP logins stay in the user's profile and are not visible, so pass provider credentials as environment
 variables. For Bedrock, pass `AWS_PROFILE` and an absolute `AWS_CONFIG_FILE` (and `AWS_SHARED_CREDENTIALS_FILE` for
 static keys), because `~/.aws` now resolves under the temporary HOME. A `credential_process` that itself reads the
-user's home fails there (observed: `toolbox: Unable to run codex`). Point `AWS_CONFIG_FILE` at a copy of the profile,
+user's home fails there (observed: the wrapper failed with an "Unable to run codex" error). Point `AWS_CONFIG_FILE` at a copy of the profile,
 outside the project and the evidence directory, whose line is
 `credential_process = /usr/bin/env HOME=<real home> <original command>`.
 
@@ -239,8 +238,8 @@ isolation, not an OS boundary.
   `grep_search`, `code`, `introspect` (read); `fs_write`, `fs_append`, `str_replace`, `delete_file` (write);
   `execute_bash` (shell); `web_fetch`, `remote_web_search` (web); `disclose_context` (skill activation),
   `invoke_sub_agent` and `subagent/<agent>`. Parent permissions must allow what a role profile allows. A machine
-  agent that rewrites the installed `.kiro/agents/cad-*.json` (observed: an AIM `creds-agent` injector adding its
-  tool and MCP server) is a recorded deviation: the installed role files no longer equal the release. Kiro's
+  agent that rewrites the installed `.kiro/agents/cad-*.json` (observed: an injector adding a tool and an MCP
+  server) is a recorded deviation: the installed role files no longer equal the release. Kiro's
   workspace-trust prompt writes `~/.kiro/workspace-roots/`; record this user-level side effect and remove the entry
   after the cell.
 - Kiro CLI V3 approval screens (3.0.0). Approve each call with "Allow once" (`y`) only after reading the whole
