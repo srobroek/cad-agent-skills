@@ -48,8 +48,10 @@ Runs in DETAIL and FREEZE after `build-version`, so every sheet binds the versio
    (the version programs and their locks), and the STEP in the state the intent draws
    (`hw/versions/vN/definition/parts/<PN>.step` or `hw/versions/vN/manufacturing/<PN>/part.step`;
    `hw/versions/vN/definition/assembly.step` for `assembly`). Expected outputs: `sheet-<N>.svg`, `.pdf` and `.png`
-   for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`; `build.py` and `build.py.lock`, targets
-   `hw/drawings/vN/<SUBJECT>/source/`; `font-check.json`, target `hw/drawings/vN/<SUBJECT>/artifacts/font-check.json`.
+   for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`; `font-check.json`, target
+   `hw/drawings/vN/<SUBJECT>/artifacts/font-check.json`. The unit's `build.py` and `build.py.lock` stay at its unit
+   root, never outputs; the lead retains them in `hw/drawings/vN/<SUBJECT>/source/`
+   ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3).
 3. The unit reproduces the feature witnesses, runs the font check (Drawing program), then writes, locks and runs
    `.cad-work/<unit>/build.py`; it reviews each PNG itself and reports every characteristic it could not draw as an
    UNKNOWN in the delivery. A font check that does not match delivers MAJOR with `ready: false`; the lead stops
@@ -122,10 +124,10 @@ d1 = ExtensionLine(border=bore_edge, offset=8 * MM, draft=draft, tolerance=crite
 The method of family `drawing.coverage`: check `drawing-<subject in lowercase>`, attempt `a1`, obligation
 `drawing.coverage@<PN>` or `@assembly`, `facet: CAD_VALID`, result `hw/drawings/vN/<SUBJECT>/coverage.json`, binding
 `VERSION`. A `cad-checker` unit runs it with its own program on the draft-drawings inputs: it reproduces the
-witnesses the same way, reads the STEP and opens every actual SVG, PNG and PDF of the subject. The lead retains
-that program and its lock under `hw/drawings/vN/<SUBJECT>/source/`, and `coverage.json`
-`implementation.source_files` name those published paths with their sha256; neither `source_files` nor
-`artifacts` lists `coverage.json` itself.
+witnesses the same way, reads the STEP and opens every actual SVG, PNG and PDF of the subject. Its program and lock
+are retained under `hw/drawings/vN/<SUBJECT>/source/` as
+[cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1 states;
+neither `source_files` nor `artifacts` lists `coverage.json` itself.
 
 The coverage table is the result's `outcomes`, one entry per characteristic:
 
