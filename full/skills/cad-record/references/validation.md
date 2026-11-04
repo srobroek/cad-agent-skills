@@ -63,7 +63,10 @@ items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
    other use; serialize JSON with non-finite numbers refused.
 2. Uniqueness: every ID inside its collection and across files (PN, REQ, IF, DR, Q, ASM, PRF, case, check,
    variant, occurrence, joint, component, operation).
-3. References: every cited ID, profile, case, check, obligation and path resolves to an existing entry.
+3. References: every cited ID, profile, case, check, obligation and path resolves to an existing entry. In `hw/manufacturing/selection.yaml`
+   each recommendation route field (`primary`, `prototype`, `end_use`, `fallback`) names a candidate of that file whose `feasibility` is
+   FEASIBLE; a FINAL recommendation's `decision` is an APPROVED INTENT `GATE` DR whose `choice` is the `primary` and whose bound version's
+   snapshot of this file has the same `candidates` and `assessment.input_sha256`.
 4. Assembly tree: one root, every parent exists, no cycle; joints connect existing occurrences.
 5. Order and units: `lower <= upper`, BETWEEN bounds ordered, joint limits ordered; a value, its criterion and its bounds share one
    dimension of [Unit dimensions](#unit-dimensions); quaternions have unit norm within 1e-9 and axes are non-zero.

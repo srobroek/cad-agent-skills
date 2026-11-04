@@ -129,6 +129,8 @@ A CONDITIONAL candidate is presented labelled with its UNKNOWNs; it is never sco
 needs a route, a NONE recommendation blocks INTENT: `selection.feasibility@product` is UNKNOWN `REQUIRED_UNKNOWN`, the
 [stop procedure](../../cad-flow/references/stages.md#stop-procedure) reports the blocking UNKNOWNs and their owners as what unblocks it, and
 they are resolved per [Ask and finish intake](#ask-and-finish-intake) before any route is recommended.
+[cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 3 checks that every route field
+names a FEASIBLE candidate and that a FINAL recommendation's decision binds this selection.
 
 Explain the governing requirements, evidence basis, uncertainties and why the primary is preferred. Name what changes the recommendation,
 such as greater measured load or temperature, longer duty/life, tighter fit, different provider capability or production quantity. State
