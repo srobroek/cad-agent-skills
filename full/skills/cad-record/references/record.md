@@ -68,7 +68,8 @@ No input contains downstream result bytes or its own future hash.
    [Inventory digest](#inventory-digest). Unit builds and UNIT-bound checks bind the brief and this digest,
    never a future vN digest. The installed policy is named by path and plugin version, never hashed.
 2. Version manifest (`hw/versions/vN/manifest.json`), written after geometry build and readback: record
-   snapshots, build source and locks, runtime, geometry and manufacturing inventories, units, transforms and
+   snapshots, build source and locks, runtime (one locked environment per kernel, each naming its lock),
+   geometry and manufacturing inventories, units, transforms and
    export tolerance. It excludes itself, check results, the stage verdict, later decisions and every
    drawing, BOM or verification output that embeds its digest.
 3. Check result `binding`: `UNIT` (unit, brief_sha256, input_inventory_sha256) or `VERSION` (version,
@@ -77,6 +78,8 @@ No input contains downstream result bytes or its own future hash.
    files, never its own. A UNIT result is never integrated stage evidence by itself.
 4. Bundle manifest: inventories the result, source, lock, artifact and log bytes and the input identity;
    excludes itself. Drawing, BOM and verification bundles are separate output bundles bound the same way.
+   The verification index is the input of its `verification.index` check, so no row cites that check's
+   obligation or result.
 5. Stage verdict (`hw/versions/vN/stage-verdict.json`): written once after every required check; names
    the expected obligations, accepted result and bundle hashes, waivers, predecessor and its approval,
    version manifest, and the installed policy by path and plugin name and version. No self hash.
@@ -91,7 +94,12 @@ No input contains downstream result bytes or its own future hash.
    approval and integrity result, because the RELEASE checks and verdict hash the proposal. The RELEASE
    approval DR then binds both the proposal and that readiness verdict (`RELEASE_INVENTORY`). The FINAL
    manifest adds the readiness verdict, the approval, the package-integrity result and the full inventory,
-   and excludes itself; its digest is reported outside it.
+   and excludes itself; its digest is reported outside it. The package-integrity result is hashed by the
+   FINAL manifest, so it never hashes or inspects any `release-manifest.json`; it checks the staged payload
+   against the proposal's planned inventory.
+9. Worker outputs: a delivery's `outputs` hash each delivered file, so a delivered file (such as
+   `variant.yaml`) never holds its delivery digest; it names its unit, role and brief digest, and the lead
+   records the accepted delivery digest in `units.yaml`.
 
 A checker may inspect scratch before the manifest exists, then emit its VERSION result against the identical
 inventoried input. Whole-assembly checks rerun on the integrated version; never relabel a UNIT PASS.

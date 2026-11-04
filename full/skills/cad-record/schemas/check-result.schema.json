@@ -254,7 +254,26 @@
     },
     {
       "if": {"required": ["family"], "properties": {"family": {"const": "release.integrity"}}},
-      "then": {"required": ["release"], "properties": {"binding": {"properties": {"kind": {"const": "VERSION"}}}}}
+      "then": {
+        "required": ["release"],
+        "properties": {
+          "binding": {"properties": {"kind": {"const": "VERSION"}}},
+          "input_files": {"items": {"$ref": "#/$defs/not_release_manifest"}},
+          "artifacts": {"items": {"$ref": "#/$defs/not_release_manifest"}},
+          "implementation": {
+            "properties": {
+              "source_files": {"items": {"$ref": "#/$defs/not_release_manifest"}},
+              "inspected": {"items": {"$ref": "#/$defs/not_release_manifest"}}
+            }
+          }
+        }
+      }
     }
-  ]
+  ],
+  "$defs": {
+    "not_release_manifest": {
+      "description": "the FINAL release manifest hashes the package-integrity result, so that result never hashes or inspects any release-manifest.json",
+      "properties": {"path": {"not": {"pattern": "(^|/)release-manifest\\.json$"}}}
+    }
+  }
 }
