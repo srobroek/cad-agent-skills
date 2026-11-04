@@ -79,4 +79,4 @@ envelope, and redoes every later stage as new attempts; it never edits an approv
 A sealed concept-definition package `hw/releases/A/` for service class `APPEARANCE_CONCEPT`, with its outer
 digest reported outside the package. Its claims are the CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED outcomes of REQ-001 to
 REQ-005, copied from the verification index; it claims no physical result. Holding torque,
-friction, tipping in use and durability are release exclusions and open questions for a later scope.
+friction, tipping in use and durability are release exclusions; service life stays an open question for a later scope.
