@@ -24,9 +24,10 @@ Run in order; the first failure rejects the delivery with that reason (`units.ya
    this step and a FAIL, UNKNOWN or MAJOR result is published as delivered.
 4. `build.status` is SUCCEEDED with a matching log, or NOT_APPLICABLE with a reason. A unit that built geometry also delivers a passing
    `geometry.readback` result ([cad-model Readback](../../cad-model/references/exports.md#readback)); an exit code alone is no success.
-5. Every `expected.outputs` target is delivered exactly once and nothing else; each `source` lies under `<root>/.cad-work/<unit>/output/`,
-   hashes to its `sha256` and, when the target's [layout](../../cad-record/layout.json) entry names a root, validates against it. Programs
-   and locks are never outputs (step 8).
+5. Every `expected.outputs` target is delivered exactly once and nothing else, except that a `target_pattern` entry takes 0 to `max`
+   outputs, each target that pattern with `<sha256>` the output's `sha256` and `<name>` one file name. Each `source` lies under
+   `<root>/.cad-work/<unit>/output/`, hashes to its `sha256` and, when the target's [layout](../../cad-record/layout.json) entry names a
+   root, validates against it. Programs and locks are never outputs (step 8).
 6. Every `expected.checks` entry has a result file that hashes to its sha256, validates against the
    [cad-record check-result root](../../cad-record/schemas/check-result.schema.json), binds this unit's brief and input digests (or the
    brief's `version`), names the delivered `family` and `result`, and has an `implementation` of the right kind: COMMAND whose
@@ -36,7 +37,8 @@ Run in order; the first failure rejects the delivery with that reason (`units.ya
 8. The lead's tree digests before dispatch and after return
    ([cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest)) equal `boundary.before_sha256` and
    `after_sha256`; `violations` is empty; the unit directory holds only `brief.yaml`, `input/**`, `output/**`, `delivery.json` and, at
-   its root, `build.py`, `build.py.lock`, `check.py` and `check.py.lock`; every other unit of the batch still matches its own delivery.
+   its root, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `.uv-cache/**` and `__pycache__/**`
+   ([agent-roles uv commands](agent-roles.md#uv-commands)); every other unit of the batch still matches its own delivery.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared `hw/` file; proposals are never
    merged as outputs ([delegation Integrate](delegation.md#integrate)).
 
@@ -45,9 +47,11 @@ Record ACCEPTED with the delivery sha256. A rejected unit is never patched: re-d
 
 ## merge-deliveries
 
-1. Start only after every unit of the batch is ACCEPTED or REJECTED.
-2. For each accepted output: `cp <source> <root>/<target>` with no transform, reformat or re-export; then the target's sha256 equals the
-   delivered `sha256`; log `{source, target, sha256}` under the unit.
+1. Start only after every unit of the batch is ACCEPTED or REJECTED, and copy only ACCEPTED units. No byte of a delivery reaches `hw/`
+   before its Accept passes: a rejected unit leaves `hw/` untouched, and a published file is never deleted or overwritten. A result the
+   run-checks stop rule discards ([stages run-checks](stages.md#run-checks) step 4) is not merged; its unit stays ACCEPTED.
+2. For each accepted output, the result files of a checker or reviewer included: `cp <source> <root>/<target>` with no transform,
+   reformat or re-export; then the target's sha256 equals the delivered `sha256`; log `{source, target, sha256}` under the unit.
 3. For each accepted COMMAND result, retain its programs ([cad-verify results](../../cad-verify/references/results.md#implementation-kind)):
    `cp <root>/.cad-work/<unit>/<file> <root>/<source_files path>` for every `source_files` entry, `<file>` being that path's file name;
    the copy's sha256 equals the entry; log the triple.

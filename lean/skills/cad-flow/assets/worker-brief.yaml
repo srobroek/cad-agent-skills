@@ -23,15 +23,13 @@ resources:
     name: cad-agent-skills-lean
     version: 0.0.0
   skills:
+  # Only the skills that own the brief's methods (references/worker-brief.md, resources.skills row).
   - name: cad-design
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-design/SKILL.md
     uri: skill://cad-design
   - name: cad-model
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-model/SKILL.md
     uri: skill://cad-model
-  - name: cad-select
-    path: /RESOLVED/BY/PREFLIGHT/skills/cad-select/SKILL.md
-    uri: skill://cad-select
   - name: cad-verify
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-verify/SKILL.md
     uri: skill://cad-verify
@@ -47,6 +45,17 @@ resources:
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/schemas/part.schema.json
   - name: check-result
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/schemas/check-result.schema.json
+  tools:
+  # Copied verbatim from preflight.json tools[] (references/preflight.md, Probe tools).
+  - name: check-jsonschema
+    argv:
+    - /RESOLVED/BY/PREFLIGHT/project/.cad-work/lead/validator/bin/check-jsonschema
+    version: REPLACE-WITH-PROBED-VERSION
+  templates:
+  - name: worker-delivery
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-flow/assets/worker-delivery.yaml
+  - name: check-result-unit
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/assets/contract-fixtures/check-result/valid/unit-prebuild.json
   role_reference:
     name: agent-roles
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-flow/references/agent-roles.md
@@ -60,6 +69,8 @@ boundary:
   - .cad-work/example-part/build.py.lock
   - .cad-work/example-part/check.py
   - .cad-work/example-part/check.py.lock
+  - .cad-work/example-part/.uv-cache
+  - .cad-work/example-part/__pycache__
   - .cad-work/example-part/delivery.json
   locked:
   - hw/interfaces.yaml

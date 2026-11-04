@@ -56,8 +56,10 @@ claim, preflight and unit log at finish. Nothing in `.cad-work/lead/sessions/` i
    SKILL.md directory loaded by the host (OMP: the path behind `skill://<name>`), resolve it with `realpath`, and test `-f <dir>/SKILL.md`.
 2. Test `-f` each derived path: `<cad-record>/schemas/<root>.schema.json` for the 28 roots,
    [cad-record's layout](../../cad-record/layout.json), `<cad-flow>/assets/stages.yaml`, `<cad-flow>/assets/worker-brief.yaml`,
-   `<cad-flow>/assets/worker-delivery.yaml`, [cad-flow agent-roles](agent-roles.md) and
-   [cad-review's rubric](../../cad-review/references/rubric.md) `<cad-review>/references/rubric.md`.
+   `<cad-flow>/assets/worker-delivery.yaml`, the brief templates
+   `<cad-record>/assets/contract-fixtures/check-result/valid/{version-pass,unit-prebuild,semantic-aggregate-fail,review-pass}.json`,
+   [cad-flow agent-roles](agent-roles.md) and [cad-review's rubric](../../cad-review/references/rubric.md)
+   `<cad-review>/references/rubric.md`.
 3. Plugin provenance ([cad-record common plugin](../../cad-record/schemas/common.schema.json#/$defs/plugin)): `name` and `version` are the
    `metadata.plugin` and `metadata.version` values in the frontmatter of the resolved `<cad-flow>/SKILL.md`, on every host. Either value
    missing → stop as an installation defect.
@@ -72,14 +74,29 @@ as an installation defect: report the path and the observation as an open questi
 
 ## Probe tools
 
+`<lead-cache>` is `<root>/.cad-work/lead/.uv-cache` ([uv commands](agent-roles.md#uv-commands)) and `<tools>` is
+`<root>/.cad-work/lead/validator`.
+
 | Probe                                                                                                                                                                                    | Required |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | `uv --version`                                                                                                                                                                           | yes      |
-| `uvx --from check-jsonschema==0.39.0 check-jsonschema --version`                                                                                                                         | yes      |
 | `uv python find 3.12`                                                                                                                                                                    | yes      |
+| `<tools>/bin/check-jsonschema --version` prints the [pinned version](../../cad-record/references/validation.md#schema-validation)                                                         | yes      |
+| `<tools>/bin/python -c 'import yaml; print(yaml.__version__)'` prints the [pinned PyYAML](../../cad-record/references/validation.md#yaml-loader)                                          | yes      |
+| `curl --version` reports 7.83 or later (`--remove-on-error`; a mid-transfer `--max-filesize` abort needs 8.4)                                                                            | yes      |
 | each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a check `hw/check-plan.yaml` already plans; none at GROUND | no       |
 
-Run the required probes as one shell command.
+Run the required probes as one shell command. When a `<tools>` probe fails, install both tools once with the pins of those links, with
+network (the host may ask to escalate), then probe again:
+
+```sh
+uv venv --cache-dir <lead-cache> --no-python-downloads --clear --python 3.12 <tools>
+uv pip install --cache-dir <lead-cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
+```
+
+Record in `tools[]` `check-jsonschema` with argv `[<tools>/bin/check-jsonschema]` and `yaml-loader` with argv `[<tools>/bin/python]`,
+each with its printed version, and `curl`, `uv` and the found `python` with theirs. Every schema validation and YAML load of the session,
+the lead's and each unit's, runs exactly these argv; briefs copy them into `resources.tools`, and a unit only executes them.
 
 A missing required tool stops with `MISSING_RESOURCE`. A missing optional tool is recorded; its checks become UNKNOWN `UNSUPPORTED_METHOD`,
 never a fallback method.
@@ -87,16 +104,15 @@ never a fallback method.
 ## preflight.json
 
 Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`, `schemas [{name, path}]`, `layout`,
-`policy {path, plugin}`, `role_reference`, `rubric`, `templates`, `tools [{name, argv, version}]`, `isolation`, `time`. Every path is
-absolute. Briefs and verdicts copy resource paths and provenance from this file only.
-
-The session's first reply states the plugin `name` and `version`, the `harness` and the `session`; an `UNAVAILABLE-*` session adds that
-resume matching and fork detection are unavailable on this host.
+`policy {path, plugin}`, `role_reference`, `rubric`, `templates [{name, path}]` (the asset and fixture templates of Resolve resources step
+2), `tools [{name, argv, version}]`, `isolation`, `time`. Every path is absolute. Briefs and verdicts copy resource paths and provenance
+from this file only. The session's first reply follows the [SKILL.md OUTPUT](../SKILL.md) first-reply line.
 
 ## Finish
 
-Run at session end. With an `UNAVAILABLE-*` session, also run it before ending every turn, whether it ends `WAITING_FOR_USER`, on a stop
-or with a report: a later turn cannot prove it is this session, so it claims anew.
+Run at session end: when the user says `end the session` or otherwise states that the session ends. With an `UNAVAILABLE-*` session, also
+run it before ending every turn, whether it ends `WAITING_FOR_USER`, on a stop or with a report: a later turn cannot prove it is this
+session, so it claims anew.
 
 1. Stop this session's units that still run (`.cad-work/lead/units.yaml`); never another session's.
 2. Copy `claim.yaml` to `.cad-work/lead/sessions/<stamp>/claim.yaml` with `state: RELEASED` and `released` (UTC), and copy `preflight.json`

@@ -15,28 +15,31 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 
 ## dispatch-units
 
-1. List the stage's independent units from its stage-work procedure. Units of one stage only, and only after its predecessor's gate is
-   satisfied.
-2. Write and validate each brief ([worker-brief](worker-brief.md)); log its sha256.
+1. List every ready unit of the stage: the units its stage-work procedure names
+   ([stages Stage-work procedure IDs](stages.md#stage-work-procedure-ids)) and the run-checks units
+   ([stages run-checks](stages.md#run-checks) step 1). Units of one stage only, and only after its predecessor's gate is satisfied.
+2. Write and validate each brief and pass its self-check ([worker-brief Compose](worker-brief.md#compose)); log its sha256.
 3. Take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) and log it for the batch.
 4. Dispatch every independent unit in one batch through the host's native subagent call naming the role, with a fresh context. The task text
    is only the role, the absolute brief path and the absolute role reference path; never the lead transcript or a forked conversation.
    Where the call has a history switch, set it to none: Codex `spawn_agent` with `agent_type: <role>`, a new `task_name` per unit and
    `fork_turns: "none"` (the default `all` forks the lead's whole history).
 5. Log each returned native task id; wait on and steer only those ids. Wait for every unit of the batch within the same turn, with the
-   host's foreground or blocking wait where it offers one; never end a turn or present a gate while a dispatched unit still runs. A unit
-   lost to a turn end is `STOPPED` and goes out again as a new unit ([Integrate](#integrate) step 2).
+   host's foreground or blocking wait where it offers one: OpenCode and Claude Code subagent calls run in the foreground, never with
+   `background: true` or `run_in_background: true`. Never end a turn or present a gate while a dispatched unit still runs. A unit lost to
+   a turn end is `STOPPED` and goes out again as a new unit ([Integrate](#integrate) step 2).
 
    | `harness`  | native `task_id`                                                         |
    | ---------- | ------------------------------------------------------------------------ |
    | `OMP`      | the task id the `task` call returns                                      |
-   | `CLAUDE`   | the Task tool call id                                                    |
+   | `CLAUDE`   | the `agentId` the Agent (Task) call returns                              |
    | `CODEX`    | the `spawn_agent` agent id, else its `/root/<task_name>` path            |
    | `OPENCODE` | the subagent's child session id                                          |
    | `KIRO`     | the subagent's sub-session id (`subSessionId`), else its tool call id    |
 
    An id the host does not show the lead is logged `UNAVAILABLE: <what the call returned>`.
-6. Write nothing outside `.cad-work/` while a unit of the batch runs: any other write changes the tree digest.
+6. Write nothing outside `.cad-work/` while a unit of the batch runs: any other write changes the tree digest. Meanwhile the lead runs its
+   own families into `.cad-work/stage-vN/checks/` ([stages run-checks](stages.md#run-checks) step 1).
 
 ## Integrate
 

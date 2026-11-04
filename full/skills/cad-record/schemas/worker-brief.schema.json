@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills worker brief (.cad-work/<unit>/brief.yaml)",
-  "description": "Typed self-contained assignment for one worker: unit, role, stage, subjects, locked input inventory, literal absolute resource map (SKILL.md, schemas, role reference) with plugin name and version, write boundary, own scratch files and the expected outputs, checks, stop conditions and report.",
+  "description": "Typed self-contained assignment for one worker: unit, role, stage, subjects, locked input inventory, literal absolute resource map (SKILL.md, schemas, role reference, preflight tools and templates) with plugin name and version, write boundary, own scratch files and the expected outputs, checks, stop conditions and report; a sourcing brief adds its seed URLs and may name retained sources by a content-addressed pattern.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -27,6 +27,12 @@
     "version": {"$ref": "common.schema.json#/$defs/version"},
     "task": {"$ref": "common.schema.json#/$defs/text"},
     "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+    "seed_urls": {
+      "description": "sourcing units only: the https URLs the record, an installed starter profile or the owner names for the subjects; empty only when the host gives the role a search tool",
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/url"},
+      "uniqueItems": true
+    },
     "input_inventory": {
       "type": "object",
       "additionalProperties": false,
@@ -56,7 +62,7 @@
       "description": "literal resolved absolute paths from the lead preflight and the installed plugin name and version; installed bytes are not hashed",
       "type": "object",
       "additionalProperties": false,
-      "required": ["plugin", "skills", "rubric", "schemas", "role_reference"],
+      "required": ["plugin", "skills", "rubric", "schemas", "tools", "templates", "role_reference"],
       "properties": {
         "plugin": {"$ref": "common.schema.json#/$defs/plugin"},
         "skills": {
@@ -130,6 +136,46 @@
             ]
           }
         },
+        "tools": {
+          "description": "the preflight.json tools[] entries the unit runs, copied verbatim; argv[0] is the absolute path of an installed binary",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "argv", "version"],
+            "properties": {
+              "name": {"enum": ["check-jsonschema", "yaml-loader"]},
+              "argv": {
+                "type": "array",
+                "prefixItems": [{"$ref": "common.schema.json#/$defs/absolute_path"}],
+                "items": {"$ref": "common.schema.json#/$defs/text"},
+                "minItems": 1
+              },
+              "version": {"$ref": "common.schema.json#/$defs/text"}
+            }
+          },
+          "uniqueItems": true
+        },
+        "templates": {
+          "description": "the worker-delivery template and the valid check-result fixtures the unit starts its files from",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "path"],
+            "properties": {
+              "name": {"$ref": "common.schema.json#/$defs/text"},
+              "path": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/absolute_path"},
+                  {"pattern": "(/cad-flow/assets/worker-delivery\\.yaml|/cad-record/assets/contract-fixtures/check-result/valid/[a-z0-9-]+\\.json)$"}
+                ]
+              }
+            }
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
         "role_reference": {
           "type": "object",
           "additionalProperties": false,
@@ -201,13 +247,31 @@
         "outputs": {
           "type": "array",
           "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["target", "kind"],
-            "properties": {
-              "target": {"$ref": "common.schema.json#/$defs/hw_path"},
-              "kind": {"$ref": "common.schema.json#/$defs/text"}
-            }
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["target", "kind"],
+                "properties": {
+                  "target": {"$ref": "common.schema.json#/$defs/hw_path"},
+                  "kind": {"$ref": "common.schema.json#/$defs/text"}
+                }
+              },
+              {
+                "description": "content-addressed retained sources of a sourcing unit: 0 to max outputs, each directory equal to its bytes' sha256",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["target_pattern", "kind", "max"],
+                "properties": {
+                  "target_pattern": {
+                    "type": "string",
+                    "pattern": "^hw/(manufacturing|parts/[A-Z]{2,5}-[0-9]{4})/sources/<sha256>/<name>$"
+                  },
+                  "kind": {"$ref": "common.schema.json#/$defs/text"},
+                  "max": {"type": "integer", "minimum": 1, "maximum": 8}
+                }
+              }
+            ]
           }
         },
         "checks": {
@@ -235,5 +299,25 @@
         "task_id": {"$ref": "common.schema.json#/$defs/text"}
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["role"], "properties": {"role": {"const": "cad-sourcing-researcher"}}},
+      "then": {"required": ["seed_urls"]},
+      "else": {
+        "not": {"required": ["seed_urls"]},
+        "properties": {
+          "expected": {"properties": {"outputs": {"items": {"required": ["target"]}}}}
+        }
+      }
+    },
+    {
+      "if": {"required": ["role"], "properties": {"role": {"not": {"const": "cad-mech-dfm-reviewer"}}}},
+      "then": {
+        "properties": {
+          "resources": {"properties": {"tools": {"contains": {"properties": {"name": {"const": "check-jsonschema"}}}}}}
+        }
+      }
+    }
+  ]
 }

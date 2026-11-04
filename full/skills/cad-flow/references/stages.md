@@ -17,10 +17,18 @@ graph follow cad-record ([layout](../../cad-record/layout.json), [record contrac
 | `due`                  | Equal to the stage: the obligation is `expected` and resolves now. A later stage: it is listed in `future` as PLANNED.              |
 | `waiver_policy`        | Family ceiling: `FORBIDDEN` is never waivable; `APPROVAL_REQUIRED` follows [gates Waivers](gates.md#waivers).                       |
 | `reopen`               | Earlier stages a FAIL, MAJOR finding or change found at this stage may reopen ([change-impact](change-impact.md)).                  |
-| `check_order`          | The fixed cost order of `run-checks`.                                                                                               |
+| `check_order`          | The fixed cost order of `run-checks`; its stop rule and publication walk it ([run-checks](#run-checks) steps 3–4).                  |
 
 `safety` and `required_by` are not used: safety comes from the requirement. `release.integrity` belongs to no stage verdict; it is the
 post-approval package check inside `publish-release`.
+
+## Lead scratch
+
+The lead writes and stages scratch only at the `.cad-work` paths of [cad-record's layout](../../cad-record/layout.json), never at the
+`.cad-work/` root and never in a system temp directory such as `/tmp`: `.cad-work/lead/scratch/` for stage work before `freeze-inputs`
+allocates `vN` (candidate, input and assessment lists), `.cad-work/stage-vN/` from then on, and its check program `.cad-work/lead/checks.py`
+with `checks.py.lock` ([run-checks](#run-checks) step 1). Every byte the lead copies into `hw/` comes from `.cad-work/`. Its uv cache and
+validator follow [preflight](preflight.md#probe-tools). Nothing in scratch is evidence.
 
 ## Lifecycle procedure IDs (owner cad-flow)
 
@@ -39,11 +47,15 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 
 ### freeze-inputs
 
-1. Allocate `vN`: the next integer above every `hw/versions/v*`, `hw/checks/v*` and `.cad-work/stage-v*`; `mkdir .cad-work/stage-vN` must
+1. Diagnose first: load every authored YAML file the attempt will inventory whose bytes differ from its latest `hw/versions/v*/`
+   snapshot, or that has none, with [cad-record's YAML loader](../../cad-record/references/validation.md#yaml-loader), and validate it
+   with the [schema command](../../cad-record/references/validation.md#schema-validation), logging into `.cad-work/lead/scratch/`. Fix
+   each failure in the record before step 2. This run is a diagnostic, never a result ([run-checks](#run-checks) step 7).
+2. Allocate `vN`: the next integer above every `hw/versions/v*`, `hw/checks/v*` and `.cad-work/stage-v*`; `mkdir .cad-work/stage-vN` must
    succeed. Never reuse a number.
-2. Write `.cad-work/stage-vN/input-inventory.txt`: every record file, part model, check plan and case, retained source and accepted decision
+3. Write `.cad-work/stage-vN/input-inventory.txt`: every record file, part model, check plan and case, retained source and accepted decision
    the attempt reads, with its digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)).
-3. From now until the verdict, a changed inventoried byte is `SOURCE_MUTATION`: stop.
+4. From now until the verdict, a changed inventoried byte is `SOURCE_MUTATION`: stop.
 
 ### build-version
 
@@ -67,23 +79,45 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 4. Write `hw/versions/vN/obligations.yaml` once, `test ! -e` first, before any check runs: `expected` and `future` obligation IDs and
    `inapplicable` entries `{family, reason}`. The verdict's `expected` and `future` equal it, and its `obligations` hashes it.
 5. An expected obligation with no check-plan method or no available tool is UNKNOWN `UNSUPPORTED_METHOD`; never substitute a method.
+6. Before any dispatch, apply [change-impact Carry-forward](change-impact.md#carry-forward) to every expected obligation; units go out only
+   for the obligations it does not carry.
 
 ### run-checks
 
-1. Run families in `check_order`. The lead runs `record.schema` ([cad-record validation](../../cad-record/references/validation.md)),
-   `record.ownership`, `record.inputs` and `delivery.integrity` (hash and ownership audits) and writes each of their results with
-   `producer_role: lead`. A `cad-checker` unit runs every other family; a `cad-mech-dfm-reviewer` unit runs `review.mechanical_dfm`. Units
-   of families that read no result of another pending family go out in one batch ([delegation](delegation.md)).
+1. Split the obligations still to run by family. The lead runs `record.schema`
+   ([cad-record validation](../../cad-record/references/validation.md)), `record.ownership`, `record.inputs` and `delivery.integrity`
+   (hash, schema and ownership audits) with `producer_role: lead`; a `cad-mech-dfm-reviewer` unit runs `review.mechanical_dfm`; one
+   `cad-checker` unit per group below runs every other family, a family no row names being a group of its own. Every unit whose families
+   read no result of another pending family goes out in one batch ([delegation](delegation.md)); the rest go in the next batch, once the
+   results they read are published.
+
+   | Group     | Families                                                                                             |
+   | --------- | ---------------------------------------------------------------------------------------------------- |
+   | semantic  | `record.semantic`                                                                                    |
+   | intake    | `intake.use_case`, `requirements.completeness`, `interfaces.completeness`, `check_plan.completeness` |
+   | selection | `selection.*`, `material.properties`, `purchase.identity`, `variant.integrity`                       |
+   | geometry  | `geometry.*`                                                                                         |
+   | motion    | `motion.*`, `assembly.operations`, `fit.*`                                                           |
+   | process   | `capability.route`, `optical.route`, `process.*`                                                     |
+   | loads     | `mass.properties`, `load.*`                                                                          |
+   | documents | `drawing.*`, `preview.render`                                                                        |
+
+   While the batch runs, the lead runs its families on the frozen `vN` into `.cad-work/stage-vN/checks/<check>/<attempt>/` with one PEP 723
+   program, `.cad-work/lead/checks.py`, locked beside it ([uv commands](agent-roles.md#uv-commands)), written once and changed only to
+   fix a defect. Each lead result is COMMAND; its `source_files` are `source/checks.py` and `source/checks.py.lock`, copied into the bundle
+   at publication ([cad-verify implementation kind](../../cad-verify/references/results.md#implementation-kind)). `delivery.integrity`
+   runs with that program after the attempt's last merge-deliveries, over every triple logged in the attempt, and is published last.
 2. Every stage result binds `VERSION` (vN and manifest digest). A worker's UNIT result is never stage evidence; a checker may read scratch
    first, then emits its VERSION result on the identical inventoried input.
 3. Publish nothing unvalidated: the lead writes its own results and bundle manifests in `.cad-work/stage-vN/checks/<check>/<attempt>/`
    first, and a worker's arrive through [worker-delivery](worker-delivery.md) acceptance. Each validates against its root before any of
    its bytes is copied under `hw/`; a file that fails is never published (the lead corrects its own in scratch; a worker's delivery is
-   rejected). When a batch has returned and its results are accepted, publish each to `hw/checks/vN/<check>/<attempt>/` before the batch
-   of any family that reads it is dispatched.
-4. A FAIL or UNKNOWN in `record.*`, `delivery.integrity`, `geometry.build` or `geometry.readback` stops every later family; any other FAIL
-   or UNKNOWN stops the families that read its result, artifacts or geometry. Each stopped obligation is UNKNOWN `NOT_RUN` naming the
-   blocking obligation.
+   rejected). When the batch has returned and every delivery is ACCEPTED or REJECTED, apply step 4, then publish the surviving results in
+   `check_order` to `hw/checks/vN/<check>/<attempt>/`, each before the batch of any family that reads it is dispatched.
+4. Stop rule, applied at acceptance in `check_order`: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every
+   later family; any other FAIL or UNKNOWN stops the families that read its result, artifacts or geometry. A stopped family's speculative
+   result, the lead's or a unit's, stays unpublished in scratch, and `checks.py` records each stopped obligation in a lead result of its
+   check: UNKNOWN `NOT_RUN` naming the blocking obligation. `delivery.integrity` runs after every family and stops none.
 5. A rerun with unchanged inputs (interruption, timeout) is the next attempt `aN` of the same check with `supersedes`; a changed input, case
    or method is a new `vN`.
 6. A result is `CARRIED_FORWARD` only under [change-impact Carry-forward](change-impact.md#carry-forward).
@@ -95,8 +129,8 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 
 1. Every expected obligation has one accepted outcome: PASS, NOT_APPLICABLE with its reviewer, the FAIL or UNKNOWN it ended with, or WAIVED
    when an APPROVED waiver `WV-###` covers that FAIL or UNKNOWN ([gates Waivers](gates.md#waivers)).
-2. Every published result, bundle manifest and derived bundle validates against its root, and every recorded sha256 equals the bytes on
-   disk.
+2. Every recorded sha256 of a published result, bundle manifest and derived bundle equals the bytes on disk; each file was validated before
+   publication ([run-checks](#run-checks) step 3).
 3. Result scopes cover exactly `obligations.yaml`: nothing missing, nothing extra.
 
 ### write-verdict
@@ -128,7 +162,8 @@ HUMAN gates only: [gates](gates.md).
 
 ### advance
 
-1. PASS verdict and satisfied gate → start the successor's procedure.
+1. PASS verdict and satisfied gate → start the successor's procedure in the same turn
+   ([gates — Record a gate decision](gates.md#record-a-gate-decision) step 3).
 2. FAIL or BLOCKED → the stop procedure; the next attempt or reopen follows [change-impact](change-impact.md).
 3. Batches never cross a stage whose gate is not satisfied.
 
@@ -146,7 +181,7 @@ the procedure ID.
 | ---------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | `record-bootstrap`     | [cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap)             | `hw/` from the template or an approved import                |
 | `intake-use-case`      | [cad-select intake-use-case](../../cad-select/references/selection.md#intake-use-case)            | intake, service, risk, authority, release scope, questions   |
-| `select-candidates`    | [cad-select select-candidates](../../cad-select/references/selection.md#select-candidates)        | candidates and the facts to source                           |
+| `select-candidates`    | [cad-select select-candidates](../../cad-select/references/selection.md#select-candidates)        | candidates and the facts to source: one `cad-sourcing-researcher` unit per material family or capability without retained sources, all in one batch |
 | `assess-selection`     | [cad-select assess-selection](../../cad-select/references/selection.md#assess-selection)          | `selection.yaml` assessment and recommendation               |
 | `specify-requirements` | [cad-verify specify-requirements](../../cad-verify/references/check-plan.md#specify-requirements) | requirement criteria, methods, facets, due stages            |
 | `specify-interfaces`   | [cad-design specify-interfaces](../../cad-design/references/layout.md#specify-interfaces)         | functional interface contracts                               |
@@ -166,7 +201,9 @@ the procedure ID.
 
 ## Stop procedure
 
-Stop on any condition below; the code is the verdict blocker when an attempt has a manifest.
+Stop on any condition below; the code is the verdict blocker when an attempt has a manifest. An outcome condition (`DUE_UNKNOWN`,
+`DUE_FAIL`, `REVIEW_MAJOR`, `REVIEW_MINOR`) holds only for an outcome a check returned in a frozen attempt: a predicted outcome stops
+nothing, so freeze the attempt, run its checks and write its verdict.
 
 | Condition                                                                                                                                                                                                                  | Blocker                                                |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |

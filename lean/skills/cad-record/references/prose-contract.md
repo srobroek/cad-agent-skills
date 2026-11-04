@@ -363,10 +363,11 @@ Generated YAML: the self-contained assignment of one worker.
 | `version` | — | `version` |
 | `task` | yes | `text` |
 | `subjects` | yes | `subjects` |
+| `seed_urls` | iff `role` is `cad-sourcing-researcher` | `[url]` unique; empty only when the host gives the role a search tool |
 | `input_inventory` | yes | `{sha256 sha256, files}`: `sha256` is the set digest over `files`; `files [{path hw_path, sha256 sha256}]≥1` required, optional `bytes` integer ≥ 0 |
-| `resources` | yes | `{plugin plugin, skills, rubric, schemas, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
+| `resources` | yes | `{plugin plugin, skills, rubric, schemas, tools, templates, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
 | `boundary` | yes | `{project_root absolute_path, scratch scratch_path, writable [scratch_path]≥1 unique, locked [hw_path] unique}` required, optional `read_only [project_path] unique`; a worker writes only under `.cad-work/` |
-| `expected` | yes | `{outputs [{target hw_path, kind text}], checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique` |
+| `expected` | yes | `{outputs, checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique` |
 | `lead` | yes | `{session text}` required, optional `task_id text` |
 
 - `resources.skills`: `[{name skill, path absolute_path}]≥1` required, optional `uri` matching
@@ -376,6 +377,13 @@ Generated YAML: the self-contained assignment of one worker.
 - `resources.role_reference`: `{name text, path absolute_path}` required, optional `uri` (same pattern).
 - `resources.rubric`: `{name =rubric, path absolute_path}` required, `path` ending in `/cad-review/references/rubric.md`; optional
   `uri =skill://cad-review/references/rubric.md`.
+- `resources.tools`: `[{name, argv, version text}]` unique, all required; `name` is `check-jsonschema` or `yaml-loader`; `argv` is
+  `[text]≥1` whose first item is an `absolute_path`. Every role except `cad-mech-dfm-reviewer` lists `check-jsonschema`.
+- `resources.templates`: `[{name text, path absolute_path}]≥1` unique, all required; `path` ends in
+  `/cad-flow/assets/worker-delivery.yaml` or `/cad-record/assets/contract-fixtures/check-result/valid/<name>.json`.
+- `expected.outputs`: each item is either `{target hw_path, kind text}` or, only when `role` is `cad-sourcing-researcher`,
+  `{target_pattern, kind text, max integer 1–8}` with `target_pattern` `hw/manufacturing/sources/<sha256>/<name>` or
+  `hw/parts/<PN>/sources/<sha256>/<name>` (literal placeholders); both forms are closed and all their fields required.
 - `resources.plugin` is name and version from the cad-flow SKILL.md metadata; no manifest path, no hash.
 
 ## worker-delivery

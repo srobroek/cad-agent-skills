@@ -314,6 +314,14 @@ worker-brief/invalid/lock-outside-scratch.yaml: '$.boundary.writable[1]: ''hw/pa
 worker-brief/invalid/missing-plugin.yaml: "$.resources: 'plugin' is a required property"
 # resources name the cad-review rubric reference every role grades with
 worker-brief/invalid/missing-rubric.yaml: "$.resources: 'rubric' is a required property"
+# resources list the delivery template and valid check-result fixtures the worker starts from
+worker-brief/invalid/missing-templates.yaml: "$.resources: 'templates' is a required property"
+# every role but the reviewer carries the preflight-resolved check-jsonschema argv
+worker-brief/invalid/missing-validator.yaml: "does not contain items matching the given schema"
+# a content-addressed target pattern belongs to a sourcing brief only
+worker-brief/invalid/pattern-outside-sourcing.yaml: "$.expected.outputs[2]: 'target' is a required property"
+# a target pattern is bounded to one sha256-named directory and file name
+worker-brief/invalid/pattern-unbounded.yaml: "$.expected.outputs[0].target_pattern: 'hw/manufacturing/sources/**' does not match"
 # plugin provenance is name and version from the cad-flow SKILL.md metadata; no manifest path
 worker-brief/invalid/plugin-manifest-field.yaml: "$.resources.plugin: Additional properties are not allowed ('manifest' was unexpected)"
 # plugin version is a semver string
@@ -326,6 +334,12 @@ worker-brief/invalid/reserved-unit.yaml: "$.unit: 'lead' does not match '^(?!lea
 worker-brief/invalid/scratch-input.yaml: "$.input_inventory.files[0].path: '.cad-work/base-part/input/part.yaml' does not match '^hw/"
 # resource entries carry name, absolute path and URI, never a sha256
 worker-brief/invalid/skill-hash.yaml: "$.resources.skills[0]: Additional properties are not allowed ('sha256' was unexpected)"
+# a sourcing brief carries its seed URLs (empty only with a host search tool)
+worker-brief/invalid/sourcing-without-seed-urls.yaml: "$: 'seed_urls' is a required property"
+# templates are the installed delivery template or a valid check-result fixture, never an invalid one
+worker-brief/invalid/template-invalid-fixture.yaml: "check-result/invalid/unknown-reported-pass.json' does not match '(/cad-flow/assets/worker-delivery"
+# a tool argv starts with the absolute path preflight installed, never a uvx resolution
+worker-brief/invalid/tool-argv-uvx.yaml: "$.resources.tools[0].argv[0]: 'uvx' does not match '^/"
 # roles are the five native roles
 worker-brief/invalid/unknown-role.yaml: "$.role: 'cad-analyst' is not one of ['cad-concept-designer', 'cad-part-designer', 'cad-checker', 'cad-mech-dfm-reviewer', 'cad-sourcing-researcher']"
 # a worker writes only under .cad-work/
