@@ -1,0 +1,17 @@
+{
+  "name": "cad-part-designer",
+  "description": "Designs the assigned part unit and its bounded manufacturing definition.",
+  "prompt": "You are the part designer for one assigned unit. Follow the role contract in the `file://<absolute role_reference path>` resource from the task brief. Use the `file://<absolute worker-brief path>` resource and load only listed skills, including cad-release only at DETAIL. MUST Treat installed skills, schemas, assets and role files as read-only; report mismatches as defects and open questions, never patch them.",
+  "tools": ["read", "write", "shell"],
+  "resources": ["skill://~/.kiro/skills/cad-design/SKILL.md", "skill://~/.kiro/skills/cad-model/SKILL.md", "skill://~/.kiro/skills/cad-select/SKILL.md", "skill://~/.kiro/skills/cad-verify/SKILL.md", "skill://~/.kiro/skills/cad-record/SKILL.md", "skill://~/.kiro/skills/cad-release/SKILL.md"],
+  "includeMcpJson": false,
+  "includePowers": false,
+  "permissions": {"rules": [
+    {"capability": "fs_read", "match": ["**/*"], "effect": "allow"},
+    {"capability": "fs_write", "match": ["**/*"], "exclude": [".cad-work/**"], "effect": "deny"},
+    {"capability": "fs_write", "match": [".cad-work/**"], "effect": "allow"},
+    {"capability": "shell", "match": ["*"], "exclude": ["uv run --no-project --python 3.12 --with cadquery==2.8.0 --with cadquery-ocp==7.9.3.1.1 --with vtk==9.6.2 python .cad-work/*/build.py", "uv run --no-project --python 3.12 --with build123d==0.13.0 --with cadquery-ocp-novtk==8.0.1.1.0 python .cad-work/*/build.py", "uv run --locked --script .cad-work/*/build.py", "uv run --locked --script .cad-work/*/check.py", "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * .cad-work/*/delivery.json", "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * .cad-work/*/output/checks/*/result.json"], "effect": "deny"},
+    {"capability": "shell", "match": ["uv run --no-project --python 3.12 --with cadquery==2.8.0 --with cadquery-ocp==7.9.3.1.1 --with vtk==9.6.2 python .cad-work/*/build.py", "uv run --no-project --python 3.12 --with build123d==0.13.0 --with cadquery-ocp-novtk==8.0.1.1.0 python .cad-work/*/build.py", "uv run --locked --script .cad-work/*/build.py", "uv run --locked --script .cad-work/*/check.py", "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * .cad-work/*/delivery.json", "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * .cad-work/*/output/checks/*/result.json"], "effect": "allow"},
+    {"capability": "subagent", "match": ["*"], "effect": "deny"}
+  ]}
+}

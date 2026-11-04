@@ -1,0 +1,17 @@
+path: base/pin
+occurrence: pin
+PN: STD-0003
+rev: A
+title: Hinge pin
+quantity: 1
+unit: EA
+sourcing: BUY
+material_profile: fastener_iso_3506_a2_70
+route:
+- PURCHASED
+availability:
+  status: UNKNOWN
+  reason: not checked
+mass:
+  status: UNKNOWN
+  reason: not weighed; not zero

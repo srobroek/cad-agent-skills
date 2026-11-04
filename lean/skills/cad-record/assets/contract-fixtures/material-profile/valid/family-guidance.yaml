@@ -1,0 +1,16 @@
+id: pla_family
+revision: 1
+title: PLA family guidance
+level: FAMILY
+family: FDM filament / PLA
+grade:
+  status: UNKNOWN
+  reason: family profile names no grade
+form: PRINTED
+process_state:
+  process: FDM
+  conditioning: UNKNOWN
+typical_not_allowable: true
+properties: []
+guidance:
+- family guidance only; never a grade allowable

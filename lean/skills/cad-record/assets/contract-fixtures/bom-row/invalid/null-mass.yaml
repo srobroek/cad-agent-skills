@@ -1,0 +1,23 @@
+path: base
+occurrence: base
+PN: STD-0001
+rev: X1
+component: body
+title: Stand base
+quantity: 1
+unit: EA
+sourcing: MAKE
+material_profile: fdm_petg_polylite
+route:
+- FDM
+- REAMING
+availability:
+  status: KNOWN
+  value: printed locally
+  basis: USER_DECLARED
+  sources:
+  - kind: USER
+    reference: owner interview
+    origin: product owner
+    date: '2026-11-03'
+mass: null

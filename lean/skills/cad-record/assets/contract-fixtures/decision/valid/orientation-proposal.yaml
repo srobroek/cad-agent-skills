@@ -1,0 +1,20 @@
+id: DR-004
+kind: ORIENTATION
+state: PROPOSED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-004/orientation.yaml
+  sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+title: Print base flat
+scope: STD-0001 print orientation
+options:
+- id: flat
+  text: base down
+  tradeoffs: bore axis horizontal; needs reaming
+choice: flat
+rationale: reachable supports only
+actor:
+  kind: ROLE
+  name: part designer unit u2
+  role: cad-part-designer
+time: '2026-11-03T09:00:00Z'

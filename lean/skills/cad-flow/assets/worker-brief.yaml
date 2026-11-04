@@ -1,0 +1,81 @@
+# Worker brief template (prose root worker-brief). Owner: cad-flow; fill per references/worker-brief.md.
+# Every value below is a placeholder: the lead replaces each one, copies resource paths and plugin provenance
+# from .cad-work/lead/preflight.json, checks the result against its table and never edits it after dispatch.
+format: cad-agent-skills.worker-brief
+schema_version: 1
+unit: example-part
+role: cad-part-designer
+stage: PARTS
+task: Design part ABC-0001 for its approved route and deliver its record, model and UNIT checks
+subjects:
+- kind: PART
+  PN: ABC-0001
+input_inventory:
+  # Set digest over files per [cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest).
+  sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  files:
+  - path: hw/parts/ABC-0001/part.yaml
+    sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  - path: hw/interfaces.yaml
+    sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+resources:
+  plugin:
+    name: cad-agent-skills-lean
+    version: 0.0.0
+  skills:
+  - name: cad-design
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-design/SKILL.md
+    uri: skill://cad-design
+  - name: cad-model
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-model/SKILL.md
+    uri: skill://cad-model
+  - name: cad-select
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-select/SKILL.md
+    uri: skill://cad-select
+  - name: cad-verify
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-verify/SKILL.md
+    uri: skill://cad-verify
+  - name: cad-record
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/SKILL.md
+    uri: skill://cad-record
+  - name: cad-review
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-review/SKILL.md
+    uri: skill://cad-review
+  schemas:
+  - name: part
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/schemas/part.schema.json
+  - name: check-result
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/schemas/check-result.schema.json
+  role_reference:
+    name: agent-roles
+    path: /RESOLVED/BY/PREFLIGHT/skills/cad-flow/references/agent-roles.md
+    uri: skill://cad-flow/references/agent-roles.md
+boundary:
+  project_root: /RESOLVED/BY/PREFLIGHT/project
+  scratch: .cad-work/example-part
+  writable:
+  - .cad-work/example-part/output
+  - .cad-work/example-part/build.py
+  - .cad-work/example-part/build.py.lock
+  - .cad-work/example-part/check.py
+  - .cad-work/example-part/check.py.lock
+  - .cad-work/example-part/delivery.json
+  locked:
+  - hw/interfaces.yaml
+  - hw/assembly.yaml
+  read_only:
+  - hw/product.yaml
+expected:
+  outputs:
+  - target: hw/parts/ABC-0001/part.yaml
+    kind: part record
+  - target: hw/parts/ABC-0001/model.py
+    kind: part model program
+  checks:
+  - abc-0001-readback
+  stop:
+  - a locked interface needs a change
+  - a required capability, method or tool is UNKNOWN
+  report: VERDICT line, delivery.json absolute path, findings, unknowns, proposals
+lead:
+  session: REPLACE-WITH-CLAIM-SESSION

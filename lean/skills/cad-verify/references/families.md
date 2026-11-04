@@ -1,0 +1,88 @@
+# Check families
+
+Owner: cad-verify. One row per registered family ([cad-record registered check families](../../cad-record/references/contract-index.md#registered-check-families), 54 families):
+the anchor that names its obligations, whether `hw/check-plan.yaml` carries it, who produces the result, and the
+method owner. Result shape, outcome codes and facets: [results.md](results.md). Scope items: [check-plan.md — Expected scope](check-plan.md#expected-scope).
+
+- **Plan** `plan`: the check plan carries the check, criterion and cases. `fixed`: no check-plan entry; the check id
+  is the family with `.` and `_` replaced by `-` (`geometry.identity` → `geometry-identity`), except
+  `drawing.coverage` → `drawing-<subject in lowercase>` and `release.integrity` → `package-integrity`.
+- **Producer**: `lead` ([cad-flow stages — run-checks](../../cad-flow/references/stages.md#run-checks)), `checker` (`cad-checker` unit), `reviewer`
+  (`cad-mech-dfm-reviewer` unit). A method owned outside cad-verify is run exactly as its owner states; this table
+  adds only the anchor and the outcome rule.
+- Every row: a method that cannot run, an input that is missing or a criterion that is UNKNOWN gives UNKNOWN with
+  the matching code, never PASS.
+- **Facet**: a `plan` family takes the check-plan facet. A `fixed` family records `CAD_VALID`, except
+  `geometry.manufacture` (`GEOMETRICALLY_MANUFACTURABLE`); its outcome counts toward a requirement facet in the
+  verification index only when it names that requirement.
+
+## Record, intake and selection
+
+| Family | Anchor | Plan | Producer | Method | FAIL when |
+|---|---|---|---|---|---|
+| `record.schema` | `@product` | fixed | lead | [cad-record validation — Schema validation](../../cad-record/references/validation.md#schema-validation), one command per layout-mapped file | a command exits non-zero |
+| `record.semantic` | `@product` | fixed | checker | [cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check), items 1–14 as separate outcomes; item 17 (prose roots) one outcome per file | an item is violated |
+| `record.ownership` | `@product` | fixed | lead | every `hw/` file matches an entry in [cad-record layout.json](../../cad-record/layout.json); every write since the predecessor came from the lead or a merged delivery | an unclassified file or a write outside ownership |
+| `record.inputs` | `@product` | fixed | lead | recompute the input inventory digest ([cad-record record — Inventory digest](../../cad-record/references/record.md#inventory-digest)); for each CARRIED_FORWARD result compare every input byte ([cad-flow change impact — Carry-forward](../../cad-flow/references/change-impact.md#carry-forward)) | a digest or byte differs |
+| `delivery.integrity` | `@product` | fixed | lead | recompute every merged `{source, target, sha256}` triple ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries)) | a triple differs |
+| `intake.use_case` | `@product` | fixed | checker | every `product.yaml` intake domain is KNOWN or a typed UNKNOWN with owner and question; service class KNOWN with its DR ([cad-select selection — intake-use-case](../../cad-select/references/selection.md#intake-use-case)) | a domain is absent or a material- or safety-driving fact is defaulted; UNKNOWN `REQUIRED_UNKNOWN` when it is UNKNOWN |
+| `requirements.completeness` | `@product` | fixed | checker | [specify-requirements](check-plan.md#specify-requirements) | per that procedure |
+| `interfaces.completeness` | `@product` | fixed | checker | [cad-design layout — specify-interfaces](../../cad-design/references/layout.md#specify-interfaces) (SPECIFY, FREEZE) and [define-layout](../../cad-design/references/layout.md#define-layout) (LAYOUT): every interface has members, functions, datums, fit, clearance, play, variation, contact, environment and access as KNOWN or typed UNKNOWN | a field is absent or a critical one is defaulted |
+| `check_plan.completeness` | `@product` | fixed | checker | [plan-checks](check-plan.md#plan-checks) | per that procedure |
+| `selection.feasibility` | `@product` | fixed | checker | [cad-select selection — assess-selection](../../cad-select/references/selection.md#assess-selection): each candidate's class follows from its hard outcomes; only FEASIBLE candidates are ranked; the recommendation is FEASIBLE or labelled CONDITIONAL | a score or preference revives an EXCLUDED or CONDITIONAL candidate, or a hard FAIL is recommended |
+| `selection.sourcing` | `@<PN>` per part citing a supplier, stock or purchase; `@product` at INTENT | fixed | checker | each cited identity, grade, thickness and rating matches a retained source quote; each retained source's directory name equals its sha256 ([cad-select — Form whole candidate routes](../../cad-select/references/selection.md#select-candidates)) | a cited fact contradicts its source; UNKNOWN when unsourced or undated |
+| `material.properties` | `@<PN>.<component>` per made component; `@product` at INTENT | fixed | checker | [cad-select materials — Sourced starter profiles](../../cad-select/references/materials.md#sourced-starter-profiles): every property a criterion or case uses matches the component's grade, form, process state, orientation, temperature and conditioning; strength uses an ALLOWABLE basis | density used as strength, typical used as allowable, another grade or state transferred |
+| `purchase.identity` | `@<PN>` per BUY part; `@<PN>.<component>/<operation>` per PURCHASED operation | fixed | checker | [Purchased](process-checks.md#purchased) | per that section |
+| `variant.integrity` | `@product` | fixed | checker | CONCEPT: each variant's `variant.yaml` and geometry equal the merged delivery bytes, state feasibility per hard constraint and list unknowns. VARIANT: every variant is byte-identical to its CONCEPT version and the comparison cites only those | a byte differs, a hard constraint is unassessed or a variant was edited |
+
+## Geometry and assembly
+
+| Family | Anchor | Plan | Producer | Method | FAIL when |
+|---|---|---|---|---|---|
+| `geometry.build` | `@assembly`; `@<PN>` per part with geometry | fixed | checker | [cad-model exports — geometry.build](../../cad-model/references/exports.md#geometrybuild) | per that heading |
+| `geometry.readback` | `@assembly`; `@<PN>` per part with geometry | fixed | checker | [cad-model exports — geometry.readback](../../cad-model/references/exports.md#geometryreadback) | per that heading |
+| `geometry.export` | `@<PN>` per exported part; `@assembly` | fixed | checker | [cad-model exports — geometry.export](../../cad-model/references/exports.md#geometryexport) | per that heading |
+| `geometry.identity` | `@<PN>.<component>` | fixed | checker | [cad-model exports — geometry.identity](../../cad-model/references/exports.md#geometryidentity) | per that heading |
+| `geometry.manufacture` | `@<PN>` per MAKE or MADE_TO_DRAWING part | fixed | checker | [cad-model exports — geometry.manufacture](../../cad-model/references/exports.md#geometrymanufacture) | per that heading |
+| `geometry.interference` | `@assembly`; `@IF-###` per intended interference fit | plan | checker | [geometry.interference](geometry-motion.md#geometryinterference) | per that heading |
+| `geometry.clearance` | `@assembly`; `@IF-###[#<feature>]` per clearance criterion | plan | checker | [geometry.clearance](geometry-motion.md#geometryclearance) | per that heading |
+| `motion.sweep` | `@case.<case>` per MOTION case | plan | checker | [motion.sweep](geometry-motion.md#motionsweep) | per that heading |
+| `motion.play` | `@case.<case>` per MOTION case with `play_extremes`; `@IF-###` stating play | plan | checker | [motion.play](geometry-motion.md#motionplay) | per that heading |
+| `motion.access` | `@op.<operation>` per operation or service task needing access | plan | checker | [motion.access](geometry-motion.md#motionaccess) | per that heading |
+| `assembly.operations` | `@op.<operation>` | plan | checker | [assembly.operations](geometry-motion.md#assemblyoperations) | per that heading |
+| `preview.render` | `@assembly`; `@<PN>`; `@product` at CONCEPT | fixed | checker | [cad-model exports — preview.render](../../cad-model/references/exports.md#previewrender) | per that heading |
+
+## Process and route
+
+| Family | Anchor | Plan | Producer | Method | FAIL when |
+|---|---|---|---|---|---|
+| `capability.route` | `@<PN>.<component>/<operation>` per made operation (every route kind except PURCHASED) | plan | checker | [capability.route](process-checks.md#capabilityroute) | per that heading |
+| `optical.route` | `@<PN>.<component>` per optical need; `@product` at INTENT | plan | checker | [optical.route](process-checks.md#opticalroute) | per that heading |
+| `process.fdm` … `process.other` (13) | `@<PN>.<component>/<operation>[#<feature>]` per operation of the mapped route kind | plan | checker | [process-checks.md](process-checks.md), the heading named by the family | per that heading |
+
+The 13 process families: `process.fdm`, `process.resin`, `process.cnc`, `process.laser`, `process.waterjet`,
+`process.plasma`, `process.sheet_forming`, `process.joining`, `process.casting`, `process.moulding`,
+`process.extrusion`, `process.secondary`, `process.other`; the route-kind mapping is [process-checks.md — Route kind to family](process-checks.md#route-kind-to-family).
+
+## Fits, mass and loads
+
+| Family | Anchor | Plan | Producer | Method | FAIL when |
+|---|---|---|---|---|---|
+| `fit.limits` | `@IF-###[#<feature>]` per stated fit or tolerance class | plan | checker | [fit.limits](fits.md#fitlimits) | per that heading |
+| `fit.stack` | `@case.<case>` per STACK case | plan | checker | [fit.stack](fits.md#fitstack) | per that heading |
+| `mass.properties` | `@case.<case>` per MASS case | plan | checker | [mass.properties](mass-loads.md#massproperties) | per that heading |
+| `load.hand` | `@case.<case>` per LOAD case with `method: HAND` | plan | checker | [load.hand](mass-loads.md#loadhand) | per that heading |
+| `load.fea` | `@case.<case>` per FEA case | plan | checker | [load.fea](fea.md#loadfea) | per that heading |
+
+## Documents, review, physical and release
+
+| Family | Anchor | Plan | Producer | Method | FAIL when |
+|---|---|---|---|---|---|
+| `drawing.coverage` | `@<PN>` or `@assembly` per REQUIRED drawing | fixed | checker | [cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage) | per that heading |
+| `drawing.preview` | `@<PN>` or `@assembly` per REQUIRED drawing | fixed | checker | [cad-release drawings — drawing.preview](../../cad-release/references/drawings.md#drawingpreview) | per that heading |
+| `bom.derivation` | `@product` | fixed | checker | [cad-release BOM — bom.derivation](../../cad-release/references/bom.md#bomderivation) | per that heading |
+| `verification.index` | `@product` | fixed | checker | re-derive every row by references/check-plan.md `index-verification` from the cited results and compare with `verification.yaml` and the CSV | a row, outcome or cited hash differs, or a row invents an outcome |
+| `review.mechanical_dfm` | `@assembly` | plan | reviewer | [cad-review review — review.mechanical_dfm](../../cad-review/references/review.md#reviewmechanical_dfm), graded by [cad-review rubric — Verdict](../../cad-review/references/rubric.md#verdict) | the review verdict is MINOR or MAJOR |
+| `physical.test` | `@REQ-###` per requirement with a PHYSICALLY_VALIDATED facet | plan | checker | [Physical evidence](results.md#physical-evidence) | the test result misses its criterion; UNKNOWN `PHYSICAL_EVIDENCE_REQUIRED` while no qualifying test exists |
+| `release.inventory` | `@product` | fixed | checker | [cad-release release — release.inventory](../../cad-release/references/release.md#releaseinventory) | per that heading |
+| `release.integrity` | `@product` | fixed | lead, inside [cad-release publish-release](../../cad-release/references/release.md#publish-release) | [cad-release release — release.integrity](../../cad-release/references/release.md#releaseintegrity) | per that heading |

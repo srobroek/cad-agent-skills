@@ -1,0 +1,16 @@
+# User policy at ~/.kiro/settings/permissions.yaml.
+# These permission rules still combine with the parent profile/session.
+rules:
+  - capability: fs_write
+    match: ["**/*"]
+    exclude: [".cad-work/**"]
+    effect: deny
+  - capability: fs_write
+    match: [".cad-work/**"]
+    effect: allow
+  - capability: shell
+    match: ["uv run --no-project *"]
+    effect: allow
+  - capability: shell
+    match: ["uv run --locked --script *", "uvx --from check-jsonschema==0.39.0 check-jsonschema *"]
+    effect: allow

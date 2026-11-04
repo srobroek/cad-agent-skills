@@ -1,0 +1,105 @@
+PN: STD-0001
+rev: X1
+title: Stand base
+sourcing: MAKE
+model:
+  kind: AUTHORED
+  kernel: cadquery
+  path: hw/parts/STD-0001/model.py
+  frame: PART_LOCAL
+transparency: OPAQUE
+components:
+- id: body
+  witness:
+  - 0
+  - 0
+  - 5
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+manufacture:
+  relationship: SAME
+intent:
+  functions:
+  - function: STRUCTURAL
+  - function: LOCATING
+  material_profile: fdm_petg_polylite
+  service:
+    requirements:
+    - REQ-001
+    loads:
+    - phone_weight
+    environment: indoor desk
+  critical_surfaces:
+  - id: bore
+    feature: hinge_bore
+    role: BORE
+    interfaces:
+    - IF-001
+    state: AFTER_FINISH
+    inspection: bore_check
+  route:
+  - id: print
+    kind: FDM
+    capability: bambu_x1c
+    provider: LOCAL
+    components:
+    - body
+    orientation:
+      status: APPROVED
+      rotation:
+        quaternion:
+        - 1
+        - 0
+        - 0
+        - 0
+      decision: DR-004
+    supports:
+      strategy: REACHABLE_NONCRITICAL
+      contact_regions:
+      - feature: underside
+      removal:
+        tools:
+        - flush cutter
+        access: open underside
+    targets:
+    - feature: hinge_bore
+    inspection:
+    - id: bore_check
+      feature: hinge_bore
+      method: pin gauge
+      state: AS_MANUFACTURED
+  - id: ream
+    kind: REAMING
+    depends_on:
+    - print
+    targets:
+    - feature: hinge_bore
+drawing:
+  status: REQUIRED
+  reason: reamed bore needs a dimension
+  datums:
+  - base_plane
+  characteristics:
+  - id: bore_dia
+    feature: hinge_bore
+    kind: DIMENSION
+    criterion:
+      property: diameter
+      comparator: BETWEEN
+      value:
+      - 5.0
+      - 5.075
+      units: mm
+      source: &id001
+        kind: USER
+        reference: owner interview
+        origin: product owner
+        date: '2026-11-03'
+mass_target:
+  status: KNOWN
+  value:
+    value: 60
+    units: g
+  basis: USER_DECLARED
+  sources:
+  - *id001
