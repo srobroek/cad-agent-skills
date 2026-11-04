@@ -59,16 +59,24 @@
   ],
   "runtime": {
     "status": "PRESENT",
-    "kernel": "cadquery",
-    "python": "3.12.8",
-    "packages": [
+    "environments": [
       {
-        "name": "cadquery",
-        "version": "2.8.0"
-      },
-      {
-        "name": "cadquery-ocp",
-        "version": "7.9.3.1.1"
+        "kernel": "cadquery",
+        "python": "3.12.8",
+        "packages": [
+          {
+            "name": "cadquery",
+            "version": "2.8.0"
+          },
+          {
+            "name": "cadquery-ocp",
+            "version": "7.9.3.1.1"
+          }
+        ],
+        "lock": {
+          "path": "hw/versions/v6/source/build.py.lock",
+          "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+        }
       }
     ],
     "platform": {
