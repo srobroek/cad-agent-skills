@@ -1,0 +1,31 @@
+# cad-release drawing intent template: the `drawing` block of hw/parts/<PN>/part.yaml (part root `$defs/drawing`).
+# Owner: cad-release, references/drawings.md "Drawing intent". The part designer fills it at DETAIL from the record.
+# Every `replace` text and every number below is a placeholder; write only what a requirement, interface, fit or the
+# record's regime states, with its source. Drawn values come from the version's STEP, never from this block.
+status: REQUIRED  # REQUIRED | NOT_REQUIRED | UNKNOWN; NOT_REQUIRED and UNKNOWN keep only status and reason
+reason: replace with why the part needs a sheet (MADE_TO_DRAWING, a fit, a thread, a finish or an inspection)
+datums:  # semantic feature names the model exposes; never a face, edge or solid index
+- datum_a
+views:  # every view a characteristic needs; a hidden feature needs a section or detail view
+- front
+- top
+- section_a_a
+characteristics:
+- id: bore_diameter
+  feature: bore
+  kind: DIMENSION  # DIMENSION | GEOMETRIC | FINISH | THREAD | NOTE
+  criterion:
+    property: diameter
+    comparator: BETWEEN
+    value: [0, 0]  # replace with the limits the source states
+    units: mm
+    source:
+      kind: DECISION
+      reference: replace with the IF-### fit or REQ-### that sets these limits
+      decision: DR-001
+  datums:
+  - datum_a
+  inspection: bore_gauge  # semantic id of the inspection method the route names
+  function: replace with the function this characteristic serves
+notes:
+- replace with a general note the record states, such as its edge-break or general-tolerance statement

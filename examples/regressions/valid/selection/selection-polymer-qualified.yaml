@@ -1,0 +1,223 @@
+status: CONFIRMED
+assessment:
+  input_sha256: ac316a851ae7cc2d2791a2629c2cf14c2e13755196ccecb060d6d5c7886b732a
+  method: hard outcomes per requirement, then PRF-001 over FEASIBLE candidates
+  date: '2026-11-03'
+  decision: DR-008
+candidates:
+- id: petg-print
+  title: Printed PETG base and arm
+  architecture: printed base and arm with a bought steel pin
+  parts:
+  - PN: STD-0001
+    sourcing: MAKE
+    material_profile: fdm_petg_polylite
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  - PN: STD-0002
+    sourcing: MAKE
+    material_profile: fdm_petg_polylite
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  - PN: STD-0003
+    sourcing: BUY
+    material_profile: fastener_iso_3506_a2_70
+    route:
+    - kind: PURCHASED
+      purchase:
+        identity:
+          status: KNOWN
+          value: ISO 2338 5 m6 x 30 A2
+          basis: STANDARD
+          sources:
+          - kind: STANDARD
+            reference: ISO 2338
+            url: https://www.iso.org/standard/7425.html
+            accessed: '2026-11-03'
+        specification:
+          status: KNOWN
+          value: ISO 2338 A2
+          basis: STANDARD
+          sources:
+          - kind: STANDARD
+            reference: ISO 2338
+            url: https://www.iso.org/standard/7425.html
+            accessed: '2026-11-03'
+        ratings:
+          status: UNKNOWN
+          reason: shear rating not retained; the pin carries < 5 N
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: PASS
+    criterion: &id002
+      id: angle_range
+      property: viewing_angle
+      comparator: BETWEEN
+      value:
+      - 55
+      - 75
+      units: deg
+      source: &id001
+        kind: USER
+        reference: owner interview
+        origin: product owner
+        date: '2026-11-03'
+    method: geometry by construction of the hinge stops
+    source: *id001
+  - requirement: REQ-002
+    outcome: PASS
+    criterion: &id003
+      id: hold_margin
+      property: hinge_holding_margin
+      comparator: GE
+      value: 1.5
+      units: dimensionless
+      source: *id001
+      conditions: 2.5 N phone at 75 deg, 23 deg_C indoor (REQ-002)
+    method: 'hand estimate of friction torque with supplier-typical PETG modulus: margin 3.1; physical.test planned
+      at RELEASE'
+    source:
+      kind: DATASHEET
+      reference: PolyLite PETG technical data sheet
+      url: https://example.com/polylite-petg.pdf
+      accessed: '2026-11-02'
+  feasibility: FEASIBLE
+  preference_scores:
+  - preference: PRF-001
+    score: 0.9
+    reason: one printer, one material, lowest cost
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 2
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: quotes not yet sourced
+    lead_time:
+      status: UNKNOWN
+      reason: provider lead time not sourced
+    maintenance:
+      status: KNOWN
+      value: replace pivot bushing on wear
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - PETG values are typical, not allowables
+  - REQ-002 physical hold is PLANNED, not established
+  reversal: move to cnc-6061 if the angle-hold test fails
+- id: cnc-6061
+  title: Machined 6061 base and arm
+  architecture: machined base and arm with a bought steel pin
+  parts:
+  - PN: STD-0001
+    sourcing: MAKE
+    material_profile: al_6061_t6_hydro
+    route:
+    - kind: CNC
+      capability: cnc_router_local
+      provider: LOCAL
+  - PN: STD-0002
+    sourcing: MAKE
+    material_profile: al_6061_t6_hydro
+    route:
+    - kind: CNC
+      capability: cnc_router_local
+      provider: LOCAL
+  - PN: STD-0003
+    sourcing: BUY
+    material_profile: fastener_iso_3506_a2_70
+    route:
+    - kind: PURCHASED
+      purchase:
+        identity:
+          status: KNOWN
+          value: ISO 2338 5 m6 x 30 A2
+          basis: STANDARD
+          sources:
+          - kind: STANDARD
+            reference: ISO 2338
+            url: https://www.iso.org/standard/7425.html
+            accessed: '2026-11-03'
+        specification:
+          status: KNOWN
+          value: ISO 2338 A2
+          basis: STANDARD
+          sources:
+          - kind: STANDARD
+            reference: ISO 2338
+            url: https://www.iso.org/standard/7425.html
+            accessed: '2026-11-03'
+        ratings:
+          status: UNKNOWN
+          reason: shear rating not retained; the pin carries < 5 N
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: PASS
+    criterion: *id002
+    method: geometry by construction of the hinge stops
+    source: *id001
+  - requirement: REQ-002
+    outcome: PASS
+    criterion: *id003
+    method: 'hand estimate with 6061 T6 typical modulus: margin 4.0'
+    source:
+      kind: DATASHEET
+      reference: Hydro 6061 T6 datasheet
+      url: https://example.com/hydro-6061.pdf
+      accessed: '2026-11-02'
+  feasibility: FEASIBLE
+  preference_scores:
+  - preference: PRF-001
+    score: 0.3
+    reason: outsourced machining, higher cost and lead time
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 2
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: quotes not yet sourced
+    lead_time:
+      status: UNKNOWN
+      reason: provider lead time not sourced
+    maintenance:
+      status: KNOWN
+      value: replace pivot bushing on wear
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - 6061 values are typical
+  reversal: re-assess on a changed load or temperature
+recommendation:
+  status: FINAL
+  primary: petg-print
+  fallback: cnc-6061
+  governing_requirements:
+  - REQ-001
+  - REQ-002
+  reasons:
+  - both candidates meet every hard requirement on sourced evidence
+  - petg-print ranks first on PRF-001
+  limits:
+  - typical values; REQ-002 physical hold PLANNED for RELEASE
+  reversal: switch to cnc-6061 if the angle-hold test fails
+  what_would_change:
+  - a failed angle-hold test
+  - service above 50 deg_C
+  decision: DR-008

@@ -17,8 +17,9 @@ brief lists; never cad-flow SKILL.md or another lead reference. Grading uses the
    as `boundary.before_sha256`, and again after your last write as `boundary.after_sha256`.
 5. Do the role duty below; write only the `boundary.writable` paths of the brief.
 6. Writers build and check with their own programs `.cad-work/<unit>/build.py` and `check.py`, using the run
-   commands cad-model and cad-verify name. Each check in `expected.checks` gets a result file under
-   `output/checks/<check>/`, bound `VERSION` when the brief names a `version`, else `UNIT`.
+   commands cad-model and cad-verify name; keep each program's uv lock beside it as `build.py.lock` or
+   `check.py.lock`. Each check in `expected.checks` gets a result file under `output/checks/<check>/`, bound
+   `VERSION` when the brief names a `version`, else `UNIT`.
 7. Grade the whole delivery PASS, MINOR or MAJOR with the rubric.
 8. Writers write `.cad-work/<unit>/delivery.json` (root `worker-delivery`, fields below) and validate it
    against the brief's schema path → exit 0.
@@ -50,9 +51,9 @@ evidence, not a stop.
 
 | Role | Duty | Skills to LOAD | Writes | Delivers to |
 |---|---|---|---|---|
-| `cad-concept-designer` | one variant from the brief's use case, requirements, preferences and feasible route: architecture, load paths, interfaces, coarse CAD and GLB when asked, feasibility per hard constraint, unknowns | cad-design, cad-model, cad-select, cad-record | `output/**`, `build.py`, `delivery.json` | `hw/concepts/<variant>/{variant.yaml,architecture.md,geometry/**}` |
-| `cad-part-designer` | the brief's PNs: part record, one-kernel model, components, manufacturing state, route, drawing intent at DETAIL, own build, readback and UNIT checks | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL | `output/**`, `build.py`, `check.py`, `delivery.json` | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` |
-| `cad-checker` | independent checks of the brief's version or unit inputs: own programs, results, artifacts, logs, coverage | cad-verify, cad-model, cad-record | `output/**`, `check.py`, `delivery.json` | `hw/checks/<vN>/<check>/<attempt>/**` |
+| `cad-concept-designer` | one variant from the brief's use case, requirements, preferences and feasible route: architecture, load paths, interfaces, coarse CAD and GLB when asked, feasibility per hard constraint, unknowns, own build and geometry readback | cad-design, cad-model, cad-select, cad-verify, cad-record | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `delivery.json` | `hw/concepts/<variant>/{variant.yaml,architecture.md,geometry/**}` |
+| `cad-part-designer` | the brief's PNs: part record, one-kernel model, components, manufacturing state, route, drawing intent at DETAIL, own build, readback and UNIT checks | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `delivery.json` | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` |
+| `cad-checker` | independent checks of the brief's version or unit inputs: own programs, results, artifacts, logs, coverage | cad-verify, cad-model, cad-select, cad-design, cad-release, cad-record | `output/**`, `check.py`, `check.py.lock`, `delivery.json` | `hw/checks/<vN>/<check>/<attempt>/**` |
 | `cad-mech-dfm-reviewer` | separate mechanical and DFM outcomes for the exact version: premises, requirements, routes, evidence, drawings, BOM | cad-review, cad-verify, cad-select, cad-record | nothing | `hw/checks/<vN>/<check>/<attempt>/result.json` |
 | `cad-sourcing-researcher` | the brief's purchased families, stock or capability: retained source bytes, profile proposals, catalogue alternatives with citations | cad-select, cad-record | `output/**`, `delivery.json` | `hw/manufacturing/sources/<sha256>/<name>`, `hw/parts/<PN>/sources/**` |
 

@@ -1,0 +1,6 @@
+# cad-agent-skills record template: the occurrence tree starts at LAYOUT; root is set with the first occurrence.
+occurrences: []
+joints: []
+couplings: []
+operations: []
+service: []

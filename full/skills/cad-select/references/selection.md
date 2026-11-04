@@ -2,7 +2,8 @@
 
 Owner: cad-select. Field and path authority belongs to cad-record. Read `cad-record/references/contract-index.md` and `cad-record/references/record.md`; use the active brief's absolute skill/schema paths. Do not copy their rules into this reference.
 
-## 1. Establish intended use
+## intake-use-case
+### Establish intended use
 
 Ask only questions that resolve this product's actual intended function and constraints. Cover:
 
@@ -21,7 +22,8 @@ Capture **requirements**, **preferences**, **assumptions** and **open questions*
 
 Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of rigor. Do not infer either from CAD or example geometry.
 
-## 2. Form whole candidate routes
+## select-candidates
+### Form whole candidate routes
 
 Develop credible combinations before ranking. For each candidate, state its architecture and every relevant part's sourcing, exact material profile or explicit UNKNOWN, and ordered route. Include secondary operations, finishing, joining, inspection, maintenance and replacement. One product may mix made and purchased components, materials and operations.
 
@@ -33,7 +35,8 @@ Do not invent machine, operator, supplier, material approval, work envelope, too
 
 For a required transparent/optical part, select either a purchased transparent component or identified transparent stock with traceable grade, thickness, optical acceptance criterion, supplier and suitable approved process. Transparent filament/resin, supplier colour labels and a visually clear print do not establish optical transmission; never route a transparency requirement through FDM.
 
-## 3. Eliminate on mandatory constraints first
+## assess-selection
+### Eliminate on mandatory constraints first
 
 For every candidate and mandatory requirement, record a sourced criterion, method and one outcome:
 
@@ -45,7 +48,7 @@ Classify the whole candidate using the selection schema: FEASIBLE has no mandato
 
 If hard constraints leave one credible candidate, document the forced choice and its evidence/limits; do not manufacture a second option. Otherwise compare at least two credible complete candidate routes for consequential decisions.
 
-## 4. Compare the feasible routes
+### Compare the feasible routes
 
 Use `hw/manufacturing/selection.yaml` and its candidate shape from `selection.schema.json`. Compare with a concise table using these columns (add project-specific explanation in prose, not novel record fields):
 
@@ -56,7 +59,7 @@ Keep hard outcomes distinct from preferences; rank only FEASIBLE candidates agai
 
 Give a primary route and, when useful and separately justified, a low-cost prototype route, end-use route and fallback. Name what changes the recommendation, such as greater measured load or temperature, longer duty/life, tighter fit, different provider capability or production quantity. State what a prototype can and cannot validate; a printed mock-up does not establish final strength, life or thermal performance.
 
-## 5. Evidence and approval boundary
+### Evidence and approval boundary
 
 For every property used to compare or calculate, identify the exact profile/property, source and reported statistic, grade/form/process state, test standard, temperature, conditioning, orientation and uncertainty to the extent the source establishes them. Keep unstated conditions UNKNOWN. Identify whether evidence is measured, supplier typical, standard minimum, estimated, calculated, assumed or a justified allowable. Density is not strength. Do not transfer bulk, cast or wrought properties to printed parts, another grade, form, orientation, moisture state or service condition.
 

@@ -27,6 +27,7 @@ check-plan/invalid/safety-check-waivable.yaml: a safety check is never waivable
 check-plan/invalid/sampled-without-justification.yaml: a SAMPLED or CONSTRAINED_PATH sampling states its justification
 check-result/invalid/artifact-lists-result-json.json: artifacts exclude result.json and bundle-manifest.json
 check-result/invalid/command-without-commands.json: a COMMAND implementation needs at least one command
+check-result/invalid/integrity-hashes-release-manifest.json: the package-integrity result never hashes or inspects release-manifest.json, which hashes it
 check-result/invalid/pass-without-criterion.json: a PASS outcome needs criterion, evidence and value
 check-result/invalid/positional-finding-id.json: finding ids are family:anchor:locus, never positional
 check-result/invalid/review-with-commands.json: a REVIEW implementation forbids commands
@@ -36,6 +37,9 @@ check-result/invalid/reviewer-command-implementation.json: the read-only reviewe
 check-result/invalid/unit-binding-missing-brief.json: UNIT binding needs unit, brief and input inventory digests
 check-result/invalid/unknown-reported-pass.json: an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
 check-result/invalid/unregistered-family.json: families are the registered enum
+# check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the
+# review's own result.json or bundle-manifest.json is semantic only (references/validation.md item 11), because
+# the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.
 common/invalid/allowable-without-authority.yaml: ALLOWABLE needs authority, conditions and derivation
 common/invalid/component-without-pn.yaml: a COMPONENT subject names its PN
 common/invalid/datasheet-without-locator.yaml: a datasheet source names a url or a retained artifact
@@ -120,20 +124,24 @@ stage-verdict/invalid/waiver-dr-id.json: waiver ids are WV-###
 stage-verdict/invalid/waiver-on-pass-item.json: a waiver is forbidden on a non-WAIVED result
 variant/invalid/feasible-with-unknown.yaml: FEASIBLE requires no UNKNOWN or FAIL hard outcome
 variant/invalid/geometry-absent-no-reason.yaml: NOT_APPLICABLE geometry states a reason; no fake STEP
-variant/invalid/missing-source.yaml: a variant names its delivering unit and digests
+variant/invalid/missing-source.yaml: a variant names its delivering unit, role and brief digest
+variant/invalid/source-delivery-hash.yaml: a variant never holds its delivery digest (the delivery outputs hash the variant)
+verification-row/invalid/cites-verification-index.yaml: a row never cites the verification.index obligation that checks this index
 verification-row/invalid/pass-with-unknown-criterion.yaml: PASS requires a real criterion
 verification-row/invalid/pass-without-results.yaml: PASS requires result references
 verification-row/invalid/planned-with-results.yaml: PLANNED rows carry no results
 verification-row/invalid/unknown-without-code.yaml: UNKNOWN requires reason and unknown_code
 verification/invalid/row-invented-pass.yaml: rows are verification-row roots; PASS needs results and a real criterion
 verification/invalid/wrong-format.yaml: format names the verification root
+version-manifest/invalid/duplicate-kernel.json: runtime has at most one environment per kernel
 version-manifest/invalid/geometry-not-mm.json: geometry is millimetres, right-handed Z-up
 version-manifest/invalid/includes-check-result.json: inventories hold only hw/versions/vN snapshots; no downstream results
 version-manifest/invalid/includes-itself.json: the manifest and stage verdict are never inventoried
 version-manifest/invalid/pre-cad-no-reason.json: NOT_APPLICABLE geometry states its reason
+version-manifest/invalid/runtime-single-kernel.json: runtime records environments[], never a top-level kernel, python or packages
 worker-brief/invalid/installed-hash.yaml: 'installed skills are never hashed: installed_sha256 is not a field'
 worker-brief/invalid/lock-outside-scratch.yaml: a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
-worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name, version and manifest path
+worker-brief/invalid/missing-plugin.yaml: resources name the installed plugin name and version
 worker-brief/invalid/plugin-manifest-field.yaml: plugin provenance is name and version from the cad-flow SKILL.md metadata; no manifest path
 worker-brief/invalid/plugin-version-not-semver.yaml: plugin version is a semver string
 worker-brief/invalid/relative-skill-path.yaml: resource paths are literal absolute paths from preflight

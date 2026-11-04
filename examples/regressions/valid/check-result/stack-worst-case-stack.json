@@ -1,0 +1,194 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "stack/a1",
+  "check": "stack",
+  "attempt": "a1",
+  "family": "fit.stack",
+  "producer_role": "cad-checker",
+  "stage": "DETAIL",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v5",
+    "version_manifest_sha256": "5f9765254eb4086d1631df9089f625aef6cecb6d1ef8899aa77ed476020f4eff"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v5/manifest.json",
+      "sha256": "5f9765254eb4086d1631df9089f625aef6cecb6d1ef8899aa77ed476020f4eff"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v5/stack/a1/source/check.py",
+        "sha256": "ea57f439c649a772103e2cbda1162378e0b0eacecc7869dfd829b7f0a421274c"
+      },
+      {
+        "path": "hw/checks/v5/stack/a1/source/check.py.lock",
+        "sha256": "80cb5bf8ffc9fbac2bed7fe6df699fd511ea17312c824d4914dc49f43fc57349"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-stack-v5/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "CASE",
+        "case": "slide-stack"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "cases": [
+      "slide-stack"
+    ],
+    "expected_obligations": [
+      "fit.stack@case.slide-stack"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "fit.stack@case.slide-stack",
+      "requirement": "REQ-012",
+      "subject": {
+        "kind": "CASE",
+        "case": "slide-stack"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "lower": -0.1,
+        "upper": 0.5,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "slide_clearance",
+        "property": "clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "IF-002 slide: carriage in rail (REQ-012)"
+      },
+      "method": {
+        "name": "one-dimensional worst-case chain (cad-verify references/fits.md fit.stack)"
+      },
+      "assumptions": [
+        "contributor tolerances from the LMP-0010 and LMP-0011 drawings, AFTER_FINISH state"
+      ],
+      "evidence": [
+        {
+          "path": "hw/checks/v5/stack/a1/artifacts/contributors.json",
+          "sha256": "08ff320c2b7f97d062e2c95868e26db19bd76046d6d2b8e2128e297366f1aa15"
+        }
+      ],
+      "configuration": "nominal +0.20 mm; minimum -0.10 mm at carriage max and rail gap min"
+    }
+  ],
+  "findings": [
+    {
+      "id": "fit.stack:case.slide-stack:minimum_gap",
+      "family": "fit.stack",
+      "obligation": "fit.stack@case.slide-stack",
+      "subject": {
+        "kind": "CASE",
+        "case": "slide-stack"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "lower": -0.1,
+        "upper": 0.5,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "slide_clearance",
+        "property": "clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "IF-002 slide: carriage in rail (REQ-012)"
+      },
+      "requirements": [
+        "REQ-012"
+      ],
+      "method": {
+        "name": "one-dimensional worst-case chain (cad-verify references/fits.md fit.stack)"
+      },
+      "uncertainty": "worst case of stated contributor intervals",
+      "consequence": "the carriage binds in the rail at the tolerance extreme",
+      "remedy": "widen the rail gap by 0.15 mm or tighten the carriage width tolerance to +/-0.05 mm",
+      "alternatives": [
+        {
+          "text": "JUSTIFIED_RSS with a DR",
+          "tradeoff": "needs distributions, capability data and owner approval; worst case still published"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "fit.stack"
+        ],
+        "earliest_stage": "DETAIL"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v5/stack/a1/artifacts/contributors.json",
+      "sha256": "08ff320c2b7f97d062e2c95868e26db19bd76046d6d2b8e2128e297366f1aa15",
+      "role": "DATA"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "worst case only; no RSS claim"
+  ]
+}

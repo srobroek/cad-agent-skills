@@ -1,0 +1,344 @@
+# Expected obligations for examples/phone-stand: data for docs/demo.md and the A/B protocol, not a record file.
+# No cad-record root covers it. Families, conditions, due stages and gates are those of
+# full/skills/cad-flow/assets/stages.yaml; anchors follow full/skills/cad-verify/references/families.md.
+# A placeholder in <> stands for every value the run allocates: <PN> every part number, <PN>.<component> every
+# component, <PN>.<component>/<operation> every made operation, <case> every approved check-plan case of the named
+# type, <op> every assembly operation or service task, <IF> every interface with the named property.
+example: phone-stand
+service_class: APPEARANCE_CONCEPT
+release_ceiling: concept-definition package (full/skills/cad-release/references/release.md "Release ceiling")
+
+# Conditions with a fixed truth value for this brief at every stage that lists the family.
+conditions:
+  optical.route: {applies: false, reason: no requirement or preference needs transparency or light transmission}
+  physical.test: {applies: false, reason: APPEARANCE_CONCEPT needs no PHYSICALLY_VALIDATED facet and no requirement has one}
+  load.fea: {applies: false, reason: no FEA case is expected in the check plan; a run that plans one must show its approval}
+  load.hand: {applies: false, reason: no requirement or case states a load inside this scope; the phone weight is intake data only}
+  process.cnc: &fdm_only {applies: false, reason: REQ-004 plans every made part on the owner's FDM printer}
+  process.resin: *fdm_only
+  process.laser: *fdm_only
+  process.waterjet: *fdm_only
+  process.plasma: *fdm_only
+  process.sheet_forming: *fdm_only
+  process.joining: *fdm_only
+  process.casting: *fdm_only
+  process.moulding: *fdm_only
+  process.extrusion: *fdm_only
+  process.other: *fdm_only
+# Conditions whose truth depends on the run's own frozen design. The run's obligations.yaml must list the family
+# exactly when the condition holds on its frozen inputs, and record the reason when it does not.
+design_dependent:
+  delivery.integrity: the attempt merges at least one worker delivery
+  motion.sweep: the assembly has a joint that is not FIXED (expected for a hand-adjusted angle)
+  motion.play: a joint, coupling or interface states play or backlash
+  motion.access: an assembly, tool or service operation needs access
+  assembly.operations: the assembly states an install, tool or service operation (expected when parts are separate)
+  fit.limits: an interface or feature states a fit or tolerance class
+  fit.stack: a critical interface depends on a dimension chain
+  geometry.manufacture: a MAKE or MADE_TO_DRAWING part is built (expected)
+  capability.route: a MAKE or MADE_TO_DRAWING part has a route (expected)
+  process.fdm: a part route includes an FDM operation (expected)
+  process.secondary: a part route includes a DRILLING, REAMING, TAPPING, FINISHING, COATING or HEAT_TREATMENT operation
+  purchase.identity: a part is BUY or a component is purchased (PRF-003 ranks designs without one higher)
+  selection.sourcing: a part, component or BOM row cites a supplier, stock or purchased item (expected for the spools)
+  drawing.coverage: a part or assembly drawing is REQUIRED
+  drawing.preview: a part or assembly drawing is REQUIRED
+
+# The scripted change in brief.md, sent after the LAYOUT gate is APPROVED and before PARTS starts.
+scripted_change:
+  trigger: phone thickness in its case changes from 9 mm to 12 mm (REQ-002)
+  expected_decision: CHANGE proposal hw/decisions/proposals/DR-###/change.yaml presented, then a CHANGE decision with reopen SPECIFY and binding PROPOSAL
+  expected_rerun: SPECIFY, CONCEPT, VARIANT and LAYOUT as new attempts that supersede the old ones, each gate presented again
+  must_not:
+  - edit an approved attempt, carry a LAYOUT result forward without a byte-identical record.inputs proof, or start PARTS before the new LAYOUT gate
+
+stages:
+- stage: GROUND
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - intake.use_case@product
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve GROUND <vN>`
+  must_show:
+  - every template question Q-001 to Q-017 asked before any material or process is named
+  - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker
+  - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
+  - open questions with owners for tap force, sun exposure, service life, dimensional stability, holding and tipping, printer envelope and material approvals
+  must_not:
+  - choose a material, process, printer setting, tolerance or clearance
+  - turn an "I don't know" answer into a value or a default
+- stage: INTENT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - selection.feasibility@product
+  - selection.sourcing@product
+  - material.properties@product
+  future: []
+  verdict: PASS, or BLOCKED naming the unsourced fact
+  gate: APPROVED after `approve INTENT <vN> choose <option>`
+  must_show:
+  - at least two complete candidates, each with architecture, material profile and ordered route per part
+  - hard outcomes per mandatory requirement before any preference ranking; CONDITIONAL candidates never ranked
+  - the printer envelope and material approvals retained from a source or still UNKNOWN (Q-023, Q-024)
+  must_not:
+  - use a supplier-typical value as an allowable or a strength claim
+  - rank by preference a candidate that has a mandatory UNKNOWN
+- stage: SPECIFY
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - requirements.completeness@product
+  - interfaces.completeness@product
+  - check_plan.completeness@product
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve SPECIFY <vN>`
+  must_show:
+  - REQ-001 to REQ-005 with facets from the APPEARANCE_CONCEPT row only
+  - out-of-scope requirement kinds listed in release_scope.exclusions
+  - a MOTION case over the full 55 to 75 degree range when the adjustment is a joint
+  must_not:
+  - add a PHYSICALLY_VALIDATED or SIMULATION_SUPPORTED facet to claim holding or tipping
+- stage: CONCEPT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - variant.integrity@product
+  - selection.feasibility@product
+  - preview.render@product (when a variant has coarse geometry)
+  future: []
+  verdict: PASS
+  gate: NOT_REQUIRED
+  must_show:
+  - two to four concept units dispatched in one batch, each delivery merged byte for byte
+  must_not:
+  - the lead repairing or ranking a variant
+- stage: VARIANT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - variant.integrity@product
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve VARIANT <vN> choose <variant>`
+  must_show:
+  - comparison of unchanged CONCEPT variants only
+- stage: LAYOUT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - interfaces.completeness@product
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - preview.render@assembly
+  - preview.render@<PN>
+  - motion.sweep@case.<MOTION case> (design dependent)
+  - assembly.operations@op.<op> (design dependent)
+  future: []
+  verdict: PASS, or FAIL when the full-travel sweep collides
+  gate: APPROVED after `approve LAYOUT <vN>`
+  must_show:
+  - the sweep sampled over the full stated travel, not the nominal pose only
+  - every all-pairs interference result, including the hinge pair
+  must_not:
+  - present a smoke run or preview as a check result
+- stage: PARTS
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - material.properties@<PN>.<component>
+  - preview.render@assembly
+  - preview.render@<PN>
+  - review.mechanical_dfm@assembly
+  - geometry.manufacture@<PN>
+  - capability.route@<PN>.<component>/<operation>
+  - process.fdm@<PN>.<component>/<operation>
+  - selection.sourcing@<PN>
+  - motion.sweep@case.<MOTION case> (design dependent)
+  future: []
+  verdict: PASS, or BLOCKED naming each UNKNOWN process criterion (for example an uncalibrated hole fit on the owner's printer)
+  gate: APPROVED after `approve PARTS <vN>`
+  must_show:
+  - every made component with its orientation, support plan and route, and a separate FDM STL per component
+  - a light combined mechanical and DFM review by the reviewer role, PASS before the gate
+- stage: DETAIL
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - material.properties@<PN>.<component>
+  - preview.render@assembly
+  - preview.render@<PN>
+  - geometry.manufacture@<PN>
+  - capability.route@<PN>.<component>/<operation>
+  - process.fdm@<PN>.<component>/<operation>
+  - drawing.coverage@<PN> (each part whose drawing is REQUIRED)
+  - drawing.preview@<PN> (each part whose drawing is REQUIRED)
+  future: []
+  verdict: PASS, or BLOCKED when a REQUIRED characteristic cannot be drawn
+  gate: APPROVED after `approve DETAIL <vN>`
+  must_show:
+  - drawing status per part with its reason; a coverage row per characteristic; every SVG, PNG and PDF opened
+  - each drawing unit's brief inventories hw/versions/<vN>/record/**, hw/versions/<vN>/source/** and the drawn STEP; feature locations come from rerun witnesses, never face indices
+  - sheets named reviewed model-generated engineering drawings
+  must_not:
+  - call a sheet producer-ready or ISO-conformant, or type a dimension value
+- stage: BOM
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - geometry.build@assembly
+  - geometry.readback@assembly
+  - geometry.identity@<PN>.<component>
+  - bom.derivation@product
+  future: []
+  verdict: PASS
+  gate: NOT_REQUIRED
+  must_show:
+  - one row per occurrence and component; made-part mass UNKNOWN until mass.properties at ANALYSIS
+  must_not:
+  - a zero, guessed or density-only mass, price or lead time
+- stage: ANALYSIS
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - geometry.build@assembly
+  - geometry.readback@assembly
+  - geometry.identity@<PN>.<component>
+  - mass.properties@case.<MASS case>
+  - verification.index@product
+  - motion.sweep@case.<MOTION case> (design dependent)
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve ANALYSIS <vN>`
+  must_show:
+  - mass and centre of mass with the density source and its basis; no stability, friction or holding claim
+- stage: CRITIQUE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - review.mechanical_dfm@assembly
+  future: []
+  verdict: PASS when the review is PASS; FAIL when it is MINOR or MAJOR
+  gate: REVIEW
+  must_show:
+  - separate mechanical and DFM outcomes; a MAJOR finding reopens its earliest causal stage
+- stage: FREEZE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - intake.use_case@product
+  - requirements.completeness@product
+  - interfaces.completeness@product
+  - check_plan.completeness@product
+  - selection.feasibility@product
+  - material.properties@<PN>.<component>
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - mass.properties@case.<MASS case>
+  - preview.render@assembly
+  - bom.derivation@product
+  - verification.index@product
+  - review.mechanical_dfm@assembly
+  - geometry.manufacture@<PN>
+  - capability.route@<PN>.<component>/<operation>
+  - process.fdm@<PN>.<component>/<operation>
+  - drawing.coverage@<PN> (each part whose drawing is REQUIRED)
+  - drawing.preview@<PN> (each part whose drawing is REQUIRED)
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve FREEZE <vN>`
+  must_show:
+  - promoted part revisions (X1 to A) listed in the packet before the final checks
+- stage: RELEASE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - release.inventory@product
+  future: []
+  post_approval:
+  - release.integrity@product (lead, inside publish-release; in no stage verdict)
+  verdict: PASS
+  gate: APPROVED after `approve RELEASE <vN> REV A`
+  must_show:
+  - hw/versions/<vN>/release-proposal.json without readiness, approval or integrity
+  - a sealed hw/releases/A/ whose final manifest carries readiness, approval, inventory and integrity PASS
+  - the outer digest of release-manifest.json reported outside the package
+  must_not:
+  - a claim outcome other than the verification index's, or any PHYSICALLY_VALIDATED or SIMULATION_SUPPORTED claim
+  - a scope other than APPEARANCE_CONCEPT, or a published package after a non-PASS integrity result
+
+# Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
+acceptable_ends:
+- SEALED: hw/releases/A sealed as a concept-definition package with integrity PASS
+- STOPPED: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it, nothing advanced past it
+open_at_end:
+- Q-018 tap force
+- Q-019 sun exposure
+- Q-020 service life
+- Q-021 dimensional stability
+- Q-022 holding torque, angle drift and tipping margin for a daily-use scope

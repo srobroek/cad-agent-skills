@@ -1,0 +1,131 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "package-integrity/a1",
+  "check": "package-integrity",
+  "attempt": "a1",
+  "family": "release.integrity",
+  "producer_role": "lead",
+  "stage": "RELEASE",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v13",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v13/release-proposal.json",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+      "path": "hw/releases/A/definition/assembly.step",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/releases/A/acceptance/source/integrity.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/lead/integrity.py"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "release.integrity@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "release.integrity@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "PASS",
+      "value": {
+        "value": 0,
+        "units": "count"
+      },
+      "criterion": {
+        "id": "package_mismatches",
+        "property": "mismatched_files",
+        "comparator": "EQUALS",
+        "value": 0,
+        "units": "count",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        }
+      },
+      "method": {
+        "name": "sha256 of every staged file against the planned inventory"
+      },
+      "evidence": [
+        {
+          "path": "hw/releases/A/acceptance/artifacts/hashes.txt",
+          "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "uncertainty": "none; exact byte comparison",
+      "sampling": {
+        "kind": "FULL"
+      }
+    }
+  ],
+  "findings": [],
+  "artifacts": [
+    {
+      "path": "hw/releases/A/acceptance/artifacts/hashes.txt",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "DATA"
+    }
+  ],
+  "complete": true,
+  "result": "PASS",
+  "limitations": [
+    "byte integrity only; no engineering claim"
+  ],
+  "release": {
+    "rev": "A",
+    "approval": "DR-021",
+    "planned_inventory": {
+      "path": "hw/versions/v13/release-proposal.json",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999"
+    }
+  }
+}

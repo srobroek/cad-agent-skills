@@ -1,0 +1,55 @@
+PN: STD-0004
+rev: X1
+title: Front lip window
+sourcing: MAKE
+model:
+  kind: AUTHORED
+  kernel: build123d
+  path: hw/parts/STD-0004/model.py
+  frame: PART_LOCAL
+transparency: TRANSPARENT
+components:
+- id: window
+  witness:
+  - 0
+  - 0
+  - 1
+  material_profile: fdm_pc_polylite_transparent
+  multiplicity: 1
+manufacture:
+  relationship: SAME
+intent:
+  functions:
+  - function: OPTICAL
+  material_profile: fdm_pc_polylite_transparent
+  service:
+    requirements:
+    - REQ-006
+    environment: indoor desk
+  critical_surfaces:
+  - id: view_face
+    feature: view_face
+    role: OPTICAL
+    state: AS_MANUFACTURED
+  route:
+  - id: print
+    kind: FDM
+    capability: bambu_x1c
+    provider: LOCAL
+    components:
+    - window
+    orientation:
+      status: PROPOSED
+      rotation:
+        quaternion:
+        - 1
+        - 0
+        - 0
+        - 0
+    supports:
+      strategy: NONE
+    targets:
+    - feature: view_face
+drawing:
+  status: NOT_REQUIRED
+  reason: no characteristic beyond the model

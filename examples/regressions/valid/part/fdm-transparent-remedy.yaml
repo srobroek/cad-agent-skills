@@ -1,0 +1,74 @@
+PN: STD-0004
+rev: X2
+title: Front lip window
+sourcing: MAKE
+model:
+  kind: AUTHORED
+  kernel: build123d
+  path: hw/parts/STD-0004/model.py
+  frame: PART_LOCAL
+transparency: TRANSPARENT
+components:
+- id: window
+  witness:
+  - 0
+  - 0
+  - 1
+  material_profile: cast_pmma_plexiglas_gs_0f00
+  multiplicity: 1
+manufacture:
+  relationship: SAME
+intent:
+  functions:
+  - function: OPTICAL
+  material_profile: cast_pmma_plexiglas_gs_0f00
+  service:
+    requirements:
+    - REQ-006
+    environment: indoor desk
+  critical_surfaces:
+  - id: view_face
+    feature: view_face
+    role: OPTICAL
+    state: AS_MANUFACTURED
+  route:
+  - id: cut
+    kind: LASER
+    capability: laser_co2_local
+    provider: LOCAL
+    components:
+    - window
+    setup:
+      stock:
+        material_profile: cast_pmma_plexiglas_gs_0f00
+        grade:
+          status: KNOWN
+          value: PLEXIGLAS GS 0F00 clear
+          basis: SUPPLIER_TYPICAL
+          sources:
+          - kind: DATASHEET
+            reference: PLEXIGLAS GS product information
+            url: https://example.com/plexiglas-gs.pdf
+            accessed: '2026-11-02'
+        thickness:
+          status: KNOWN
+          value:
+            value: 3
+            units: mm
+          basis: SUPPLIER_TYPICAL
+          sources:
+          - kind: DATASHEET
+            reference: PLEXIGLAS GS product information
+            url: https://example.com/plexiglas-gs.pdf
+            accessed: '2026-11-02'
+        supplier: sheet stockist named in hw/manufacturing/sources
+    targets:
+    - feature: view_face
+    inspection:
+    - id: view_check
+      feature: view_face
+      method: visual readability check through the window
+      state: AS_MANUFACTURED
+drawing:
+  status: NOT_REQUIRED
+  reason: no characteristic beyond the model

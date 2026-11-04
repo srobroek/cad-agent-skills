@@ -1,0 +1,129 @@
+PN: LMP-0007
+rev: X1
+title: Pivot bracket
+sourcing: MAKE
+model:
+  kind: AUTHORED
+  kernel: build123d
+  path: hw/parts/LMP-0007/model.py
+  frame: PART_LOCAL
+transparency: OPAQUE
+components:
+- id: bracket
+  witness:
+  - 0
+  - 0
+  - 5
+  material_profile: al_6082_t6_hydro
+  multiplicity: 1
+- id: bushing
+  witness:
+  - 0
+  - 20
+  - 5
+  material_profile:
+    status: UNKNOWN
+    reason: bushing supplier material not yet sourced
+  multiplicity: 1
+manufacture:
+  relationship: SAME
+intent:
+  functions:
+  - function: STRUCTURAL
+  - function: LOCATING
+  material_profile: al_6082_t6_hydro
+  service:
+    requirements:
+    - REQ-011
+    environment: indoor, lamp head heat up to 60 deg_C
+  critical_surfaces:
+  - id: pivot
+    feature: pivot_bore
+    component: bracket
+    role: BORE
+    interfaces:
+    - IF-003
+    state: AFTER_FINISH
+    inspection: bore_gauge
+  route:
+  - id: mill
+    kind: CNC
+    capability: cnc_router_local
+    provider: LOCAL
+    components:
+    - bracket
+    setup:
+      stock:
+        material_profile: al_6082_t6_hydro
+        form:
+          status: KNOWN
+          value: flat bar 40 x 10 mm
+          basis: SUPPLIER_TYPICAL
+          sources:
+          - kind: SUPPLIER
+            reference: stockist quote Q-2291
+            artifact: hw/manufacturing/sources/8ce0125c8be6d7f07bc163da3b2cf46bc083cb5fc9bfebddfbdcd496cd71f9fa/quote-Q-2291.pdf
+            sha256: 8ce0125c8be6d7f07bc163da3b2cf46bc083cb5fc9bfebddfbdcd496cd71f9fa
+    targets:
+    - feature: outline
+    - feature: pivot_bore
+  - id: drill
+    kind: DRILLING
+    capability: pillar_drill_local
+    provider: LOCAL
+    components:
+    - bracket
+    depends_on:
+    - mill
+    targets:
+    - feature: mount_holes
+  - id: ream
+    kind: REAMING
+    capability: hand_ream_h7
+    provider: LOCAL
+    components:
+    - bracket
+    depends_on:
+    - mill
+    targets:
+    - feature: pivot_bore
+  - id: anodise
+    kind: COATING
+    capability: anodiser_outsourced
+    provider: OUTSOURCED
+    supplier: local anodiser
+    components:
+    - bracket
+    depends_on:
+    - ream
+    - drill
+    description: type II anodise, 10-15 um
+  - id: bushing
+    kind: PURCHASED
+    components:
+    - bushing
+    purchase:
+      identity:
+        status: KNOWN
+        value: igus GFM-0810-06
+        basis: SUPPLIER_TYPICAL
+        sources:
+        - kind: DATASHEET
+          reference: igus iglidur G flange bearing
+          url: https://example.com/igus-gfm.pdf
+          accessed: '2026-11-01'
+      specification:
+        status: KNOWN
+        value: iglidur G flange bushing 8 x 10 x 6
+        basis: SUPPLIER_TYPICAL
+        sources:
+        - kind: DATASHEET
+          reference: igus iglidur G flange bearing
+          url: https://example.com/igus-gfm.pdf
+          accessed: '2026-11-01'
+      ratings:
+        status: UNKNOWN
+        reason: pv limit at 60 deg_C not retained
+drawing:
+  status: REQUIRED
+  reason: reamed and coated bore needs limits

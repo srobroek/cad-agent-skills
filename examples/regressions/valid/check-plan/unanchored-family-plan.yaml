@@ -1,0 +1,153 @@
+checks:
+- id: clearance
+  family: geometry.clearance
+  subjects:
+  - &id001
+    kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-003
+  criterion: &id002
+    id: hinge_running_clearance
+    property: clearance
+    comparator: GE
+    value: 0.3
+    units: mm
+    state: ASSEMBLED
+    source: &id003
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+    conditions: over the whole 0-75 deg hinge travel (REQ-003)
+  method: Pair measurement then geometry.clearance (cad-verify references/geometry-motion.md)
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: hinge interface states a running clearance
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  producer_role: cad-checker
+- id: sweep
+  family: motion.sweep
+  subjects:
+  - *id001
+  components: []
+  operations: []
+  requirements:
+  - REQ-003
+  criterion: *id002
+  method: full-travel grid, every pair per pose (cad-verify references/geometry-motion.md motion.sweep)
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: revolute hinge
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  cases:
+  - hinge-travel
+  producer_role: cad-checker
+- id: fdm
+  family: process.fdm
+  subjects:
+  - kind: PRODUCT
+  components: []
+  operations: []
+  criterion:
+    id: fdm_items
+    property: process_fdm_items
+    comparator: EQUALS
+    value: met under capability bambu_x1c and the approved orientation and supports
+    source:
+      kind: POLICY
+      reference: cad-verify references/process-checks.md process.fdm
+      origin: cad-agent-skills 0.1.0
+      document: cad-verify references/process-checks.md process.fdm
+  method: process.fdm item list (cad-verify references/process-checks.md process.fdm)
+  facet: GEOMETRICALLY_MANUFACTURABLE
+  due: PARTS
+  applicability:
+    status: CONDITIONAL
+    reason: selected routes print the base and arm
+    condition: a part route includes a FDM operation
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  producer_role: cad-checker
+- id: review
+  family: review.mechanical_dfm
+  subjects:
+  - *id001
+  components: []
+  operations: []
+  criterion:
+    id: review_pass
+    property: review_verdict
+    comparator: EQUALS
+    value: PASS
+    source:
+      kind: POLICY
+      reference: cad-review references/rubric.md
+      origin: cad-agent-skills 0.1.0
+      document: cad-review references/rubric.md
+  method: cad-review references/review.md review.mechanical_dfm
+  facet: CAD_VALID
+  due: PARTS
+  applicability:
+    status: APPLICABLE
+    reason: stage policy
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-mech-dfm-reviewer
+- id: angle-hold
+  family: physical.test
+  subjects:
+  - kind: REQUIREMENT
+    requirement: REQ-002
+  components: []
+  operations: []
+  requirements:
+  - REQ-002
+  criterion:
+    id: angle_hold
+    property: angle_drift
+    comparator: LE
+    value: 2
+    units: deg
+    state: ASSEMBLED
+    source: *id003
+    conditions: 2.5 N phone weight at 75 deg for 24 h at 23 deg_C (REQ-002)
+  method: 24 h hold of a 2.5 N dummy phone at 75 deg on printed parts, calibrated inclinometer (cad-verify references/results.md
+    Physical evidence)
+  facet: PHYSICALLY_VALIDATED
+  due: RELEASE
+  applicability:
+    status: CONDITIONAL
+    reason: FUNCTIONAL_DEMO needs REQ-002 physically
+    condition: the release scope's service class or a requirement needs PHYSICALLY_VALIDATED evidence
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  producer_role: cad-checker
+cases:
+- id: hinge-travel
+  kind: MOTION
+  subjects:
+  - *id001
+  state: assembled, nominal
+  requirements:
+  - REQ-003
+  joints:
+  - hinge
+  sampling:
+    kind: GRID
+    count: 38
+  steps:
+  - joint: hinge
+    step:
+      value: 2
+      units: deg
+  pairs: ALL
+  play_extremes: true
+  criterion: *id002

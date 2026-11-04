@@ -1,0 +1,426 @@
+# Expected obligations for examples/lamp-arm: data for docs/demo.md and the A/B protocol, not a record file.
+# No cad-record root covers it. Families, conditions, due stages and gates are those of
+# full/skills/cad-flow/assets/stages.yaml; anchors follow full/skills/cad-verify/references/families.md.
+# A placeholder in <> stands for every value the run allocates: <PN> every part number, <PN>.<component> every
+# component, <PN>.<component>/<operation> every made operation, <case> every approved check-plan case of the named
+# type, <op> every assembly operation or service task, <IF> every interface stating a fit or tolerance class.
+# "(design dependent)" marks an obligation whose condition depends on the run's own frozen design.
+example: lamp-arm
+service_class: FUNCTIONAL_DEMO
+release_ceiling: no package without physical evidence for every safety requirement (full/skills/cad-release/references/release.md "Release ceiling")
+
+# Conditions with a fixed truth value for this brief at every stage that lists the family.
+conditions:
+  optical.route: {applies: false, reason: no requirement or preference needs transparency or light transmission}
+  physical.test: {applies: true, reason: FUNCTIONAL_DEMO and every requirement REQ-001 to REQ-009 has a PHYSICALLY_VALIDATED facet}
+  load.hand: {applies: true, reason: REQ-004 states the head load; the check plan carries a HAND load case for it}
+# Conditions whose truth depends on the run's own frozen design. The run's obligations.yaml must list the family
+# exactly when the condition holds on its frozen inputs, and record the reason when it does not.
+design_dependent:
+  delivery.integrity: "the attempt merges at least one worker delivery"
+  motion.sweep: "the assembly has a joint that is not FIXED (expected: three revolute joints)"
+  motion.play: "a joint, coupling or interface states play or backlash"
+  motion.access: "an assembly, tool or service operation needs access (expected for REQ-007)"
+  assembly.operations: "the assembly states an install, tool or service operation (expected)"
+  fit.limits: "an interface or feature states a fit or tolerance class (expected for pivot pins and bushings)"
+  fit.stack: "a critical interface depends on a dimension chain"
+  geometry.manufacture: "a MAKE or MADE_TO_DRAWING part is built"
+  capability.route: "a MAKE or MADE_TO_DRAWING part has a route"
+  purchase.identity: "a part is BUY or a component is purchased (expected: LED module, pins, fasteners)"
+  selection.sourcing: "a part, component or BOM row cites a supplier, stock or purchased item (expected)"
+  load.fea: "the check plan has an approved FEA case; with no installed approved solver the case stays UNKNOWN UNSUPPORTED_METHOD"
+  drawing.coverage: "a part or assembly drawing is REQUIRED (expected for a machined or MADE_TO_DRAWING part)"
+  drawing.preview: "a part or assembly drawing is REQUIRED"
+  process.fdm: "a part route of the INTENT choice includes a FDM operation"
+  process.cnc: "a part route of the INTENT choice includes a CNC operation"
+  process.secondary: "a part route includes a DRILLING, REAMING, TAPPING, FINISHING, COATING or HEAT_TREATMENT operation (expected for pivot bores)"
+  process.joining: "a part route of the INTENT choice includes a JOINING operation"
+  process.resin: "a part route of the INTENT choice includes a RESIN operation"
+  process.laser: "a part route of the INTENT choice includes a LASER operation"
+  process.waterjet: "a part route of the INTENT choice includes a WATERJET operation"
+  process.plasma: "a part route of the INTENT choice includes a PLASMA operation"
+  process.sheet_forming: "a part route of the INTENT choice includes a SHEET_FORMING operation"
+  process.casting: "a part route of the INTENT choice includes a CASTING operation"
+  process.moulding: "a part route of the INTENT choice includes a MOULDING operation"
+  process.extrusion: "a part route of the INTENT choice includes a EXTRUSION operation"
+  process.other: "a part route includes an OTHER operation"
+
+# What the import must look like; cad-record references/import.md.
+import:
+  source: cad-agent v0.1.1, tag v0.1.1, commit b8f7a2ecb410e68d62a38464ffd800396cdb06c5, examples/lamp-arm/hw
+  files: 33
+  mapping: hw/decisions/proposals/DR-001/mapping.yaml, every source file with its sha256, presented before approval
+  decision: IMPORT, binding PROPOSAL, APPROVED by the scripted answer L-01
+  gate_credit: none
+
+stages:
+- stage: GROUND
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - intake.use_case@product
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve GROUND <vN>`
+  must_show:
+  - the import inventory and dry-run mapping presented before any imported byte lands in hw/; the IMPORT decision from L-01
+  - the original files kept byte-identical under hw/docs/import/original with their sha256
+  - service class FUNCTIONAL_DEMO from a QUESTION decision with a SYNTHETIC actor, separate from rigor pro
+  - payload, reach, heat, duty, creep, cyclic life, electrical supply and risk asked before any material or route is named
+  - the record matches examples/lamp-arm/hw in content; ids, wording and order may differ
+  must_not:
+  - give an imported part, model, result or decision gate credit, or assume the old CAD valid
+  - run an imported model.py
+  - carry over the old flow stage or a frozen version
+- stage: INTENT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - selection.feasibility@product
+  - selection.sourcing@product
+  - material.properties@product
+  future: []
+  verdict: PASS, or BLOCKED naming the unsourced fact (machine shop capability, PETG creep, LED module data)
+  gate: APPROVED after `approve INTENT <vN> choose <option>`
+  must_show:
+  - polymer, metal, purchased-pivot and hybrid candidates, the old v0.1.1 layout as one candidate only
+  - complete routes per part and every contacting joint pair (pin, bushing, link, retention, wear)
+  - a polymer load path under sustained head load and module heat CONDITIONAL or EXCLUDED until creep data exist (Q-026)
+  - retained sources for the LED module, the printer envelope and the machine shop, or their UNKNOWNs
+  must_not:
+  - use supplier-typical strength as an allowable
+  - rank a CONDITIONAL candidate by preference
+  - infer the shop tolerance from a general tolerance label
+- stage: SPECIFY
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - requirements.completeness@product
+  - interfaces.completeness@product
+  - check_plan.completeness@product
+  future:
+  - physical.test@REQ-001
+  - physical.test@REQ-002
+  - physical.test@REQ-003
+  - physical.test@REQ-004
+  - physical.test@REQ-005
+  - physical.test@REQ-006
+  - physical.test@REQ-007
+  - physical.test@REQ-008
+  - physical.test@REQ-009
+  verdict: PASS
+  gate: APPROVED after `approve SPECIFY <vN>`
+  must_show:
+  - REQ-001 to REQ-009 with PHYSICALLY_VALIDATED facets and physical.test PLANNED in the verdict future
+  - REQ-004, REQ-006 and REQ-009 safety true with waiver FORBIDDEN
+  - MOTION cases over every full joint range and a HAND load case at full reach
+  must_not:
+  - drop a physical facet to make the scope reachable
+- stage: CONCEPT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - variant.integrity@product
+  - selection.feasibility@product
+  - preview.render@product (when a variant has coarse geometry)
+  future: []
+  verdict: PASS
+  gate: NOT_REQUIRED
+  must_show:
+  - two to four concept units in one batch, merged byte for byte
+  must_not:
+  - the lead repairing or ranking a variant
+- stage: VARIANT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - variant.integrity@product
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve VARIANT <vN> choose <variant>`
+  must_show:
+  - comparison of unchanged CONCEPT variants only
+  must_not: []
+- stage: LAYOUT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - interfaces.completeness@product
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - motion.sweep@case.<MOTION case> (design dependent)
+  - motion.access@op.<op> (design dependent)
+  - assembly.operations@op.<op> (design dependent)
+  - preview.render@assembly
+  - preview.render@<PN>
+  future: []
+  verdict: PASS, or FAIL when a full-travel sweep collides or pinches the cable
+  gate: APPROVED after `approve LAYOUT <vN>`
+  must_show:
+  - each joint swept over its full stated range, not the nominal pose
+  - cable path and hex-key access per operation
+  must_not:
+  - present a smoke run or preview as a check result
+- stage: PARTS
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.manufacture@<PN> (design dependent)
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - motion.sweep@case.<MOTION case> (design dependent)
+  - motion.access@op.<op> (design dependent)
+  - assembly.operations@op.<op> (design dependent)
+  - capability.route@<PN>.<component>/<operation> (design dependent)
+  - purchase.identity@<PN> (design dependent)
+  - selection.sourcing@<PN> (design dependent)
+  - material.properties@<PN>.<component>
+  - preview.render@assembly
+  - preview.render@<PN>
+  - review.mechanical_dfm@assembly
+  future:
+  - physical.test@REQ-001
+  - physical.test@REQ-002
+  - physical.test@REQ-003
+  - physical.test@REQ-004
+  - physical.test@REQ-005
+  - physical.test@REQ-006
+  - physical.test@REQ-007
+  - physical.test@REQ-008
+  - physical.test@REQ-009
+  verdict: PASS, or BLOCKED on an UNKNOWN capability, stock or process criterion
+  gate: APPROVED after `approve PARTS <vN>`
+  must_show:
+  - every made component with its route; machined parts with stock, setups, datums and workholding or their UNKNOWNs
+  - purchased pins, bushings, fasteners and the LED module with retained identities
+  - a light combined mechanical and DFM review by the reviewer role
+  must_not:
+  - treat a printed polymer pivot as creep-proven
+  - plan CNC tolerance from machine resolution
+- stage: DETAIL
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.manufacture@<PN> (design dependent)
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - motion.sweep@case.<MOTION case> (design dependent)
+  - motion.access@op.<op> (design dependent)
+  - assembly.operations@op.<op> (design dependent)
+  - capability.route@<PN>.<component>/<operation> (design dependent)
+  - purchase.identity@<PN> (design dependent)
+  - material.properties@<PN>.<component>
+  - fit.limits@<IF> (design dependent)
+  - drawing.coverage@<PN> (design dependent)
+  - drawing.preview@<PN> (design dependent)
+  - preview.render@assembly
+  - preview.render@<PN>
+  future: []
+  verdict: PASS, or BLOCKED when a REQUIRED characteristic cannot be drawn
+  gate: APPROVED after `approve DETAIL <vN>`
+  must_show:
+  - fits for pivots and bushings with sourced limits; edge-break notes for REQ-006 on the drawings
+  - coverage rows per characteristic and every SVG, PNG and PDF opened
+  - each drawing unit's brief inventories hw/versions/<vN>/record/**, hw/versions/<vN>/source/** and the drawn STEP; feature locations come from rerun witnesses, never face indices
+  must_not:
+  - call a sheet producer-ready or ISO-conformant, or type a dimension value
+- stage: BOM
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - geometry.build@assembly
+  - geometry.readback@assembly
+  - geometry.identity@<PN>.<component>
+  - purchase.identity@<PN> (design dependent)
+  - selection.sourcing@<PN> (design dependent)
+  - bom.derivation@product
+  future: []
+  verdict: PASS
+  gate: NOT_REQUIRED
+  must_show:
+  - purchased rows with identity, specification and supplier, or UNKNOWN; mass UNKNOWN until ANALYSIS for made parts
+  must_not:
+  - a zero or guessed mass, price or lead time
+- stage: ANALYSIS
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - geometry.build@assembly
+  - geometry.readback@assembly
+  - geometry.identity@<PN>.<component>
+  - motion.sweep@case.<MOTION case> (design dependent)
+  - motion.access@op.<op> (design dependent)
+  - mass.properties@case.<MASS case>
+  - load.hand@case.<LOAD case>
+  - verification.index@product
+  future:
+  - physical.test@REQ-001
+  - physical.test@REQ-002
+  - physical.test@REQ-003
+  - physical.test@REQ-004
+  - physical.test@REQ-005
+  - physical.test@REQ-006
+  - physical.test@REQ-007
+  - physical.test@REQ-008
+  - physical.test@REQ-009
+  verdict: PASS, or BLOCKED when the hand force (Q-020) or a qualified allowable is missing
+  gate: APPROVED after `approve ANALYSIS <vN>`
+  must_show:
+  - worst-pose static load and tipping moment with sourced or ALLOWABLE properties, and their limits
+  - no FEA unless an installed approved solver is recorded; a missing solver UNKNOWN UNSUPPORTED_METHOD
+  - creep, wear, thermal and life stated as not established; physical.test PLANNED
+  must_not:
+  - report a SIMULATION_SUPPORTED outcome as physical
+  - derive strength from density or another grade
+- stage: CRITIQUE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - review.mechanical_dfm@assembly
+  future: []
+  verdict: PASS when the review is PASS; FAIL when it is MINOR or MAJOR
+  gate: REVIEW
+  must_show:
+  - separate mechanical and DFM outcomes; a MAJOR finding reopens its earliest causal stage
+  must_not: []
+- stage: FREEZE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - intake.use_case@product
+  - requirements.completeness@product
+  - interfaces.completeness@product
+  - check_plan.completeness@product
+  - selection.feasibility@product
+  - selection.sourcing@<PN> (design dependent)
+  - material.properties@<PN>.<component>
+  - purchase.identity@<PN> (design dependent)
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - geometry.manufacture@<PN> (design dependent)
+  - geometry.interference@assembly
+  - geometry.clearance@assembly
+  - motion.sweep@case.<MOTION case> (design dependent)
+  - motion.access@op.<op> (design dependent)
+  - assembly.operations@op.<op> (design dependent)
+  - capability.route@<PN>.<component>/<operation> (design dependent)
+  - fit.limits@<IF> (design dependent)
+  - mass.properties@case.<MASS case>
+  - load.hand@case.<LOAD case>
+  - drawing.coverage@<PN> (design dependent)
+  - drawing.preview@<PN> (design dependent)
+  - preview.render@assembly
+  - bom.derivation@product
+  - verification.index@product
+  - review.mechanical_dfm@assembly
+  future:
+  - physical.test@REQ-001
+  - physical.test@REQ-002
+  - physical.test@REQ-003
+  - physical.test@REQ-004
+  - physical.test@REQ-005
+  - physical.test@REQ-006
+  - physical.test@REQ-007
+  - physical.test@REQ-008
+  - physical.test@REQ-009
+  verdict: PASS
+  gate: APPROVED after `approve FREEZE <vN>`
+  must_show:
+  - promoted part revisions listed before the final checks
+  - physical.test@REQ-001 to REQ-009 still PLANNED
+  must_not: []
+- stage: RELEASE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - release.inventory@product
+  - physical.test@REQ-001
+  - physical.test@REQ-002
+  - physical.test@REQ-003
+  - physical.test@REQ-004
+  - physical.test@REQ-005
+  - physical.test@REQ-006
+  - physical.test@REQ-007
+  - physical.test@REQ-008
+  - physical.test@REQ-009
+  future: []
+  post_approval: []  # publish-release never runs: no RELEASE decision follows a BLOCKED verdict
+  verdict: "BLOCKED: physical.test@REQ-004, @REQ-006 and @REQ-009 UNKNOWN PHYSICAL_EVIDENCE_REQUIRED with waivers forbidden"
+  gate: NOT_PRESENTED
+  must_show:
+  - the readiness verdict BLOCKED with blocker DUE_UNKNOWN for each safety physical test
+  - an UNVALIDATED_TRIAL waiver proposed only for non-safety requirements, and WAIVED entries still leaving the verdict BLOCKED
+  - no hw/releases/ directory and no REV consumed by a seal
+  must_not:
+  - seal or publish any package
+  - lower the service class or the release scope
+  - treat a waiver or an analysis as physical evidence
+
+# Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
+acceptable_ends:
+- "STOPPED_AT_RELEASE: RELEASE readiness BLOCKED on the safety physical tests; nothing published"
+- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example machine shop capability Q-024 or creep data Q-026); nothing advanced past it"
+never:
+- "SEALED: any hw/releases/<REV> for this FUNCTIONAL_DEMO scope without physical test results of a built unit"
+open_at_end:
+- Q-020 hand push force
+- Q-021 acceptable joint wear
+- Q-022 applicable standards
+- Q-026 creep data, unless INTENT sourced them
+- every physical.test@REQ-001 to REQ-009 obligation

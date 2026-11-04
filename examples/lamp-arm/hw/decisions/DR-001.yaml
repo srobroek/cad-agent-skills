@@ -1,0 +1,21 @@
+id: DR-001
+kind: IMPORT
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-001/mapping.yaml
+  sha256: 74e91068258f7edfa892e21858ce4ec74e5cf3754707f88ac168f31d3727b3aa
+title: Import of the cad-agent v0.1.1 lamp-arm record as readable history
+scope: every file of the existing hw/ as inventoried in the mapping
+rationale: The owner keeps the old record for reference, carries over only what is restated at GROUND, and assumes none of the old CAD, results or decisions valid.
+limits:
+- imported files give no gate credit, no CAD validity and no approval
+- the old layout is one INTENT candidate, never a baseline
+actor:
+  kind: USER
+  name: SYNTHETIC demo owner (scripted answer L-01)
+time: '2026-11-03T10:05:00Z'
+statement:
+  transcript_sha256: 6141ca16d511039393211a154ec3cc30859995fa1ad917d930a9408715eec2a3
+  quote: approve the import mapping DR-001 as presented
+  time: '2026-11-03T10:05:00Z'
