@@ -72,8 +72,9 @@ No input contains downstream result bytes or its own future hash.
    export tolerance. It excludes itself, check results, the stage verdict, later decisions and every
    drawing, BOM or verification output that embeds its digest.
 3. Check result `binding`: `UNIT` (unit, brief_sha256, input_inventory_sha256) or `VERSION` (version,
-   version_manifest_sha256). Its artifact and implementation inventories exclude `result.json` and
-   `bundle-manifest.json`. A UNIT result is never integrated stage evidence by itself.
+   version_manifest_sha256). Its artifact inventory and COMMAND sources exclude `result.json` and
+   `bundle-manifest.json`; a REVIEW `inspected` list may name other, earlier checks' result and bundle
+   files, never its own. A UNIT result is never integrated stage evidence by itself.
 4. Bundle manifest: inventories the result, source, lock, artifact and log bytes and the input identity;
    excludes itself. Drawing, BOM and verification bundles are separate output bundles bound the same way.
 5. Stage verdict (`hw/versions/vN/stage-verdict.json`): written once after every required check; names

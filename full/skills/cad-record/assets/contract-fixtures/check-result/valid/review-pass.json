@@ -28,6 +28,14 @@
       {
         "path": "hw/parts/STD-0001/part.yaml",
         "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      {
+        "path": "hw/checks/v6/clearance/a1/result.json",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      {
+        "path": "hw/checks/v6/clearance/a1/bundle-manifest.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
       }
     ]
   },

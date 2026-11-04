@@ -80,7 +80,8 @@ JSON Schema does not prove the items below. The lead or checker writes its own p
     - Expiry: `expires` is after the verdict `time`, or the `until_change` condition has not occurred.
     - Every other result's `result` equals the `result` in its `result.json`.
 11. Digests: every `input_inventory` and `boundary` digest recomputes exactly by
-    references/record.md#inventory-digest; a REVIEW implementation's `inspected` hashes match the bytes read.
+    references/record.md#inventory-digest; a REVIEW implementation's `inspected` hashes match the bytes read,
+    and `inspected` never lists the review's own `result.json` or `bundle-manifest.json`.
 12. Immutability and layout: published DRs, verdicts, manifests and results match their recorded hashes;
     every `hw/` file matches a layout entry; no evidence cites `.cad-work/`.
 13. Derived files: BOM rows sorted by path then component, verification rows by requirement, subject and

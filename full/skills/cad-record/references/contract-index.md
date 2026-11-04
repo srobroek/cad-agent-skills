@@ -149,7 +149,7 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `producer_role`, `stage` | role or `lead`; stage enum |
 | `binding` | `{kind: UNIT, unit, brief_sha256, input_inventory_sha256}` or `{kind: VERSION, version, version_manifest_sha256}` |
 | `input_files` | `[{path, sha256}]` of every input read |
-| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; the reviewer always reports REVIEW |
+| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; `inspected` lists every file read, including other checks' `result.json` and `bundle-manifest.json`; the reviewer always reports REVIEW |
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |
 | `findings[]` | `{id, family, subject, severity, outcome, measured, criterion, method, uncertainty, consequence, remedy, alternatives, recheck}` |
@@ -293,6 +293,8 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `scratch.unit_input`: `.cad-work/{UNIT}/input/**`
 - `scratch.unit_output`: `.cad-work/{UNIT}/output/**`
 - `scratch.unit_build`: `.cad-work/{UNIT}/build.py`
+- `scratch.unit_build_lock`: `.cad-work/{UNIT}/build.py.lock` (uv writes `uv lock --script build.py` next to the script)
 - `scratch.unit_check`: `.cad-work/{UNIT}/check.py`
+- `scratch.unit_check_lock`: `.cad-work/{UNIT}/check.py.lock` (`uv lock --script check.py`)
 - `scratch.unit_delivery`: `.cad-work/{UNIT}/delivery.json` → `worker-delivery`
 - `scratch.stage`: `.cad-work/stage-{V}/**`
