@@ -11,7 +11,11 @@
     "joints": {"type": "array", "items": {"$ref": "#/$defs/joint"}},
     "couplings": {"type": "array", "items": {"$ref": "#/$defs/coupling"}},
     "operations": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
-    "service": {"type": "array", "items": {"$ref": "#/$defs/service_task"}}
+    "service": {"type": "array", "items": {"$ref": "#/$defs/service_task"}},
+    "drawing": {
+      "description": "optional assembly drawing intent, the same shape as a part's drawing intent; REQUIRED makes the assembly a drawing.coverage and drawing.preview subject",
+      "$ref": "part.schema.json#/$defs/drawing"
+    }
   },
   "$defs": {
     "occurrence": {
