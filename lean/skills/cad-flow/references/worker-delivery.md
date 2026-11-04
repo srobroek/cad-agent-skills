@@ -33,7 +33,8 @@ Run in order; the first failure rejects the delivery with that reason (`units.ya
    [cad-record check-result root](../../cad-record/schemas/check-result.schema.json), binds this unit's brief and input digests (or the
    brief's `version`), names the delivered `family` and `result`, and has an `implementation` of the right kind: COMMAND whose
    `source_files` name `source/<file>` beside the result target, each with the sha256 of the unit-root file of that name, or REVIEW
-   (reviewer only) whose `inspected` entries match the brief inventory.
+   (reviewer only) whose `inspected` entries match the brief inventory. A program or lock whose bytes differ from the sha256 its results
+   record was edited after its last run; the delivery is rejected, never relabelled ([agent-roles](agent-roles.md#every-role) step 6).
 7. Every log hashes to its sha256.
 8. The lead's tree digests before dispatch and after return
    ([cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest)) equal `boundary.before_sha256` and
