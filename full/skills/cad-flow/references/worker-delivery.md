@@ -51,6 +51,9 @@ Record ACCEPTED with the delivery sha256. A rejected unit is never patched: re-d
 3. For each accepted COMMAND result, retain its programs ([cad-verify results](../../cad-verify/references/results.md#implementation-kind)):
    `cp <root>/.cad-work/<unit>/<file> <root>/<source_files path>` for every `source_files` entry, `<file>` being that path's file name;
    the copy's sha256 equals the entry; log the triple.
+   For a drawing unit ([cad-release draft-drawings](../../cad-release/references/drawings.md#draft-drawings)), also
+   `cp <root>/.cad-work/<unit>/build.py` and `build.py.lock` to the `drawing.source` path `<root>/hw/drawings/vN/<SUBJECT>/source/`;
+   log each triple with the copy's sha256.
 4. A retained source keeps its directory name equal to its sha256 (`hw/manufacturing/sources/<sha256>/<name>`).
 5. Defective geometry, annotations or records go back to the producing role as a new unit; a lead edit is a separate, disclosed
    controlled-record edit, never inside merged bytes.

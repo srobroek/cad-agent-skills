@@ -75,7 +75,10 @@ items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
    are unexpired at the verdict time; a changed input makes the old evidence stale (UNKNOWN, `STALE`).
 8. Coverage: a result's outcomes cover exactly its `expected_obligations`; a stage verdict's `expected` and `future` equal the
    published `hw/versions/vN/obligations.yaml` its `obligations` hashes, and that file follows the stage policy row: each family
-   listed, or `inapplicable` with the reason its condition is false; future facets are `PLANNED`.
+   listed, or `inapplicable` with the reason its condition is false; future facets are `PLANNED`. A result whose obligation covers
+   continuous travel (a MOTION case, or the approach or insertion of `motion.access` or `assembly.operations`) with any sampled pose set
+   has `scope.coverage_kind` SAMPLED (PARTIAL when a scope item is missing), whatever its sampling kind; FULL is valid only for a finite
+   scope ([cad-verify results — Coverage](../../cad-verify/references/results.md#coverage)).
 9. Chain and authority: predecessor verdict and gate DR exist and bind, and the predecessor verdict's `result` is PASS; every
    `binding.verdict_result` equals the `result` of the verdict it hashes; a RELEASE DR binds a PASS RELEASE verdict of its
    `version` whose `release.inventory` result inspected the bound `proposal`; vN is unused and above every attempt; approvals
