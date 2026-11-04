@@ -225,6 +225,7 @@ stages:
   gate: APPROVED after `approve DETAIL <vN>`
   must_show:
   - drawing status per part with its reason; a coverage row per characteristic; every SVG, PNG and PDF opened
+  - each drawing unit's brief inventories hw/versions/<vN>/record/**, hw/versions/<vN>/source/** and the drawn STEP; feature locations come from rerun witnesses, never face indices
   - sheets named reviewed model-generated engineering drawings
   must_not:
   - call a sheet producer-ready or ISO-conformant, or type a dimension value

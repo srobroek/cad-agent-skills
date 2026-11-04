@@ -6,11 +6,13 @@ approved. It is not producer-ready, certified, or conformant to ISO 128, ISO 129
 standard; a regime or general tolerance printed on a sheet repeats the record's statement and claims no
 conformance. Intent fields are the part root's `drawing` block; paths are cad-record `layout.json`
 (`drawing.sheet_svg`, `drawing.sheet_pdf`, `drawing.sheet_png`, `drawing.coverage`, `drawing.bundle_manifest`);
-result fields are the `check-result` root.
+result fields are the `check-result` root; anchors and producers of the two drawing families are
+[cad-verify Check families](../../cad-verify/references/families.md).
 
 ## Drawing intent
 
-The part designer writes `drawing` in `hw/parts/<PN>/part.yaml` at DETAIL (`detail-parts`), from
+The part designer writes `drawing` in `hw/parts/<PN>/part.yaml` at DETAIL
+([cad-design `detail-parts`](../../cad-design/references/parts.md#detail-parts)), from
 `<skill-dir>/assets/drawing-intent.yaml`.
 
 | Part | `drawing.status` |
@@ -21,8 +23,9 @@ The part designer writes `drawing` in `hw/parts/<PN>/part.yaml` at DETAIL (`deta
 
 - `datums`, `views` and `characteristics[]` (`id`, `feature`, `kind` DIMENSION, GEOMETRIC, FINISH, THREAD or
   NOTE, `criterion` with its source, `datums`, `inspection`, `function`) state what must be shown and accepted.
-- A `feature` is a semantic feature name the model exposes (cad-model references/model-contract.md), never a
-  face, edge or solid index.
+- A `feature` is a semantic feature id the model's `features` function witnesses
+  ([cad-model Top-level names](../../cad-model/references/model-contract.md#top-level-names)), never a face, edge or
+  solid index.
 - A `criterion` comes from a requirement, interface, fit or the record's regime with its source; never from
   the model. The drawn value always comes from the STEP.
 - The assembly has no drawing intent field in the record contract, so the `assembly` subject is never
@@ -35,28 +38,38 @@ Runs in DETAIL and FREEZE after `build-version`, so every sheet binds the versio
 1. Subjects: every PN of the version whose snapshot `part.yaml` has `drawing.status: REQUIRED`. None →
    output "no REQUIRED drawing"; the drawing families' condition is false at `enumerate-obligations`.
 2. Dispatch one `cad-part-designer` unit per subject in one batch (cad-flow references/delegation.md,
-   references/worker-brief.md), skills including cad-release. Inputs copied into the unit's `input/`:
-   `hw/versions/vN/manifest.json`, the PN's STEP in the state the intent draws
-   (`definition/parts/<PN>.step` or `manufacturing/<PN>/part.step`), the snapshot `part.yaml`,
-   `interfaces.yaml` and `product.yaml`. Expected outputs: `sheet-<N>.svg`, `.pdf` and `.png` for every sheet,
-   targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`.
-3. The unit writes `.cad-work/<unit>/build.py` (Drawing program) and runs it; it reviews each PNG itself and
-   reports every characteristic it could not draw as an UNKNOWN in the delivery.
+   references/worker-brief.md), skills including cad-release. `input_inventory`, copied into the unit's `input/`:
+   `hw/versions/vN/manifest.json`, every file of `hw/versions/vN/record/**` and `hw/versions/vN/source/**`
+   (the version programs and their locks), and the PN's STEP in the state the intent draws
+   (`hw/versions/vN/definition/parts/<PN>.step` or `hw/versions/vN/manufacturing/<PN>/part.step`). Expected
+   outputs: `sheet-<N>.svg`, `.pdf` and `.png` for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`.
+3. The unit reproduces the feature witnesses, then writes, locks and runs `.cad-work/<unit>/build.py` (Drawing
+   program); it reviews each PNG itself and reports every characteristic it could not draw as an UNKNOWN in the
+   delivery.
 4. Accept deliveries (cad-flow references/worker-delivery.md); publish the sheets byte for byte to
    `hw/drawings/vN/<SUBJECT>/`. A unit that delivers no sheet for a subject leaves `drawing.coverage@<PN>`
    UNKNOWN `MISSING_INPUT`.
 5. `drawing.coverage` and `drawing.preview` run in `run-checks` (methods below). After coverage is accepted,
    write `hw/drawings/vN/<SUBJECT>/bundle-manifest.json`: `kind: DRAWING`, binding `VERSION`, `input` the
-   manifest, STEP and part snapshot, `recipe` the drawing program's argv, packages and platform, `policy` from
-   preflight, `files` every sheet (`DOCUMENT` for SVG and PDF, `IMAGE` for PNG), `coverage.json` (`DATA`) and
-   the program `.cad-work/<unit>/build.py` (`SOURCE`, kept in scratch, no gate credit) → it validates.
+   manifest, the STEP, the record snapshot and the version programs read, `recipe` the drawing program's argv,
+   packages and platform, `policy` from preflight, `files` every sheet (`DOCUMENT` for SVG and PDF, `IMAGE` for
+   PNG), `coverage.json` (`DATA`) and the program `.cad-work/<unit>/build.py` and its lock (`SOURCE`, kept in
+   scratch, no gate credit) → it validates.
 
 ## Drawing program
 
-One build123d environment, pinned and locked as cad-model references/model-contract.md states (build123d
-0.13.0); a CadQuery part's STEP is read with `import_step`, never by mixing CadQuery's OCP into this
-environment.
+One build123d environment, pinned in the script header and locked as
+[cad-model Kernels and environments](../../cad-model/references/model-contract.md#kernels-and-environments) states;
+a CadQuery part's STEP is read with `import_step`, never by mixing CadQuery's OCP into this environment. Calls are
+the ones [cad-model build123d calls](../../cad-model/references/build123d.md) checked.
 
+- Feature locations: rerun the version programs from the input copy of `hw/versions/vN/source/` on the input copy
+  of `hw/versions/vN/record/` into the unit's own scratch, CadQuery program first, as
+  [cad-model Version build](../../cad-model/references/exports.md#version-build) step 4 runs them. The work
+  directory then holds `signature.json` and `features/<PN>.json` (`features/<PN>.manufacture.json` for a
+  manufacturing state) per [cad-model Signatures and witnesses](../../cad-model/references/exports.md#signatures-and-witnesses).
+  A rebuilt signature that differs from the manifest's geometry stops the unit (MAJOR). Each characteristic's
+  feature is found by its witness; a feature without a witness is UNKNOWN `MISSING_INPUT`.
 - Views: project the STEP with `project_to_viewport(viewport_origin, viewport_up, look_at)`, which returns
   visible and hidden edges; place them on a `TechnicalDrawing(title, sub_title, drawing_number, sheet_number,
   drawing_scale, page_size, designed_by, design_date)` border. `drawing_number` is the PN; `sub_title` carries
@@ -65,10 +78,13 @@ environment.
 - A characteristic whose feature no projected view shows gets a section (the part split by a plane, then
   projected) or a detail view. A characteristic that still cannot be shown is UNKNOWN `UNSUPPORTED_METHOD`.
 - Dimensions: `ExtensionLine(border, offset, draft)` or `DimensionLine(path, draft)` on the projected edges
-  or points of the named feature, with `label` left unset so the printed value is the measured length, and
-  `tolerance` taken from the criterion. Never type a numeric label.
-- `Draft(font=..., font_size=..., decimal_precision=...)` names the font explicitly; the default `Arial` is a
-  host font. Record the font file and its license; no host font fallback.
+  or points nearest the named feature's witness, with `label` left unset so the printed value is the measured
+  length, and `tolerance` taken from the criterion. Never type a numeric label.
+- Fonts: `Draft(font=...)` takes a family name only (0.13.0 has no font path there) and `Text` takes
+  `font_path`; give every `Text` the retained font file
+  ([cad-model Text and fonts](../../cad-model/references/build123d.md#text-and-fonts)) and name that installed
+  family in `Draft`, never the default `Arial`. Record family, file and license; a missing font is UNKNOWN
+  `MISSING_INPUT`.
 - Export with `ExportSVG(unit=Unit.MM)`: layers `Visible` and `Hidden`, every view, dimension and label added.
   PDF and PNG come from that SVG through an installed, approved converter or FreeCAD TechDraw, with its version
   recorded; PNG at 144 dpi or more. A required PDF or PNG without such a tool is UNKNOWN `UNSUPPORTED_METHOD`.
@@ -84,8 +100,8 @@ d1 = ExtensionLine(border=bore_edge, offset=8 * MM, draft=draft, tolerance=crite
 
 The method of family `drawing.coverage`: check `drawing-<subject in lowercase>`, attempt `a1`, obligation
 `drawing.coverage@<PN>`, `facet: CAD_VALID`, result `hw/drawings/vN/<SUBJECT>/coverage.json`, binding
-`VERSION`. A `cad-checker` unit runs it with its own program; it reads the STEP and opens every actual SVG,
-PNG and PDF of the subject.
+`VERSION`. A `cad-checker` unit runs it with its own program on the draft-drawings inputs: it reproduces the
+witnesses the same way, reads the STEP and opens every actual SVG, PNG and PDF of the subject.
 
 The coverage table is the result's `outcomes`, one entry per characteristic:
 

@@ -3,7 +3,8 @@
 Owner: cad-release. The rows of `hw/bom/vN/bom.yaml` (root `bom`, rows root `bom-row`) are derived from the
 record snapshot and the version manifest of one version; they are never authored. `bom.csv` derives from
 `bom.yaml` only and has no gate credit. Paths are cad-record `layout.json` (`bom.yaml`, `bom.csv`,
-`bom.bundle_manifest`); facts follow cad-record references/record.md "Facts".
+`bom.bundle_manifest`); facts follow cad-record references/record.md "Facts"; the `bom.derivation` anchor and
+producer are [cad-verify Check families](../../cad-verify/references/families.md).
 
 ## derive-bom
 
@@ -25,8 +26,9 @@ reading the inputs below; no program runs, and the independent `bom.derivation` 
    part's procurement; `availability`, `price` and `lead_time` likewise, each KNOWN only with its source and
    date. Anything the record does not state is UNKNOWN with its reason; never 0, never a catalogue guess.
 5. Mass, per row, KNOWN only from:
-   - a published `mass.properties` outcome for this PN or component on geometry whose manifest digest equals
-     this version's: source `kind: CALCULATION`, `reference` the result path and its sha256, `reason` the method;
+   - a published `mass.properties` outcome ([cad-verify mass and loads](../../cad-verify/references/mass-loads.md))
+     for this PN or component on geometry whose manifest digest equals this version's: source `kind: CALCULATION`,
+     `reference` the result path and its sha256, `reason` the method;
    - a purchased item's datasheet mass: source `kind: DATASHEET` with its URL or retained artifact.
 
    Otherwise UNKNOWN: in BOM a made part reads `mass.properties is due at ANALYSIS`.

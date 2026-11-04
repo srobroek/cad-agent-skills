@@ -4,13 +4,17 @@ Owner: cad-release. This file owns revision promotion, the release ceiling, the 
 completeness, the staged copy, the package integrity check and publication. Gate and waiver decisions are cad-flow
 references/gates.md; paths are cad-record `layout.json` (`version.release_proposal`, `release.*`); manifest
 fields are the `release-manifest` root; the hash order is cad-record references/record.md "Acyclic hash graph"
-step 8. `vF` below is the approved FREEZE version and `vM` the RELEASE attempt.
+step 8; anchors and producers of `release.inventory` and `release.integrity` are
+[cad-verify Check families](../../cad-verify/references/families.md). `vF` below is the approved FREEZE version
+and `vM` the RELEASE attempt.
 
 ## Release ceiling
 
 A package is published only after a PASS RELEASE verdict. Which physical evidence each service class needs, and
-where an `UNVALIDATED_TRIAL` waiver may stand in for a missing physical test, is cad-verify references/check-plan.md
-"Evidence by service class"; this table states what the published package is.
+where an `UNVALIDATED_TRIAL` waiver may stand in for a missing physical test, is
+[cad-verify Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class) and
+[cad-verify Physical evidence](../../cad-verify/references/results.md#physical-evidence); this table states what the
+published package is.
 
 | Release scope service class | The package is |
 |---|---|
@@ -67,8 +71,10 @@ RELEASE, after `build-version`; geometry is the FREEZE version's.
 
    A retained source whose redistribution right is not granted is never copied: it goes to `exclusions` with
    its citation, sha256 and the restriction. Scratch, previews and other notes are never payload.
-5. `claims`: from `hw/verification/vF/verification.yaml`, one claim per requirement and outcome, its facets
-   grouped, the outcome copied unchanged (PASS, WAIVED, UNKNOWN or PLANNED). A FAIL row blocks the proposal.
+5. `claims`: from `hw/verification/vF/verification.yaml`
+   ([cad-verify `index-verification`](../../cad-verify/references/check-plan.md#index-verification)), one claim per
+   requirement and outcome, its facets grouped, the outcome copied unchanged (PASS, WAIVED, UNKNOWN or PLANNED). A
+   FAIL row blocks the proposal.
 6. `scope`: `service_class`, `purpose`, `operating_limits` and `exclusions` copied from `product.yaml`; `trial`
    only when an `UNVALIDATED_TRIAL` waiver is in use, copied from its WAIVER decision.
 7. `frozen` (`vF`, its manifest and verdict hashes, its GATE decision), `decisions` (every DR the package

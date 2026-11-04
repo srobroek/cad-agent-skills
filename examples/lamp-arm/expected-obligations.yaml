@@ -261,6 +261,7 @@ stages:
   must_show:
   - fits for pivots and bushings with sourced limits; edge-break notes for REQ-006 on the drawings
   - coverage rows per characteristic and every SVG, PNG and PDF opened
+  - each drawing unit's brief inventories hw/versions/<vN>/record/**, hw/versions/<vN>/source/** and the drawn STEP; feature locations come from rerun witnesses, never face indices
   must_not:
   - call a sheet producer-ready or ISO-conformant, or type a dimension value
 - stage: BOM
