@@ -29,9 +29,13 @@ Per LOAD case with `method: HAND`:
 2. Each formula cites its source (document, edition, equation) and the validity limits the case states; the model stays inside them or the
    outcome is UNKNOWN `UNSUPPORTED_METHOD`.
 3. Units are converted explicitly; mixed units without a conversion are a FAIL of the method.
-4. Material values come from the case's profile with the basis it requires: a strength criterion needs an `ALLOWABLE` basis with authority,
-   conditions and derivation. A `SUPPLIER_TYPICAL` value, a density, another grade, form, orientation or process state is never strength
-   evidence; such an outcome is UNKNOWN `REQUIRED_UNKNOWN`.
+4. Material values come from the case's profile at the `material.basis_required` this step sets:
+   - `ALLOWABLE`, with authority, conditions and derivation, for a strength, fracture, buckling, fatigue or creep criterion and for every
+     criterion of a safety requirement;
+   - `SUPPLIER_TYPICAL` or `MEASURED` only for a static stiffness or deflection criterion of a non-safety requirement, on the component's
+     grade, form, orientation and process state, with the source's stated uncertainty carried into the outcome: PASS only when the whole
+     range meets the criterion, and a value without a stated uncertainty is UNKNOWN `REQUIRED_UNKNOWN`;
+   - never a density or a value of another grade, form, orientation or process state: such an outcome is UNKNOWN `REQUIRED_UNKNOWN`.
 5. Evaluate every listed failure mode. A static method covers static modes only: CYCLIC, SUSTAINED, IMPACT and VIBRATION loads need a
    qualified method and data for fatigue, creep, impact or resonance, else UNKNOWN `UNSUPPORTED_METHOD`.
 6. A demand above capacity is FAIL with the margin: a 0.1883 N·m holding torque against a 0.24586 N·m demand fails.
