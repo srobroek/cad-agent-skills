@@ -76,16 +76,20 @@ the ones [cad-model build123d calls](../../cad-model/references/build123d.md) ch
   manufacturing state) per [cad-model Signatures and witnesses](../../cad-model/references/exports.md#signatures-and-witnesses).
   A rebuilt signature that differs from the manifest's geometry stops the unit (MAJOR). Each characteristic's
   feature is found by its witness; a feature without a witness is UNKNOWN `MISSING_INPUT`.
-- Views: project the STEP with `project_to_viewport(viewport_origin, viewport_up, look_at)`, which returns
-  visible and hidden edges; place them on a `TechnicalDrawing(title, sub_title, drawing_number, sheet_number,
-  drawing_scale, page_size, designed_by, design_date)` border. `drawing_number` is the PN; `sub_title` carries
-  the part revision, `Units: mm`, the regime and the general tolerance as the record states them;
-  `design_date` comes from the brief, never the clock.
+- Views: project the STEP orthographically with `project_to_viewport(viewport_origin, viewport_up, look_at)` (no
+  `focus`), which returns visible and hidden edges, and place them at 1:1 on a `TechnicalDrawing(title, sub_title,
+  drawing_number, sheet_number, drawing_scale, page_size, designed_by, design_date)` border with `drawing_scale` 1.
+  `Draft` has no scale and prints the 2D length of the path it is given, so a scaled view prints scaled values: fit
+  a large part with a larger `page_size`, another sheet or a partial view, never by scaling. `drawing_number` is
+  the PN; `sub_title` carries the part revision, `Units: mm`, the regime and the general tolerance as the record
+  states them; `design_date` comes from the brief, never the clock.
 - A characteristic whose feature no projected view shows gets a section (the part split by a plane, then
   projected) or a detail view. A characteristic that still cannot be shown is UNKNOWN `UNSUPPORTED_METHOD`.
 - Dimensions: `ExtensionLine(border, offset, draft)` or `DimensionLine(path, draft)` on the projected edges
-  or points nearest the named feature's witness, with `label` left unset so the printed value is the measured
-  length, and `tolerance` taken from the criterion. Never type a numeric label.
+  or points nearest the named feature's witness, only where that edge or point pair lies parallel to the view
+  plane, so its projected length is its true length; otherwise use a section or a view normal to it. `label`
+  stays unset so the printed value is the measured length, `tolerance` comes from the criterion, and
+  `Draft(decimal_precision=…)` prints every limit of that tolerance without rounding. Never type a numeric label.
 - Fonts: the font file and its license come from the version record, `hw/versions/vN/record/parts/<PN>/sources/`
   (for `assembly`, the part sources the brief names)
   ([cad-model Determinism](../../cad-model/references/model-contract.md#determinism),
@@ -129,9 +133,11 @@ The coverage table is the result's `outcomes`, one entry per characteristic:
 | status | `outcome` |
 
 - PASS: the annotation is printed on a sheet, legible in its PNG and on its rendered PDF page (labels are glyph
-  outlines, read as images); its value equals the measured value within the manifest's export tolerance; the
-  printed tolerance equals the criterion.
-- FAIL: a wrong value, a tolerance that is not printed, or an annotation on the wrong feature.
+  outlines, read as images); its printed value equals the STEP-measured value rounded to its printed decimal
+  places, and those places print every limit of the criterion's tolerance without rounding; the printed tolerance
+  equals the criterion.
+- FAIL: a wrong value, too few decimal places for the tolerance, a tolerance that is not printed, or an annotation
+  on the wrong feature.
 - UNKNOWN: the characteristic is not drawn (`UNSUPPORTED_METHOD`) or a sheet is missing (`MISSING_INPUT`).
 - Every characteristic has one entry and every intent view exists, so `coverage_kind: FULL`. Feature
   recognition is not promised: a feature without a characteristic is no finding.

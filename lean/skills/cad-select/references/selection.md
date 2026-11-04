@@ -19,12 +19,14 @@ Ask only questions that resolve this product's actual intended function and cons
 
 ### Ask and finish intake
 
-1. Ask every open template question in one message, grouped by domain; skip none. Ask focused questions, not a generic questionnaire dump.
+1. Ask every open template question in one message, grouped by domain; skip none. Each asked question carries exactly one question id, and
+   each id covers one template question. Ask focused questions, not a generic questionnaire dump.
 2. After the reply, record every answered fact as KNOWN with a `USER` source
    ([cad-record Facts](../../cad-record/references/record.md#facts)); record "I don't know", a refusal and each question the reply
    leaves out as a typed UNKNOWN with owner and question ([Scope of each unknown](#scope-of-each-unknown)); that question is done.
    Validate each changed file once ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4).
-3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; record its reply as in step 2.
+3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; each follow-up gets a new question id.
+   Record its reply as in step 2.
 4. Go to `freeze-inputs`. Never ask an answered or recorded question again. The owner's name is recorded as the owner states it, and
    every decision from the owner's statements names that `actor.name`.
 
@@ -130,8 +132,9 @@ allowable. Density is not strength. Do not transfer bulk, cast or wrought proper
 moisture state or service condition.
 
 A starter profile is a sourced comparison aid, not lot identification, process approval, physical qualification or an allowable. Confirm
-procurement identity and all relevant conditions. Typical supplier data and standard minima remain `typical_not_allowable`; structural
-calculations require an independently justified allowable with competent authority, conditions and derivation.
+procurement identity and all relevant conditions. Typical supplier data and standard minima remain `typical_not_allowable`; which
+calculations need an allowable, and which may use a typical value with its uncertainty, is
+[cad-verify mass-loads — load.hand](../../cad-verify/references/mass-loads.md#loadhand) step 4.
 
 Store the assessed options and recommendation in the cad-record `selection` prose root. The lead checks the selection table, input inventory
 and evidence; the INTENT gate packet presents the options, and its `choose` reply approves the selection

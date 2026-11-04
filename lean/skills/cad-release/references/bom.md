@@ -8,8 +8,10 @@ producer are [cad-verify Check families](../../cad-verify/references/families.md
 
 ## derive-bom
 
-Runs in BOM and FREEZE after `build-version`, so the version manifest exists. The lead derives the rows by
-reading the inputs below; no program runs, and the independent `bom.derivation` check re-derives them.
+Runs in BOM after `build-version` and in FREEZE after `run-checks`, so the version manifest exists and, at FREEZE, this
+version's `mass.properties` result is published. The lead derives the rows by reading the inputs below; no program
+runs, and the independent `bom.derivation` check re-derives them, at FREEZE inside this step
+([cad-flow stages — run-checks](../../cad-flow/references/stages.md#run-checks) step 8).
 
 1. Inputs, each recorded with its sha256: `hw/versions/vN/manifest.json`, and from `hw/versions/vN/record/`
    the snapshots of `assembly.yaml`, every `parts/<PN>/part.yaml` and `manufacturing/materials.yaml`, plus

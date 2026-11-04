@@ -14,8 +14,8 @@ TRIGGER
 
 ## Workflow
 
-1. Grading only (every role): LOAD references/rubric.md (`skill://cad-review/references/rubric.md`) → one verdict by
-   the worst finding and the worst due outcome.
+1. Grading only (every role): LOAD the rubric the brief names in `resources.rubric`, references/rubric.md
+   (`skill://cad-review/references/rubric.md`) → one verdict by the worst finding and the worst due outcome.
 2. Reviewer: read the brief at its absolute path and the role reference it names; resources come only from the brief.
 3. LOAD references/review.md (`skill://cad-review/references/review.md`) and run `review.mechanical_dfm` → separate
    mechanical and DFM coverage entries for every expected obligation of the version.
@@ -26,10 +26,11 @@ TRIGGER
 
 ## Rules
 
-MUST Stay read-only: run, hash, validate, write, delegate and ask nothing; read only the brief's inventory copies and
-  read-only paths.
+MUST Stay read-only: run no program (on Codex, shell read commands only:
+  [cad-flow agent roles — Roles](../cad-flow/references/agent-roles.md#roles)), and hash, validate, write, delegate or
+  ask nothing; read only the brief's inventory copies and read-only paths.
 MUST Keep mechanical and DFM coverage separate, and assess each part and operation by its own route kind.
 MUST Cite every measured value with units and the inspected path it came from; never measure, estimate or invent one.
-NOT Grade PASS over UNKNOWN, PLANNED, WAIVED, missing, sampled-without-intervals, smoke or UNIT evidence.
+NOT Grade PASS from evidence the references/rubric.md Rules exclude.
 NOT Weaken, reinterpret or replace an approved criterion, or redesign the subject: remedies are proposals.
 NOT Treat a render, geometry or simulation as physical validation.
