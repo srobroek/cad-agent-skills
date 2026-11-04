@@ -137,7 +137,8 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
   `MEASURED|SUPPLIER_TYPICAL|STANDARD|USER_DECLARED|CALCULATED|ESTIMATE|ASSUMED|ALLOWABLE`.
 - Units: `mm`, `um`, `m`, `mm2`, `mm3`, `deg`, `rad`, `N`, `kN`, `N_mm`, `N_m`, `N_per_mm`, `Pa`, `kPa`, `MPa`, `GPa`,
   `bar`, `g`, `kg`, `kg_m3`, `g_cm3`, `deg_C`, `K`, `s`, `min`, `h`, `d`, `cycles`, `count`, `rpm`, `Hz`, `mm_s`, `m_s`,
-  `deg_s`, `percent`, `dimensionless`, `J`, `J_m`, `kJ_m2`, `W`, `kW`, `W_m_K`, `um_m_K`, `per_K`, `V`, `A`.
+  `deg_s`, `percent`, `dimensionless`, `J`, `J_m`, `kJ_m2`, `g_10min`, `cm3_10min`, `W`, `kW`, `W_m_K`, `um_m_K`, `per_K`, `V`,
+  `A`.
 - Producer roles: `cad-concept-designer`, `cad-part-designer`, `cad-checker`, `cad-mech-dfm-reviewer`,
   `cad-sourcing-researcher`, `lead`. Skills: `cad-flow`, `cad-record`, `cad-select`, `cad-design`, `cad-model`,
   `cad-verify`, `cad-review`, `cad-release`.
@@ -151,7 +152,7 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `producer_role`, `stage` | role or `lead`; stage enum |
 | `binding` | `{kind: UNIT, unit, brief_sha256, input_inventory_sha256}` or `{kind: VERSION, version, version_manifest_sha256}` |
 | `input_files` | `[{path, sha256}]` of every input read |
-| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code}] (at least one), packages, platform}`, or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; `inspected` lists every file read, including other checks' `result.json` and `bundle-manifest.json`; the reviewer always reports REVIEW |
+| `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code, stdout, stderr}] (at least one), packages, platform}`, `stdout` and `stderr` published `hw/` paths beside the result, never scratch; or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; `inspected` lists every file read, including other checks' `result.json` and `bundle-manifest.json`; the reviewer always reports REVIEW |
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |
 | `findings[]` | `{id, family, subject, severity, outcome, measured, criterion, method, uncertainty, consequence, remedy, alternatives, recheck}` |
@@ -316,7 +317,8 @@ AUTHORITY actor and a `statement` whose `path` is `hw/decisions/statements/DR-##
 - `scratch.lead_checks`: `.cad-work/lead/checks.py`
 - `scratch.lead_checks_lock`: `.cad-work/lead/checks.py.lock` (`uv lock --script checks.py`)
 - `scratch.lead_work`: `.cad-work/lead/scratch/**`
-- `scratch.lead_uv_cache`: `.cad-work/lead/.uv-cache/**`
+- `scratch.lead_uv_cache`: `.cad-work/lead/.uv-cache/**` (the one uv cache of the lead and every unit)
+- `scratch.lead_tmp`: `.cad-work/lead/tmp/**` (`TMPDIR`)
 - `scratch.lead_validator`: `.cad-work/lead/validator/**`
 - `scratch.unit_brief`: `.cad-work/{UNIT}/brief.yaml` → `worker-brief`
 - `scratch.unit_input`: `.cad-work/{UNIT}/input/**`
@@ -327,7 +329,7 @@ AUTHORITY actor and a `statement` whose `path` is `hw/decisions/statements/DR-##
 - `scratch.unit_check_lock`: `.cad-work/{UNIT}/check.py.lock` (`uv lock --script check.py`)
 - `scratch.unit_extract`: `.cad-work/{UNIT}/extract.py`
 - `scratch.unit_extract_lock`: `.cad-work/{UNIT}/extract.py.lock` (`uv lock --script extract.py`)
-- `scratch.unit_uv_cache`: `.cad-work/{UNIT}/.uv-cache/**`
+- `scratch.unit_tmp`: `.cad-work/{UNIT}/tmp/**` (`TMPDIR`)
 - `scratch.unit_pycache`: `.cad-work/{UNIT}/__pycache__/**`
 - `scratch.unit_delivery`: `.cad-work/{UNIT}/delivery.json` → `worker-delivery`
 - `scratch.stage`: `.cad-work/stage-{V}/**`

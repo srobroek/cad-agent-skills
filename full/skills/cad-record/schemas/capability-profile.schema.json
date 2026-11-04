@@ -98,6 +98,7 @@
         "material": {"$ref": "common.schema.json#/$defs/profile_id"},
         "status": {"enum": ["APPROVED", "FORBIDDEN"]},
         "thickness": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "diameter": {"description": "the approved consumable diameter: filament, wire, bar or tube", "$ref": "common.schema.json#/$defs/quantity_fact"},
         "coating": {"$ref": "common.schema.json#/$defs/text_fact"},
         "extraction": {"$ref": "common.schema.json#/$defs/text_fact"},
         "operations": {

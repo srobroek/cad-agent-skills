@@ -157,8 +157,9 @@ Template (`template: true`): `tools` and `source` absent; `calibrations` empty; 
 `parameters` value, `machine.identity`, and any `operator`, `supplier` and `envelope.x`/`y`/`z` are `fact_unknown`.
 
 Approval: `{material profile_id, status APPROVED|FORBIDDEN, source source}` required; optional `thickness
-quantity_fact`, `coating text_fact`, `extraction text_fact`, `operations [CUT|SCORE|ENGRAVE|MACHINE|PRINT|FORM|JOIN|OTHER]≥1
-unique`; `reason text` when FORBIDDEN.
+quantity_fact`, `diameter quantity_fact` (the approved filament, wire, bar or tube diameter), `coating text_fact`,
+`extraction text_fact`, `operations [CUT|SCORE|ENGRAVE|MACHINE|PRINT|FORM|JOIN|OTHER]≥1 unique`; `reason text` when
+FORBIDDEN.
 
 Calibration, one demonstrated capability: `{id semantic_id, characteristic semantic_id, scope, result, source source,
 date date}` required; optional `valid_until date`, `decision decision_id`. `scope {material profile_id}` required with

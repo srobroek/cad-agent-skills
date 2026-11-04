@@ -251,7 +251,7 @@
     {
       "if": {"required": ["family"], "properties": {"family": {"const": "review.mechanical_dfm"}}},
       "then": {
-        "description": "the reviewer's result, or the lead's result of a review stopped at acceptance: every outcome UNKNOWN NOT_RUN",
+        "description": "the reviewer's result, or the lead's result of a review stopped at acceptance or of a lost or stalled reviewer unit: every outcome UNKNOWN NOT_RUN, or TIMEOUT for a stalled unit",
         "anyOf": [
           {"required": ["review"], "properties": {"producer_role": {"const": "cad-mech-dfm-reviewer"}}},
           {
@@ -261,7 +261,7 @@
               "outcomes": {
                 "items": {
                   "required": ["outcome", "unknown_code"],
-                  "properties": {"outcome": {"const": "UNKNOWN"}, "unknown_code": {"const": "NOT_RUN"}}
+                  "properties": {"outcome": {"const": "UNKNOWN"}, "unknown_code": {"enum": ["NOT_RUN", "TIMEOUT"]}}
                 }
               }
             }

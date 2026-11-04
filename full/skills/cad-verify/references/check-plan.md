@@ -11,6 +11,13 @@ and fixed check id are in [families.md](families.md).
 Input: the approved GROUND and INTENT record (`hw/product.yaml` service class, risk, authority and release scope;
 `hw/manufacturing/selection.yaml`) and `hw/requirements.yaml`.
 
+GROUND intake writes each requirement whole by steps 1–7
+([cad-select selection](../../cad-select/references/selection.md#write-criteria-a-stage-can-evidence)). At SPECIFY this procedure
+writes no byte of `hw/requirements.yaml`, since an edit there stales the INTENT selection
+([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 11): the
+`requirements.completeness` check judges the file by steps 1–7, and a gap is repaired only by a change
+([cad-flow change impact](../../cad-flow/references/change-impact.md)).
+
 1. Keep requirements, preferences, assumptions and questions in their own collections; a preference never becomes a requirement and an open
    question is never a criterion.
 2. Give every requirement `subjects`, sourced `criteria` (property, comparator, value, units, state, conditions), `methods`, `facets`,
@@ -75,8 +82,11 @@ cad-flow and the installed tools in `.cad-work/lead/preflight.json`.
    - `producer_role`: `cad-checker`; `cad-mech-dfm-reviewer` for `review.mechanical_dfm`.
 3. Write the cases the methods need:
    - MOTION per functional motion: joints, sampling and steps per [geometry-motion.md](geometry-motion.md), `pairs: ALL`,
-     `play_extremes: true` when any member states play. A case names pairs only for a criterion stated between those occurrences, beside
-     the `pairs: ALL` case of that motion; an interface excuses contact only in its declared feature region, never a whole pair.
+     `play_extremes: true` when any member states play. Each joint is the semantic id LAYOUT gives the assembly joint that
+     realizes the motion ([cad-design define-layout](../../cad-design/references/layout.md#define-layout) step 3); it resolves
+     from LAYOUT on ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check)
+     item 3). A case names pairs only for a criterion stated between those occurrences, beside the `pairs: ALL` case of that
+     motion; an interface excuses contact only in its declared feature region, never a whole pair.
    - STACK per critical dimension chain: signed contributors, state and source; WORST_CASE unless a [JUSTIFIED_RSS](fits.md#fitstack) block
      and DR exist.
    - LOAD per stated load, with `material.basis_required` from [mass-loads — load.hand](mass-loads.md#loadhand) step 4.

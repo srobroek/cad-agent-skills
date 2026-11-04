@@ -18,8 +18,8 @@ TRIGGER
 ## Workflow
 
 1. Lead stage work: LOAD references/check-plan.md (`skill://cad-verify/references/check-plan.md`) and run the
-   heading named by the procedure ID → validated `hw/requirements.yaml`, a `hw/check-plan.yaml` conforming to its
-   cad-record prose root, confirmed cases or `hw/verification/vN/` with its bundle manifest.
+   heading named by the procedure ID → `hw/requirements.yaml` judged with no byte changed, a `hw/check-plan.yaml`
+   conforming to its cad-record prose root, confirmed cases or `hw/verification/vN/` with its bundle manifest.
 2. Before any run, enumerate scope with check-plan.md "Expected scope" → every obligation `<family>@<anchor>`
    assigned to exactly one check, or UNKNOWN with a `SCOPE_GAP`.
 3. LOAD references/families.md (`skill://cad-verify/references/families.md`) → each obligation's anchor, producer

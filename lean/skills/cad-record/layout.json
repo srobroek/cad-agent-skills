@@ -1100,12 +1100,26 @@
       "schema": null,
       "format": "BYTES",
       "owner": "cad-flow",
-      "writer": "lead, through uv --cache-dir",
+      "writer": "lead and every unit, through uv --cache-dir",
       "mutability": "SCRATCH",
       "stage": "ANY",
       "condition": {"kind": "ALWAYS"},
       "gate_credit": false,
-      "meaning": "the lead's uv cache; never evidence"
+      "meaning": "the one uv cache the lead warms at preflight; every uv command of the lead and of a unit uses it; never evidence"
+    },
+    {
+      "id": "scratch.lead_tmp",
+      "path": ".cad-work/lead/tmp/**",
+      "kind": "SCRATCH",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-flow",
+      "writer": "lead and the tools it runs, through TMPDIR",
+      "mutability": "SCRATCH",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "a lead command writes a temporary file"},
+      "gate_credit": false,
+      "meaning": "the lead's temporary files; never evidence"
     },
     {
       "id": "scratch.lead_validator",
@@ -1248,18 +1262,18 @@
       "meaning": "uv script lock of the extraction program, written next to extract.py"
     },
     {
-      "id": "scratch.unit_uv_cache",
-      "path": ".cad-work/{UNIT}/.uv-cache/**",
+      "id": "scratch.unit_tmp",
+      "path": ".cad-work/{UNIT}/tmp/**",
       "kind": "SCRATCH",
       "schema": null,
       "format": "BYTES",
       "owner": "cad-flow",
-      "writer": "worker, through uv --cache-dir",
+      "writer": "worker and the tools it runs, through TMPDIR",
       "mutability": "SCRATCH",
       "stage": "ANY",
-      "condition": {"kind": "CONDITIONAL", "when": "the unit runs uv"},
+      "condition": {"kind": "CONDITIONAL", "when": "a unit command writes a temporary file"},
       "gate_credit": false,
-      "meaning": "the unit's own uv cache; never an output or evidence"
+      "meaning": "the unit's temporary files; allowed in the unit file set, never an output or evidence"
     },
     {
       "id": "scratch.unit_pycache",
