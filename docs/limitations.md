@@ -75,9 +75,12 @@ acceptance compares (8/10 sonnet versus 7/9 opus, directional). Codex A/B outcom
 and do not establish a general tier result. Keep shipped role model lines unchanged; a matched-effort A/B after the fix
 wave is needed to decide defaults.
 
-`uv lock --script` needs package-index/network access to resolve and lock
-dependencies. A lock does not imply offline availability. Runtime CAD
-dependencies are installed in the product project, not shipped here.
+The lead warms one shared uv cache with network in preflight
+([Warm the uv cache](../full/skills/cad-flow/references/preflight.md#warm-the-uv-cache)); every later uv command runs
+`--offline` against it, except the sourcing researcher's PDF `extract.py`, which locks and runs on the network its
+fetches use ([uv commands](../full/skills/cad-flow/references/agent-roles.md#uv-commands)). A package missing from the
+warmed cache fails offline and is never fetched by a unit. Runtime CAD dependencies are installed in the product project,
+not shipped here.
 
 Retain font files and licenses by their bytes. A font family name alone is not
 deterministic input. Drawing text may become outlines with no text layer.
