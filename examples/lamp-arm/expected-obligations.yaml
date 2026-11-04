@@ -72,7 +72,7 @@ stages:
   - payload, reach, heat, duty, creep, cyclic life, electrical supply and risk asked before any material or route is named
   - the record matches examples/lamp-arm/hw in content; ids, wording and order may differ
   - the gate packet lists each consequential UNKNOWN as a limit with the stage where it blocks (cad-select references/selection.md "Scope of each unknown"); none blocks GROUND
-  - Q-026 creep blocks at INTENT (polymer load paths CONDITIONAL); Q-020 hand push force at the first check whose HAND load case needs it; Q-021 acceptable wear and Q-022 standards feed no REQ-001 to REQ-009 criterion and stay open questions listed in the RELEASE readiness limits
+  - Q-026 creep data block no INTENT outcome (REQ-004 head drift is PLANNED there, due ANALYSIS; ANALYSIS states creep as not established and physical.test@REQ-004 settles the drift limit at RELEASE); Q-020 hand push force at the first check whose HAND load case needs it; Q-021 acceptable wear and Q-022 standards feed no REQ-001 to REQ-009 criterion and stay open questions listed in the RELEASE readiness limits
   must_not:
   - give an imported part, model, result or decision gate credit, or assume the old CAD valid
   - run an imported model.py
@@ -88,13 +88,13 @@ stages:
   - selection.sourcing@product
   - material.properties@product
   future: []
-  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id (machine shop capability, PETG creep, LED module data)
+  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id; Q-023 LED module data, Q-024 machine shop capability and Q-026 creep data block INTENT only through a criterion INTENT settles (cad-select references/selection.md "Scope of each unknown")
   gate: APPROVED after `approve INTENT <vN> choose <option>`
   must_show:
   - polymer, metal, purchased-pivot and hybrid candidates, the old v0.1.1 layout as one candidate only
   - complete routes per part and every contacting joint pair (pin, bushing, link, retention, wear)
   - hard outcomes per criterion of each mandatory requirement before any preference ranking; a criterion only a later stage evidences PLANNED with its due stage; every UNKNOWN names its question id
-  - a polymer load path under sustained head load and module heat CONDITIONAL or EXCLUDED until creep data exist (Q-026)
+  - REQ-004 head drift PLANNED due ANALYSIS on every candidate; a polymer load path EXCLUDED only when retained creep data already show it cannot hold the drift limit; missing creep data (Q-026) a limit of each polymer candidate, never a PASS and never an INTENT blocker
   - retained sources for the LED module, the printer envelope and the machine shop, or their UNKNOWNs
   must_not:
   - use supplier-typical strength as an allowable
@@ -426,7 +426,7 @@ stages:
 # Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
 acceptable_ends:
 - "STOPPED_AT_RELEASE: RELEASE readiness BLOCKED on the safety physical tests; nothing published"
-- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example machine shop capability Q-024 or creep data Q-026); nothing advanced past it"
+- "STOPPED_EARLIER: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it (for example machine shop capability Q-024, due at PARTS); nothing advanced past it"
 never:
 - "SEALED: any hw/releases/<REV> for this FUNCTIONAL_DEMO scope without physical test results of a built unit"
 open_at_end:

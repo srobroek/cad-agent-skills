@@ -71,9 +71,12 @@ it falls due:
 | --- | --- | --- |
 | an owner's answer that a criterion, case or choice needs, for a requirement kind the service class admits ([cad-verify check-plan — Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class)) that `release_scope.exclusions` does not exclude, or for any SAFETY or REGULATORY requirement | `consequential: true`, owner, question | the first obligation that needs it: each INTENT hard outcome it feeds is UNKNOWN and keeps its candidate CONDITIONAL ([assess-selection](#assess-selection)); SPECIFY `requirements.completeness` is UNKNOWN `REQUIRED_UNKNOWN` while a criterion needs it; a check whose case needs it is UNKNOWN `REQUIRED_UNKNOWN`; else it stays a release limit |
 | an answer only an excluded requirement kind or a later scope needs | `consequential: false`, owner, question, the exclusion as `reason` | nothing: an owned open question |
-| a fact a stage's own work establishes, not an owner's answer: a capability envelope, material profile or supplier fact at INTENT ([select-candidates](#select-candidates)), or a later product behaviour such as creep, temperature rise or wear rate | `consequential: true`, owner, question; `reason` names the stage that establishes it | only that stage: its obligation stays UNKNOWN until its check establishes the fact; an earlier hard outcome that needs the fact is PLANNED for that stage ([assess-selection](#assess-selection)); the owner is asked only after that stage's work returns it UNKNOWN |
+| a fact sourcing or a check establishes, not an owner's answer: a capability envelope, material profile or supplier fact ([select-candidates](#select-candidates)), or a product behaviour such as creep, temperature rise or wear rate | `consequential: true`, owner, question; `reason` names the stage that establishes it | only the first obligation that uses it as evidence: INTENT only through a criterion INTENT settles ([assess-selection](#assess-selection)), whose hard outcome stays UNKNOWN; a later criterion that needs it is PLANNED at INTENT, and its own stage's obligation stays UNKNOWN until a check establishes the fact; the owner is asked only after sourcing returns it UNKNOWN |
 
-An UNKNOWN takes the first row when the owner can answer it and the third when a stage's checks establish it, never both.
+An UNKNOWN takes the first row when the owner can answer it and the third when sourcing or a check establishes it, never both. INTENT is
+blocked only by an UNKNOWN hard outcome: a criterion whose value the owner has not given, or a criterion INTENT settles whose evidence is
+missing. A fact that only a later criterion or case uses, such as a printer envelope or creep data, blocks nothing at INTENT: it is a limit
+there and falls due at the stage whose obligation uses it.
 
 Set each question's `material_to_choice` and `safety_relevant` by the same table.
 
