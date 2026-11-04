@@ -1,37 +1,75 @@
 # Intended error of each invalid authoring fixture (data index, not an instance).
-claude-agent-frontmatter/invalid/agent-allowed.yaml: Agent must be disallowed
-claude-agent-frontmatter/invalid/model-set.yaml: model is omitted
-claude-agent-frontmatter/invalid/permission-mode.yaml: plugin agents ignore permissionMode; refused
-claude-marketplace/invalid/entry-without-version.json: every entry declares version
-claude-marketplace/invalid/root-source.json: sources are ./full or ./lean
-claude-plugin/invalid/bad-version.json: version is semver
-claude-plugin/invalid/hooks.json: hooks are refused
-claude-plugin/invalid/missing-agent.json: all five agents are listed
-codex-agent/invalid/missing-instructions.toml: developer_instructions is required
-codex-agent/invalid/model-override.toml: model is omitted
-codex-agent/invalid/sandbox-override.toml: no agent sandbox override
-expected-obligations/invalid/bad-obligation.yaml: expected obligations are <family>@<anchor>, placeholders allowed
-expected-obligations/invalid/misspelled-family.yaml: the family of an expected or future obligation is a registered check family
-expected-obligations/invalid/twelve-stages.yaml: stages lists exactly the 13 stages in order
-expected-obligations/invalid/unregistered-family.yaml: condition keys are registered check families
-kiro-agent/invalid/mcp-included.json: includeMcpJson is false
-kiro-agent/invalid/subagent-tool.json: 'roles never delegate: no subagent tool'
-kiro-agent/invalid/v2-allowed-tools.json: V2 allowedTools is refused
-omp-agent-frontmatter/invalid/missing-model.yaml: model role selector is required
-omp-agent-frontmatter/invalid/spawns-star.yaml: 'roles never delegate: spawns is empty'
-omp-agent-frontmatter/invalid/thinking-level-key.yaml: OMP reads thinkingLevel; the thinking-level key is refused
-omp-agent-frontmatter/invalid/unknown-thinking-level.yaml: thinkingLevel is a canonical OMP selector (auto, inherit, off, minimal, low, medium, high, xhigh, max)
-omp-agent-frontmatter/invalid/unknown-role.yaml: name is one of the five roles
-omp-marketplace/invalid/entry-without-version.json: every entry declares version
-omp-marketplace/invalid/root-source.json: sources are ./full or ./lean
-omp-plugin/invalid/missing-version.json: version is required
-omp-plugin/invalid/skills-remap.json: no skills remap
-opencode-agent-frontmatter/invalid/old-list-dialect.yaml: the old permissions list dialect is refused
-opencode-agent-frontmatter/invalid/primary-mode.yaml: mode is subagent
-opencode-agent-frontmatter/invalid/task-allowed.yaml: task is denied
-skill-frontmatter/invalid/cad-flow-unknown-plugin.yaml: metadata.plugin is cad-agent-skills or cad-agent-skills-lean
-skill-frontmatter/invalid/cad-flow-without-metadata.yaml: cad-flow carries metadata.plugin and metadata.version
-skill-frontmatter/invalid/cad-flow-without-version.yaml: cad-flow metadata names the version
-skill-frontmatter/invalid/extra-field.yaml: 'closed: only name and description'
-skill-frontmatter/invalid/metadata-non-string.yaml: metadata values are strings (quote the version)
-skill-frontmatter/invalid/unknown-name.yaml: name is one of the eight skills
+# CI asserts every <family>/invalid/* file fails against ../<family>.schema.json and that its check-jsonschema --verbose
+# output contains the entry's substring; the comment above each entry states the intent the substring proves.
+# Agent must be disallowed
+claude-agent-frontmatter/invalid/agent-allowed.yaml: '$.disallowedTools: ''Write'' does not match ''(^|,\\s*)Agent(\\s*,|$)'''
+# model is omitted
+claude-agent-frontmatter/invalid/model-set.yaml: "$: Additional properties are not allowed ('model' was unexpected)"
+# plugin agents ignore permissionMode; refused
+claude-agent-frontmatter/invalid/permission-mode.yaml: "$: Additional properties are not allowed ('permissionMode' was unexpected)"
+# every entry declares version
+claude-marketplace/invalid/entry-without-version.json: "$.plugins[0]: 'version' is a required property"
+# sources are ./full or ./lean
+claude-marketplace/invalid/root-source.json: "$.plugins[0].source: './' is not one of ['./full', './lean']"
+# version is semver
+claude-plugin/invalid/bad-version.json: "$.version: 'latest' does not match"
+# hooks are refused
+claude-plugin/invalid/hooks.json: "$: Additional properties are not allowed ('hooks' was unexpected)"
+# all five agents are listed
+claude-plugin/invalid/missing-agent.json: "'./harness/claude/agents/cad-mech-dfm-reviewer.md'] is too short"
+# developer_instructions is required
+codex-agent/invalid/missing-instructions.toml: "$: 'developer_instructions' is a required property"
+# model is omitted
+codex-agent/invalid/model-override.toml: "$: Additional properties are not allowed ('model' was unexpected)"
+# no agent sandbox override
+codex-agent/invalid/sandbox-override.toml: "$: Additional properties are not allowed ('sandbox_mode' was unexpected)"
+# expected obligations are <family>@<anchor>, placeholders allowed
+expected-obligations/invalid/bad-obligation.yaml: "$.stages[8].expected[0]: 'bom-derivation' does not match"
+# the family of an expected or future obligation is a registered check family
+expected-obligations/invalid/misspelled-family.yaml: "$.stages[1].expected[0]: 'selection.feasability@product' does not match"
+# stages lists exactly the 13 stages in order
+expected-obligations/invalid/twelve-stages.yaml: "$.stages[8].stage: 'BOM' was expected"
+# condition keys are registered check families
+expected-obligations/invalid/unregistered-family.yaml: "$.conditions: 'optical.magic' is not one of ["
+# includeMcpJson is false
+kiro-agent/invalid/mcp-included.json: '$.includeMcpJson: False was expected'
+# roles never delegate: no subagent tool
+kiro-agent/invalid/subagent-tool.json: "$.tools: ['read', 'write', 'web', 'subagent'] should not be valid under {'contains': {'const': 'subagent'}}"
+# V2 allowedTools is refused
+kiro-agent/invalid/v2-allowed-tools.json: "$: Additional properties are not allowed ('allowedTools' was unexpected)"
+# model role selector is required
+omp-agent-frontmatter/invalid/missing-model.yaml: "$: 'model' is a required property"
+# roles never delegate: spawns is empty
+omp-agent-frontmatter/invalid/spawns-star.yaml: "$.spawns: ['*'] is expected to be empty"
+# OMP reads thinkingLevel; the thinking-level key is refused
+omp-agent-frontmatter/invalid/thinking-level-key.yaml: "$: Additional properties are not allowed ('thinking-level' was unexpected)"
+# thinkingLevel is a canonical OMP selector (auto, inherit, off, minimal, low, medium, high, xhigh, max)
+omp-agent-frontmatter/invalid/unknown-thinking-level.yaml: "$.thinkingLevel: 'ultra' is not one of ['auto', 'inherit', 'off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max']"
+# name is one of the five roles
+omp-agent-frontmatter/invalid/unknown-role.yaml: "$.name: 'cad-analyst' is not one of ['cad-concept-designer', 'cad-part-designer', 'cad-checker', 'cad-mech-dfm-reviewer', 'cad-sourcing-researcher']"
+# every entry declares version
+omp-marketplace/invalid/entry-without-version.json: "$.plugins[0]: 'version' is a required property"
+# sources are ./full or ./lean
+omp-marketplace/invalid/root-source.json: "$.plugins[0].source: './' is not one of ['./full', './lean']"
+# version is required
+omp-plugin/invalid/missing-version.json: "$: 'version' is a required property"
+# no skills remap
+omp-plugin/invalid/skills-remap.json: "$: Additional properties are not allowed ('skills' was unexpected)"
+# the old permissions list dialect is refused
+opencode-agent-frontmatter/invalid/old-list-dialect.yaml: "$: Additional properties are not allowed ('permissions' was unexpected)"
+# mode is subagent
+opencode-agent-frontmatter/invalid/primary-mode.yaml: "$.mode: 'subagent' was expected"
+# task is denied
+opencode-agent-frontmatter/invalid/task-allowed.yaml: "$.permission.task: 'deny' was expected"
+# metadata.plugin is cad-agent-skills or cad-agent-skills-lean
+skill-frontmatter/invalid/cad-flow-unknown-plugin.yaml: "$.metadata.plugin: 'cad-agent' is not one of ['cad-agent-skills', 'cad-agent-skills-lean']"
+# cad-flow carries metadata.plugin and metadata.version
+skill-frontmatter/invalid/cad-flow-without-metadata.yaml: "$: 'metadata' is a required property"
+# cad-flow metadata names the version
+skill-frontmatter/invalid/cad-flow-without-version.yaml: "$.metadata: 'version' is a required property"
+# closed: only name and description
+skill-frontmatter/invalid/extra-field.yaml: "$: Additional properties are not allowed ('allowed-tools' was unexpected)"
+# metadata values are strings (quote the version)
+skill-frontmatter/invalid/metadata-non-string.yaml: "$.metadata.version: 1 is not of type 'string'"
+# name is one of the eight skills
+skill-frontmatter/invalid/unknown-name.yaml: "$.name: 'cad-bom' is not one of ['cad-flow', 'cad-record', 'cad-select', 'cad-design', 'cad-model', 'cad-verify', 'cad-review', 'cad-release']"

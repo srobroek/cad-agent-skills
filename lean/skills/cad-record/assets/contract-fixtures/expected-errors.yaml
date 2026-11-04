@@ -1,93 +1,181 @@
 # Intended error of each invalid contract fixture (data index, not an instance).
-# CI asserts every <root>/invalid/* file fails against schemas/<root>.schema.json; this index states why it must fail.
+# CI asserts every <root>/invalid/* file fails against schemas/<root>.schema.json and that its check-jsonschema --verbose
+# output contains the entry's substring; the comment above each entry states the intent the substring proves.
 # Lean: the 17 prose roots have no schema and no fixtures; references/prose-contract.md states their rules.
-assembly/invalid/drawing-operations.yaml: 'assembly operations have one authority: top-level operations only; drawing is drawing intent, not operations'
-assembly/invalid/drawing-without-reason.yaml: assembly drawing intent has the part drawing shape; status needs its reason
-assembly/invalid/insert-without-direction.yaml: INSERT requires into and direction
-assembly/invalid/revolute-without-limits.yaml: a non-FIXED joint requires axis and limits
-assembly/invalid/rotation-not-quaternion.yaml: placement rotation is a 4-element quaternion
-bom-row/invalid/buy-without-purchase.yaml: a BUY row requires purchase identity
-bom-row/invalid/null-mass.yaml: missing mass is UNKNOWN, never null or zero
-bom-row/invalid/zero-quantity.yaml: quantity is an integer >= 1
-check-result/invalid/artifact-lists-coverage-json.json: artifacts and source files exclude result.json, bundle-manifest.json, coverage.json and package-integrity.json, which are check results or bundle manifests themselves
-check-result/invalid/artifact-lists-result-json.json: artifacts exclude result.json and bundle-manifest.json
-check-result/invalid/command-without-commands.json: a COMMAND implementation needs at least one command
-check-result/invalid/integrity-hashes-release-manifest.json: the package-integrity result never hashes or inspects release-manifest.json, which hashes it
-check-result/invalid/pass-without-criterion.json: a PASS outcome needs criterion, evidence and value
-check-result/invalid/positional-finding-id.json: finding ids are family:anchor:locus, never positional
-check-result/invalid/review-with-commands.json: a REVIEW implementation forbids commands
-check-result/invalid/review-without-coverage.json: a reviewer result needs separate mechanical and DFM coverage
-check-result/invalid/review-without-inspected.json: a REVIEW implementation lists at least one inspected file
-check-result/invalid/reviewer-command-implementation.json: the read-only reviewer reports a REVIEW implementation
-check-result/invalid/unit-binding-missing-brief.json: UNIT binding needs unit, brief and input inventory digests
-check-result/invalid/semantic-finding-without-item.json: a record.semantic finding id names its semantic item (record.semantic:item-<n>:<locus>), never the product anchor
-check-result/invalid/unknown-reported-pass.json: an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
-check-result/invalid/unregistered-family.json: families are the registered enum
+# assembly operations have one authority: top-level operations only; drawing is drawing intent, not operations
+assembly/invalid/drawing-operations.yaml: "$.drawing: Additional properties are not allowed ('operations' was unexpected)"
+# assembly drawing intent has the part drawing shape; status needs its reason
+assembly/invalid/drawing-without-reason.yaml: "$.drawing: 'reason' is a required property"
+# INSERT requires into and direction
+assembly/invalid/insert-without-direction.yaml: "$.operations[0]: 'direction' is a required property"
+# a non-FIXED joint requires axis and limits
+assembly/invalid/revolute-without-limits.yaml: "$.joints[0]: 'limits' is a required property"
+# placement rotation is a 4-element quaternion
+assembly/invalid/rotation-not-quaternion.yaml: '$.occurrences[1].placement.rotation: [0, 0, 90] is too short'
+# a BUY row requires purchase identity
+bom-row/invalid/buy-without-purchase.yaml: "$: 'purchase' is a required property"
+# missing mass is UNKNOWN, never null or zero
+bom-row/invalid/null-mass.yaml: '$.mass: None is not valid under any of the given schemas'
+# quantity is an integer >= 1
+bom-row/invalid/zero-quantity.yaml: '$.quantity: 0 is less than the minimum of 1'
+# artifacts and source files exclude result.json, bundle-manifest.json, coverage.json and package-integrity.json, which are check results or bundle manifests themselves
+check-result/invalid/artifact-lists-coverage-json.json: '$.artifacts[2].path: ''hw/drawings/v6/STD-0001/coverage.json'' should not be valid under {''pattern'': ''(^|/)(result|bundle-manifest|coverage|package-integrity)\\.json$''}'
+# artifacts exclude result.json and bundle-manifest.json
+check-result/invalid/artifact-lists-result-json.json: '$.artifacts[2].path: ''hw/checks/v6/clearance/a1/result.json'' should not be valid under {''pattern'': ''(^|/)(result|bundle-manifest|coverage|package-integrity)\\.json$''}'
+# a COMMAND implementation needs at least one command
+check-result/invalid/command-without-commands.json: '$.implementation.commands: [] should be non-empty'
+# the package-integrity result never hashes or inspects release-manifest.json, which hashes it
+check-result/invalid/integrity-hashes-release-manifest.json: '$.input_files[2].path: ''hw/releases/A/release-manifest.json'' should not be valid under {''pattern'': ''(^|/)release-manifest\\.json$''}'
+# a PASS outcome needs criterion, evidence and value
+check-result/invalid/pass-without-criterion.json: "$.outcomes[0]: 'criterion' is a required property"
+# finding ids are family:anchor:locus, never positional
+check-result/invalid/positional-finding-id.json: "$.findings[0].id: 'finding-1' does not match"
+# a REVIEW implementation forbids commands
+check-result/invalid/review-with-commands.json: "$.implementation: Additional properties are not allowed ('commands' was unexpected)"
+# a reviewer result needs separate mechanical and DFM coverage
+check-result/invalid/review-without-coverage.json: "$: 'review' is a required property"
+# a REVIEW implementation lists at least one inspected file
+check-result/invalid/review-without-inspected.json: '$.implementation.inspected: [] should be non-empty'
+# the read-only reviewer reports a REVIEW implementation
+check-result/invalid/reviewer-command-implementation.json: "$.implementation.kind: 'REVIEW' was expected"
+# UNIT binding needs unit, brief and input inventory digests
+check-result/invalid/unit-binding-missing-brief.json: "$.binding: 'brief_sha256' is a required property"
+# a record.semantic finding id names its semantic item (record.semantic:item-<n>:<locus>), never the product anchor
+check-result/invalid/semantic-finding-without-item.json: "$.findings[0].id: 'record.semantic:product:q-025' does not match"
+# an incomplete result, or one with UNKNOWN outcomes or PARTIAL coverage, is never PASS
+check-result/invalid/unknown-reported-pass.json: "$.result: 'PASS' is not one of ['FAIL', 'UNKNOWN']"
+# families are the registered enum
+check-result/invalid/unregistered-family.json: "$.family: 'geometry.magic' is not one of ["
 # check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the
 # review's own result.json or bundle-manifest.json is semantic only (references/validation.md item 11), because
 # the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.
-common/invalid/allowable-without-authority.yaml: ALLOWABLE needs authority, conditions and derivation
-common/invalid/component-without-pn.yaml: a COMPONENT subject names its PN
-common/invalid/datasheet-without-locator.yaml: a datasheet source names a url or a retained artifact
-common/invalid/estimate-without-uncertainty.yaml: ESTIMATE needs uncertainty
-common/invalid/interval-and-value.yaml: a quantity is a value or an interval, not both
-common/invalid/na-unreviewed.yaml: NOT_APPLICABLE needs reviewed_by
-common/invalid/obligation-bad-anchor.yaml: obligation ids are <family>@<anchor> with a registered family and anchor grammar
-common/invalid/outcome-entry-waived.yaml: a check result never writes WAIVED; only a stage verdict maps a covered FAIL or UNKNOWN to WAIVED
-common/invalid/path-traversal.yaml: project paths have no dot segments
-common/invalid/safety-waiver.yaml: safety or regulatory obligations are never waived
-common/invalid/trial-waiver-unsupervised.yaml: an UNVALIDATED_TRIAL waiver needs expires and supervision
-common/invalid/unknown-unit.yaml: units are the closed symbol set
-common/invalid/until-change-text.yaml: until_change lists the files whose byte change ends the waiver, never free text
-common/invalid/waiver-without-id.yaml: a waiver carries its WV-### id
-decision/invalid/approval-without-statement.yaml: an approval records the transcript hash, quote and time
-decision/invalid/gate-approves-failed-verdict.yaml: an approved gate binds a PASS verdict
-decision/invalid/gate-binds-proposal.yaml: a GATE decision binds a STAGE verdict
-decision/invalid/lead-approves-gate.yaml: only a USER or AUTHORITY approves
-decision/invalid/proposal-in-scratch.yaml: a PROPOSAL binding names an immutable proposal under hw/decisions/proposals/DR-###/, never scratch
-decision/invalid/release-without-verdict.yaml: a RELEASE approval binds the proposal and the RELEASE readiness verdict that hashes it
-decision/invalid/statement-in-scratch.yaml: 'approval statement bytes are published at hw/decisions/statements/DR-###.txt, never in scratch'
-decision/invalid/supersede-without-refers.yaml: SUPERSEDED refers to the old DR
-material-profile/invalid/condition-omitted.yaml: test temperature is required, as a value or an explicit UNKNOWN
-material-profile/invalid/family-with-known-grade.yaml: a FAMILY profile leaves grade UNKNOWN or NOT_APPLICABLE
-material-profile/invalid/lowercase-enum.yaml: enum casing is CAPS
-material-profile/invalid/printed-without-orientation.yaml: every property of a PRINTED profile states its specimen orientation (UNKNOWN allowed)
-material-profile/invalid/typical-claims-allowable.yaml: a typical_not_allowable profile never holds an ALLOWABLE value
-part/invalid/approved-orientation-no-decision.yaml: an APPROVED orientation requires its decision
-part/invalid/assembly-zero-without-import.yaml: ASSEMBLY_ZERO frame requires import provenance
-part/invalid/bad-revision.yaml: revision letters exclude I, O, Q, S, X, Z; drafts are X1…
-part/invalid/finished-critical-support-incomplete.yaml: FINISHED_CRITICAL supports need allowance, finish and inspection
-part/invalid/made-op-without-capability.yaml: a made operation requires capability (profile id or UNKNOWN)
-part/invalid/make-without-manufacture.yaml: a MAKE part requires manufacture
-part/invalid/purchased-with-capability.yaml: a PURCHASED operation forbids capability
-product/invalid/consequential-unknown-without-question.yaml: a consequential UNKNOWN requires owner and question
-product/invalid/flow-stage-field.yaml: 'additionalProperties: product carries no workflow stage (flow)'
-product/invalid/import-snapshot-in-docs.yaml: an import's originals live at hw/imports/DR-###/original, never under hw/docs/
-product/invalid/known-fact-without-source.yaml: a KNOWN fact requires sources
-product/invalid/rigor-default-pro.yaml: rigor is maker|pro|regulated (lowercase) or an UNKNOWN fact; PRO matches neither
-product/invalid/service-class-without-decision.yaml: a known service class requires its decision
-product/invalid/wrong-format.yaml: format must be cad-agent-skills and record_version 1
-release-manifest/invalid/final-without-integrity.json: FINAL requires approval, integrity and inventory
-release-manifest/invalid/final-without-readiness.json: a FINAL manifest names the RELEASE readiness verdict
-release-manifest/invalid/proposal-with-approval.json: a PROPOSAL excludes the not-yet-written approval and integrity
-release-manifest/invalid/proposal-with-readiness.json: a PROPOSAL never hashes the RELEASE readiness verdict (that verdict hashes the proposal)
-release-manifest/invalid/rev-reused-letter.json: REV letters exclude I, O, Q, S, X, Z
-release-manifest/invalid/self-listed.json: the manifest never inventories itself
-release-manifest/invalid/unknown-service-scope.json: a release states a known service class
-requirements/invalid/bad-requirement-id.yaml: 'REQ ids are REQ-### '
-requirements/invalid/missing-facets.yaml: requirement requires facets
-requirements/invalid/missing-questions-list.yaml: the four lists are required, even when empty
-requirements/invalid/resolved-without-resolution.yaml: a RESOLVED question requires resolution
-requirements/invalid/safety-waivable.yaml: a safety requirement must have waiver_policy FORBIDDEN
-stage-verdict/invalid/installed-policy-hash.json: installed policy is recorded by path and plugin name/version, never hashed
-stage-verdict/invalid/missing-predecessor.json: every stage after GROUND names its predecessor
-stage-verdict/invalid/pass-with-blocker.json: PASS requires no blockers
-stage-verdict/invalid/pass-with-fail-item.json: a PASS verdict accepts only PASS, WAIVED and NOT_APPLICABLE results
-stage-verdict/invalid/pass-with-unknown-result.json: PASS cannot accept a FAIL or UNKNOWN result
-stage-verdict/invalid/pass-without-obligations.json: a PASS verdict hashes its published obligations.yaml
-stage-verdict/invalid/provisional-result.json: verdicts are PASS, FAIL or BLOCKED; no provisional stage
-stage-verdict/invalid/review-required-not-passed.json: a required review must be PASS
-stage-verdict/invalid/unit-result-accepted.json: only VERSION or CARRIED_FORWARD results are accepted
-stage-verdict/invalid/waived-without-waiver.json: a WAIVED result names its WV-### waiver
-stage-verdict/invalid/waiver-dr-id.json: waiver ids are WV-###
-stage-verdict/invalid/waiver-on-pass-item.json: a waiver is forbidden on a non-WAIVED result
+# ALLOWABLE needs authority, conditions and derivation
+common/invalid/allowable-without-authority.yaml: "$.fact[4]: 'authority' is a required property"
+# a COMPONENT subject names its PN
+common/invalid/component-without-pn.yaml: "$.subject[0]: 'PN' is a required property"
+# a datasheet source names a url or a retained artifact
+common/invalid/datasheet-without-locator.yaml: "$.source[0]: {'kind': 'DATASHEET', 'reference': 'some datasheet'} is not valid under any of the given schemas"
+# ESTIMATE needs uncertainty
+common/invalid/estimate-without-uncertainty.yaml: "$.fact[0]: 'uncertainty' is a required property"
+# a quantity is a value or an interval, not both
+common/invalid/interval-and-value.yaml: "should not be valid under {'anyOf': [{'required': ['lower']}, {'required': ['upper']}]}"
+# NOT_APPLICABLE needs reviewed_by
+common/invalid/na-unreviewed.yaml: "$.fact[0]: 'reviewed_by' is a required property"
+# obligation ids are <family>@<anchor> with a registered family and anchor grammar
+common/invalid/obligation-bad-anchor.yaml: "$.obligation[0].id: 'geometry.clearance@hinge' does not match"
+# a check result never writes WAIVED; only a stage verdict maps a covered FAIL or UNKNOWN to WAIVED
+common/invalid/outcome-entry-waived.yaml: "$.outcome_entry[0].outcome: 'WAIVED' is not one of ['PASS', 'FAIL', 'UNKNOWN', 'NOT_APPLICABLE']"
+# project paths have no dot segments
+common/invalid/path-traversal.yaml: "$.file_hash[0].path: 'hw/../etc/passwd' does not match"
+# safety or regulatory obligations are never waived
+common/invalid/safety-waiver.yaml: '$.waiver[0].safety_or_regulatory: False was expected'
+# an UNVALIDATED_TRIAL waiver needs expires and supervision
+common/invalid/trial-waiver-unsupervised.yaml: "$.waiver[0]: 'supervision' is a required property"
+# units are the closed symbol set
+common/invalid/unknown-unit.yaml: "$.quantity[0].units: 'inch' is not one of ["
+# until_change lists the files whose byte change ends the waiver, never free text
+common/invalid/until-change-text.yaml: "$.waiver[0].until_change: 'until the hinge geometry changes' is not of type 'array'"
+# a waiver carries its WV-### id
+common/invalid/waiver-without-id.yaml: "$.waiver[0]: 'id' is a required property"
+# an approval records the transcript hash, quote and time
+decision/invalid/approval-without-statement.yaml: "$: 'statement' is a required property"
+# an approved gate binds a PASS verdict
+decision/invalid/gate-approves-failed-verdict.yaml: "$.binding.verdict_result: 'PASS' was expected"
+# a GATE decision binds a STAGE verdict
+decision/invalid/gate-binds-proposal.yaml: "$.binding.kind: 'STAGE' was expected"
+# only a USER or AUTHORITY approves
+decision/invalid/lead-approves-gate.yaml: "$.actor.kind: 'LEAD' is not one of ['USER', 'AUTHORITY']"
+# a PROPOSAL binding names an immutable proposal under hw/decisions/proposals/DR-###/, never scratch
+decision/invalid/proposal-in-scratch.yaml: "$.binding.path: '.cad-work/u2/output/orientation.yaml' does not match '^hw/decisions/proposals/DR-[0-9]{3}/'"
+# a RELEASE approval binds the proposal and the RELEASE readiness verdict that hashes it
+decision/invalid/release-without-verdict.yaml: "$.binding: 'verdict' is a required property"
+# approval statement bytes are published at hw/decisions/statements/DR-###.txt, never in scratch
+decision/invalid/statement-in-scratch.yaml: "$.statement.path: '.cad-work/lead/sessions/20261103T100000Z/statements/DR-007.txt' does not match '^hw/decisions/statements/DR-"
+# SUPERSEDED refers to the old DR
+decision/invalid/supersede-without-refers.yaml: "$: 'refers' is a required property"
+# test temperature is required, as a value or an explicit UNKNOWN
+material-profile/invalid/condition-omitted.yaml: "$.properties[0].conditions: 'temperature' is a required property"
+# a FAMILY profile leaves grade UNKNOWN or NOT_APPLICABLE
+material-profile/invalid/family-with-known-grade.yaml: "$.grade.status: 'UNKNOWN' was expected"
+# enum casing is CAPS
+material-profile/invalid/lowercase-enum.yaml: "$.form: 'printed' is not one of ['PRINTED', 'BULK', 'WROUGHT', 'CAST', 'MOULDED', 'SHEET', 'ROD', 'FILM', 'PURCHASED', 'UNKNOWN']"
+# every property of a PRINTED profile states its specimen orientation (UNKNOWN allowed)
+material-profile/invalid/printed-without-orientation.yaml: "$.properties[0].conditions: 'orientation' is a required property"
+# a typical_not_allowable profile never holds an ALLOWABLE value
+material-profile/invalid/typical-claims-allowable.yaml: "should not be valid under {'required': ['basis'], 'properties': {'basis': {'const': 'ALLOWABLE'}}}"
+# an APPROVED orientation requires its decision
+part/invalid/approved-orientation-no-decision.yaml: "$.intent.route[0].orientation: 'decision' is a required property"
+# ASSEMBLY_ZERO frame requires import provenance
+part/invalid/assembly-zero-without-import.yaml: "$.model: 'import' is a required property"
+# revision letters exclude I, O, Q, S, X, Z; drafts are X1…
+part/invalid/bad-revision.yaml: "$.rev: 'I' does not match"
+# FINISHED_CRITICAL supports need allowance, finish and inspection
+part/invalid/finished-critical-support-incomplete.yaml: "$.intent.route[0].supports: 'allowance' is a required property"
+# a made operation requires capability (profile id or UNKNOWN)
+part/invalid/made-op-without-capability.yaml: "$.intent.route[1]: 'capability' is a required property"
+# a MAKE part requires manufacture
+part/invalid/make-without-manufacture.yaml: "$: 'manufacture' is a required property"
+# a PURCHASED operation forbids capability
+part/invalid/purchased-with-capability.yaml: "should not be valid under {'anyOf': [{'required': ['capability']}, {'required': ['supports']}, {'required': ['orientation']}]}"
+# a consequential UNKNOWN requires owner and question
+product/invalid/consequential-unknown-without-question.yaml: "$.risk.severity: 'question' is a required property"
+# additionalProperties: product carries no workflow stage (flow)
+product/invalid/flow-stage-field.yaml: "$: Additional properties are not allowed ('flow' was unexpected)"
+# an import's originals live at hw/imports/DR-###/original, never under hw/docs/
+product/invalid/import-snapshot-in-docs.yaml: "$.import.original_snapshot: 'hw/docs/import/original' does not match"
+# a KNOWN fact requires sources
+product/invalid/known-fact-without-source.yaml: "$.identity.owner: 'sources' is a required property"
+# rigor is maker|pro|regulated (lowercase) or an UNKNOWN fact; PRO matches neither
+product/invalid/rigor-default-pro.yaml: "$.rigor: 'PRO' is not valid under any of the given schemas"
+# a known service class requires its decision
+product/invalid/service-class-without-decision.yaml: "$.service: 'decision' is a required property"
+# format must be cad-agent-skills and record_version 1
+product/invalid/wrong-format.yaml: "$.format: 'cad-agent-skills' was expected"
+# FINAL requires approval, integrity and inventory
+release-manifest/invalid/final-without-integrity.json: "$: 'integrity' is a required property"
+# a FINAL manifest names the RELEASE readiness verdict
+release-manifest/invalid/final-without-readiness.json: "$: 'readiness' is a required property"
+# a PROPOSAL excludes the not-yet-written approval and integrity
+release-manifest/invalid/proposal-with-approval.json: "should not be valid under {'anyOf': [{'required': ['approval']}, {'required': ['integrity']}, {'required': ['inventory']}, {'required': ['readiness']}]}"
+# a PROPOSAL never hashes the RELEASE readiness verdict (that verdict hashes the proposal)
+release-manifest/invalid/proposal-with-readiness.json: "should not be valid under {'anyOf': [{'required': ['approval']}, {'required': ['integrity']}, {'required': ['inventory']}, {'required': ['readiness']}]}"
+# REV letters exclude I, O, Q, S, X, Z
+release-manifest/invalid/rev-reused-letter.json: "$.rev: 'I' does not match"
+# the manifest never inventories itself
+release-manifest/invalid/self-listed.json: '$.inventory[6].path: ''release-manifest.json'' should not be valid under {''pattern'': ''^release-manifest\\.json$''}'
+# a release states a known service class
+release-manifest/invalid/unknown-service-scope.json: "$.scope.service_class: 'UNKNOWN' should not be valid under {'const': 'UNKNOWN'}"
+# REQ ids are REQ-### 
+requirements/invalid/bad-requirement-id.yaml: "$.requirements[0].id: 'REQ-1' does not match"
+# requirement requires facets
+requirements/invalid/missing-facets.yaml: "$.requirements[0]: 'facets' is a required property"
+# the four lists are required, even when empty
+requirements/invalid/missing-questions-list.yaml: "$: 'questions' is a required property"
+# a RESOLVED question requires resolution
+requirements/invalid/resolved-without-resolution.yaml: "$.questions[1]: 'resolution' is a required property"
+# a safety requirement must have waiver_policy FORBIDDEN
+requirements/invalid/safety-waivable.yaml: "$.requirements[1].waiver_policy: 'FORBIDDEN' was expected"
+# installed policy is recorded by path and plugin name/version, never hashed
+stage-verdict/invalid/installed-policy-hash.json: "$.policy: Additional properties are not allowed ('sha256' was unexpected)"
+# every stage after GROUND names its predecessor
+stage-verdict/invalid/missing-predecessor.json: "$: 'predecessor' is a required property"
+# PASS requires no blockers
+stage-verdict/invalid/pass-with-blocker.json: "$.blockers: [{'code': 'DUE_UNKNOWN', 'text': 'motion.sweep timed out', 'obligation': 'motion.sweep@assembly'}] is expected to be empty"
+# a PASS verdict accepts only PASS, WAIVED and NOT_APPLICABLE results
+stage-verdict/invalid/pass-with-fail-item.json: "$.results[1].result: 'FAIL' is not one of ['PASS', 'WAIVED', 'NOT_APPLICABLE']"
+# PASS cannot accept a FAIL or UNKNOWN result
+stage-verdict/invalid/pass-with-unknown-result.json: "$.results[0].result: 'UNKNOWN' is not one of ['PASS', 'WAIVED', 'NOT_APPLICABLE']"
+# a PASS verdict hashes its published obligations.yaml
+stage-verdict/invalid/pass-without-obligations.json: "$: 'obligations' is a required property"
+# verdicts are PASS, FAIL or BLOCKED; no provisional stage
+stage-verdict/invalid/provisional-result.json: "$.result: 'PROVISIONAL' is not one of ['PASS', 'FAIL', 'BLOCKED']"
+# a required review must be PASS
+stage-verdict/invalid/review-required-not-passed.json: "$.review.verdict: 'PASS' was expected"
+# only VERSION or CARRIED_FORWARD results are accepted
+stage-verdict/invalid/unit-result-accepted.json: "$.results[0].binding: 'UNIT' is not one of ['VERSION', 'CARRIED_FORWARD']"
+# a WAIVED result names its WV-### waiver
+stage-verdict/invalid/waived-without-waiver.json: "$.results[1]: 'waiver' is a required property"
+# waiver ids are WV-###
+stage-verdict/invalid/waiver-dr-id.json: "$.results[1].waiver: 'DR-015' does not match"
+# a waiver is forbidden on a non-WAIVED result
+stage-verdict/invalid/waiver-on-pass-item.json: "should not be valid under {'required': ['waiver']}"

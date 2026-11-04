@@ -59,6 +59,7 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
+  - delivery.integrity@product (when this attempt merges at least one worker delivery)
   - intake.use_case@product
   future: []
   verdict: PASS
@@ -67,7 +68,7 @@ stages:
   - every template question Q-001 to Q-017 asked before any material or process is named
   - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker
   - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
-  - open questions with owners for tap force, sun exposure, service life, dimensional stability, holding and tipping, printer envelope and material approvals
+  - each fact a reply leaves open recorded as a typed UNKNOWN with owner and question (cad-select references/selection.md "Ask and finish intake" step 2) for screen-tap force, sun exposure, service life and wear, dimensional stability, the printer envelope and the material approvals; holding, friction, tipping and durability are release_scope exclusions from A-15, not new questions
   - the gate packet lists Q-023 printer envelope and Q-024 material approvals as limits due at INTENT, and the out-of-scope unknowns (consequential false) as owned open questions; none blocks GROUND (cad-select references/selection.md "Scope of each unknown")
   must_not:
   - choose a material, process, printer setting, tolerance or clearance

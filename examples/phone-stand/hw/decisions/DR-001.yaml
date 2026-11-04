@@ -16,6 +16,7 @@ actor:
   name: SYNTHETIC demo owner (scripted answer A-12)
 time: '2026-11-03T09:20:00Z'
 statement:
+  path: hw/decisions/statements/DR-001.txt
   transcript_sha256: d69ae45a35214401783a3ad9ab90e0290294b2f7e1fde51378a818de8a733cad
   quote: 'APPEARANCE_CONCEPT: this release is a concept package to review the form, the CAD fit of my phone and printability; holding a real phone every day is a later, separate scope.'
   time: '2026-11-03T09:20:00Z'

@@ -16,6 +16,7 @@ actor:
   name: product owner
 time: '2026-11-03T11:00:00Z'
 statement:
+  path: hw/decisions/statements/DR-021.txt
   transcript_sha256: b04b9ca8f938a8709a88ec34f3635f819d992fe7dbda43325b045fd6db1d84a9
   quote: approve waiver WV-001 for the seam on the STD-0001 front face
   time: '2026-11-03T11:00:00Z'
@@ -35,7 +36,11 @@ waiver:
   safety_or_regulatory: false
   limitation: a visible seam line remains on the front face
   operating_envelope: appearance only; no load, fit or motion depends on front_face
-  until_change: front_face geometry, the print orientation or the slicer seam rule changes
+  until_change:
+  - path: hw/parts/STD-0001/part.yaml
+    sha256: dbb88f7fccead8c49d93f950cbefe3c1970cf0da4ad392b96627c1a86366f128
+  - path: hw/manufacturing/capabilities.yaml
+    sha256: b0dcab883f942bb8b0bec5dc7d5d30914e5b245159e975681881b264ff592dc3
   reason: the seam cannot be moved off the curved face without changing the approved orientation
   consequence: a cosmetic seam is visible to the user
   authority:

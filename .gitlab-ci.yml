@@ -84,6 +84,8 @@ static-checks:
       }
 
       # All valid fixtures of a root validate together; invalid fixtures must report their indexed error.
+      # Prints the validator-output substring indexed under key $2 in $1; only a line that starts with "$2:" matches,
+      # so the "# intent" comment above each entry is ignored.
       expected_error() {
         local index_file="$1" key="$2"
         awk -v key="$key" '
@@ -112,7 +114,8 @@ static-checks:
       }
 
       validate_fixtures() {
-        local schema="$1" fixture_dir="$2" instance key index_file="${fixture_dir%/*}/expected-errors.yaml"
+        local schema="$1" fixture_dir="$2" instance key index_file
+        index_file="${fixture_dir%/*}/expected-errors.yaml"
         local -a valid=("$fixture_dir"/valid/*) invalid=("$fixture_dir"/invalid/*)
         ((${#valid[@]} > 0 && ${#invalid[@]} > 0)) || fail "Missing valid or invalid fixtures in $fixture_dir"
         validate_many "$schema" "${valid[@]}"
@@ -303,19 +306,7 @@ static-checks:
         root="${relative#invalid/}"
         schema="$full_schemas/${root%%/*}.schema.json"
         [[ -f "$schema" ]] || fail "Missing full schema for regression: $instance"
-        expected="$(awk -v key="$relative" '
-          substr($0, 1, length(key) + 1) == key ":" {
-            value = substr($0, length(key) + 2)
-            sub(/^[[:space:]]+/, "", value)
-            quote = substr(value, 1, 1)
-            if (quote == "\047" || quote == "\042") { value = substr(value, 2, length(value) - 2) }
-            if (quote == "\047") { gsub(/\047\047/, "\047", value) }
-            print value
-            found = 1
-            exit
-          }
-          END { if (!found) exit 1 }
-        ' "$expected_errors")" || fail "Missing intended error in $expected_errors: $relative"
+        expected="$(expected_error "$expected_errors" "$relative")" || fail "Missing intended error in $expected_errors: $relative"
         if actual="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then fail "Invalid regression unexpectedly validated: $instance"; fi
         if ! grep -Fq -- "$expected" <<<"$actual"; then
           printf 'Regression error mismatch: %s\nExpected substring: %s\nValidator output:\n%s\n\n' "$instance" "$expected" "$actual" >&2

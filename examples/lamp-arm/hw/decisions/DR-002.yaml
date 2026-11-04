@@ -16,6 +16,7 @@ actor:
   name: SYNTHETIC demo owner (scripted answer L-12)
 time: '2026-11-03T10:30:00Z'
 statement:
+  path: hw/decisions/statements/DR-002.txt
   transcript_sha256: 5fc444f1e68f8e0f8a281f3cc42b71bbeedc9d6d5647a41383fd6f9fd2f2f013
   quote: 'FUNCTIONAL_DEMO: a supervised bench demonstration of reach and pose holding, run by me for up to three months; not unsupervised or everyday use.'
   time: '2026-11-03T10:30:00Z'

@@ -15,6 +15,7 @@ actor:
   name: product owner
 time: '2026-11-03T12:00:00Z'
 statement:
+  path: hw/decisions/statements/DR-023.txt
   transcript_sha256: ddef2f5d2bc4241c8475c9fb28390cdc365bb9e9f8645445453af77300d03269
   quote: ok, waive the bore too
   time: '2026-11-03T12:00:00Z'
