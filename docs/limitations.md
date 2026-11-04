@@ -39,6 +39,9 @@ model routing and resource loads remain unproved until live smoke runs per host.
 - Kiro headless cannot approve denied tools without `--trust-all-tools`.
 - A concurrent OMP process can delete the shared plugin cache during a run.
 - `claude plugin details` reports zero agents even though the session `init` lists all five.
+- Claude Code has no per-role filesystem isolation: a worker's shell and file tools reach every path the session can.
+  In the round-2 smoke a checker wrote and then deleted `/tmp/live.txt` and `/tmp/inv.txt`; only the worker's own
+  `boundary.violations` report and the lead's rejection of the delivery caught it.
 
 `uv lock --script` needs package-index/network access to resolve and lock
 dependencies. A lock does not imply offline availability. Runtime CAD
