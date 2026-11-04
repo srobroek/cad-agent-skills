@@ -34,6 +34,12 @@ not provide OS isolation. An OS read-only mount or sandbox can provide stronger
 confinement, but this repository installs none. Host discovery, permissions,
 model routing and resource loads remain unproved until live smoke runs per host.
 
+### Observed host limitations
+
+- Kiro headless cannot approve denied tools without `--trust-all-tools`.
+- A concurrent OMP process can delete the shared plugin cache during a run.
+- `claude plugin details` reports zero agents even though the session `init` lists all five.
+
 `uv lock --script` needs package-index/network access to resolve and lock
 dependencies. A lock does not imply offline availability. Runtime CAD
 dependencies are installed in the product project, not shipped here.
