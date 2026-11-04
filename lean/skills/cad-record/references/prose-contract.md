@@ -361,7 +361,7 @@ Generated YAML: the self-contained assignment of one worker.
 | `task` | yes | `text` |
 | `subjects` | yes | `subjects` |
 | `input_inventory` | yes | `{sha256 sha256, files}`: `sha256` is the set digest over `files`; `files [{path hw_path, sha256 sha256}]≥1` required, optional `bytes` integer ≥ 0 |
-| `resources` | yes | `{plugin plugin, skills, schemas, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
+| `resources` | yes | `{plugin plugin, skills, rubric, schemas, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
 | `boundary` | yes | `{project_root absolute_path, scratch scratch_path, writable [scratch_path]≥1 unique, locked [hw_path] unique}` required, optional `read_only [project_path] unique`; a worker writes only under `.cad-work/` |
 | `expected` | yes | `{outputs [{target hw_path, kind text}], checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique` |
 | `lead` | yes | `{session text}` required, optional `task_id text` |
@@ -371,6 +371,8 @@ Generated YAML: the self-contained assignment of one worker.
 - `resources.schemas`: `[{name, path absolute_path}]`, all required; `name` is `common` or one of the ten schema roots
   listed at the top. A prose root is never listed; its contract reaches the worker through the cad-record skill.
 - `resources.role_reference`: `{name text, path absolute_path}` required, optional `uri` (same pattern).
+- `resources.rubric`: `{name =rubric, path absolute_path}` required, `path` ending in `/cad-review/references/rubric.md`; optional
+  `uri =skill://cad-review/references/rubric.md`.
 - `resources.plugin` is name and version from the cad-flow SKILL.md metadata; no manifest path, no hash.
 
 ## worker-delivery

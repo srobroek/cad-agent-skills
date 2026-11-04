@@ -56,7 +56,7 @@
       "description": "literal resolved absolute paths from the lead preflight and the installed plugin name and version; installed bytes are not hashed",
       "type": "object",
       "additionalProperties": false,
-      "required": ["plugin", "skills", "schemas", "role_reference"],
+      "required": ["plugin", "skills", "rubric", "schemas", "role_reference"],
       "properties": {
         "plugin": {"$ref": "common.schema.json#/$defs/plugin"},
         "skills": {
@@ -138,6 +138,22 @@
             "name": {"$ref": "common.schema.json#/$defs/text"},
             "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
             "uri": {"type": "string", "pattern": "^skill://cad-[a-z]+(/[A-Za-z0-9._/-]+)?$"}
+          }
+        },
+        "rubric": {
+          "description": "the installed cad-review rubric reference every role grades with",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "path"],
+          "properties": {
+            "name": {"const": "rubric"},
+            "path": {
+              "allOf": [
+                {"$ref": "common.schema.json#/$defs/absolute_path"},
+                {"pattern": "/cad-review/references/rubric\\.md$"}
+              ]
+            },
+            "uri": {"const": "skill://cad-review/references/rubric.md"}
           }
         },
         "layout": {

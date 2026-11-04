@@ -22,6 +22,10 @@ resources:
     uri: skill://cad-model
   - name: cad-design
     path: /Users/me/.agents/skills/cad-design/SKILL.md
+  rubric:
+    name: rubric
+    path: /Users/me/.agents/skills/cad-review/references/rubric.md
+    uri: skill://cad-review/references/rubric.md
   schemas:
   - name: part
     path: /Users/me/.agents/skills/cad-record/schemas/part.schema.json

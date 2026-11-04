@@ -25,6 +25,10 @@ resources:
   - name: cad-record
     path: /Users/me/.agents/skills/cad-record/SKILL.md
     uri: skill://cad-record
+  rubric:
+    name: rubric
+    path: /Users/me/.agents/skills/cad-review/references/rubric.md
+    uri: skill://cad-review/references/rubric.md
   schemas:
   - name: check-result
     path: /Users/me/.agents/skills/cad-record/schemas/check-result.schema.json
