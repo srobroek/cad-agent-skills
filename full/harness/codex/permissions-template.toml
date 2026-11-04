@@ -1,0 +1,5 @@
+# Codex custom agents inherit the parent sandbox and approval policy.
+# Per-agent filesystem write roots are unavailable in custom profiles.
+# The DFM reviewer uses features.shell_tool=false to remove shell execution.
+# Writers' brief boundaries are instructions, not per-unit OS isolation.
+# This is explanatory guidance, not a custom-agent profile.
