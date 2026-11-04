@@ -14,7 +14,8 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
 
 1. A COMMAND producer writes its own program `.cad-work/<unit>/check.py` as a PEP 723 script, locks it with
    `uv lock --script <absolute path>` and runs it with `uv run --locked --script <absolute path>`; the lead retains the program and lock
-   under `hw/checks/vN/<check>/<attempt>/source/`.
+   under `hw/checks/vN/<check>/<attempt>/source/`, or for `drawing.coverage` under `hw/drawings/vN/<SUBJECT>/source/`
+   ([cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage)).
 2. The checker never runs or imports a producer's `build.py` or `check.py` as its method; producer exports are inputs only.
 3. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
    `MISSING_RESULT` at acceptance.

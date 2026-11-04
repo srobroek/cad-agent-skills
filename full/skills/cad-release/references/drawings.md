@@ -5,7 +5,8 @@ Owner: cad-release. A sheet here is a reviewed model-generated engineering drawi
 approved. It is not producer-ready, certified, or conformant to ISO 128, ISO 129, ASME Y14.5 or any other
 standard; a regime or general tolerance printed on a sheet repeats the record's statement and claims no
 conformance. Intent fields are the part root's `drawing` block; paths are cad-record `layout.json`
-(`drawing.sheet_svg`, `drawing.sheet_pdf`, `drawing.sheet_png`, `drawing.coverage`, `drawing.bundle_manifest`);
+(`drawing.sheet_svg`, `drawing.sheet_pdf`, `drawing.sheet_png`, `drawing.coverage`, `drawing.source`,
+`drawing.artifacts`, `drawing.bundle_manifest`);
 result fields are the `check-result` root; anchors and producers of the two drawing families are
 [cad-verify Check families](../../cad-verify/references/families.md).
 
@@ -47,20 +48,20 @@ Runs in DETAIL and FREEZE after `build-version`, so every sheet binds the versio
    (the version programs and their locks), and the STEP in the state the intent draws
    (`hw/versions/vN/definition/parts/<PN>.step` or `hw/versions/vN/manufacturing/<PN>/part.step`;
    `hw/versions/vN/definition/assembly.step` for `assembly`). Expected outputs: `sheet-<N>.svg`, `.pdf` and `.png`
-   for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`.
+   for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`; `build.py` and `build.py.lock`, targets
+   `hw/drawings/vN/<SUBJECT>/source/`; `font-check.json`, target `hw/drawings/vN/<SUBJECT>/artifacts/font-check.json`.
 3. The unit reproduces the feature witnesses, runs the font check (Drawing program), then writes, locks and runs
    `.cad-work/<unit>/build.py`; it reviews each PNG itself and reports every characteristic it could not draw as an
    UNKNOWN in the delivery. A font check that does not match delivers MAJOR with `ready: false`; the lead stops
    the stage BLOCKED (`DELIVERY_FAILED`) with the font named, and no sheet is published.
-4. Accept deliveries (cad-flow references/worker-delivery.md); publish the sheets byte for byte to
-   `hw/drawings/vN/<SUBJECT>/`. A unit that delivers no sheet for a subject leaves `drawing.coverage@<PN>`
-   UNKNOWN `MISSING_INPUT`.
+4. Accept deliveries (cad-flow references/worker-delivery.md); publish every accepted output byte for byte to its
+   target. A unit that delivers no sheet for a subject leaves `drawing.coverage@<PN>` UNKNOWN `MISSING_INPUT`.
 5. `drawing.coverage` and `drawing.preview` run in `run-checks` (methods below). After coverage is accepted,
    write `hw/drawings/vN/<SUBJECT>/bundle-manifest.json`: `kind: DRAWING`, binding `VERSION`, `input` the
    manifest, the STEP, the record snapshot and the version programs read, `recipe` the drawing program's argv,
    packages and platform, `policy` from preflight, `files` every sheet (`DOCUMENT` for SVG and PDF, `IMAGE` for
-   PNG), `coverage.json` (`DATA`) and the program `.cad-work/<unit>/build.py` and its lock (`SOURCE`, kept in
-   scratch, no gate credit) → it validates.
+   PNG), `coverage.json` (`DATA`), `artifacts/font-check.json` (`ARTIFACT`), and the drawing and coverage programs
+   with their locks under `source/` (`SOURCE`, `LOCK`), each by its `hw/drawings/vN/<SUBJECT>/` path → it validates.
 
 ## Drawing program
 
@@ -101,7 +102,8 @@ the ones [cad-model build123d calls](../../cad-model/references/build123d.md) ch
   the calibration string `0123456789.,+-±°ØRM` at the sheet's `font_size` once with `Text(..., font_path=<retained
   file>)` and once with `Text(..., font=<Draft family>)`; their face area and bounding-box size must be equal
   within 1e-6 mm² and 1e-6 mm. Write both values, the family, the file path and its sha256 to
-  `.cad-work/<unit>/output/font-check.json` (role `DATA` in the delivery and the drawing bundle). Unequal values
+  `.cad-work/<unit>/output/font-check.json` (role `DATA` in the delivery; published as
+  `hw/drawings/vN/<SUBJECT>/artifacts/font-check.json`, role `ARTIFACT` in the drawing bundle). Unequal values
   mean the family resolves to another font: stop, never draw.
 - Export with `ExportSVG(unit=Unit.MM)`: layers `Visible` and `Hidden`, every view, dimension and label added.
   PDF and PNG come from that SVG through an installed, approved converter or FreeCAD TechDraw, with its version
@@ -119,7 +121,10 @@ d1 = ExtensionLine(border=bore_edge, offset=8 * MM, draft=draft, tolerance=crite
 The method of family `drawing.coverage`: check `drawing-<subject in lowercase>`, attempt `a1`, obligation
 `drawing.coverage@<PN>` or `@assembly`, `facet: CAD_VALID`, result `hw/drawings/vN/<SUBJECT>/coverage.json`, binding
 `VERSION`. A `cad-checker` unit runs it with its own program on the draft-drawings inputs: it reproduces the
-witnesses the same way, reads the STEP and opens every actual SVG, PNG and PDF of the subject.
+witnesses the same way, reads the STEP and opens every actual SVG, PNG and PDF of the subject. The lead retains
+that program and its lock under `hw/drawings/vN/<SUBJECT>/source/`, and `coverage.json`
+`implementation.source_files` name those published paths with their sha256; neither `source_files` nor
+`artifacts` lists `coverage.json` itself.
 
 The coverage table is the result's `outcomes`, one entry per characteristic:
 

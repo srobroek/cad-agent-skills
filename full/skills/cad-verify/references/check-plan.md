@@ -132,10 +132,10 @@ Runs at ANALYSIS before `freeze-inputs`; it edits no case.
 
 Runs at ANALYSIS, FREEZE and RELEASE after `run-checks` has published this attempt's results.
 
-1. Read the snapshot `requirements.yaml`, `obligations.yaml`, every accepted result of `vN` (VERSION or CARRIED_FORWARD) and every APPROVED
-   WAIVER DR. At RELEASE, also read the approved `vF` verdict and its accepted results: its `expected` obligations count as expected here
-   with their accepted outcomes, and its `future` obligations are this attempt's expected ones, so every row carries the frozen outcomes
-   and the RELEASE `physical.test` outcomes, and no row is future.
+1. Read the snapshot `requirements.yaml`, `hw/versions/vN/obligations.yaml`, every accepted result of `vN` (VERSION or CARRIED_FORWARD) and
+   every APPROVED WAIVER DR. At RELEASE, also read the approved `vF` verdict and its accepted results: its `expected` obligations count as
+   expected here with their accepted outcomes, and its `future` obligations are this attempt's expected ones, so every row carries the
+   frozen outcomes and the RELEASE `physical.test` outcomes, and no row is future.
 2. One row per requirement × subject × facet × criterion. `obligations`: the expected obligations whose outcomes name that requirement,
    subject and facet, plus the future obligations of that requirement and facet in `obligations.yaml`. Row `outcome`, first match:
    - WAIVED when every FAIL or UNKNOWN obligation is covered by an approved waiver under
@@ -143,11 +143,19 @@ Runs at ANALYSIS, FREEZE and RELEASE after `run-checks` has published this attem
      waiver DR;
    - FAIL when any is FAIL; UNKNOWN (with the result's `unknown_code`) when any is UNKNOWN;
    - PLANNED when any is future;
-   - NOT_APPLICABLE when all are; else PASS. A row with no obligation is UNKNOWN `INCOMPLETE` and a `SCOPE_GAP`. A row never cites the
-     `verification.index` result, which reads this index.
+   - NOT_APPLICABLE when all are; else PASS.
+
+   A row with no obligation is written with `obligations: []`, UNKNOWN `INCOMPLETE`, a `reason` and no `results`; it is a `SCOPE_GAP`. A
+   row never cites the `verification.index` result, which reads this index.
 3. `results` lists each cited `result.json` with its sha256; nothing is copied from a prior index, a CSV or a summary.
-4. Write `hw/verification/vN/verification.yaml` (root `verification`, rows sorted by requirement, subject, facet), then `verification.csv`
-   with the same rows and columns requirement, subject, facet, criterion, method, due, outcome, unknown_code, waiver, results; then the
-   VERIFICATION bundle manifest.
-5. Dispatch the `verification.index` check (references/families.md): an independent checker re-derives the rows and compares them; its
+4. Write `hw/verification/vN/verification.yaml`: `format: cad-agent-skills.verification`, `schema_version: 1`, `version` (vN), `stage`,
+   `version_manifest_sha256` (the sha256 of `hw/versions/vN/manifest.json`) and `rows`, sorted by requirement, subject anchor
+   ([cad-record contract index — ID families](../../cad-record/references/contract-index.md#id-families)), facet, then criterion `id`,
+   else `property`, an UNKNOWN criterion last. It validates against the `verification` root.
+5. Write `verification.csv` with the same rows and columns requirement, subject, facet, criterion, method, due, outcome, unknown_code,
+   waiver, results.
+6. Write `hw/verification/vN/bundle-manifest.json` last: `kind: VERIFICATION`, binding `VERSION` (vN and the manifest digest), `input`
+   each cited `result.json` and `obligations.yaml` with its sha256, `recipe: {kind: REVIEW, inspected: <the input files>}`, `policy` from
+   preflight, `files` `verification.yaml` and `verification.csv` (role `DATA`), `complete: true` → it validates.
+7. Dispatch the `verification.index` check (references/families.md): an independent checker re-derives the rows and compares them; its
    result is published before `accept-results`.

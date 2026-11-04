@@ -136,8 +136,11 @@ procurement identity and all relevant conditions. Typical supplier data and stan
 calculations need an allowable, and which may use a typical value with its uncertainty, is
 [cad-verify mass-loads — load.hand](../../cad-verify/references/mass-loads.md#loadhand) step 4.
 
-Store the assessed options and recommendation in the cad-record `selection` prose root. The lead checks the selection table, input inventory
-and evidence; the INTENT gate packet presents the options, and its `choose` reply approves the selection
+Store the assessed options and recommendation in the cad-record `selection` prose root. Its `assessment` lists `inputs`, every `hw/` file
+the assessment read with its sha256 (never `hw/manufacturing/selection.yaml` or a decision written from this assessment), `input_sha256`,
+the set digest over `inputs` ([cad-record record — Inventory digest](../../cad-record/references/record.md#inventory-digest)), `method` and
+`date`. The lead checks the selection table, input inventory and evidence; the INTENT gate packet presents the options, and its `choose`
+reply approves the selection
 ([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates)); no separate SELECTION approval is
 asked. Selection work does not itself alter a part, requirement, interface, material library or design; until the gate is APPROVED, report
 WAITING_FOR_USER and make no design change.
