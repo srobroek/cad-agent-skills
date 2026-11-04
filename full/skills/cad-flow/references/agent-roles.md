@@ -18,8 +18,9 @@ never cad-flow SKILL.md or another lead reference. Grading uses the rubric owned
 6. Writers build and check with their own programs `.cad-work/<unit>/build.py` and `check.py`. Use
    [cad-model's unit build procedure](../../cad-model/references/exports.md#unit-build) and
    [cad-verify's implementation contract](../../cad-verify/references/results.md#implementation-kind); keep each program's uv lock beside it
-   as `build.py.lock` or `check.py.lock`. Each expected check gets its result file under `output/checks/<check>/`, bound `VERSION` when the
-   brief names a `version`, else `UNIT`.
+   as `build.py.lock` or `check.py.lock`, at the unit root, never under `output/` and never as a delivery output: the lead retains them
+   at acceptance. Each expected check gets its result file under `output/checks/<check>/`, bound `VERSION` when the brief names a
+   `version`, else `UNIT`; its `source_files` name `source/<file>` beside the result's target with each program's sha256.
 7. Grade the whole delivery PASS, MINOR or MAJOR with the [cad-review rubric](../../cad-review/references/rubric.md).
 8. Writers write `.cad-work/<unit>/delivery.json` (root [worker-delivery](../../cad-record/schemas/worker-delivery.schema.json), fields
    below) and validate it against the brief's schema path → exit 0.

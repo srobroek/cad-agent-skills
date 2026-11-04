@@ -52,8 +52,9 @@ Read the brief inputs only, from their copies under `.cad-work/<unit>/input/`. W
      or the alternative candidate the variant depends on;
    - `requirements`: the REQ ids the variant addresses;
    - `hard_outcomes[]`: one per mandatory requirement in scope. `PASS` or `FAIL` needs the requirement's criterion,
-     a method that establishes it at concept level (envelope, reach, travel, an estimate with its uncertainty) and
-     its `source`; otherwise `UNKNOWN` with the `reason`;
+     a geometric method at concept level (envelope, reach, travel, clearance) and its `source`; a criterion that
+     rests on a material property, a load or a life is `UNKNOWN` with the `reason`, as is any criterion without such
+     a method;
    - `feasibility`: `FEASIBLE` with no FAIL and no UNKNOWN, `CONDITIONAL` with an UNKNOWN and no FAIL, `EXCLUDED`
      with a FAIL;
    - `dependencies`: each route, PN or functional-contract change beyond approved scope;

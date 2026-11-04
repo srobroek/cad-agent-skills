@@ -12,8 +12,9 @@ Input: the brief's `version`, `subjects`, `expected.checks` and `expected.obliga
 requirements, interfaces, assembly, parts, the version manifest, published results with their bundle manifests and `source/` programs,
 obligations, drawings, BOM and verification index.
 
-1. Read only the copies under `.cad-work/<unit>/input/` and the brief's `boundary.read_only` paths. Run, hash, validate and write nothing. A
-   file you need that is not in the inventory is a MAJOR finding, never a guess.
+1. Read only the copies under `.cad-work/<unit>/input/` and the brief's `boundary.read_only` paths. Run no program (on Codex, shell read
+   commands only: [cad-flow agent roles — Roles](../../cad-flow/references/agent-roles.md#roles)); hash, validate and write nothing. A file
+   you need that is not in the inventory is a MAJOR finding, never a guess.
 2. Record each file you read, other checks' `result.json` and `bundle-manifest.json` included, as an `inspected` entry with the sha256 the
    brief inventory gives for it; never list this review's own result.
 3. List coverage from the version's expected obligations, one entry per obligation:

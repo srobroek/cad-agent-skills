@@ -8,7 +8,7 @@ roots for capability templates and actual profiles (`cad-record/references/prose
 ## Sourced starter profiles
 
 The 17 profiles in `cad-record/assets/manufacturing/material-profiles/` preserve the source identities, source wording and quoted values,
-units, conditions, profile unknowns and caveats. Enum values alone are translated to U1's CAPS contract.
+units, conditions, profile unknowns and caveats. Enum values alone are translated to the CAPS enums of the cad-record material-profile root.
 `assets/manufacturing/material-profiles/README.md` explains source limitations and use. Treat every starter as typical comparison material,
 never as a purchased-lot identity, approved process/material combination, physical-performance evidence or design allowable.
 

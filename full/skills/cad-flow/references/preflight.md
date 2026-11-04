@@ -11,19 +11,21 @@ Runs before every other preflight command.
 1. `harness` is the host this conversation runs in, known from its own system prompt and tool names: `OMP`, `CLAUDE`, `CODEX`,
    `OPENCODE` or `KIRO`. Never infer it from environment variables or the process tree: a shell another host started passes on that
    host's variables.
-2. `session` is the native id of this conversation, read only from the row of `harness` by printing that one variable (on Codex
-   `printf '%s\n' "${CODEX_THREAD_ID-}"`), never by listing or searching the environment. Unset or empty → `UNAVAILABLE-<started stamp>`.
+2. `session` is the native id of this conversation, read only from the row of `harness` by printing that one variable through the host's
+   shell tool (`printenv CODEX_THREAD_ID`), never from an eval or REPL kernel, whose environment can be stale, and never by listing or
+   searching the environment. Unset, empty or failing the row's check → `UNAVAILABLE-<started stamp>`.
 
-   | `harness`  | `session` source                                                             |
-   | ---------- | ---------------------------------------------------------------------------- |
-   | `OMP`      | `$PI_SESSION_ID`                                                             |
-   | `CLAUDE`   | `$CLAUDE_CODE_SESSION_ID`                                                    |
-   | `CODEX`    | `$CODEX_THREAD_ID`                                                           |
-   | `OPENCODE` | `$OPENCODE_SESSION_ID`                                                       |
-   | `KIRO`     | none: Kiro exports no session variable; always `UNAVAILABLE-<started stamp>` |
+   | `harness`  | `session` source (shell tool)                                                              |
+   | ---------- | ------------------------------------------------------------------------------------------ |
+   | `OMP`      | `printenv PI_SESSION_ID`; the value appears in `printenv PI_SESSION_FILE`                  |
+   | `CLAUDE`   | `printenv CLAUDE_CODE_SESSION_ID`                                                          |
+   | `CODEX`    | `printenv CODEX_THREAD_ID`: the thread id `codex resume` takes and its rollout file names |
+   | `OPENCODE` | `printenv OPENCODE_SESSION_ID`                                                             |
+   | `KIRO`     | none: Kiro exports no session variable; always `UNAVAILABLE-<started stamp>`               |
 
 3. A variable of another row (`PI_*`, `CLAUDE_*`, `CODEX_*`, `OPENCODE_*`) is never `session` and never evidence of `harness`; never
-   invent an id. An `UNAVAILABLE-*` session reports that resume matching and fork detection are unavailable on this host.
+   invent an id. An `UNAVAILABLE-*` session is reported to the user in the first reply: resume matching and fork detection are
+   unavailable on this host.
 4. `isolation` is `NOT_APPLICABLE`, and no `omp` command runs, on every harness except OMP.
 5. Harness `OMP` only: `omp config get task.isolation.enabled --json` prints `false` → `isolation: DISABLED`; otherwise stop and ask
    the user to set it, because an isolated worker writes into a clone the lead never reads.

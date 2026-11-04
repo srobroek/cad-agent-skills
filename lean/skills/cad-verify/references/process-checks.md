@@ -60,7 +60,7 @@ Per component with `transparency` TRANSPARENT or TRANSLUCENT, or a requirement f
 (SKILL.md MUST on transparency); this check verifies the record against it.
 
 1. FAIL [`fdm_optical`] when any operation forming the optical region is FDM, whatever the filament's name or colour.
-2. FAIL [`resin_optical`] when a resin print stands in for an optical criterion without a sourced resin qualification for that criterion.
+2. FAIL [`resin_optical`] when any resin print forms the optical region, whatever the resin's name, clarity or qualification.
 3. PASS needs a purchased transparent part or identified transparent stock: traceable grade, thickness, supplier and sourced optical
    criterion, on a route whose capability approves that stock.
 4. Actual transmission of the made part is a `physical.test` obligation; until it exists the optical requirement's PHYSICALLY_VALIDATED

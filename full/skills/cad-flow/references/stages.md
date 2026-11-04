@@ -71,13 +71,16 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 ### run-checks
 
 1. Run families in `check_order`. The lead runs `record.schema` ([cad-record validation](../../cad-record/references/validation.md)),
-   `record.ownership`, `record.inputs` and `delivery.integrity` (hash and ownership audits). A `cad-checker` unit runs every other family; a
-   `cad-mech-dfm-reviewer` unit runs `review.mechanical_dfm`. Units of families that read no result of another pending family go out in one
-   batch ([delegation](delegation.md)).
+   `record.ownership`, `record.inputs` and `delivery.integrity` (hash and ownership audits) and writes each of their results with
+   `producer_role: lead`. A `cad-checker` unit runs every other family; a `cad-mech-dfm-reviewer` unit runs `review.mechanical_dfm`. Units
+   of families that read no result of another pending family go out in one batch ([delegation](delegation.md)).
 2. Every stage result binds `VERSION` (vN and manifest digest). A worker's UNIT result is never stage evidence; a checker may read scratch
    first, then emits its VERSION result on the identical inventoried input.
-3. When a batch has returned, accept its results ([worker-delivery](worker-delivery.md)) and publish each to
-   `hw/checks/vN/<check>/<attempt>/` before the batch of any family that reads it is dispatched.
+3. Publish nothing unvalidated: the lead writes its own results and bundle manifests in `.cad-work/stage-vN/checks/<check>/<attempt>/`
+   first, and a worker's arrive through [worker-delivery](worker-delivery.md) acceptance. Each validates against its root before any of
+   its bytes is copied under `hw/`; a file that fails is never published (the lead corrects its own in scratch; a worker's delivery is
+   rejected). When a batch has returned and its results are accepted, publish each to `hw/checks/vN/<check>/<attempt>/` before the batch
+   of any family that reads it is dispatched.
 4. A FAIL or UNKNOWN in `record.*`, `delivery.integrity`, `geometry.build` or `geometry.readback` stops every later family; any other FAIL
    or UNKNOWN stops the families that read its result, artifacts or geometry. Each stopped obligation is UNKNOWN `NOT_RUN` naming the
    blocking obligation.

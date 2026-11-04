@@ -9,11 +9,17 @@ program. This environment also reads CadQuery STEP files for assembly, readback,
 
 ## Faces and witnesses
 
+Filter by surface type first, then group by position and require exactly one match: `group_by` rounds each face
+centre to 6 decimals, and taking `[0]` of a sorted list would pick a tie in kernel order. `position_at` and
+`normal_at` normalise u and v over the face's UV bounds.
+
 ```python
-bores = part.faces().filter_by(GeomType.CYLINDER).sort_by(Axis.X)
-point = bores[0].position_at(0.5, 0.5)    # on the surface
-normal = bores[0].normal_at(0.5, 0.5)     # points out of the material
-seat = part.faces().filter_by(GeomType.PLANE).sort_by(Axis.Z)[-1]
+bores = part.faces().filter_by(GeomType.CYLINDER).group_by(Axis.X)[0]    # cylinders nearest -X
+seats = part.faces().filter_by(GeomType.PLANE).group_by(Axis.Z)[-1]      # planes highest in +Z
+assert len(bores) == 1 and len(seats) == 1                                # a tie names no feature
+point = bores[0].position_at(0.5, 0.5)
+normal = bores[0].normal_at(0.5, 0.5)                                     # points out of the material
+assert bores[0].distance_to(point) < 1e-6                                 # on the trimmed face, not in a hole
 ```
 
 ## Placement from a record quaternion

@@ -7,14 +7,19 @@ references/model-contract.md. Each snippet shows one call on a shape the model a
 
 ## Faces and witnesses
 
-Select by surface type, sort by position, then take a point on the surface and its normal there. `Face.Center()` of a
-cylinder is its centre of mass, which lies on the axis, not on the surface.
+Filter by surface type first, then select by position and require exactly one match: `<X` and `>Z` compare centres of
+mass and return every face within 1e-4 mm of the extreme, and `.val()` would take the first in kernel order. Take the
+witness at the midpoint of the face's own UV bounds: `positionAt` and `normalAt(u, v)` take raw surface parameters
+(radians and mm on a cylinder), not 0–1. `Face.Center()` of a cylinder is its centre of mass, on the axis, not on the
+surface.
 
 ```python
-bores = sorted(body.faces("%CYLINDER").vals(), key=lambda f: f.Center().toTuple())
-point = bores[0].positionAt(0.5, 0.5)    # on the surface
-normal = bores[0].normalAt(point)         # points out of the material
-seat = body.faces(">Z").val()             # the planar face with the highest +Z
+bores = body.faces("%CYLINDER").faces("<X").vals()    # cylinders whose centre is nearest -X
+seats = body.faces("%PLANE").faces(">Z").vals()       # planes whose centre is highest in +Z
+assert len(bores) == 1 and len(seats) == 1            # a tie names no feature
+u0, u1, v0, v1 = bores[0].uvBounds()
+normal, point = bores[0].normalAt((u0 + u1) / 2, (v0 + v1) / 2)    # normal points out of the material
+assert bores[0].distance(cq.Vertex.makeVertex(*point.toTuple())) < 1e-6    # on the trimmed face, not in a hole
 ```
 
 ## Placement from a record quaternion

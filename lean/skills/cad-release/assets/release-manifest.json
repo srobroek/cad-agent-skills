@@ -58,13 +58,6 @@
         "CAD_VALID"
       ],
       "outcome": "PASS"
-    },
-    {
-      "requirement": "REQ-001",
-      "facets": [
-        "PHYSICALLY_VALIDATED"
-      ],
-      "outcome": "PLANNED"
     }
   ],
   "waivers": [],
