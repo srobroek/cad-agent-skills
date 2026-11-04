@@ -1,0 +1,358 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "cnc/a1",
+  "check": "cnc",
+  "attempt": "a1",
+  "family": "process.cnc",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v4",
+    "version_manifest_sha256": "904f3a0308c3b49115036c90499b9c61292e8147bb13b6dfa3e3050554dca3e1"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v4/manifest.json",
+      "sha256": "904f3a0308c3b49115036c90499b9c61292e8147bb13b6dfa3e3050554dca3e1"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v4/cnc/a1/source/check.py",
+        "sha256": "1fec1408110ababcd7c5f4011579fbd707a0b5832ffab202e59df12cff123454"
+      },
+      {
+        "path": "hw/checks/v4/cnc/a1/source/check.py.lock",
+        "sha256": "d0bea96db58a83f0a80b0f2114230f877d7006f769dc8556b3aef86bdaa16dd9"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-cnc-v4/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "build123d",
+        "version": "0.13.0"
+      },
+      {
+        "name": "cadquery-ocp-novtk",
+        "version": "8.0.1.1.0"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "LMP-0002"
+      }
+    ],
+    "components": [
+      "arm"
+    ],
+    "operations": [
+      "mill"
+    ],
+    "expected_obligations": [
+      "process.cnc@LMP-0002.arm/mill",
+      "process.cnc@LMP-0002.arm/mill#deep_pocket",
+      "process.cnc@LMP-0002.arm/mill#slot_corner"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "process.cnc@LMP-0002.arm/mill",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0002",
+        "operation": "mill",
+        "component": "arm"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "UNKNOWN",
+      "reason": "setup.workholding is absent: clamp locations and distortion cannot be assessed",
+      "unknown_code": "REQUIRED_UNKNOWN",
+      "criterion": {
+        "id": "workholding_recorded",
+        "property": "workholding_plan",
+        "comparator": "EQUALS",
+        "value": "recorded",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.cnc",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.cnc"
+        }
+      },
+      "method": {
+        "name": "process.cnc item list on the manufacturing-state STEP against capability cnc_router_local (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      }
+    },
+    {
+      "obligation": "process.cnc@LMP-0002.arm/mill#deep_pocket",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0002",
+        "feature": "deep_pocket",
+        "component": "arm",
+        "operation": "mill"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "value": -6.0,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "holder_clear",
+        "property": "holder_clearance_at_depth",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.cnc",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.cnc"
+        },
+        "conditions": "tool stick-out 20 mm from the holder, cnc_router_local tool list"
+      },
+      "method": {
+        "name": "process.cnc item list on the manufacturing-state STEP against capability cnc_router_local (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v4/cnc/a1/artifacts/cnc.json",
+          "sha256": "415e49e83b6633ea241d894e81f11581c0951269775aac8afb07fb54ec5d5af0"
+        }
+      ]
+    },
+    {
+      "obligation": "process.cnc@LMP-0002.arm/mill#slot_corner",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0002",
+        "feature": "slot_corner",
+        "component": "arm",
+        "operation": "mill"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "value": 1.0,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "min_radius_smallest_cutter",
+        "property": "internal_corner_radius",
+        "comparator": "GE",
+        "value": 3.0,
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.cnc",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.cnc"
+        },
+        "conditions": "smallest cutter in cnc_router_local: 6 mm diameter end mill"
+      },
+      "method": {
+        "name": "process.cnc item list on the manufacturing-state STEP against capability cnc_router_local (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v4/cnc/a1/artifacts/cnc.json",
+          "sha256": "415e49e83b6633ea241d894e81f11581c0951269775aac8afb07fb54ec5d5af0"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.cnc:LMP-0002.arm/mill:workholding_unknown",
+      "family": "process.cnc",
+      "obligation": "process.cnc@LMP-0002.arm/mill",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0002",
+        "operation": "mill",
+        "component": "arm"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "no workholding plan"
+      },
+      "criterion": {
+        "id": "workholding_recorded",
+        "property": "workholding_plan",
+        "comparator": "EQUALS",
+        "value": "recorded",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.cnc",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.cnc"
+        }
+      },
+      "method": {
+        "name": "process.cnc item list on the manufacturing-state STEP against capability cnc_router_local (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "none: missing plan",
+      "consequence": "clamping may collide with toolpaths or distort the thin arm",
+      "remedy": "record vices or fixture, clamp regions and datums for the mill setup",
+      "recheck": {
+        "families": [
+          "process.cnc"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    },
+    {
+      "id": "process.cnc:LMP-0002.arm/mill#deep_pocket:reach",
+      "family": "process.cnc",
+      "obligation": "process.cnc@LMP-0002.arm/mill#deep_pocket",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0002",
+        "feature": "deep_pocket",
+        "component": "arm",
+        "operation": "mill"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": -6.0,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "holder_clear",
+        "property": "holder_clearance_at_depth",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.cnc",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.cnc"
+        },
+        "conditions": "tool stick-out 20 mm from the holder, cnc_router_local tool list"
+      },
+      "method": {
+        "name": "process.cnc item list on the manufacturing-state STEP against capability cnc_router_local (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "tool and holder from the capability tool list, nominal",
+      "consequence": "the holder collides 6 mm above the 28 mm pocket floor",
+      "remedy": "reduce pocket depth to 20 mm or specify a longer reach tool in the capability",
+      "alternatives": [
+        {
+          "text": "pocket from both sides",
+          "tradeoff": "second setup and datum transfer"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "process.cnc"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    },
+    {
+      "id": "process.cnc:LMP-0002.arm/mill#slot_corner:internal_radius",
+      "family": "process.cnc",
+      "obligation": "process.cnc@LMP-0002.arm/mill#slot_corner",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0002",
+        "feature": "slot_corner",
+        "component": "arm",
+        "operation": "mill"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": 1.0,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "min_radius_smallest_cutter",
+        "property": "internal_corner_radius",
+        "comparator": "GE",
+        "value": 3.0,
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.cnc",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.cnc"
+        },
+        "conditions": "smallest cutter in cnc_router_local: 6 mm diameter end mill"
+      },
+      "method": {
+        "name": "process.cnc item list on the manufacturing-state STEP against capability cnc_router_local (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "model nominal radius",
+      "consequence": "the 6 mm cutter leaves R3 corners; the mating tab will not seat",
+      "remedy": "open the corners to R3.0 or add dog-bone reliefs",
+      "recheck": {
+        "families": [
+          "process.cnc"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v4/cnc/a1/artifacts/cnc.json",
+      "sha256": "415e49e83b6633ea241d894e81f11581c0951269775aac8afb07fb54ec5d5af0",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v4/cnc/a1/stdout.txt",
+      "sha256": "0687fed0e02fd27501e6b526fe31ac80f406bde2f8b49d2e5390996ca1d98254",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "access from geometry and the tool list; no CAM toolpath was generated"
+  ]
+}

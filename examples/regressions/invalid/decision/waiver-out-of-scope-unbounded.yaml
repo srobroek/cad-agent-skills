@@ -1,0 +1,43 @@
+id: DR-023
+kind: WAIVER
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-023/waiver.yaml
+  sha256: 50fa06a1788e526602f79d1989b8c797b93f48d7faf15485a1b9e2268ea15f3b
+title: Extend the seam waiver to the hinge bore support contact
+scope: process.fdm@STD-0001.body/print#hinge_bore
+rationale: lead proposal to cover the bore FAIL under the seam waiver
+limits:
+- supports contact the hinge bore
+actor:
+  kind: USER
+  name: product owner
+time: '2026-11-03T12:00:00Z'
+statement:
+  transcript_sha256: ddef2f5d2bc4241c8475c9fb28390cdc365bb9e9f8645445453af77300d03269
+  quote: ok, waive the bore too
+  time: '2026-11-03T12:00:00Z'
+waiver:
+  id: WV-002
+  decision: DR-023
+  obligation: process.fdm@STD-0001.body/print#hinge_bore
+  subject:
+    kind: FEATURE
+    PN: STD-0001
+    feature: hinge_bore
+    component: body
+    operation: print
+  criterion: no support contact on the hinge bore (process.fdm)
+  classification: NON_SAFETY_DEVIATION
+  retained_outcome: FAIL
+  safety_or_regulatory: false
+  limitation: supports contact the hinge bore
+  operating_envelope: every use of the hinge
+  reason: avoid reorienting the base
+  consequence: bore size and roundness uncontrolled; REQ-003 clearance at risk
+  authority:
+    name: product owner
+    role: OWNER
+    basis: owner of the appearance requirement REQ-005
+    scope: REQ-005 appearance

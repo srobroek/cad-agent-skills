@@ -1,0 +1,355 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "laser/a1",
+  "check": "laser",
+  "attempt": "a1",
+  "family": "process.laser",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v4",
+    "version_manifest_sha256": "904f3a0308c3b49115036c90499b9c61292e8147bb13b6dfa3e3050554dca3e1"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v4/manifest.json",
+      "sha256": "904f3a0308c3b49115036c90499b9c61292e8147bb13b6dfa3e3050554dca3e1"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v4/laser/a1/source/check.py",
+        "sha256": "ded0ad31f7f13f0477d202dd32b251692e03540872b63aff04b110bfab5d0e5d"
+      },
+      {
+        "path": "hw/checks/v4/laser/a1/source/check.py.lock",
+        "sha256": "9e8be97b2114165b9259f51d3f3009755590abc5664cc200f0db561062d7c056"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-laser-v4/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "build123d",
+        "version": "0.13.0"
+      },
+      {
+        "name": "cadquery-ocp-novtk",
+        "version": "8.0.1.1.0"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "LMP-0003"
+      },
+      {
+        "kind": "PART",
+        "PN": "LMP-0005"
+      },
+      {
+        "kind": "PART",
+        "PN": "LMP-0006"
+      }
+    ],
+    "components": [
+      "panel",
+      "cover",
+      "shield"
+    ],
+    "operations": [
+      "cut"
+    ],
+    "expected_obligations": [
+      "process.laser@LMP-0003.panel/cut#tab_slot",
+      "process.laser@LMP-0005.cover/cut",
+      "process.laser@LMP-0006.shield/cut"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "process.laser@LMP-0003.panel/cut#tab_slot",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0003",
+        "feature": "tab_slot",
+        "component": "panel",
+        "operation": "cut"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "value": -0.15,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "tab_slot_worst_case",
+        "property": "tab_slot_clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.laser",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.laser"
+        },
+        "conditions": "stock 3.0 +/-0.2 mm, kerf 0.15 +/-0.05 mm from laser_co2_local, no coating"
+      },
+      "method": {
+        "name": "process.laser item list on the flat profile at stock, kerf and coating range extremes (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v4/laser/a1/artifacts/laser.json",
+          "sha256": "4b3aa6936a50313ee5cf0412a1733150f77ebfe91d9de8d5149fbd617c5197ba"
+        }
+      ],
+      "configuration": "nominal clearance +0.10 mm; worst case at thick stock and narrow kerf"
+    },
+    {
+      "obligation": "process.laser@LMP-0005.cover/cut",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0005",
+        "operation": "cut",
+        "component": "cover"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "text": "stock identified as PVC sheet"
+      },
+      "criterion": {
+        "id": "safe_identified_stock",
+        "property": "stock_identity",
+        "comparator": "EQUALS",
+        "value": "identified, approved by the laser capability, not chlorine-releasing",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.laser",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.laser"
+        }
+      },
+      "method": {
+        "name": "process.laser item list on the flat profile at stock, kerf and coating range extremes (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/manufacturing/sources/1ec81fcc6012b81f9da2f94b5f9e10693cc8db6a33a9c166275b7330eb80b258/pvc-sheet.pdf",
+          "sha256": "1ec81fcc6012b81f9da2f94b5f9e10693cc8db6a33a9c166275b7330eb80b258"
+        }
+      ]
+    },
+    {
+      "obligation": "process.laser@LMP-0006.shield/cut",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0006",
+        "operation": "cut",
+        "component": "shield"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "UNKNOWN",
+      "reason": "shield stock coating is unidentified; laser approval and fume extraction cannot be assessed",
+      "unknown_code": "REQUIRED_UNKNOWN",
+      "criterion": {
+        "id": "safe_identified_stock",
+        "property": "stock_identity",
+        "comparator": "EQUALS",
+        "value": "identified, approved by the laser capability, not chlorine-releasing",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.laser",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.laser"
+        }
+      },
+      "method": {
+        "name": "process.laser item list on the flat profile at stock, kerf and coating range extremes (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.laser:LMP-0003.panel/cut#tab_slot:tab_slot_fit",
+      "family": "process.laser",
+      "obligation": "process.laser@LMP-0003.panel/cut#tab_slot",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0003",
+        "feature": "tab_slot",
+        "component": "panel",
+        "operation": "cut"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": -0.15,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "tab_slot_worst_case",
+        "property": "tab_slot_clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.laser",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.laser"
+        },
+        "conditions": "stock 3.0 +/-0.2 mm, kerf 0.15 +/-0.05 mm from laser_co2_local, no coating"
+      },
+      "method": {
+        "name": "process.laser item list on the flat profile at stock, kerf and coating range extremes (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "stock and kerf ranges from their sources; worst-case sum",
+      "consequence": "tabs will not enter slots at thick stock",
+      "remedy": "widen slots by 0.25 mm; then cut a fit coupon (physical.test)",
+      "recheck": {
+        "families": [
+          "process.laser"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    },
+    {
+      "id": "process.laser:LMP-0005.cover/cut:material_unsafe",
+      "family": "process.laser",
+      "obligation": "process.laser@LMP-0005.cover/cut",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0005",
+        "operation": "cut",
+        "component": "cover"
+      },
+      "severity": "CRITICAL",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "PVC"
+      },
+      "criterion": {
+        "id": "safe_identified_stock",
+        "property": "stock_identity",
+        "comparator": "EQUALS",
+        "value": "identified, approved by the laser capability, not chlorine-releasing",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.laser",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.laser"
+        }
+      },
+      "method": {
+        "name": "process.laser item list on the flat profile at stock, kerf and coating range extremes (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "stock identity from the retained datasheet",
+      "consequence": "laser-cutting PVC releases chlorine compounds: operator harm and machine corrosion",
+      "remedy": "select acrylic or PETG sheet approved by the laser capability, or another route",
+      "recheck": {
+        "families": [
+          "process.laser"
+        ],
+        "earliest_stage": "INTENT"
+      }
+    },
+    {
+      "id": "process.laser:LMP-0006.shield/cut:material_unidentified",
+      "family": "process.laser",
+      "obligation": "process.laser@LMP-0006.shield/cut",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "LMP-0006",
+        "operation": "cut",
+        "component": "shield"
+      },
+      "severity": "CRITICAL",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "coating unidentified"
+      },
+      "criterion": {
+        "id": "safe_identified_stock",
+        "property": "stock_identity",
+        "comparator": "EQUALS",
+        "value": "identified, approved by the laser capability, not chlorine-releasing",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.laser",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.laser"
+        }
+      },
+      "method": {
+        "name": "process.laser item list on the flat profile at stock, kerf and coating range extremes (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "none: identity missing",
+      "consequence": "an unidentified coating may release hazardous fumes",
+      "remedy": "identify the coating from the supplier and retain the source, or choose identified stock",
+      "recheck": {
+        "families": [
+          "process.laser"
+        ],
+        "earliest_stage": "INTENT"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v4/laser/a1/artifacts/laser.json",
+      "sha256": "4b3aa6936a50313ee5cf0412a1733150f77ebfe91d9de8d5149fbd617c5197ba",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v4/laser/a1/stdout.txt",
+      "sha256": "f0290418ac139ccaf51d15e9570b880d92bd84afafc5ea9336e107c7f7f1ada1",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "a passing tab-slot interval still needs a fit coupon: physical.test"
+  ]
+}

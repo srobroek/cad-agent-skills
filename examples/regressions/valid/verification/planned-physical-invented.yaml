@@ -1,0 +1,77 @@
+format: cad-agent-skills.verification
+schema_version: 1
+version: v11
+stage: ANALYSIS
+version_manifest_sha256: 18be27ed5a50309b83dad637ff92855b758fcb30047b2a1765193564b42146a5
+rows:
+- requirement: REQ-002
+  subject: &id001
+    kind: ASSEMBLY
+  method: ANALYSIS
+  criterion:
+    id: hinge_torque_margin
+    property: holding_torque_margin
+    comparator: GE
+    value: 1.0
+    units: dimensionless
+    state: ASSEMBLED
+    source: &id002
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+    conditions: friction torque over demand at 75 deg, 2.5 N phone (REQ-002)
+  facet: SIMULATION_SUPPORTED
+  due: ANALYSIS
+  outcome: PASS
+  obligations:
+  - load.hand@case.phone-load
+  results:
+  - path: hw/checks/v11/hand-load/a1/result.json
+    sha256: 116f2c75a64b79ee81897a955e88b929ccd3057219de4a81bdb650e488607953
+- requirement: REQ-002
+  subject: *id001
+  method: TEST
+  criterion:
+    id: angle_hold
+    property: angle_drift
+    comparator: LE
+    value: 2
+    units: deg
+    state: ASSEMBLED
+    source: *id002
+    conditions: 2.5 N phone weight at 75 deg for 24 h at 23 deg_C (REQ-002)
+  facet: PHYSICALLY_VALIDATED
+  due: RELEASE
+  outcome: PASS
+  obligations:
+  - physical.test@REQ-002
+  results:
+  - path: hw/checks/v11/hand-load/a1/result.json
+    sha256: 116f2c75a64b79ee81897a955e88b929ccd3057219de4a81bdb650e488607953
+- requirement: REQ-003
+  subject:
+    kind: INTERFACE
+    interface: IF-001
+    feature: hinge_bore
+  method: ANALYSIS
+  criterion:
+    id: hinge_running_clearance
+    property: clearance
+    comparator: GE
+    value: 0.3
+    units: mm
+    state: ASSEMBLED
+    source: *id002
+    conditions: over the whole 0-75 deg hinge travel (REQ-003)
+  facet: CAD_VALID
+  due: LAYOUT
+  outcome: PASS
+  obligations:
+  - motion.sweep@case.hinge-travel
+  - motion.play@case.hinge-travel
+  results:
+  - path: hw/checks/v11/sweep/a1/result.json
+    sha256: d79a2122ed57a53482cf9931bb39986160b54a95306d1f46eb458d114364407b
+  - path: hw/checks/v11/play/a1/result.json
+    sha256: 6a4635de86c7ac249f067ad91d0ab2acef9fedcd3652c3e036ce416e92ddeaf6

@@ -1,0 +1,150 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "CRITIQUE",
+  "version": "v13",
+  "predecessor": {
+    "stage": "ANALYSIS",
+    "version": "v11",
+    "verdict": {
+      "path": "hw/versions/v11/stage-verdict.json",
+      "sha256": "f2b98569d0ec91231872b9cc9ca93c85413812a292589b0aeec8231f6e9d1ae4"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-026.yaml",
+      "sha256": "1d55a0b19a5dd854bfc04548a5e42dfa1084706da4e2528767f6a818a8dc7a2e"
+    }
+  },
+  "version_manifest": {
+    "path": "hw/versions/v13/manifest.json",
+    "sha256": "199ebdedd6254ff49008f72771e6c58a8eb03a1868cca8474322b0c1342751a6"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "record.schema@product",
+    "record.semantic@product",
+    "record.ownership@product",
+    "record.inputs@product",
+    "delivery.integrity@product",
+    "review.mechanical_dfm@assembly"
+  ],
+  "results": [
+    {
+      "check": "record-schema",
+      "attempt": "a1",
+      "family": "record.schema",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v13/record-schema/a1/result.json",
+        "sha256": "7fb8308a2a1230f7427d94b8e3b78ff645985873c548e84969c54204056b96dc"
+      },
+      "bundle": {
+        "path": "hw/checks/v13/record-schema/a1/bundle-manifest.json",
+        "sha256": "a6032ed1122c2f2d8c1d32d8c6ec6a5a1856f523a841237b287fb036d740ae09"
+      }
+    },
+    {
+      "check": "record-semantic",
+      "attempt": "a1",
+      "family": "record.semantic",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v13/record-semantic/a1/result.json",
+        "sha256": "6aae2def9f2947f8de78517ce9ff4f510eb30edafc27503dd8d0013404910dfd"
+      },
+      "bundle": {
+        "path": "hw/checks/v13/record-semantic/a1/bundle-manifest.json",
+        "sha256": "e8e58500c08ed479243e9dbaf0c5a89d14b26c6046f72f346b9d8c491e0942aa"
+      }
+    },
+    {
+      "check": "record-ownership",
+      "attempt": "a1",
+      "family": "record.ownership",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v13/record-ownership/a1/result.json",
+        "sha256": "8974f9759ffe686989a25ceaf5eda8a5020e7fee6b30340fb8e227d7108f626b"
+      },
+      "bundle": {
+        "path": "hw/checks/v13/record-ownership/a1/bundle-manifest.json",
+        "sha256": "5a9308145fecc002f315f5b95d7d64a7559b272915de89aacb556f37ed4369d7"
+      }
+    },
+    {
+      "check": "record-inputs",
+      "attempt": "a1",
+      "family": "record.inputs",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v13/record-inputs/a1/result.json",
+        "sha256": "989794698538af163571b4b73a23b6625d724fabff17bbf8a9fc746cb49b296e"
+      },
+      "bundle": {
+        "path": "hw/checks/v13/record-inputs/a1/bundle-manifest.json",
+        "sha256": "f68f1e3063dab6d0742889cd4d2d8fdd6febae21753accb4acb02e4d922360c2"
+      }
+    },
+    {
+      "check": "delivery-integrity",
+      "attempt": "a1",
+      "family": "delivery.integrity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v13/delivery-integrity/a1/result.json",
+        "sha256": "3fb8495f63619c1f2f485471c7b6a5549ac29d3837fa36270e9097a896d3cf91"
+      },
+      "bundle": {
+        "path": "hw/checks/v13/delivery-integrity/a1/bundle-manifest.json",
+        "sha256": "90738cea9b7030246ef89f816027911da10aa199d951499e11430055013bda30"
+      }
+    },
+    {
+      "check": "review",
+      "attempt": "a1",
+      "family": "review.mechanical_dfm",
+      "result": "FAIL",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v13/review/a1/result.json",
+        "sha256": "79ef00942156809675aa3ae4de02a347e6cff55305e4837491b70e6f9743490a"
+      },
+      "bundle": {
+        "path": "hw/checks/v13/review/a1/bundle-manifest.json",
+        "sha256": "2606fa14d89939ed035cc0af1fedc125f47a5b0b706d3680e5543bae4112b943"
+      }
+    }
+  ],
+  "bundles": [],
+  "waivers": [],
+  "future": [],
+  "blockers": [
+    {
+      "code": "OTHER",
+      "text": "required review MINOR: close process.fdm:STD-0002.body/print#phone_lip:edge_radius, then recheck in a new attempt",
+      "obligation": "review.mechanical_dfm@assembly"
+    }
+  ],
+  "review": {
+    "required": true,
+    "verdict": "MINOR",
+    "result": {
+      "path": "hw/checks/v13/review/a1/result.json",
+      "sha256": "79ef00942156809675aa3ae4de02a347e6cff55305e4837491b70e6f9743490a"
+    }
+  },
+  "complete": true,
+  "result": "FAIL",
+  "time": "2026-11-03T12:00:00Z"
+}

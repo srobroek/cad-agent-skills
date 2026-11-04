@@ -1,0 +1,53 @@
+PN: LMP-0009
+rev: X1
+title: Spring clip (imported)
+sourcing: MAKE
+model:
+  kind: AUTHORED
+  kernel: cadquery
+  path: hw/parts/LMP-0009/model.py
+  frame: ASSEMBLY_ZERO
+  import:
+    original: hw/parts/LMP-0009/sources/legacy/part.yaml
+    decision: DR-003
+transparency: OPAQUE
+components:
+- id: clip
+  witness:
+  - 0
+  - 0
+  - 0
+  material_profile:
+    status: UNKNOWN
+    reason: legacy record names spring steel without grade
+  multiplicity: 1
+manufacture:
+  relationship: SAME
+intent:
+  functions:
+    status: UNKNOWN
+    reason: legacy record states no function
+    owner: product owner
+    question: Q-021
+    consequential: true
+  material_profile:
+    status: UNKNOWN
+    reason: spring steel grade unknown
+  service:
+    status: UNKNOWN
+    reason: legacy record states no service
+  critical_surfaces:
+    status: UNKNOWN
+    reason: legacy record marks no critical surface
+  route:
+  - id: bend
+    kind: OTHER
+    description: hand-bent spring wire around a jig
+    capability:
+      status: UNKNOWN
+      reason: no bending capability or jig recorded
+    components:
+    - clip
+drawing:
+  status: UNKNOWN
+  reason: legacy record has no drawing intent

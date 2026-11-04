@@ -1,0 +1,220 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "capability/a1",
+  "check": "capability",
+  "attempt": "a1",
+  "family": "capability.route",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v7",
+    "version_manifest_sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v7/manifest.json",
+      "sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+    },
+    {
+      "path": "hw/versions/v7/record/manufacturing/capabilities.yaml",
+      "sha256": "95fac9216d77b8147c6f7c4f33fa1e4baba8ced93aedd286930dd747b0ecf05e"
+    },
+    {
+      "path": "hw/versions/v7/record/parts/STD-0002/part.yaml",
+      "sha256": "42713521395daa70779ea996a460d6a4abd797b4e7d63be810a2f65a6fd5a6e8"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v7/capability/a1/source/check.py",
+        "sha256": "3f615a5758e103f8277cee428c80e23692595c964112418ac8602eb492dd3e52"
+      },
+      {
+        "path": "hw/checks/v7/capability/a1/source/check.py.lock",
+        "sha256": "28ed3f8f7b0225f81454d4db94b0e63f5345d3c0e73d99fe5d17224df0e7e315"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-capability-v7/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "STD-0001"
+      },
+      {
+        "kind": "PART",
+        "PN": "STD-0002"
+      }
+    ],
+    "components": [
+      "body"
+    ],
+    "operations": [
+      "print"
+    ],
+    "expected_obligations": [
+      "capability.route@STD-0001.body/print",
+      "capability.route@STD-0002.body/print"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "capability.route@STD-0001.body/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0001",
+        "operation": "print",
+        "component": "body"
+      },
+      "facet": "PROCESS_PLANNED",
+      "outcome": "PASS",
+      "value": {
+        "text": "bambu_x1c approves PETG; calibrations valid to 2027-01-31"
+      },
+      "criterion": {
+        "id": "capability_items",
+        "property": "capability_route_items",
+        "comparator": "EQUALS",
+        "value": "real profile, approved stock, criteria inside demonstrated capability, unexpired calibrations",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md capability.route",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md capability.route"
+        }
+      },
+      "method": {
+        "name": "capability.route record check against hw/manufacturing/capabilities.yaml (cad-verify references/process-checks.md)"
+      },
+      "evidence": [
+        {
+          "path": "hw/versions/v7/record/manufacturing/capabilities.yaml",
+          "sha256": "95fac9216d77b8147c6f7c4f33fa1e4baba8ced93aedd286930dd747b0ecf05e"
+        }
+      ]
+    },
+    {
+      "obligation": "capability.route@STD-0002.body/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0002",
+        "operation": "print",
+        "component": "body"
+      },
+      "facet": "PROCESS_PLANNED",
+      "outcome": "UNKNOWN",
+      "reason": "the pivot_boss hole-compensation calibration of bambu_x1c expired 2026-09-30; the boss criterion relies on it",
+      "unknown_code": "REQUIRED_UNKNOWN",
+      "criterion": {
+        "id": "capability_items",
+        "property": "capability_route_items",
+        "comparator": "EQUALS",
+        "value": "real profile, approved stock, criteria inside demonstrated capability, unexpired calibrations",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md capability.route",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md capability.route"
+        }
+      },
+      "method": {
+        "name": "capability.route record check against hw/manufacturing/capabilities.yaml (cad-verify references/process-checks.md)"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "capability.route:STD-0002.body/print:calibration_expired",
+      "family": "capability.route",
+      "obligation": "capability.route@STD-0002.body/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0002",
+        "operation": "print",
+        "component": "body"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "calibration expired 2026-09-30"
+      },
+      "criterion": {
+        "id": "capability_items",
+        "property": "capability_route_items",
+        "comparator": "EQUALS",
+        "value": "real profile, approved stock, criteria inside demonstrated capability, unexpired calibrations",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md capability.route",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md capability.route"
+        }
+      },
+      "method": {
+        "name": "capability.route record check against hw/manufacturing/capabilities.yaml (cad-verify references/process-checks.md)"
+      },
+      "uncertainty": "no current calibration",
+      "consequence": "pivot_boss size after printing is not established",
+      "remedy": "recalibrate hole compensation for PETG on bambu_x1c and retain the coupon record",
+      "recheck": {
+        "families": [
+          "capability.route"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v7/capability/a1/artifacts/capability.json",
+      "sha256": "1ff738e7efb008f5c6411e901bb1e379419bbc692b1736cd0585536c4e47fdda",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v7/capability/a1/stdout.txt",
+      "sha256": "46dc570883dfa32cbb3c08630b86c18428f46a56eea34b4d2d08c8f25d8c962a",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "UNKNOWN",
+  "limitations": []
+}

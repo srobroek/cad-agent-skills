@@ -1,0 +1,10 @@
+# Intended schema error of each invalid regression case (data index, not an instance).
+# Same convention as cad-record contract-fixtures/expected-errors.yaml; keys are relative to examples/regressions/.
+# Every valid/<root>/* case exits 0 and every invalid/<root>/* case exits 1 against <cad-record>/schemas/<root>.schema.json;
+# a valid case may still fail the semantic check its scenario names.
+invalid/check-result/review-with-commands-critique.json: 'a REVIEW implementation forbids commands: the read-only reviewer runs nothing'
+invalid/decision/waiver-out-of-scope-unbounded.yaml: a waiver needs expires or until_change; an unbounded waiver is never written
+invalid/selection/selection-score-revives-excluded.yaml: an EXCLUDED candidate carries no preference scores; a score cannot revive a hard FAIL
+invalid/stage-verdict/release-without-physical-pass.json: a PASS readiness verdict accepts only PASS, WAIVED and NOT_APPLICABLE results; physical.test is UNKNOWN
+invalid/stage-verdict/review-minor-pass.json: a stage whose required review is MINOR cannot PASS
+invalid/stage-verdict/stale-after-change-no-recheck.json: a CARRIED_FORWARD result names carried_from with its record.inputs recheck

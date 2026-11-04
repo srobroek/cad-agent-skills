@@ -1,0 +1,394 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "fdm/a1",
+  "check": "fdm",
+  "attempt": "a1",
+  "family": "process.fdm",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v7",
+    "version_manifest_sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v7/manifest.json",
+      "sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v7/fdm/a1/source/check.py",
+        "sha256": "b5a4947f05ff0ea61686f55e72c161711fc08d88cd100fba45c7acad3f08a7e3"
+      },
+      {
+        "path": "hw/checks/v7/fdm/a1/source/check.py.lock",
+        "sha256": "888dc3dd61b5186bd59dcc35bb74edb0dd506db441f0b0d8fd42ce9679174d2f"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-fdm-v7/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "STD-0001"
+      },
+      {
+        "kind": "PART",
+        "PN": "STD-0002"
+      },
+      {
+        "kind": "PART",
+        "PN": "STD-0005"
+      }
+    ],
+    "components": [
+      "body",
+      "clip"
+    ],
+    "operations": [
+      "print"
+    ],
+    "expected_obligations": [
+      "process.fdm@STD-0001.body/print#underside",
+      "process.fdm@STD-0001.body/print#hinge_bore",
+      "process.fdm@STD-0002.body/print#pivot_boss",
+      "process.fdm@STD-0005.clip/print"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "process.fdm@STD-0001.body/print#underside",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0001",
+        "feature": "underside",
+        "component": "body",
+        "operation": "print"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "PASS",
+      "value": {
+        "text": "supports on the non-critical underside; flush-cutter access from the open side"
+      },
+      "criterion": {
+        "id": "supports_reachable",
+        "property": "support_removal_access",
+        "comparator": "EQUALS",
+        "value": "reachable",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v7/fdm/a1/artifacts/fdm.json",
+          "sha256": "bb3e5aae5c5d884e34e910b9fb7da50dc653ff11c058f8271f0071b752c77947"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0001.body/print#hinge_bore",
+      "requirement": "REQ-003",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0001",
+        "feature": "hinge_bore",
+        "component": "body",
+        "operation": "print"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "text": "supports contact hinge_bore over 210 deg; no operation finishes it"
+      },
+      "criterion": {
+        "id": "no_unfinished_support_on_critical",
+        "property": "support_contact_on_critical",
+        "comparator": "EQUALS",
+        "value": false,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        },
+        "conditions": "a support may touch a critical surface only when the route finishes it with allowance, access and inspection"
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v7/fdm/a1/artifacts/fdm.json",
+          "sha256": "bb3e5aae5c5d884e34e910b9fb7da50dc653ff11c058f8271f0071b752c77947"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0002.body/print#pivot_boss",
+      "requirement": "REQ-003",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0002",
+        "feature": "pivot_boss",
+        "component": "body",
+        "operation": "print"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "text": "soluble support contacts pivot_boss; no finishing allowance or inspection"
+      },
+      "criterion": {
+        "id": "no_unfinished_support_on_critical",
+        "property": "support_contact_on_critical",
+        "comparator": "EQUALS",
+        "value": false,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        },
+        "conditions": "a support may touch a critical surface only when the route finishes it with allowance, access and inspection"
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v7/fdm/a1/artifacts/fdm.json",
+          "sha256": "bb3e5aae5c5d884e34e910b9fb7da50dc653ff11c058f8271f0071b752c77947"
+        }
+      ]
+    },
+    {
+      "obligation": "process.fdm@STD-0005.clip/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0005",
+        "operation": "print",
+        "component": "clip"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "UNKNOWN",
+      "reason": "supports UNKNOWN: no support plan recorded for the print operation",
+      "unknown_code": "REQUIRED_UNKNOWN",
+      "criterion": {
+        "id": "supports_reachable",
+        "property": "support_removal_access",
+        "comparator": "EQUALS",
+        "value": "reachable",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.fdm:STD-0001.body/print#hinge_bore:support_on_critical",
+      "family": "process.fdm",
+      "obligation": "process.fdm@STD-0001.body/print#hinge_bore",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0001",
+        "feature": "hinge_bore",
+        "component": "body",
+        "operation": "print"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "support contact 210 deg of the bore"
+      },
+      "criterion": {
+        "id": "no_unfinished_support_on_critical",
+        "property": "support_contact_on_critical",
+        "comparator": "EQUALS",
+        "value": false,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        },
+        "conditions": "a support may touch a critical surface only when the route finishes it with allowance, access and inspection"
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "contact region from the declared support plan",
+      "consequence": "bore size and roundness uncontrolled",
+      "remedy": "add a REAMING operation with allowance and inspection, or reorient",
+      "recheck": {
+        "families": [
+          "process.fdm"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    },
+    {
+      "id": "process.fdm:STD-0002.body/print#pivot_boss:support_on_critical",
+      "family": "process.fdm",
+      "obligation": "process.fdm@STD-0002.body/print#pivot_boss",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0002",
+        "feature": "pivot_boss",
+        "component": "body",
+        "operation": "print"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "soluble support on the boss, no finishing"
+      },
+      "criterion": {
+        "id": "no_unfinished_support_on_critical",
+        "property": "support_contact_on_critical",
+        "comparator": "EQUALS",
+        "value": false,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        },
+        "conditions": "a support may touch a critical surface only when the route finishes it with allowance, access and inspection"
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "contact region from the declared support plan",
+      "consequence": "a soluble support alone leaves the boss surface uncontrolled",
+      "remedy": "add a finishing allowance, access and inspection for pivot_boss",
+      "recheck": {
+        "families": [
+          "process.fdm"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    },
+    {
+      "id": "process.fdm:STD-0005.clip/print:support_unplanned",
+      "family": "process.fdm",
+      "obligation": "process.fdm@STD-0005.clip/print",
+      "subject": {
+        "kind": "OPERATION",
+        "PN": "STD-0005",
+        "operation": "print",
+        "component": "clip"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "no support plan"
+      },
+      "criterion": {
+        "id": "supports_reachable",
+        "property": "support_removal_access",
+        "comparator": "EQUALS",
+        "value": "reachable",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.fdm",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.fdm"
+        }
+      },
+      "method": {
+        "name": "process.fdm item list on the manufacturing-state STEP in the approved orientation (cad-verify references/process-checks.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "no plan to measure against",
+      "consequence": "overhangs of the clip may print unsupported or with unreachable supports",
+      "remedy": "record the support strategy and regions for the clip print",
+      "recheck": {
+        "families": [
+          "process.fdm"
+        ],
+        "earliest_stage": "PARTS"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v7/fdm/a1/artifacts/fdm.json",
+      "sha256": "bb3e5aae5c5d884e34e910b9fb7da50dc653ff11c058f8271f0071b752c77947",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v7/fdm/a1/stdout.txt",
+      "sha256": "b0573ed33db86f1ee59f65ac37f144d90baa98664f67282ec80b6c34cf52c1a7",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": []
+}
