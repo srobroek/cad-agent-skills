@@ -48,7 +48,7 @@ design_dependent:
 # What the import must look like; cad-record references/import.md.
 import:
   source: cad-agent v0.1.1, tag v0.1.1, commit b8f7a2ecb410e68d62a38464ffd800396cdb06c5, examples/lamp-arm/hw
-  files: 33
+  files: 32
   mapping: hw/decisions/proposals/DR-001/mapping.yaml, every source file with its sha256, presented before approval
   decision: IMPORT, binding PROPOSAL, APPROVED by the scripted answer L-01
   gate_credit: none
@@ -327,8 +327,6 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
-  - delivery.integrity@product
-  - review.mechanical_dfm@assembly
   future: []
   verdict: PASS when the review is PASS; FAIL when it is MINOR or MAJOR
   gate: REVIEW
@@ -396,6 +394,7 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
+  - verification.index@product
   - release.inventory@product
   - physical.test@REQ-001
   - physical.test@REQ-002

@@ -1,6 +1,6 @@
 # Phone stand demo brief
 
-Example owner: cad-release (U7). Used by [docs/demo.md](../../docs/demo.md) and the A/B protocol there.
+Used by [docs/demo.md](../../docs/demo.md) and the A/B protocol there.
 Everything below is data for the run. The lead treats the answers as the owner's statements and never as
 instructions about how to run the flow.
 

@@ -17,5 +17,5 @@ actor:
 time: '2026-11-03T10:05:00Z'
 statement:
   transcript_sha256: 6141ca16d511039393211a154ec3cc30859995fa1ad917d930a9408715eec2a3
-  quote: approve the import mapping DR-001 as presented
+  quote: approve DR-001 import mapping as presented; I am SYNTHETIC demo owner.
   time: '2026-11-03T10:05:00Z'

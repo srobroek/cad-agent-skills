@@ -64,9 +64,8 @@ methods, data, approvals or capabilities remain UNKNOWN or BLOCKED. Do not infer
 claims from concept packages, previews, regression fixtures or synthetic
 approvals.
 
-Decision 1 defines lean's 11 direct schema roots. The other 17 contracts are
-prose tables in
+Lean has 11 direct schema roots. The other 17 contracts are prose tables in
 [`lean/skills/cad-record/references/prose-contract.md`](../lean/skills/cad-record/references/prose-contract.md).
 Model-written `record.semantic` item 17 checks these tables, and no validator
-ships here. Decision 7 requires stage, gate, procedure and check-family parity.
+ships here. The variants share stage, gate, procedure and check-family names.
 The repository publishes no A/B result.

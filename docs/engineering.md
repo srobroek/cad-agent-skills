@@ -32,11 +32,11 @@ methods, not service performance. They cannot establish material lot, process
 variation, manufactured fit, actual load, wear, fatigue, creep, environment or
 workmanship. If a service class or requirement needs a physical test, perform
 it on the relevant physical item and retain the evidence. Without that test,
-the result remains UNKNOWN or PLANNED and release is withheld. A competent
-authority may permit a narrowly scoped, supervised, expiring non-safety trial
-under release policy. Production and safety-critical scope cannot waive
-required physical or authority evidence. A demo may end in a concept-definition
-package or a named stop. It cannot imply a functional pass without evidence.
+the result remains UNKNOWN or PLANNED and release is withheld. The approver
+named in `product.yaml` may authorize only the scope allowed by the release
+policy's [release ceiling](../full/skills/cad-release/references/release.md#release-ceiling).
+Required physical and authority evidence remains mandatory.
+It also cannot claim a functional pass without the required evidence.
 
 ## Manufacturing intent
 

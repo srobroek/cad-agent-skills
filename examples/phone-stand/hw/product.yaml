@@ -275,7 +275,7 @@ release_scope:
   exclusions:
     status: KNOWN
     value:
-    - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL and SERVICE requirements are outside this APPEARANCE_CONCEPT scope
+    - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL, SERVICE, SAFETY and REGULATORY requirements are outside this APPEARANCE_CONCEPT scope
     - no holding-force, friction, tipping, durability, physical-fit or other physical claim
     - drawings are reviewed model-generated engineering drawings, not producer-ready and not standards-conformant
     basis: USER_DECLARED
