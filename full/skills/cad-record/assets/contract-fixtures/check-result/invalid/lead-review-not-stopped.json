@@ -1,0 +1,92 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "review/a1",
+  "check": "review",
+  "attempt": "a1",
+  "family": "review.mechanical_dfm",
+  "producer_role": "lead",
+  "stage": "CRITIQUE",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input_files": [
+    {
+      "path": "hw/checks/v6/record-schema/a1/result.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v6/review/a1/source/checks.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      {
+        "path": "hw/checks/v6/review/a1/source/checks.py.lock",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/lead/checks.py"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "ASSEMBLY"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "review.mechanical_dfm@assembly"
+    ],
+    "coverage_kind": "PARTIAL"
+  },
+  "outcomes": [
+    {
+      "obligation": "review.mechanical_dfm@assembly",
+      "subject": {
+        "kind": "ASSEMBLY"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "UNKNOWN",
+      "method": {
+        "name": "lead reading of the design"
+      },
+      "reason": "lead could not judge DFM",
+      "unknown_code": "MISSING_INPUT"
+    }
+  ],
+  "findings": [],
+  "artifacts": [],
+  "complete": true,
+  "result": "UNKNOWN",
+  "limitations": [
+    "the reviewer's delivery stays unpublished; no review ran on this version"
+  ]
+}

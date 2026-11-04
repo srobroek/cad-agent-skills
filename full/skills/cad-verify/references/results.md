@@ -7,22 +7,30 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
 
 ## Implementation kind
 
-| Kind      | Who                                         | Contents                                                                                                                 |
-| --------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `COMMAND` | every family except `review.mechanical_dfm` | `source_files` (the retained programs under `source/`), `commands` (argv, cwd, exit code), pinned `packages`, `platform` |
-| `REVIEW`  | `review.mechanical_dfm` only, always        | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts                  |
+| Kind      | Who                                                                                                       | Contents                                                                                                                 |
+| --------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `COMMAND` | every family except `review.mechanical_dfm`; the lead's result of any family stopped at acceptance        | `source_files` (the retained programs under `source/`), `commands` (argv, cwd, exit code), pinned `packages`, `platform` |
+| `REVIEW`  | the `review.mechanical_dfm` reviewer, always                                                              | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts                  |
 
-1. A COMMAND producer writes its own program `.cad-work/<unit>/check.py` as a PEP 723 script, locks it with
-   `uv lock --script <absolute path>` and runs it with `uv run --locked --script <absolute path>`. Program and lock stay at the unit root,
-   never delivery outputs ([cad-flow agent-roles — Every role](../../cad-flow/references/agent-roles.md#every-role) step 6); at merge the
-   lead copies them into the result bundle's `source/`
+1. A COMMAND producer writes its own program as a PEP 723 script, a unit at `.cad-work/<unit>/check.py` and the lead at
+   `.cad-work/lead/checks.py`, and locks and runs it with the
+   [cad-flow agent-roles uv commands](../../cad-flow/references/agent-roles.md#uv-commands). A program that reads record
+   YAML parses it with the [pinned loader](../../cad-record/references/validation.md#yaml-loader). Program and lock stay at
+   the unit root, never delivery outputs ([cad-flow agent-roles — Every role](../../cad-flow/references/agent-roles.md#every-role)
+   step 6); at merge the lead copies them into the result bundle's `source/`
    ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3):
    `hw/checks/vN/<check>/<attempt>/source/`, or for `drawing.coverage` `hw/drawings/vN/<SUBJECT>/source/`
-   ([cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage)).
-2. The checker never runs or imports a producer's `build.py` or `check.py` as its method; producer exports are inputs only.
-3. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
+   ([cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage)). The lead retains
+   its own program and lock as `source/checks.py` and `source/checks.py.lock` of every result it produces.
+2. A checker may start from the retained `source/check.py` and lock of the latest accepted result of the same family (one
+   a stage verdict lists) for a re-attempt, a rework or a later stage, when its brief's input inventory lists both. The
+   copy is its own program: it re-checks the copy against the current method and its brief, relocks and re-runs it, and
+   the new result's `source_files` hash the program it ran.
+3. The checker never runs or imports a producer's `build.py` or `check.py` as its method; producer exports are inputs only
+   ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 17).
+4. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
    `MISSING_RESULT` at acceptance.
-4. A REVIEW result that lists commands, or a reviewer that wrote any file or ran anything other than read-only inspection commands (the lead
+5. A REVIEW result that lists commands, or a reviewer that wrote any file or ran anything other than read-only inspection commands (the lead
    compares its tree digest before dispatch and after return; per-host reading rule:
    [cad-flow agent roles — Roles](../../cad-flow/references/agent-roles.md#roles)), fails acceptance; the lead never edits the reviewer's
    bytes.

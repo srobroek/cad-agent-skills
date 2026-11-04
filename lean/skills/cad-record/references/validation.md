@@ -6,19 +6,22 @@ model-written semantic check program proves what shape cannot, and the shape of 
 
 ## Schema validation
 
-Use the pinned published CLI, one schema and one instance per command, from the project root.
-`<skill-dir>` is the absolute cad-record directory from the brief or preflight, never a guess.
+Run check-jsonschema 0.39.0, the pinned published CLI, as preflight.json `tools[]` `check-jsonschema` argv
+([cad-flow preflight](../../cad-flow/references/preflight.md#probe-tools)) from the project root; never resolve it through
+`uvx` or another install. `<skill-dir>` is the absolute cad-record directory from the brief or preflight, never a guess.
+Run one command per schema root over every instance of that root in [scope](#scope), each path quoted, in sorted order:
 
 ```sh
-uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile "<skill-dir>/schemas/product.schema.json" "hw/product.yaml"
+"<check-jsonschema argv>" --schemafile "<skill-dir>/schemas/decision.schema.json" -o json --verbose "hw/decisions/DR-001.yaml" "hw/decisions/DR-002.yaml"
 ```
 
-- Exit 0 means the instance matches; any other exit is a FAIL for that file; record stdout and stderr.
+- Exit 0 means every instance matches. The JSON report on stdout lists each matching file in `successes` and each
+  other file in `errors` (one entry per violation: `filename`, `path`, `message`) or `parse_errors` (`filename`,
+  `message`); record stdout and stderr.
 - Pass the root schema file itself; never `file#fragment`. Sibling `$ref`s resolve from the schema's own
   directory, so the installed tree must stay intact.
-- Quote every path. For a family (parts, decisions, results), run one command per literal path in sorted
-  order; never pass an unquoted glob.
-- Every file whose `layout.json` entry names a `schema` is validated against that root:
+- Never pass an unquoted glob.
+- A file whose `layout.json` entry names a `schema` validates against that root:
 
 | Instance | Root |
 |---|---|
@@ -35,17 +38,61 @@ uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile "<skill-dir>/s
 These records have `schema: null` in `layout.json` and a prose root instead: interfaces, check plan, materials,
 capabilities, selection, variants, version manifests, bundle manifests, BOMs, verification indexes, the lead claim,
 briefs and deliveries, plus the installed `<cad-flow>/assets/stages.yaml`. Semantic item 17 checks them; no schema
-command runs on them.
+command runs on them, and the [YAML loader](#yaml-loader) loads each YAML file among them.
 
 A snapshot under `hw/versions/vN/record/` validates against the root, or conforms to the prose root, of the live
 file it copies.
 
+### YAML loader
+
+The one YAML loader of the lead and every worker is PyYAML 6.0.3 `yaml.safe_load` on the file's bytes. check-jsonschema
+parses YAML with ruamel.yaml, which accepts text this loader rejects (an unquoted `?` inside a flow mapping), so a schema
+PASS alone never shows that a YAML file loads.
+
+- Command: preflight.json `tools[]` `yaml-loader` argv
+  ([cad-flow preflight](../../cad-flow/references/preflight.md#probe-tools)), every file quoted, in one call:
+
+  ```sh
+  "<yaml-loader argv>" -c 'import sys, yaml; [yaml.safe_load(open(p, "rb")) for p in sys.argv[1:]]' "hw/product.yaml" "hw/requirements.yaml"
+  ```
+
+  Exit 0 means every file loads. A non-zero exit names the first file that fails (`in "<path>", line …`): that file
+  is FAIL, and the call repeats over the files after it until each file has loaded or failed.
+- A program that reads record YAML (the lead's `checks.py`, a worker's `check.py` or `build.py`) declares
+  `pyyaml==6.0.3` in its PEP 723 block and parses with `yaml.safe_load`; never another loader or a hand parser.
+- `record.schema` loads every YAML instance in its scope before its root commands, and the lead runs the loader as the
+  scratch diagnostic of [cad-flow freeze-inputs](../../cad-flow/references/stages.md#freeze-inputs) step 1.
+- Authored YAML that loads: [record — Namespace and conventions](record.md#namespace-and-conventions).
+
+### Scope
+
+`record.schema` validates the version snapshot and every file published since the last accepted result; a file
+hash-verified as unchanged is not validated again.
+
+- Universe: every `hw/` file whose `layout.json` entry names a schema, every `hw/` YAML instance of a
+  [prose root](prose-contract.md), and every snapshot file under `hw/versions/v*/record/`. A CONTROLLED live file
+  (layout `mutability`) is validated as its snapshot copy, never in place. A prose-root YAML file is only loaded; its
+  row's root is the prose root's name.
+- Baseline: the `record.schema` result of the newest `hw/versions/v*/stage-verdict.json` whose `policy.plugin` equals
+  the installed plugin name and version, with its item table ([Reporting](#reporting)); both re-hash to the sha256s that
+  verdict's `result_file` and the result's bundle manifest record. There is none at the first attempt, after a plugin
+  change or when a re-hash differs.
+- UNCHANGED: a universe file whose baseline row has the same path, root and sha256 and outcome PASS, and whose bytes
+  still hash to that sha256. Its row is copied with basis `UNCHANGED`. Every other universe file, the vN snapshot
+  among them, is validated: the YAML loader, then its root command when it has a schema root.
+- The installed stage policy `<cad-flow>/assets/stages.yaml` is never hashed, so it is loaded in every attempt.
+- The result's `input_files` list the baseline's `result.json` and item table and every universe file.
+- Briefs, deliveries and the lead claim are validated where cad-flow writes or accepts them. A result published after
+  `record.schema` ran is validated before publication
+  ([cad-flow run-checks](../../cad-flow/references/stages.md#run-checks) step 3) and enters the next attempt's scope.
+
 ## Semantic check
 
-JSON Schema does not prove items 1–16; item 17 stands in for the schema of each prose root. The lead or checker
-writes its own program under `.cad-work/<unit>/` with an explicit uv script lock, runs it against the inventoried
-input, and publishes a `record.semantic` check result; an independent checker reads that program before its result
-counts.
+JSON Schema does not prove items 1–16 and 18; item 17 stands in for the schema of each prose root. The lead or checker
+writes its own program under `.cad-work/<unit>/`, or starts from a retained one
+([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 2), with an
+explicit uv script lock, runs it against the inventoried input, and publishes a `record.semantic` check result; an
+independent checker reads that program before its result counts.
 
 The program reads the inventoried `hw/` files, including the statement files the DRs hash, this skill's schemas, `layout.json`
 and the stage policy, all named in the brief ([cad-flow worker brief](../../cad-flow/references/worker-brief.md)).
@@ -60,14 +107,15 @@ items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
 3. References: every cited ID, profile, case, check, obligation and path resolves to an existing entry. In `hw/manufacturing/selection.yaml`
    each recommendation route field (`primary`, `prototype`, `end_use`, `fallback`) names a candidate of that file whose `feasibility` is
    FEASIBLE; a FINAL recommendation's `decision` is an APPROVED INTENT `GATE` DR whose `choice` is the `primary` and whose bound version's
-   snapshot of this file has the same `candidates` and `assessment.input_sha256`.
+   snapshot of this file has the same `candidates` and `assessment.input_sha256`. Each UNKNOWN hard outcome's `question` is OPEN
+   in the `hw/requirements.yaml` of the same snapshot.
 4. Assembly tree: one root, every parent exists, no cycle; joints connect existing occurrences.
 5. Order and units: `lower <= upper`, BETWEEN bounds ordered, joint limits ordered; a value, its criterion and its bounds share one
    dimension of [Unit dimensions](#unit-dimensions); quaternions have unit norm within 1e-9 and axes are non-zero.
 6. Hashes: every recorded sha256 equals the bytes on disk; a retained source's directory name equals its
    sha256; inventories exclude themselves and every downstream file (references/record.md hash graph).
 7. Freshness: a VERSION result's inputs, cases and check plan equal the version snapshot; a CARRIED_FORWARD result keeps its
-   original binding and instead equals the current bytes input by input
+   original binding and instead equals the current bytes input by input, and its outcomes are all PASS or NOT_APPLICABLE
    ([cad-flow change impact — Carry-forward](../../cad-flow/references/change-impact.md#carry-forward)); calibrations and waivers
    are unexpired at the verdict time; a changed input makes the old evidence stale (UNKNOWN, `STALE`).
 8. Coverage: a result's outcomes cover exactly its `expected_obligations`; a stage verdict's `expected` and `future` equal the
@@ -114,6 +162,12 @@ items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
       resolving `$ref`s from `<skill-dir>/schemas/`;
     - the stage policy's `order` runs 1–13 in stage-enum order, GROUND's `predecessor` is null and every other
       stage's `predecessor` is the stage before it.
+18. Program provenance: no `cad-checker` result's program (a `source_files` entry not ending `.lock`) has the sha256 of a
+    producer program in the record: a version build source under `hw/versions/v*/source/`, a part model
+    `hw/parts/<PN>/model.py` or a drawing program `hw/drawings/v*/<SUBJECT>/source/build.py`. A program whose sha256
+    equals a check program an earlier version's result retains is a reused one: some such result of the same family is
+    listed in a stage verdict ([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind)
+    steps 2 and 3).
 
 ## Unit dimensions
 
@@ -154,16 +208,20 @@ check result ([cad-verify results — Outcomes](../../cad-verify/references/resu
 
 | Aggregate | When |
 |---|---|
-| `PASS` | every schema command exits 0; every semantic item holds |
-| `FAIL` | any command exits non-zero, or any item is violated |
-| `UNKNOWN` | otherwise, when a command did not run or an item could not be assessed: the `unknown_code` all those share, else `INCOMPLETE` |
+| `PASS` | every file row is PASS; every semantic item holds |
+| `FAIL` | any file row is FAIL or any command exits non-zero; any item is violated |
+| `UNKNOWN` | otherwise, when a file row or an item could not be assessed: the `unknown_code` all those share, else `INCOMPLETE` |
 
-- Item table: `artifacts/items.json` in the check bundle, role `REPORT`; one row per command (file, root, exit
-  code, stderr) or per semantic item (item number, outcome, files, message), item 17 one row per prose-root file.
-  It is the aggregate's `evidence`; the aggregate's `value` is the tally as text (`17 of 17 items hold`).
-- Each non-PASS command or item is one finding: `record.schema:product:<locus>` or
+- Item table: `artifacts/items.json` in the check bundle, role `REPORT`. It is the aggregate's `evidence`; the
+  aggregate's `value` is the tally as text (`42 of 42 files pass`, `18 of 18 items hold`).
+  - `record.schema`: one row per universe file of its [scope](#scope) and one for the stage policy: file, root, sha256
+    (none for the stage policy, which is never hashed), basis `VALIDATED` or `UNCHANGED`, outcome and messages. A
+    VALIDATED file is PASS when it loads (YAML) and, with a schema root, its root command lists it in `successes`; FAIL
+    when the loader rejects it or the report lists it in `errors` or `parse_errors`, with every message and JSON path;
+    UNKNOWN `NOT_RUN` when its command did not run or the report does not name it, never PASS.
+  - `record.semantic`: one row per item (item number, outcome, files, message), item 17 one row per prose-root file.
+- Each non-PASS file row or item is one finding: `record.schema:product:<locus>` or
   `record.semantic:item-<n>:<locus>`. `<locus>` is the file path, or the offending ID for an item that spans files,
   lower-cased, with every character outside `a-z0-9_` as `-` and every leading character outside `a-z` dropped
   (`hw-product-yaml`, `req-003`, `cad-work-u1-brief-yaml`). A FAIL finding names the file, JSON
   path and message.
-- A command that did not run is UNKNOWN `NOT_RUN`, never PASS.

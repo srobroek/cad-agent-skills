@@ -202,9 +202,11 @@ Candidate:
 
 - Route step: `kind route_kind` required, optional `provider LOCAL|OUTSOURCED`; `capability` (`profile_id` or
   `fact_unknown`) iff `kind` is not PURCHASED; `purchase` (`part#purchase`) iff `kind` is PURCHASED.
-- Hard outcome (also used by [variant](#variant)): `{requirement requirement_id, outcome PASS|FAIL|UNKNOWN, criterion
-  criterion_or_unknown, method text}` required; PASS and FAIL need `source source` and a real `criterion`; UNKNOWN
-  needs `reason text`.
+- Hard outcome (also used by [variant](#variant)): `{requirement requirement_id, outcome PASS|FAIL|UNKNOWN|PLANNED,
+  criterion criterion_or_unknown, method text}` required; PASS and FAIL need `source source` and a real `criterion`;
+  UNKNOWN needs `reason text` and `question question_id`, the open question that settles it; PLANNED needs
+  `reason text`, a real `criterion` and `due stage`, never GROUND or INTENT. `question` appears only on UNKNOWN and
+  `due` only on PLANNED. What PLANNED means: [cad-select assess-selection](../../cad-select/references/selection.md#assess-selection).
 - Feasibility: FEASIBLE has no FAIL or UNKNOWN hard outcome; CONDITIONAL has at least one UNKNOWN and no FAIL;
   EXCLUDED has at least one FAIL. A score or weighting never ranks a FAIL feasible.
 - Recommendation: `{status NONE|CONDITIONAL|FINAL, governing_requirements requirement_ids, reasons texts, limits
@@ -223,7 +225,7 @@ Authored by a concept unit and merged unchanged. A preview is never verification
 | `architecture_doc` | — | `hw_path` |
 | `parts` | yes | `[{PN pn, title text, sourcing sourcing, material_profile, route}]≥1`, all required; `material_profile` is `profile_id` or `fact_open`; `route` is `[route_kind]≥1` or `fact_unknown` |
 | `requirements` | yes | `requirement_ids` |
-| `hard_outcomes` | yes | `[hard outcome]≥1`, as in [selection](#selection) |
+| `hard_outcomes` | yes | `[hard outcome]≥1`, as in [selection](#selection) without `question`; a PLANNED `due` is a stage after VARIANT |
 | `feasibility` | yes | `FEASIBLE\|CONDITIONAL\|EXCLUDED`, the selection feasibility rule |
 | `dependencies` | — | `texts` |
 | `unknowns` | yes | `[fact_unknown]` |

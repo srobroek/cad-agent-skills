@@ -72,12 +72,12 @@
       "facet": "CAD_VALID",
       "outcome": "FAIL",
       "value": {
-        "text": "15 of 16 items hold"
+        "text": "16 of 17 items hold"
       },
       "criterion": {
         "property": "semantic_items_holding",
         "comparator": "EQUALS",
-        "value": 16,
+        "value": 17,
         "source": {
           "kind": "POLICY",
           "reference": "Semantic check and Reporting",

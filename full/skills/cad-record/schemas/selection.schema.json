@@ -113,11 +113,19 @@
               "required": ["requirement", "outcome", "criterion", "method"],
               "properties": {
                 "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
-                "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN"]},
+                "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN", "PLANNED"]},
                 "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
                 "method": {"$ref": "common.schema.json#/$defs/text"},
                 "source": {"$ref": "common.schema.json#/$defs/source"},
-                "reason": {"$ref": "common.schema.json#/$defs/text"}
+                "reason": {"$ref": "common.schema.json#/$defs/text"},
+                "due": {
+                  "description": "PLANNED only: the first later stage whose evidence settles the criterion; never PASS",
+                  "$ref": "common.schema.json#/$defs/stage"
+                },
+                "question": {
+                  "description": "UNKNOWN only: the open question in hw/requirements.yaml that settles it",
+                  "$ref": "common.schema.json#/$defs/question_id"
+                }
               },
               "allOf": [
                 {
@@ -129,7 +137,19 @@
                 },
                 {
                   "if": {"required": ["outcome"], "properties": {"outcome": {"const": "UNKNOWN"}}},
-                  "then": {"required": ["reason"]}
+                  "then": {"required": ["reason", "question"]},
+                  "else": {"not": {"required": ["question"]}}
+                },
+                {
+                  "if": {"required": ["outcome"], "properties": {"outcome": {"const": "PLANNED"}}},
+                  "then": {
+                    "required": ["reason", "due"],
+                    "properties": {
+                      "criterion": {"$ref": "common.schema.json#/$defs/criterion"},
+                      "due": {"not": {"enum": ["GROUND", "INTENT"]}}
+                    }
+                  },
+                  "else": {"not": {"required": ["due"]}}
                 }
               ]
             },

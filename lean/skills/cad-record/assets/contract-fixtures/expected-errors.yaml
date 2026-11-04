@@ -26,6 +26,8 @@ check-result/invalid/artifact-lists-result-json.json: '$.artifacts[2].path: ''hw
 check-result/invalid/command-without-commands.json: '$.implementation.commands: [] should be non-empty'
 # the package-integrity result never hashes or inspects release-manifest.json, which hashes it
 check-result/invalid/integrity-hashes-release-manifest.json: '$.input_files[2].path: ''hw/releases/A/release-manifest.json'' should not be valid under {''pattern'': ''(^|/)release-manifest\\.json$''}'
+# the lead writes a review.mechanical_dfm result only for a review stopped at acceptance: every outcome UNKNOWN NOT_RUN
+check-result/invalid/lead-review-not-stopped.json: "$.outcomes[0].unknown_code: 'NOT_RUN' was expected"
 # a PASS outcome needs criterion, evidence and value
 check-result/invalid/pass-without-criterion.json: "$.outcomes[0]: 'criterion' is a required property"
 # finding ids are family:anchor:locus, never positional
