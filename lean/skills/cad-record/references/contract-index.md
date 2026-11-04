@@ -320,6 +320,11 @@ AUTHORITY actor and a `statement` whose `path` is `hw/decisions/statements/DR-##
 - `scratch.lead_units`: `.cad-work/lead/units.yaml`
 - `scratch.lead_sessions`: `.cad-work/lead/sessions/**`
 - `scratch.lead_claim`: `.cad-work/lead/active/claim.yaml` → `lead-claim` (prose)
+- `scratch.lead_checks`: `.cad-work/lead/checks.py`
+- `scratch.lead_checks_lock`: `.cad-work/lead/checks.py.lock` (`uv lock --script checks.py`)
+- `scratch.lead_work`: `.cad-work/lead/scratch/**`
+- `scratch.lead_uv_cache`: `.cad-work/lead/.uv-cache/**`
+- `scratch.lead_validator`: `.cad-work/lead/validator/**`
 - `scratch.unit_brief`: `.cad-work/{UNIT}/brief.yaml` → `worker-brief` (prose)
 - `scratch.unit_input`: `.cad-work/{UNIT}/input/**`
 - `scratch.unit_output`: `.cad-work/{UNIT}/output/**`
@@ -327,5 +332,7 @@ AUTHORITY actor and a `statement` whose `path` is `hw/decisions/statements/DR-##
 - `scratch.unit_build_lock`: `.cad-work/{UNIT}/build.py.lock` (uv writes `uv lock --script build.py` next to the script)
 - `scratch.unit_check`: `.cad-work/{UNIT}/check.py`
 - `scratch.unit_check_lock`: `.cad-work/{UNIT}/check.py.lock` (`uv lock --script check.py`)
+- `scratch.unit_uv_cache`: `.cad-work/{UNIT}/.uv-cache/**`
+- `scratch.unit_pycache`: `.cad-work/{UNIT}/__pycache__/**`
 - `scratch.unit_delivery`: `.cad-work/{UNIT}/delivery.json` → `worker-delivery` (prose)
 - `scratch.stage`: `.cad-work/stage-{V}/**`

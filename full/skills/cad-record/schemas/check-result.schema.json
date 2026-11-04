@@ -250,7 +250,24 @@
     },
     {
       "if": {"required": ["family"], "properties": {"family": {"const": "review.mechanical_dfm"}}},
-      "then": {"required": ["review"], "properties": {"producer_role": {"const": "cad-mech-dfm-reviewer"}}}
+      "then": {
+        "description": "the reviewer's result, or the lead's result of a review stopped at acceptance: every outcome UNKNOWN NOT_RUN",
+        "anyOf": [
+          {"required": ["review"], "properties": {"producer_role": {"const": "cad-mech-dfm-reviewer"}}},
+          {
+            "required": ["producer_role"],
+            "properties": {
+              "producer_role": {"const": "lead"},
+              "outcomes": {
+                "items": {
+                  "required": ["outcome", "unknown_code"],
+                  "properties": {"outcome": {"const": "UNKNOWN"}, "unknown_code": {"const": "NOT_RUN"}}
+                }
+              }
+            }
+          }
+        ]
+      }
     },
     {
       "if": {"required": ["family"], "properties": {"family": {"const": "release.integrity"}}},

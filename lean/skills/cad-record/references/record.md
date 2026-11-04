@@ -10,6 +10,9 @@ Owner: cad-record. `layout.json` (beside SKILL.md) is the path authority; the te
 - Generated JSON and YAML documents declare `format: cad-agent-skills.<root>` and `schema_version: 1`.
   Authored record YAML (requirements, interfaces, assembly, check plan, parts, manufacturing, decisions)
   carries no header; product.yaml carries the record version for the project.
+- Authored YAML is block style. A flow collection (`[…]`, `{…}`) holds only IDs and other bare tokens (enum values,
+  unit symbols), numbers and quoted strings; any other text is quoted or written in block style. Loader:
+  [validation — YAML loader](validation.md#yaml-loader).
 - Machine states, processes, service classes and results are CAPS. Exceptions: rigor `maker|pro|regulated`,
   kernel `cadquery|build123d`, unit symbols (`mm`, `deg_C`, `g_cm3`…) and quoted source text.
 - New geometry is authored `PART_LOCAL`, millimetres, right-handed, +Z up. An imported part keeps
@@ -141,8 +144,16 @@ find . -type f ! -path './.git/*' ! -path './.cad-work/*' ! -path './.claude/*' 
 find . -type f ! -path './.git/*' ! -path './.cad-work/*' ! -path './.claude/*' ! -path './.codex/*' ! -path './.agents/*' ! -path './.opencode/*' ! -path './.kiro/*' ! -path './.omp/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 -r sha256sum | sha256sum
 ```
 
-The first line is macOS (`shasum`), the second Linux (`sha256sum`). For a set digest, replace the `find … | sed …`
-prefix with `LC_ALL=C sort <list>` over a file holding one listed path per line.
+The first line is macOS (`shasum`), the second Linux (`sha256sum`). A set digest sorts the listed paths, never the hash
+lines; `<list>` is a file holding one listed path per line, relative to the root:
+
+```sh
+LC_ALL=C sort <list> | tr '\n' '\0' | xargs -0 -r shasum -a 256 | shasum -a 256
+```
+
+```sh
+LC_ALL=C sort <list> | tr '\n' '\0' | xargs -0 -r sha256sum | sha256sum
+```
 
 Worked example: `hw/product.yaml` holds `format: cad-agent-skills` + LF and `hw/parts/STD-0001/part.yaml` holds
 `PN: STD-0001` + LF; `.git/HEAD`, `.cad-work/u1/x.txt` and `.kiro/agents/cad-checker.json` also exist and are excluded. The lines are:

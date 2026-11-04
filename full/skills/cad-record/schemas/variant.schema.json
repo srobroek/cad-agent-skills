@@ -57,11 +57,15 @@
         "required": ["requirement", "outcome", "criterion", "method"],
         "properties": {
           "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
-          "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN"]},
+          "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN", "PLANNED"]},
           "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
           "method": {"$ref": "common.schema.json#/$defs/text"},
           "source": {"$ref": "common.schema.json#/$defs/source"},
-          "reason": {"$ref": "common.schema.json#/$defs/text"}
+          "reason": {"$ref": "common.schema.json#/$defs/text"},
+          "due": {
+            "description": "PLANNED only: the first stage after VARIANT whose evidence settles the criterion; never PASS",
+            "$ref": "common.schema.json#/$defs/stage"
+          }
         },
         "allOf": [
           {
@@ -74,6 +78,17 @@
           {
             "if": {"required": ["outcome"], "properties": {"outcome": {"const": "UNKNOWN"}}},
             "then": {"required": ["reason"]}
+          },
+          {
+            "if": {"required": ["outcome"], "properties": {"outcome": {"const": "PLANNED"}}},
+            "then": {
+              "required": ["reason", "due"],
+              "properties": {
+                "criterion": {"$ref": "common.schema.json#/$defs/criterion"},
+                "due": {"not": {"enum": ["GROUND", "INTENT", "SPECIFY", "CONCEPT", "VARIANT"]}}
+              }
+            },
+            "else": {"not": {"required": ["due"]}}
           }
         ]
       },

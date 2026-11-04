@@ -63,6 +63,8 @@ check-result/invalid/artifact-lists-result-json.json: '$.artifacts[2].path: ''hw
 check-result/invalid/command-without-commands.json: '$.implementation.commands: [] should be non-empty'
 # the package-integrity result never hashes or inspects release-manifest.json, which hashes it
 check-result/invalid/integrity-hashes-release-manifest.json: '$.input_files[2].path: ''hw/releases/A/release-manifest.json'' should not be valid under {''pattern'': ''(^|/)release-manifest\\.json$''}'
+# the lead writes a review.mechanical_dfm result only for a review stopped at acceptance: every outcome UNKNOWN NOT_RUN
+check-result/invalid/lead-review-not-stopped.json: "$.outcomes[0].unknown_code: 'NOT_RUN' was expected"
 # a PASS outcome needs criterion, evidence and value
 check-result/invalid/pass-without-criterion.json: "$.outcomes[0]: 'criterion' is a required property"
 # finding ids are family:anchor:locus, never positional
@@ -224,6 +226,8 @@ requirements/invalid/safety-waivable.yaml: "$.requirements[1].waiver_policy: 'FO
 selection/invalid/conditional-only-with-primary.yaml: "$.recommendation.status: 'NONE' was expected"
 # preferences rank feasible candidates only
 selection/invalid/conditional-ranked.yaml: "should not be valid under {'required': ['preference_scores']}"
+# only a PLANNED hard outcome names a due stage
+selection/invalid/due-without-planned.yaml: "'due': 'DETAIL'} should not be valid under {'required': ['due']}"
 # a FINAL recommendation names its decision
 selection/invalid/final-without-decision.yaml: "$.recommendation: 'decision' is a required property"
 # assessment.inputs never lists hw/manufacturing/selection.yaml, which holds them
@@ -236,6 +240,12 @@ selection/invalid/none-with-feasible.yaml: "$.recommendation.status: 'NONE' is n
 selection/invalid/not-assessed-with-candidates.yaml: "should not be valid under {'anyOf': [{'required': ['assessment']}, {'required': ['recommendation']}]}"
 # only a PURCHASED step carries a purchase
 selection/invalid/purchase-on-made-step.yaml: "should not be valid under {'required': ['purchase']}"
+# a PLANNED hard outcome is due at a stage after INTENT
+selection/invalid/planned-due-intent.yaml: "$.candidates[0].hard_outcomes[1].due: 'INTENT' should not be valid under {'enum': ['GROUND', 'INTENT']}"
+# a PLANNED hard outcome names its due stage
+selection/invalid/planned-without-due.yaml: "$.candidates[0].hard_outcomes[1]: 'due' is a required property"
+# an UNKNOWN hard outcome names the open question that settles it
+selection/invalid/unknown-without-question.yaml: "$.candidates[1].hard_outcomes[0]: 'question' is a required property"
 # a hard FAIL makes a candidate EXCLUDED; preferences cannot rank it feasible
 selection/invalid/weighted-pass-over-fail.yaml: "should not be valid under {'contains': {'type': 'object', 'properties': {'outcome': {'enum': ['FAIL', 'UNKNOWN']}}, 'required': ['outcome']}}"
 # a CONDITIONAL check names its condition
@@ -276,6 +286,8 @@ variant/invalid/feasible-with-unknown.yaml: "should not be valid under {'contain
 variant/invalid/geometry-absent-no-reason.yaml: "$.geometry: 'reason' is a required property"
 # a variant names its delivering unit, role and brief digest
 variant/invalid/missing-source.yaml: "$: 'source' is a required property"
+# a variant's PLANNED hard outcome is due after VARIANT
+variant/invalid/planned-due-variant.yaml: "$.hard_outcomes[1].due: 'VARIANT' should not be valid under {'enum': ['GROUND', 'INTENT', 'SPECIFY', 'CONCEPT', 'VARIANT']}"
 # a variant never holds its delivery digest (the delivery outputs hash the variant)
 variant/invalid/source-delivery-hash.yaml: "$.source: Additional properties are not allowed ('delivery_sha256' was unexpected)"
 # a row never cites the verification.index obligation that checks this index

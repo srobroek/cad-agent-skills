@@ -61,6 +61,7 @@ candidates:
       source: *id001
     method: pending
     reason: printer envelope unsourced (Q-021)
+    question: Q-021
   feasibility: CONDITIONAL
   economics:
     quantity:
@@ -136,6 +137,7 @@ candidates:
     criterion: *id002
     method: no CNC capability profile
     reason: no machining provider
+    question: Q-022
   feasibility: CONDITIONAL
   economics:
     quantity:
