@@ -52,18 +52,28 @@ model routing and resource loads remain unproved until live smoke runs per host.
 - Claude Code on Bedrock lists `WebFetch` but no `WebSearch` in the session's tools (2.1.318), so a Claude role that
   names `WebSearch`, such as the sourcing researcher, has no search there and works from URLs it is given, such as a
   brief's `seed_urls`. Round 3 ran no Claude sourcing unit, so this is the listed tool set, not an observed failure.
-- OpenCode 2.2.5 keeps its session database, logs and state in the user's default data directory
-  (`~/.local/share/opencode`) even for a private `opencode serve`. When a cell does not set its own `XDG_DATA_HOME`,
-  `XDG_STATE_HOME` and `XDG_CACHE_HOME`, another OpenCode process on the host can "recover" the cell's busy session:
-  in round 3 a restarted background service appended restart notices to the lead and aborted it ("Execution was
-  interrupted repeatedly and will not be resumed automatically"). `/tmp/opencode` stays shared even with those set.
-- Kiro CLI 3.0.0 does not reliably apply a role profile's shell rules to output redirections: in some sessions it
-  matched a command without its `> file` part, so a redirect into `hw/`, `.git/` or a host directory ran although the
-  profile denies it. The lead's boundary digest catches a redirect into `hw/` (worker delivery Accept step 8); one into
-  `.git/` or a host directory is not caught.
-- Claude Code 2.1.318 `claude plugin marketplace add --scope project` declares the marketplace in the project settings
-  but still records it at user level and lists it from other projects (where the plugin stays disabled), so two cells
-  that register the same marketplace are not isolated from each other.
+- OpenCode 2.2.5 `websearch` returned `Web search cancelled` for every lead and worker call in both round-4 cells;
+  the evidence does not establish why it was cancelled. See [live-smoke evidence](smoke.md#observed-smoke-findings).
+- Codex CLI 0.166.0 on Bedrock: round-4 probes found `gpt-6.1-terra` and `gpt-6-luna` in `us-east-1`; probes in
+  `us-east-2` and `us-west-2` returned 404. Verify a selected model in the provider region before a cell; catalog
+  availability does not establish regional availability. See [smoke findings](smoke.md#observed-smoke-findings).
+- Kiro CLI V3's approval driver used a 1.0 s polling default; the round-4 driver used `--poll 0.25`. One full cell's
+  approval wait share was 6.93% at the default and 5.33% after switching, including a 75.93 s driver stall. These
+  observed shares do not verify a target. See [smoke findings](smoke.md#observed-smoke-findings).
+- Claude Code 2.1.318 `claude plugin marketplace add --scope project` declares the marketplace in the project settings,
+  but still records it at user level and lists it from other projects (where the plugin stays disabled). Two cells
+  that register the same marketplace are therefore not isolated from each other.
+
+### Model-routing evidence
+
+Each host exposes a per-agent model override mechanism; current keys and precedence are documented in
+[smoke.md](smoke.md#observed-smoke-findings). These describe routing only, not which model or effort a role should use.
+
+Round-4 A/B evidence does not support changing per-role defaults. OMP's terra/high and luna/xhigh runs confound model
+and effort, and both OMP cells failed obligations. Claude's baseline failed before equivalent INTENT; only checker
+acceptance compares (8/10 sonnet versus 7/9 opus, directional). Codex A/B outcomes were blocked at GROUND or sourcing
+and do not establish a general tier result. Keep shipped role model lines unchanged; a matched-effort A/B after the fix
+wave is needed to decide defaults.
 
 `uv lock --script` needs package-index/network access to resolve and lock
 dependencies. A lock does not imply offline availability. Runtime CAD
@@ -93,4 +103,4 @@ Lean has 11 direct schema roots. The other 17 contracts are prose tables in
 [`lean/skills/cad-record/references/prose-contract.md`](../lean/skills/cad-record/references/prose-contract.md).
 Model-written `record.semantic` item 17 checks these tables, and no validator
 ships here. The variants share stage, gate, procedure and check-family names.
-The repository publishes no A/B result.
+The repository publishes no A/B result. Round-4 evidence does not establish a per-role model or effort recommendation; see [model-routing evidence](#model-routing-evidence).
