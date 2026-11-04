@@ -11,7 +11,7 @@ subjects:
 - kind: PART
   PN: ABC-0001
 input_inventory:
-  # set digest over files (cad-record references/record.md "Inventory digest")
+  # Set digest over files per [cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest).
   sha256: '0000000000000000000000000000000000000000000000000000000000000000'
   files:
   - path: hw/parts/ABC-0001/part.yaml

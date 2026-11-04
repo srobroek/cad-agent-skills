@@ -22,23 +22,23 @@ ASK approval of each change to approved scope, each waiver, and the release inve
 
 ## Workflow
 
-1. LOAD references/preflight.md (`skill://cad-flow/references/preflight.md`); claim the lead lock, resolve
+1. LOAD [preflight](references/preflight.md) (`skill://cad-flow/references/preflight.md`); claim the lead lock, resolve
    resources → `claim.yaml` ACTIVE for this session and `preflight.json` with absolute paths only.
-2. LOAD references/stages.md (`skill://cad-flow/references/stages.md`); run `resume-state` against
+2. LOAD [stages](references/stages.md) (`skill://cad-flow/references/stages.md`); run `resume-state` against
    `assets/stages.yaml` → the stage, its attempt vN and the next procedure ID.
 3. Run the stage's `procedure` IDs in order, loading the stage `owner` skill for stage-work IDs
    → one immutable `hw/versions/vN/stage-verdict.json` that validates.
-4. At `dispatch-units` LOAD references/delegation.md (`skill://cad-flow/references/delegation.md`),
-   references/worker-brief.md (`skill://cad-flow/references/worker-brief.md`) and references/agent-roles.md
+4. At `dispatch-units` LOAD [delegation](references/delegation.md) (`skill://cad-flow/references/delegation.md`),
+   [worker brief](references/worker-brief.md) (`skill://cad-flow/references/worker-brief.md`) and [agent roles](references/agent-roles.md)
    (`skill://cad-flow/references/agent-roles.md`) → one batch, each native task ID logged.
-5. For each returned delivery LOAD references/worker-delivery.md (`skill://cad-flow/references/worker-delivery.md`)
+5. For each returned delivery LOAD [worker delivery](references/worker-delivery.md) (`skill://cad-flow/references/worker-delivery.md`)
    → ACCEPTED or REJECTED, accepted bytes merged verbatim.
-6. At `present-gate` LOAD references/gates.md (`skill://cad-flow/references/gates.md`) → an APPROVED or
+6. At `present-gate` LOAD [gates](references/gates.md) (`skill://cad-flow/references/gates.md`) → an APPROVED or
    REJECTED decision, or the stage stays WAITING_FOR_USER.
-7. On a change, FAIL or MAJOR LOAD references/change-impact.md (`skill://cad-flow/references/change-impact.md`)
+7. On a change, FAIL or MAJOR LOAD [change impact](references/change-impact.md) (`skill://cad-flow/references/change-impact.md`)
    → the stage reopened, stale results listed, a CHANGE decision when approved scope changes.
-8. On a stop condition run the stages.md stop procedure → blocker recorded, user told, no further writes.
-9. Finish per preflight.md → claim copied into the session directory, only this session's lock released.
+8. On a stop condition run [the stop procedure](references/stages.md#stop-procedure) → blocker recorded, user told, no further writes.
+9. Finish per [preflight](references/preflight.md) → claim copied into the session directory, only this session's lock released.
 
 ## Rules
 

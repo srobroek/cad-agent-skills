@@ -64,4 +64,4 @@ original version, that recheck result and the reason. Without that explicit asse
 - Cause inside the finding stage's own work → a new attempt of that stage.
 - Cause in an earlier stage → this procedure with R from the table.
 - MAJOR → the earliest causal owner gets a new attempt; MINOR → close the finding, then recheck in a new attempt.
-- Defective worker output → re-dispatch to the producing role (references/delegation.md), not a reopen.
+- Defective worker output → re-dispatch to the producing role ([delegation](delegation.md)), not a reopen.
