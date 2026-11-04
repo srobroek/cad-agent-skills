@@ -45,6 +45,8 @@ skill ships none.
   input inventory with its sha256; never part.yaml, another PN or any other record file;
 - draw text only from a font file retained under `hw/parts/<PN>/sources/` with its license file, passed by path;
   a family name alone or a host font is forbidden, and a missing font fails the build.
+  Sole exception: drawing dimension labels, owned by
+  [cad-release Drawing program](../../cad-release/references/drawings.md#drawing-program).
 
 Determinism is the same signature at the declared tolerances (references/exports.md "Signatures and witnesses"),
 never identical bytes; a STEP header timestamp may differ between runs.
