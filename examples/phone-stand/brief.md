@@ -57,12 +57,15 @@ written from these answers names an actor starting `SYNTHETIC`.
    verdict sha256; present it again.`
 2. INTENT and VARIANT: reply `approve <STAGE> <vN> choose <option id>` with the option the packet recommends: at INTENT
    the recommendation's `primary`; at VARIANT, with no single recommendation, the first FEASIBLE option in packet order.
-   An INTENT recommendation of NONE presents no gate: answer its blocking questions as in "Scripted owner answers".
+   An INTENT recommendation of NONE presents no gate: its attempt ends BLOCKED, and its report asks each blocking
+   question by id; answer them as in "Scripted owner answers".
 3. A waiver proposal gets `reject <DR-###>; I decline this waiver.`
 4. RELEASE: reply `approve RELEASE <vN> REV <REV>` for the presented proposal.
 5. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
    change or a selection): reply `approve <DR-###>` when it restates a scripted answer, the scripted change or the
    option rule 2 would choose; otherwise `reject <DR-###>; record it as an open question.`
+6. After the expected end, or after a stop the lead reports that asks nothing these rules answer, reply exactly
+   `end the session`. This is the last scripted turn: the lead releases its claim on it.
 
 ## Scripted change
 
