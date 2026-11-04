@@ -5,11 +5,16 @@ names are identical.
 
 ## Claude Code
 
-Add the public GitHub marketplace once:
+Add the public GitHub marketplace at the scope you install at. For a project install, run both commands from the project root:
 
-```sh
-claude plugin marketplace add srobroek/cad-agent-skills
-```
+| Scope   | Command                                                                   |
+| ------- | ------------------------------------------------------------------------- |
+| project | `claude plugin marketplace add srobroek/cad-agent-skills --scope project` |
+| user    | `claude plugin marketplace add srobroek/cad-agent-skills --scope user`    |
+
+The project form declares the marketplace in the project's `.claude/settings.json`, beside the plugin it enables. Claude Code 2.1.318
+still records it in the user's `known_marketplaces.json`, so `claude plugin marketplace list` shows it in other projects too, where the
+plugin stays disabled.
 
 Run the one command for your variant and scope:
 

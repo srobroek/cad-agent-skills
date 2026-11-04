@@ -325,6 +325,8 @@ AUTHORITY actor and a `statement` whose `path` is `hw/decisions/statements/DR-##
 - `scratch.unit_build_lock`: `.cad-work/{UNIT}/build.py.lock` (uv writes `uv lock --script build.py` next to the script)
 - `scratch.unit_check`: `.cad-work/{UNIT}/check.py`
 - `scratch.unit_check_lock`: `.cad-work/{UNIT}/check.py.lock` (`uv lock --script check.py`)
+- `scratch.unit_extract`: `.cad-work/{UNIT}/extract.py`
+- `scratch.unit_extract_lock`: `.cad-work/{UNIT}/extract.py.lock` (`uv lock --script extract.py`)
 - `scratch.unit_uv_cache`: `.cad-work/{UNIT}/.uv-cache/**`
 - `scratch.unit_pycache`: `.cad-work/{UNIT}/__pycache__/**`
 - `scratch.unit_delivery`: `.cad-work/{UNIT}/delivery.json` → `worker-delivery`

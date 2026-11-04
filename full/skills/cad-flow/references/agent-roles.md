@@ -66,7 +66,7 @@ is a missing tool: stop as above.
 | `cad-part-designer`       | the brief's part numbers and any required assembly drawing: part record, one-kernel model, components, manufacturing state, route, part drawing intent at DETAIL, own build, readback and UNIT checks; draw each briefed subject per [cad-release's drawing procedure](../../cad-release/references/drawings.md#draft-drawings) | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL and FREEZE | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `.uv-cache/**`, `__pycache__/**`, `delivery.json` | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` and briefed drawing bundles |
 | `cad-checker`             | independent checks of the brief's version or unit inputs: own programs, results, artifacts, logs, coverage                                                                                                                                                                                                                      | cad-verify, cad-model, cad-select, cad-design, cad-release, cad-record                      | `output/**`, `check.py`, `check.py.lock`, `.uv-cache/**`, `__pycache__/**`, `delivery.json`                              | `hw/checks/<vN>/<check>/<attempt>/**`                                       |
 | `cad-mech-dfm-reviewer`   | separate mechanical and DFM outcomes for the exact version: premises, requirements, routes, evidence, drawings, BOM                                                                                                                                                                                                             | cad-review, cad-verify, cad-select, cad-record                                              | nothing                                                                                                                | `hw/checks/<vN>/<check>/<attempt>/result.json`                              |
-| `cad-sourcing-researcher` | the brief's purchased families, stock or capability: retained source bytes, profile proposals, catalogue alternatives with citations                                                                                                                                                                                            | cad-select, cad-record                                                                      | `output/**`, `delivery.json`                                                                                           | `hw/manufacturing/sources/<sha256>/<name>`, `hw/parts/<PN>/sources/**`      |
+| `cad-sourcing-researcher` | the brief's purchased families, stock or capability: retained source bytes, profile proposals, catalogue alternatives with citations                                                                                                                                                                                            | cad-select, cad-record                                                                      | `output/**`, `extract.py`, `extract.py.lock`, `.uv-cache/**`, `__pycache__/**`, `delivery.json`                        | `hw/manufacturing/sources/<sha256>/<name>`, `hw/parts/<PN>/sources/**`      |
 
 The brief lists only the skills that own its methods ([worker-brief](worker-brief.md#compose)); a role loads no other.
 
@@ -79,13 +79,20 @@ The brief lists only the skills that own its methods ([worker-brief](worker-brie
   document as one fenced `json` block with `implementation.kind: REVIEW` and `inspected` listing every file read with its sha256 from
   the brief inventory. The lead writes those bytes unchanged and writes the delivery for it.
 - Sourcing researcher: profiles are proposals to the shared libraries ([cad-select materials](../../cad-select/references/materials.md));
-  NOT purchase, select, approve or write a shared record. Retain each source's original bytes with this one command, never a web-fetch
-  text conversion; the retained bytes are the body curl wrote, hashed with `shasum -a 256` (or `sha256sum`), and each is delivered to a
-  brief pattern with `<sha256>` its hash:
+  NOT purchase, select, approve or write a shared record. Retain each source's original bytes with one of these two commands, never a
+  web-fetch text conversion; the second adds `--create-dirs` when the directory of `<path>` does not exist yet. The retained bytes are
+  the body curl wrote, hashed with `shasum -a 256` (or `sha256sum`), and each is delivered to a brief pattern with `<sha256>` its hash:
 
   ```sh
   curl -fsSL -o <root>/.cad-work/<unit>/output/<path> --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 <url>
+  curl -fsSL --create-dirs -o <root>/.cad-work/<unit>/output/<path> --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 <url>
   ```
+
+  To read a retained PDF's text, write the PEP 723 program `.cad-work/<unit>/extract.py`, lock it beside itself as `extract.py.lock`
+  and run it with the [uv commands](#uv-commands); it reads the retained bytes unchanged and writes the text to its own file under
+  `output/`. The text is derived evidence, never a substitute for the original bytes, which stay retained and are what a fact cites;
+  deliver the text as its own source, with `<sha256>` its own hash. `extract.py` and its lock stay in the unit directory and are never
+  delivery outputs.
 
   Budget per unit: at most 8 retained sources, 16 fetch attempts and 3 attempts per host; a host that answered 403 or 429 or failed TLS
   is not fetched again. Discover only through the host's search tool or the brief's `seed_urls`; never scan an archive CDX index or a
