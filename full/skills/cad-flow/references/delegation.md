@@ -26,6 +26,16 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 5. Log each returned native task id; wait on and steer only those ids. Wait for every unit of the batch within the same turn, with the
    host's foreground or blocking wait where it offers one; never end a turn or present a gate while a dispatched unit still runs. A unit
    lost to a turn end is `STOPPED` and goes out again as a new unit ([Integrate](#integrate) step 2).
+
+   | `harness`  | native `task_id`                                                         |
+   | ---------- | ------------------------------------------------------------------------ |
+   | `OMP`      | the task id the `task` call returns                                      |
+   | `CLAUDE`   | the Task tool call id                                                    |
+   | `CODEX`    | the `spawn_agent` agent id, else its `/root/<task_name>` path            |
+   | `OPENCODE` | the subagent's child session id                                          |
+   | `KIRO`     | the subagent's sub-session id (`subSessionId`), else its tool call id    |
+
+   An id the host does not show the lead is logged `UNAVAILABLE: <what the call returned>`.
 6. Write nothing outside `.cad-work/` while a unit of the batch runs: any other write changes the tree digest.
 
 ## Integrate
@@ -49,3 +59,7 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
   [worker-delivery](worker-delivery.md) is the per-unit check.
 - Native permission profiles prevent accidental tool calls; they are no operating-system boundary, and an allowed program can still write
   indirectly.
+- A host that denies a command this contract requires, to a worker or to the lead, is a host or plugin defect. Record the exact denied
+  command, the host's denial text and the installed role or profile path, stop the affected unit (`STOPPED`), and report it as a
+  `MISSING_RESOURCE` blocker with an open question for the operator. Never ask the owner to edit an installed role or profile file
+  ([install rule](../SKILL.md#rules)).
