@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills example expected obligations (examples/<example>/expected-obligations.yaml)",
+  "description": "Closed demo and A/B protocol data for one example: fixed-truth conditions, design-dependent conditions, the 13 stages with the obligations each must enumerate, the outcomes a correct run may report and the correct end states. Not a record file. Families, stages and service classes are the cad-record common definitions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "example",
+    "service_class",
+    "release_ceiling",
+    "conditions",
+    "design_dependent",
+    "stages",
+    "acceptable_ends",
+    "open_at_end"
+  ],
+  "properties": {
+    "example": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "service_class": {"$ref": "../../skills/cad-record/schemas/common.schema.json#/$defs/service_class"},
+    "release_ceiling": {"$ref": "#/definitions/text"},
+    "conditions": {
+      "description": "families whose condition has a fixed truth value for this brief at every stage that lists them",
+      "type": "object",
+      "propertyNames": {"$ref": "../../skills/cad-record/schemas/common.schema.json#/$defs/check_family"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["applies", "reason"],
+        "properties": {"applies": {"type": "boolean"}, "reason": {"$ref": "#/definitions/text"}}
+      }
+    },
+    "design_dependent": {
+      "description": "families whose condition depends on the run's own frozen design: family -> condition text",
+      "type": "object",
+      "propertyNames": {"$ref": "../../skills/cad-record/schemas/common.schema.json#/$defs/check_family"},
+      "additionalProperties": {"$ref": "#/definitions/text"}
+    },
+    "scripted_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger", "expected_decision", "expected_rerun", "must_not"],
+      "properties": {
+        "trigger": {"$ref": "#/definitions/text"},
+        "expected_decision": {"$ref": "#/definitions/text"},
+        "expected_rerun": {"$ref": "#/definitions/text"},
+        "must_not": {"$ref": "#/definitions/texts"}
+      }
+    },
+    "import": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "files", "mapping", "decision", "gate_credit"],
+      "properties": {
+        "source": {"$ref": "#/definitions/text"},
+        "files": {"type": "integer", "minimum": 1},
+        "mapping": {"$ref": "#/definitions/text"},
+        "decision": {"$ref": "#/definitions/text"},
+        "gate_credit": {"const": "none"}
+      }
+    },
+    "stages": {
+      "description": "exactly the 13 stages, in order",
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "items": [
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "GROUND"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "INTENT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "SPECIFY"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "CONCEPT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "VARIANT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "LAYOUT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "PARTS"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "DETAIL"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "BOM"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "ANALYSIS"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "CRITIQUE"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "FREEZE"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "RELEASE"}}}]}
+      ]
+    },
+    "acceptable_ends": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/definitions/text"},
+          {
+            "description": "one named end state (SEALED, STOPPED, ...) and its description",
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "propertyNames": {"pattern": "^[A-Z][A-Z_]*$"},
+            "additionalProperties": {"$ref": "#/definitions/text"}
+          }
+        ]
+      }
+    },
+    "never": {"$ref": "#/definitions/texts"},
+    "open_at_end": {"type": "array", "items": {"$ref": "#/definitions/text"}}
+  },
+  "definitions": {
+    "text": {"type": "string", "minLength": 1},
+    "texts": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/text"}},
+    "obligation": {
+      "description": "<family>@<anchor> with <placeholders> allowed, optionally followed by a parenthesised condition",
+      "type": "string",
+      "pattern": "^[a-z][a-z_]*\\.[a-z][a-z_]*@([^ <>()]|<[^<>]+>)+( \\([^()]+\\))?$"
+    },
+    "stage_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "expected", "future", "verdict", "gate", "must_show"],
+      "properties": {
+        "stage": {"$ref": "../../skills/cad-record/schemas/common.schema.json#/$defs/stage"},
+        "expected": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/obligation"}},
+        "future": {"type": "array", "items": {"$ref": "#/definitions/obligation"}},
+        "verdict": {"type": "string", "pattern": "^(PASS|FAIL|BLOCKED)\\b"},
+        "gate": {"type": "string", "pattern": "^(APPROVED after `approve [A-Z]+ <vN>[^`]*`|NOT_REQUIRED|NOT_PRESENTED|REVIEW)$"},
+        "must_show": {"$ref": "#/definitions/texts"},
+        "must_not": {"type": "array", "items": {"$ref": "#/definitions/text"}},
+        "post_approval": {"type": "array", "items": {"$ref": "#/definitions/text"}}
+      }
+    }
+  }
+}
