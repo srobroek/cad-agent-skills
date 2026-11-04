@@ -25,8 +25,7 @@ Runs before every other preflight command.
    | `KIRO`     | none: Kiro exports no session variable; always `UNAVAILABLE-<started stamp>`               |
 
 3. A variable of another row (`PI_*`, `CLAUDE_*`, `CODEX_*`, `OPENCODE_*`) is never `session` and never evidence of `harness`; never
-   invent an id. An `UNAVAILABLE-*` session is reported to the user in the first reply: resume matching and fork detection are
-   unavailable on this host.
+   invent an id. An `UNAVAILABLE-*` session means resume matching and fork detection are unavailable on this host.
 4. `isolation` is `NOT_APPLICABLE`, and no `omp` command runs, on every harness except OMP.
 5. Harness `OMP` only: `omp config get task.isolation.enabled --json` prints `false` → `isolation: DISABLED`; otherwise stop and ask
    the user to set it, because an isolated worker writes into a clone the lead never reads.
@@ -92,6 +91,9 @@ never a fallback method.
 Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`, `schemas [{name, path}]`, `layout`,
 `policy {path, plugin}`, `role_reference`, `rubric`, `templates`, `tools [{name, argv, version}]`, `isolation`, `time`. Every path is
 absolute. Briefs and verdicts copy resource paths and provenance from this file only.
+
+The session's first reply states the plugin `name` and `version`, the `harness` and the `session`; an `UNAVAILABLE-*` session adds that
+resume matching and fork detection are unavailable on this host.
 
 ## Finish
 

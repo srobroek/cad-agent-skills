@@ -31,6 +31,10 @@ needs a change to a locked or shared file; a required capability, method or tool
 fails; or, for a producer, a check of its own output is FAIL or UNKNOWN. A checker or reviewer delivers a FAIL, UNKNOWN or MAJOR finding as
 its result; that is the evidence, not a stop ([cad-flow worker delivery](worker-delivery.md#accept)).
 
+A host that denies one command has not blocked every command: retry only the exact command forms this contract and your skills name,
+each once, and record every denial verbatim (the command and the host's denial text) in `limits`. A required command that stays denied
+is a missing tool: stop as above.
+
 ## Delivery fields
 
 | Field                                    | Value                                                                                                                                                                  |
