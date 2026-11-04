@@ -1,9 +1,10 @@
 # Check plan
 
-Owner: cad-verify. The SPECIFY and ANALYSIS stage-work procedures, the expected-scope enumeration that cad-flow
-`enumerate-obligations` takes its anchors from, and the evidence each service class needs. Fields and paths are
-cad-record's (`schemas/requirements.schema.json`, `schemas/check-plan.schema.json`, `layout.json`); the per-family
-method, anchor and fixed check id are in references/families.md.
+Owner: cad-verify. The SPECIFY and ANALYSIS stage-work procedures, the expected-scope enumeration that [cad-flow
+`enumerate-obligations`](../../cad-flow/references/stages.md#enumerate-obligations) takes its anchors from, and the
+evidence each service class needs. Fields and paths are cad-record's ([requirements schema](../../cad-record/schemas/requirements.schema.json),
+[check-plan schema](../../cad-record/schemas/check-plan.schema.json), [layout](../../cad-record/layout.json)); the per-family method, anchor and fixed check id
+are in [families.md](families.md).
 
 ## specify-requirements
 
@@ -17,19 +18,22 @@ Input: the approved GROUND and INTENT record (`hw/product.yaml` service class, r
    given stays a typed UNKNOWN with owner and question; never a default or a typical value.
 3. Methods: `ANALYSIS` for geometry, process, stack, mass and load evidence; `INSPECTION` of the model or drawing for
    CAD_VALID, of a made article for PHYSICALLY_VALIDATED; `DEMONSTRATION` and `TEST` only for PHYSICALLY_VALIDATED.
-4. Facets from the service class table below: each requirement lists every facet its class needs for its kind.
+4. For each requirement, list the facets relevant to it, chosen from those allowed for its service class and kind in
+   the table below. A requirement need not list every allowed facet. If it omits a facet mandatory for its service
+   class, that omission is a scope gap: the affected outcome is UNKNOWN, never PASS.
 5. `due`: the earliest stage whose verdict needs the evidence (CAD_VALID from LAYOUT, GEOMETRICALLY_MANUFACTURABLE and
    PROCESS_PLANNED from PARTS, SIMULATION_SUPPORTED at ANALYSIS, PHYSICALLY_VALIDATED at RELEASE).
 6. `safety: true` for kind SAFETY or REGULATORY and for any requirement whose failure the product risk names as a
-   harm to people; then `waiver_policy: FORBIDDEN`. Otherwise `APPROVAL_REQUIRED` only where a waiver class of cad-flow
-   references/gates.md "Waivers" can apply, else `FORBIDDEN`.
+   harm to people; then `waiver_policy: FORBIDDEN`. Otherwise `APPROVAL_REQUIRED` only where a waiver class in
+   [cad-flow gates — Waivers](../../cad-flow/references/gates.md#waivers) can apply, else `FORBIDDEN`.
 7. Validate `hw/requirements.yaml` against the requirements root → exit 0.
 
 `requirements.completeness@product` is PASS only when: at least one requirement exists; the service class is KNOWN
-with its DR; every requirement has KNOWN criteria, at least one method and the facets and `due` the table gives; every
+with its DR; every requirement has KNOWN criteria, a method, its applicable facets and `due` per step 4; every
 safety requirement is FORBIDDEN; every requirement kind outside the class's scope is listed in
 `product.yaml` `release_scope.exclusions`. A consequential UNKNOWN criterion or service class is UNKNOWN
-`REQUIRED_UNKNOWN`; a missing facet, method or exclusion is FAIL.
+`REQUIRED_UNKNOWN`; omission of a facet mandatory for that service class is also a `SCOPE_GAP`. A missing method or
+exclusion is FAIL.
 
 ### Evidence by service class
 
@@ -46,8 +50,9 @@ A SAFETY or REGULATORY requirement is in scope at every class and never waived. 
 
 ## plan-checks
 
-Input: the requirements from `specify-requirements`, `hw/interfaces.yaml` from cad-design `specify-interfaces`,
-the stage policy `assets/stages.yaml` of cad-flow and the installed tools in `.cad-work/lead/preflight.json`.
+Input: the requirements from `specify-requirements`, `hw/interfaces.yaml` from
+[cad-design layout — specify-interfaces](../../cad-design/references/layout.md#specify-interfaces), the stage policy
+`assets/stages.yaml` of cad-flow and the installed tools in `.cad-work/lead/preflight.json`.
 
 1. For every family that families.md marks `plan` and whose stage-policy condition can hold for this product (its
    requirements, interfaces, selected routes and sourcing), write at least one check in `hw/check-plan.yaml`.
@@ -65,13 +70,13 @@ the stage policy `assets/stages.yaml` of cad-flow and the installed tools in `.c
    - `waiver_policy`: FORBIDDEN when the family ceiling, a covered requirement or `safety` says so.
    - `producer_role`: `cad-checker`; `cad-mech-dfm-reviewer` for `review.mechanical_dfm`.
 3. Write the cases the methods need:
-   - MOTION per functional motion: joints, sampling and steps per references/geometry-motion.md, `pairs: ALL`
+   - MOTION per functional motion: joints, sampling and steps per [geometry-motion.md](geometry-motion.md), `pairs: ALL`
      unless an interface excludes a pair with its reason, `play_extremes: true` when any member states play.
    - STACK per critical dimension chain: signed contributors, state and source; WORST_CASE unless a
-     JUSTIFIED_RSS block and DR exist (references/fits.md).
+     [JUSTIFIED_RSS](fits.md#fitstack) block and DR exist.
    - LOAD per stated load, with `material.basis_required: ALLOWABLE` for a strength criterion
-     (references/mass-loads.md).
-   - FEA only when preflight found an installed solver and the user approved it (references/fea.md).
+     ([mass-loads.md](mass-loads.md#loadhand)).
+   - FEA only when preflight found an installed solver and the user approved it ([fea.md](fea.md#loadfea)).
    - MASS once for the product: densities per made component and every purchased mass.
 4. Validate `hw/check-plan.yaml` against the check-plan root → exit 0.
 
@@ -82,8 +87,7 @@ scope item. An UNKNOWN criterion is UNKNOWN `REQUIRED_UNKNOWN`; a missing check,
 
 ## Expected scope
 
-cad-flow `enumerate-obligations` step 2 runs this on the frozen inputs of `vN`, before any check runs.
-
+[`enumerate-obligations`](../../cad-flow/references/stages.md#enumerate-obligations) step 2 runs this on the frozen inputs of `vN`, before any check runs.
 1. Scope items from the snapshot:
    - every made part (MAKE, MADE_TO_DRAWING), every component, every route operation that forms that component
      (operation `components`, or all components when absent) and every target feature or critical surface it forms:
@@ -100,7 +104,7 @@ cad-flow `enumerate-obligations` step 2 runs this on the frozen inputs of `vN`, 
    obligation `<family>@<anchor>`.
 5. Assign each obligation to the one check whose family and scope rule cover it. No covering check → the obligation
    is `<family>@<anchor>` UNKNOWN `UNSUPPORTED_METHOD` with a `SCOPE_GAP` blocker; two covering checks → `SCOPE_GAP`
-   and SPECIFY reopens (cad-flow references/change-impact.md).
+   and SPECIFY reopens ([cad-flow change impact](../../cad-flow/references/change-impact.md)).
 6. Product-wide families (families.md anchor `@product`) give one obligation `<family>@product` under their fixed
    check id. For a `plan` family, `<family>@product` exists only when the plan does not anchor it and resolves UNKNOWN
    `UNSUPPORTED_METHOD`, never PASS.
@@ -116,7 +120,7 @@ Runs at ANALYSIS before `freeze-inputs`; it edits no case.
    the basis it requires; its method is available (an FEA solver at the exact version in `preflight.json`).
 3. Write `.cad-work/lead/sessions/<stamp>/confirm-cases.yaml`: each case `CONFIRMED`, or blocked with
    `MISSING_INPUT`, `REQUIRED_UNKNOWN` or `UNSUPPORTED_METHOD` and the fact that unblocks it.
-4. A case that must change is a change (cad-flow references/change-impact.md, reopen SPECIFY); a blocked case
+4. A case that must change is a change ([cad-flow change impact](../../cad-flow/references/change-impact.md), reopen SPECIFY); a blocked case
    leaves its obligations UNKNOWN with that code. A safety case is never postponed to a later stage.
 
 ## index-verification
@@ -127,9 +131,8 @@ Runs at ANALYSIS and FREEZE after `run-checks` has published this attempt's resu
    CARRIED_FORWARD) and every APPROVED WAIVER DR.
 2. One row per requirement × subject × facet × criterion. `obligations`: the expected obligations whose outcomes
    name that requirement, subject and facet, plus the future obligations of that requirement and facet in
-   `obligations.yaml`. Row `outcome`, first match:
-   - WAIVED when every FAIL or UNKNOWN obligation is covered by an approved waiver under cad-flow references/stages.md
-     `write-verdict` step 2 (there is at least one); the row cites the waiver DR;
+   - WAIVED when every FAIL or UNKNOWN obligation is covered by an approved waiver under [cad-flow stages — write-verdict](../../cad-flow/references/stages.md#write-verdict)
+     step 2 (there is at least one); the row cites the waiver DR;
    - FAIL when any is FAIL; UNKNOWN (with the result's `unknown_code`) when any is UNKNOWN;
    - PLANNED when any is future;
    - NOT_APPLICABLE when all are; else PASS.

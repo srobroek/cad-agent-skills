@@ -1,6 +1,6 @@
 # FEA
 
-Owner: cad-verify. Method for `load.fea`. FEA cases are the cad-record `check-plan` root (solver, loads, boundary
+Owner: cad-verify. Method for `load.fea`. FEA cases are the [cad-record check-plan root](../../cad-record/schemas/check-plan.schema.json) (solver, loads, boundary
 conditions, material, mesh, convergence, `units: mm-N-MPa`, limits).
 
 ## load.fea

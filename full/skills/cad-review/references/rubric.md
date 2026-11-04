@@ -1,9 +1,9 @@
 # Rubric
 
 Owner: cad-review. The one grading rubric for every worker delivery and every review: finding severity and the
-verdict `PASS|MINOR|MAJOR`. The reply format is cad-flow references/agent-roles.md "Reply"; the finding fields are
-cad-verify references/results.md "Findings"; what a verdict does to a stage is cad-flow references/stages.md
-`write-verdict` and references/change-impact.md "Findings".
+verdict `PASS|MINOR|MAJOR`. The reply format is [cad-flow agent roles — Reply](../../cad-flow/references/agent-roles.md#reply); the finding fields are
+[cad-verify results — Findings](../../cad-verify/references/results.md#findings); what a verdict does to a stage is [cad-flow stages — write-verdict](../../cad-flow/references/stages.md#write-verdict)
+and [cad-flow change impact — Findings](../../cad-flow/references/change-impact.md#findings).
 
 ## Finding severity
 
@@ -34,7 +34,7 @@ neither is physical validation.
 | `cad-concept-designer`, `cad-part-designer` | the delivery against its brief; only PASS is ready |
 | `cad-sourcing-researcher` | the research scope of the brief; a PASS finds a conditional option, never a final feasibility or selection |
 | `cad-checker` | the checked subject by its results: PASS when every result is PASS or reviewed NOT_APPLICABLE and no finding is above INFO; MINOR when only MINOR findings remain; MAJOR on any FAIL or UNKNOWN result |
-| `cad-mech-dfm-reviewer` | the reviewed version, by cad-review references/review.md `review.mechanical_dfm` |
+| `cad-mech-dfm-reviewer` | the reviewed version, by [cad-review review — review.mechanical_dfm](review.md#reviewmechanical_dfm) |
 
 ## Rules
 

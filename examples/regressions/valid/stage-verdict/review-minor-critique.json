@@ -131,7 +131,7 @@
   "future": [],
   "blockers": [
     {
-      "code": "OTHER",
+      "code": "REVIEW_MINOR",
       "text": "required review MINOR: close process.fdm:STD-0002.body/print#phone_lip:edge_radius, then recheck in a new attempt",
       "obligation": "review.mechanical_dfm@assembly"
     }

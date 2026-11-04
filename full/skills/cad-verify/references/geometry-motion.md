@@ -1,8 +1,7 @@
 # Geometry and motion checks
 
 Owner: cad-verify. Methods for `geometry.interference`, `geometry.clearance`, `motion.sweep`, `motion.play`,
-`motion.access` and `assembly.operations`. Inputs are the version's readback geometry and transforms (cad-model
-references/exports.md), the assembly tree, joints and operations (cad-record `assembly` root), interfaces and the
+`motion.access` and `assembly.operations`. Inputs are the version's readback geometry and transforms ([cad-model exports](../../cad-model/references/exports.md)), the [cad-record assembly root](../../cad-record/schemas/assembly.schema.json), interfaces and the
 MOTION cases of the check plan.
 
 ## Pair measurement

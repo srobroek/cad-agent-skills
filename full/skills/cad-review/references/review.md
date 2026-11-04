@@ -1,10 +1,10 @@
 # Mechanical and DFM review
 
 Owner: cad-review. The read-only reviewer's procedure. cad-flow assigns cad-review no stage-work procedure ID:
-`review.mechanical_dfm` is a check family that cad-flow references/stages.md `run-checks` dispatches to a
-`cad-mech-dfm-reviewer` unit at PARTS, CRITIQUE and FREEZE. Grading is references/rubric.md; the reply is cad-flow
-references/agent-roles.md "Reply"; the lead's transcription is cad-flow references/worker-delivery.md "Read-only
-reviewer".
+[`review.mechanical_dfm`](../../cad-flow/references/stages.md#run-checks) is a check family dispatched to a
+`cad-mech-dfm-reviewer` unit at PARTS, CRITIQUE and FREEZE. Grading is [cad-review rubric](rubric.md#verdict);
+the reply is [cad-flow agent roles — Reply](../../cad-flow/references/agent-roles.md#reply); the lead's transcription
+is [cad-flow worker delivery — Read-only reviewer](../../cad-flow/references/worker-delivery.md#read-only-reviewer).
 
 ## review.mechanical_dfm
 
@@ -26,27 +26,26 @@ bundle manifests and `source/` programs, obligations, drawings, BOM and verifica
 4. For each entry decide the outcome the evidence supports: PASS only when its result is PASS and the challenges below
    find no defect; FAIL, UNKNOWN, NOT_APPLICABLE or WAIVED (an APPROVED waiver DR in the inventory) with a `reason`.
 5. Challenge the premise: each requirement traces use case → requirement → criterion → check; criteria and facets
-   equal the approved SPECIFY record and the service class (cad-verify references/check-plan.md); nothing is weakened.
+   equal the approved SPECIFY record and the service class ([cad-verify check plan](../../cad-verify/references/check-plan.md)); nothing is weakened.
 6. Challenge the evidence of each result:
    - its scope equals its obligations, and no pair, pose, component or feature was dropped;
    - coverage FULL, or SAMPLED with unsampled intervals listed;
    - its `source/` program measures what the outcome claims (pairs, poses, contributors, criteria) on inputs that
      hash to this version;
-   - no smoke, nominal, UNIT or scratch run stands as evidence;
-   - no PHYSICALLY_VALIDATED claim without a physical test (cad-verify references/results.md "Physical evidence");
+   - no PHYSICALLY_VALIDATED claim without a physical test ([cad-verify results — Physical evidence](../../cad-verify/references/results.md#physical-evidence));
    - every CARRIED_FORWARD result names its recheck.
 7. Mechanical: the load path from each load to its reaction; retention, fastener access, engagement and edge
    distance; joints over full travel and at play extremes; fits under the product regime; stacks at the worst case;
    stiffness, stability, thermal and moisture effects; FEA validity (boundary conditions, mesh, convergence,
    singularities, units).
-8. DFM: each part and operation by its own route kind against cad-verify references/process-checks.md, never one
+8. DFM: each part and operation by its own route kind against [cad-verify process checks](../../cad-verify/references/process-checks.md), never one
    process for the whole product; supports on critical surfaces, tool access, workholding, stock identity, kerf and
    thickness ranges, purchased identity; drawings carry every characteristic the route and inspection need; the BOM
    is derived, not typed. A process without criteria or capability is untested: UNKNOWN, never PASS.
-9. Write findings with the fields of cad-verify references/results.md "Findings": each measured value with units and
+9. Write findings with the fields of [cad-verify results — Findings](../../cad-verify/references/results.md#findings): each measured value with units and
    the inspected path it came from; remedy with alternatives and tradeoffs; `recheck` naming the families and the
-   earliest causal stage (cad-flow references/change-impact.md). Remedies are proposals; you redesign nothing.
-10. Grade the version with references/rubric.md → `PASS`, `MINOR` or `MAJOR`.
+   earliest causal stage ([cad-flow change impact — Findings](../../cad-flow/references/change-impact.md#findings)). Remedies are proposals; you redesign nothing.
+10. Grade the version with [cad-review rubric — Verdict](rubric.md#verdict) → `PASS`, `MINOR` or `MAJOR`.
 11. Compose the result document (root `check-result`) and reply with it as one fenced `json` block.
 
 ## Result document
@@ -64,6 +63,5 @@ bundle manifests and `source/` programs, obligations, drawings, BOM and verifica
 | `complete`, `result` | true when every coverage entry was assessed; PASS for a PASS verdict, else FAIL |
 | `limitations` | untested checks, unread evidence, sampled scope, absent physical evidence |
 | `review` | `{verdict, mechanical, dfm}` from steps 3–4 and 10 |
-
 The lead saves the block byte-identically and validates it; a block that fails validation, lists commands or
 mismatches the inventory is rejected and re-dispatched as a new unit, never repaired.
