@@ -46,7 +46,7 @@ design_dependent:
 
 # The scripted change in brief.md, sent after the LAYOUT gate is APPROVED and before PARTS starts.
 scripted_change:
-  trigger: phone thickness in its case changes from 9 mm to 12 mm (REQ-002)
+  trigger: phone thickness in its case changes from 9 mm to 12 mm (the REQ-002 cradle pocket depth)
   expected_decision: CHANGE proposal hw/decisions/proposals/DR-###/change.yaml presented, then a CHANGE decision with reopen SPECIFY and binding PROPOSAL
   expected_rerun: SPECIFY, CONCEPT, VARIANT and LAYOUT as new attempts that supersede the old ones, each gate presented again
   must_not:
@@ -66,9 +66,10 @@ stages:
   gate: APPROVED after `approve GROUND <vN>`
   must_show:
   - every template question Q-001 to Q-017 asked before any material or process is named
-  - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker
+  - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker, taken from A-12 as stated
+  - release_scope purpose form, CAD validity and printability review only (A-15), and exclusions naming fit with every functional, physical, safety and regulatory claim (cad-release references/release.md "Release ceiling")
   - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
-  - each fact a reply leaves open recorded as a typed UNKNOWN with owner and question (cad-select references/selection.md "Ask and finish intake" step 2) for screen-tap force, sun exposure, service life and wear, dimensional stability, the printer envelope and the material approvals; holding, friction, tipping and durability are release_scope exclusions from A-15, not new questions
+  - each fact a reply leaves open recorded as a typed UNKNOWN with owner and question (cad-select references/selection.md "Ask and finish intake" step 2) for screen-tap force, sun exposure, service life and wear, dimensional stability, the printer envelope and the material approvals; fit, holding, friction, tipping and durability are release_scope exclusions from A-15, not new questions
   - the gate packet lists the printer envelope and the material approvals as limits due at INTENT, and the out-of-scope unknowns (consequential false) as owned open questions; none blocks GROUND (cad-select references/selection.md "Scope of each unknown")
   must_not:
   - choose a material, process, printer setting, tolerance or clearance
@@ -107,11 +108,12 @@ stages:
   verdict: PASS
   gate: APPROVED after `approve SPECIFY <vN>`
   must_show:
-  - REQ-001 to REQ-005 with facets from the APPEARANCE_CONCEPT row only
-  - out-of-scope requirement kinds listed in release_scope.exclusions
+  - REQ-001 to REQ-005 with kinds APPEARANCE or MANUFACTURING and facets from the APPEARANCE_CONCEPT row only; REQ-002 a form dimension of the cradle pocket, not a fit
+  - out-of-scope requirement kinds, and fit of a phone in the stand, listed in release_scope.exclusions
   - a MOTION case over the full 55 to 75 degree range when the adjustment is a joint
   must_not:
   - add a PHYSICALLY_VALIDATED or SIMULATION_SUPPORTED facet to claim holding or tipping
+  - add an INTERFACE requirement, a fit, clearance or retention criterion between the phone and the stand, or any fit claim
 - stage: CONCEPT
   expected:
   - record.schema@product
@@ -195,7 +197,7 @@ stages:
   - selection.sourcing@<PN>
   - motion.sweep@case.<MOTION case> (design dependent)
   future: []
-  verdict: PASS, or BLOCKED naming each UNKNOWN process criterion (for example an uncalibrated hole fit on the owner's printer)
+  verdict: PASS, or BLOCKED naming each UNKNOWN process criterion (for example an uncalibrated hole diameter on the owner's printer)
   gate: APPROVED after `approve PARTS <vN>`
   must_show:
   - every made component with its orientation, support plan and route, and a separate FDM STL per component
@@ -335,8 +337,10 @@ stages:
   - hw/versions/<vN>/release-proposal.json without readiness, approval or integrity
   - a sealed hw/releases/A/ whose final manifest carries readiness, approval, inventory and integrity PASS
   - the outer digest of release-manifest.json reported outside the package
+  - claims only the CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED outcomes of REQ-001 to REQ-005, and scope exclusions copied from product.yaml, the fit exclusion among them
   must_not:
   - a claim outcome other than the verification index's, or any PHYSICALLY_VALIDATED or SIMULATION_SUPPORTED claim
+  - a fit claim of a phone in the stand, in CAD or physical, or any functional claim
   - a scope other than APPEARANCE_CONCEPT, or a published package after a non-PASS integrity result
 
 # Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.

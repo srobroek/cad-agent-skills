@@ -34,7 +34,7 @@ intake:
   status: DRAFT
   purpose:
     status: KNOWN
-    value: Concept package to review the form, the CAD fit of the owner's phone and printability
+    value: Concept package to review the form, CAD validity and printability only; no fit or function claim
     basis: USER_DECLARED
     sources:
     - &a12 {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC demo owner, date: '2026-11-03'}
@@ -260,7 +260,7 @@ authority:
 release_scope:
   purpose:
     status: KNOWN
-    value: concept-definition package for form, CAD fit and printability review
+    value: concept-definition package for form, CAD validity and printability review only
     basis: USER_DECLARED
     sources:
     - &a15 {kind: USER, reference: brief.md answer A-15, origin: SYNTHETIC demo owner, date: '2026-11-03'}
@@ -276,8 +276,9 @@ release_scope:
     status: KNOWN
     value:
     - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL, SERVICE, SAFETY and REGULATORY requirements are outside this APPEARANCE_CONCEPT scope
-    - no holding-force, friction, tipping, durability, physical-fit or other physical claim
-    - no safety claim; the harm the risk names (the phone slides or tips onto the desk, or the phone or the stand falls off the desk) is not evaluated in this scope
+    - no fit claim, in CAD or physical; the stated phone envelope sizes the cradle form (REQ-002), and no fit of a phone in the stand is evaluated
+    - no functional, holding-force, friction, tipping, durability or other physical claim
+    - no safety or regulatory claim; the harm the risk names (the phone slides or tips onto the desk, or the phone or the stand falls off the desk) is not evaluated in this scope
     - drawings are reviewed model-generated engineering drawings, not producer-ready and not standards-conformant
     basis: USER_DECLARED
     sources:

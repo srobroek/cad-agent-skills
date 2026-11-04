@@ -32,19 +32,19 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 
 | Stage | Send | Observe |
 |---|---|---|
-| GROUND | answers A-01 to A-20 | all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question, apart from rigor |
+| GROUND | answers A-01 to A-20 | all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question from A-12 without asking it again, apart from rigor; release scope form, CAD validity and printability review only, with fit excluded |
 | INTENT | the INTENT reply | at least two complete candidates; hard outcomes before preferences; printer and spool facts retained from sources or UNKNOWN |
-| SPECIFY | the SPECIFY reply | APPEARANCE_CONCEPT facets only; functional, performance, interface, environmental, service, safety and regulatory kinds excluded. Holding, friction, tipping and durability are release exclusions; service life is the open question. |
+| SPECIFY | the SPECIFY reply | APPEARANCE and MANUFACTURING requirements with APPEARANCE_CONCEPT facets only; REQ-002 sizes the cradle as a form dimension, never a fit; functional, performance, interface, environmental, service, safety and regulatory kinds listed as exclusions; fit, holding, friction, tipping and durability are release exclusions and service life remains an open question |
 | CONCEPT, VARIANT | the VARIANT reply | two to four unchanged variants; the lead repairs none |
 | LAYOUT | the LAYOUT reply, then the scripted change | hinge frames, play and hand access; the sweep over the full 55 to 75 degree travel, not the nominal pose |
-| change | the CHANGE approval | the 12 mm phone reopens SPECIFY; SPECIFY to LAYOUT rerun as new attempts, every gate presented again |
+| change | the CHANGE approval | the 12 mm phone case changes the REQ-002 cradle pocket depth and reopens SPECIFY; SPECIFY to LAYOUT rerun as new attempts, every gate presented again |
 | PARTS | the PARTS reply | each printed component with orientation, support and route; capability UNKNOWNs stop the stage instead of passing |
 | DETAIL | the DETAIL reply | drawing status per part; coverage per characteristic; every SVG, PNG and PDF opened; no producer-ready claim |
 | BOM | none | rows per occurrence and component; made-part mass UNKNOWN until ANALYSIS |
 | ANALYSIS | the ANALYSIS reply | mass and centre of mass with their density basis; no stability, friction or holding claim |
 | CRITIQUE | none | separate mechanical and DFM outcomes; a MAJOR finding reopens its causal stage |
 | FREEZE | the FREEZE reply | promote revisions; run checks before deriving the BOM; build the verification index, then accept results; exact frozen version and digest in the packet |
-| RELEASE | the RELEASE reply | enumerate the `vM` verification index before proposing; no readiness or approval is in the proposal; after approval a sealed `hw/releases/A/`, integrity PASS, claims copied from `vM`, and outer digest reported outside the package |
+| RELEASE | the RELEASE reply | enumerate the `vM` verification index before proposing; no readiness or approval is in the proposal; after approval a sealed `hw/releases/A/`, integrity PASS, only CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED claims copied from `vM`, no fit or physical claim, and outer digest reported outside the package |
 
 ## Lamp arm walk-through
 

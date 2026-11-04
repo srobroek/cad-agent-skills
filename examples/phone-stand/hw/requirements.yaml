@@ -1,8 +1,8 @@
 # Reference record for examples/phone-stand: hw/requirements.yaml after GROUND stage work, before the GROUND gate.
 # Requirements, preferences, assumptions and questions stay distinct. Kinds and facets follow the APPEARANCE_CONCEPT
-# row of cad-verify "Evidence by service class"; holding, tipping and durability stay out of scope (product.yaml
-# release_scope.exclusions), and service life stays an open question for a later scope. SPECIFY completes methods,
-# cases and the check plan.
+# row of cad-verify "Evidence by service class" (APPEARANCE and MANUFACTURING kinds; no fit or function claim): fit,
+# holding, tipping and durability stay out of scope (product.yaml release_scope.exclusions), and service life stays an
+# open question for a later scope. SPECIFY completes methods, cases and the check plan.
 requirements:
 - id: REQ-001
   title: Viewing angle range
@@ -27,31 +27,31 @@ requirements:
   source: *a08
   owner: SYNTHETIC demo owner
 - id: REQ-002
-  title: Phone envelope in the model
-  text: The concept model's cradle encloses a 162 x 77 x 9 mm phone envelope in portrait at every viewing angle.
+  title: Cradle size in the model
+  text: The concept model's cradle has a portrait pocket of at least 162 x 77 x 9 mm, the case envelope the owner states; it is a form dimension of the model, not a fit of a phone.
   kind: APPEARANCE
   priority: MAJOR
   subjects:
   - kind: ASSEMBLY
   criteria:
-  - property: phone_length_capacity
+  - property: cradle_pocket_length
     comparator: GE
     value: 162
     units: mm
     source: &a06 {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}
-  - property: phone_width_capacity
+  - property: cradle_pocket_width
     comparator: GE
     value: 77
     units: mm
     source: *a06
-  - property: phone_thickness_capacity
+  - property: cradle_pocket_depth
     comparator: GE
     value: 9
     units: mm
     source: *a06
   conditions:
     status: KNOWN
-    value: geometric envelope of the phone in its case; a physical fit of a real phone is excluded from this scope
+    value: form dimensions of the cradle pocket on the model, taken from the stated envelope of the phone in its case; no fit of a phone, in CAD or physical, is claimed (product.yaml release_scope.exclusions)
     basis: USER_DECLARED
     sources:
     - *a06
@@ -66,7 +66,7 @@ requirements:
   owner: SYNTHETIC demo owner
 - id: REQ-003
   title: Desk footprint
-  text: The concept model fits inside a 120 x 120 mm square on the desk at every viewing angle.
+  text: The concept model's footprint stays inside a 120 x 120 mm square on the desk at every viewing angle.
   kind: APPEARANCE
   priority: MAJOR
   subjects:
@@ -265,7 +265,7 @@ questions:
   material_to_choice: false
   safety_relevant: true
   status: RESOLVED
-  resolution: {answer: concept-definition package for display and handling; no physical claim, source: {kind: USER, reference: brief.md answer A-15, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+  resolution: {answer: "concept-definition package for form, CAD validity and printability review, for display and handling; no fit, functional or physical claim", source: {kind: USER, reference: brief.md answer A-15, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
 - id: Q-016
   question: 'Are generated results tracked in git, and how long is evidence retained?'
   owner: user
