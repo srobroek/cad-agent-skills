@@ -8,6 +8,7 @@ permission:
   skill: allow
   edit: deny
   bash: deny
+  execute: deny
   task: deny
   webfetch: deny
   websearch: deny

@@ -37,7 +37,7 @@ Run in order; the first failure rejects the delivery with that reason (`units.ya
 8. The lead's tree digests before dispatch and after return
    ([cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest)) equal `boundary.before_sha256` and
    `after_sha256`; `violations` is empty; the unit directory holds only `brief.yaml`, `input/**`, `output/**`, `delivery.json` and, at
-   its root, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `.uv-cache/**` and `__pycache__/**`
+   its root, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `extract.py`, `extract.py.lock`, `.uv-cache/**` and `__pycache__/**`
    ([agent-roles uv commands](agent-roles.md#uv-commands)); every other unit of the batch still matches its own delivery.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared `hw/` file; proposals are never
    merged as outputs ([delegation Integrate](delegation.md#integrate)).

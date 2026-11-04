@@ -1220,6 +1220,34 @@
       "meaning": "uv script lock of the worker check program, written next to check.py"
     },
     {
+      "id": "scratch.unit_extract",
+      "path": ".cad-work/{UNIT}/extract.py",
+      "kind": "SCRATCH",
+      "schema": null,
+      "format": "PY",
+      "owner": "cad-flow",
+      "writer": "worker",
+      "mutability": "SCRATCH",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "a sourcing unit reads a retained PDF's text"},
+      "gate_credit": false,
+      "meaning": "sourcing researcher's text-extraction program; its text output is derived evidence, never a substitute for the retained bytes"
+    },
+    {
+      "id": "scratch.unit_extract_lock",
+      "path": ".cad-work/{UNIT}/extract.py.lock",
+      "kind": "SCRATCH",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-flow",
+      "writer": "worker",
+      "mutability": "SCRATCH",
+      "stage": "ANY",
+      "condition": {"kind": "CONDITIONAL", "when": "the unit locks its extraction program with uv lock --script extract.py"},
+      "gate_credit": false,
+      "meaning": "uv script lock of the extraction program, written next to extract.py"
+    },
+    {
       "id": "scratch.unit_uv_cache",
       "path": ".cad-work/{UNIT}/.uv-cache/**",
       "kind": "SCRATCH",

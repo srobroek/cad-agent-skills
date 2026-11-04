@@ -11,18 +11,55 @@ permission:
     .cad-work/**: allow
   bash:
     "*": deny
-    "uv lock --script /*/.cad-work/*/check.py": allow
-    "uv run --locked --script /*/.cad-work/*/check.py *": allow
-    "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * *.cad-work/*/delivery.json*": allow
-    "uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile * *.cad-work/*/output/*": allow
+    "uv lock --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --script /*/.cad-work/*/check.py": allow
+    "uv run --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/check.py": allow
+    "uv run --cache-dir /*/.cad-work/*/.uv-cache --no-python-downloads --locked --script /*/.cad-work/*/check.py *": allow
+    "/*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/delivery.json*": allow
+    "/*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
+    "\"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/delivery.json*": allow
+    "\"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
+    "/*/.cad-work/lead/validator/bin/python -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
+    "\"/*/.cad-work/lead/validator/bin/python\" -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
     "shasum -a 256 *": allow
     "sha256sum *": allow
+    "shasum -a 256": allow
+    "sha256sum": allow
     "find . -type f ! -path './.git/*' ! -path './.cad-work/*' ! -path './.claude/*' ! -path './.codex/*' ! -path './.agents/*' ! -path './.opencode/*' ! -path './.kiro/*' ! -path './.omp/*'": allow
     "sed 's|^\\./||'": allow
     "LC_ALL=C sort": allow
+    "sort": allow
+    "LC_ALL=C sort /*/.cad-work/*": allow
+    "sort /*/.cad-work/*": allow
     "tr '\\n' '\\0'": allow
     "xargs -0 -r shasum -a 256": allow
     "xargs -0 -r sha256sum": allow
+    "date -u +%Y-%m-%dT%H:%M:%SZ": allow
+    "date -u +%Y-%m-%dT%H:%M:%SZ > /*/.cad-work/*": allow
+    "ls": allow
+    "ls *": allow
+    "mkdir -p /*/.cad-work/*": allow
+    "*--no-project*": deny
+    "*../*": deny
+    "LC_ALL=C sort * -o*": deny
+    "sort * -o*": deny
+    "LC_ALL=C sort *--output*": deny
+    "sort *--output*": deny
+    "mkdir -p /* ?*": deny
+    "*>*/hw/*": deny
+    "*>hw/*": deny
+    "*> hw/*": deny
+    "*>\"hw/*": deny
+    "*> \"hw/*": deny
+    "*>'hw/*": deny
+    "*> 'hw/*": deny
+    "*>*.git/*": deny
+    "*>*.claude/*": deny
+    "*>*.codex/*": deny
+    "*>*.agents/*": deny
+    "*>*.opencode/*": deny
+    "*>*.kiro/*": deny
+    "*>*.omp/*": deny
+  execute: deny
   task: deny
 ---
 
