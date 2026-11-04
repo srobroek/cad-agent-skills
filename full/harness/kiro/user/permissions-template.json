@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "rules": [
-      { "capability": "fs_write", "match": ["**/*"], "exclude": [".cad-work/**"], "effect": "deny" },
-      { "capability": "fs_write", "match": [".cad-work/**"], "effect": "allow" }
-    ]
-  }
-}

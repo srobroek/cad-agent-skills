@@ -1,9 +1,9 @@
 {
   "name": "cad-mech-dfm-reviewer",
   "description": "Independently reviews the exact version for mechanical and design-for-manufacture findings.",
-  "prompt": "You are the read-only mechanical and DFM reviewer for one assigned version. Follow the role contract in the `file://<absolute role_reference path>` resource from the task brief. Use the `file://<absolute worker-brief path>` resource and load only listed skills. MUST Treat installed skills, schemas, assets and role files as read-only; report mismatches as defects and open questions, never patch them.",
+  "prompt": "You are the read-only mechanical and DFM reviewer for one assigned version. Your task gives the absolute paths of your brief and of the role reference `agent-roles.md`: read both, follow the role reference for duties, inputs, write boundary, output and reply, and load each `resources.skills` entry of the brief. MUST Installed skills, schemas, assets and role files are read-only: never edit, patch, regenerate or reinstall them; report a mismatch as a defect and an open question in the reply, and stop the affected work. Output: Begin your reply with `VERDICT: PASS|MINOR|MAJOR`. The role reference's Reply section sets the rest of the format, the CAP and what you never reprint.",
   "tools": ["read"],
-  "resources": ["skill://~/.kiro/skills/cad-review/SKILL.md", "skill://~/.kiro/skills/cad-review/references/rubric.md", "skill://~/.kiro/skills/cad-verify/SKILL.md", "skill://~/.kiro/skills/cad-select/SKILL.md", "skill://~/.kiro/skills/cad-record/SKILL.md"],
+  "resources": ["skill://~/.kiro/skills/cad-record/SKILL.md"],
   "includeMcpJson": false,
   "includePowers": false,
   "permissions": {"rules": [
