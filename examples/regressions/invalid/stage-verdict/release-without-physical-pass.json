@@ -19,6 +19,10 @@
     "path": "hw/versions/v15/manifest.json",
     "sha256": "c9470c600be57dd62ee08dfde412ac09e7f5028a2b330a6bde2536da113a0949"
   },
+  "obligations": {
+    "path": "hw/versions/v15/obligations.yaml",
+    "sha256": "8b07d171f5cb6da32a4ad5ef2f3066ddd9b126a1b4f9f67388a50a72b01b907c"
+  },
   "policy": {
     "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
     "plugin": {

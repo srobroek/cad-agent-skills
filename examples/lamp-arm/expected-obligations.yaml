@@ -60,6 +60,7 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
+  - delivery.integrity@product (when this attempt merges at least one worker delivery)
   - intake.use_case@product
   future: []
   verdict: PASS

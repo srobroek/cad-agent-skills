@@ -16,6 +16,7 @@ actor:
   name: product owner
 time: '2026-11-03T09:30:00Z'
 statement:
+  path: hw/decisions/statements/DR-018.txt
   transcript_sha256: 5f90bd0e2e3a407049475ea19c76a64590c584a072ec9a09dbef9d14566f1f8c
   quote: approve the change of the STD-0002 arm to ASA
   time: '2026-11-03T09:30:00Z'
