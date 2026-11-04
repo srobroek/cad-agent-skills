@@ -1,0 +1,233 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "sweep/a1",
+  "check": "sweep",
+  "attempt": "a1",
+  "family": "motion.sweep",
+  "producer_role": "cad-checker",
+  "stage": "LAYOUT",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "c9ce3e804c731feb6fb9b77b675295a915d1854e9c4f858b5b8b39b893a92812"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v6/manifest.json",
+      "sha256": "c9ce3e804c731feb6fb9b77b675295a915d1854e9c4f858b5b8b39b893a92812"
+    },
+    {
+      "path": "hw/versions/v6/definition/assembly.step",
+      "sha256": "ad16687673ff174b2a2b68b6925ec0cc15cd13f3493eb5771c70145cbdb37968"
+    },
+    {
+      "path": "hw/versions/v6/record/check-plan.yaml",
+      "sha256": "101e94dfb83a38982c2f89d93d044ceceb73957239da2b1042859b48531d7e80"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v6/sweep/a1/source/check.py",
+        "sha256": "a958a173c8aeac55e5bd201b565dac8516cc50c8881b41138ee0ec53f4d816f8"
+      },
+      {
+        "path": "hw/checks/v6/sweep/a1/source/check.py.lock",
+        "sha256": "db9350b7dd64a13801a07dcaddf543773004b1dfb3e74dd20a1b0fb0d361f3a7"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-sweep-v6/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "CASE",
+        "case": "hinge-travel"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "cases": [
+      "hinge-travel"
+    ],
+    "expected_obligations": [
+      "motion.sweep@case.hinge-travel"
+    ],
+    "coverage_kind": "SAMPLED",
+    "unsampled": [
+      "hinge 0.00..4.17 deg between sampled poses",
+      "hinge 4.17..8.33 deg between sampled poses",
+      "hinge 8.33..12.50 deg between sampled poses",
+      "hinge 12.50..16.67 deg between sampled poses",
+      "hinge 16.67..20.83 deg between sampled poses",
+      "hinge 20.83..25.00 deg between sampled poses",
+      "hinge 25.00..29.17 deg between sampled poses",
+      "hinge 29.17..33.33 deg between sampled poses",
+      "hinge 33.33..37.50 deg between sampled poses",
+      "hinge 37.50..41.67 deg between sampled poses",
+      "hinge 41.67..45.83 deg between sampled poses",
+      "hinge 45.83..50.00 deg between sampled poses",
+      "hinge 50.00..54.17 deg between sampled poses",
+      "hinge 54.17..58.33 deg between sampled poses",
+      "hinge 58.33..62.50 deg between sampled poses",
+      "hinge 62.50..66.67 deg between sampled poses",
+      "hinge 66.67..70.83 deg between sampled poses",
+      "hinge 70.83..75.00 deg between sampled poses"
+    ]
+  },
+  "outcomes": [
+    {
+      "obligation": "motion.sweep@case.hinge-travel",
+      "requirement": "REQ-003",
+      "subject": {
+        "kind": "CASE",
+        "case": "hinge-travel"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "UNKNOWN",
+      "reason": "19 sampled poses, all pairs, minimum clearance 0.41 mm at 37.50 deg; the criterion holds over continuous travel and no computed bound covers the 18 intervals between poses",
+      "unknown_code": "INCOMPLETE",
+      "criterion": {
+        "id": "hinge_running_clearance",
+        "property": "clearance",
+        "comparator": "GE",
+        "value": 0.3,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "over the whole 0-75 deg hinge travel (REQ-003)"
+      },
+      "method": {
+        "name": "full-travel grid sweep, every occurrence pair per pose (cad-verify references/geometry-motion.md motion.sweep)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/sweep/a1/artifacts/poses.json",
+          "sha256": "14eb30d83f840c889ac630135706e8273a17e48b8352bb3efdad6bdea81fe723"
+        }
+      ],
+      "sampling": {
+        "kind": "GRID",
+        "count": 19,
+        "step": {
+          "value": 4.1667,
+          "units": "deg"
+        },
+        "unsampled": [
+          "all 18 intervals listed in scope.unsampled"
+        ]
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "motion.sweep:case.hinge-travel:intervals",
+      "family": "motion.sweep",
+      "obligation": "motion.sweep@case.hinge-travel",
+      "subject": {
+        "kind": "CASE",
+        "case": "hinge-travel"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "text": "minimum sampled clearance 0.41 mm; 18 intervals of 4.17 deg unbounded"
+      },
+      "criterion": {
+        "id": "hinge_running_clearance",
+        "property": "clearance",
+        "comparator": "GE",
+        "value": 0.3,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "over the whole 0-75 deg hinge travel (REQ-003)"
+      },
+      "requirements": [
+        "REQ-003"
+      ],
+      "method": {
+        "name": "full-travel grid sweep, every occurrence pair per pose (cad-verify references/geometry-motion.md motion.sweep)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "between-sample clearance not bounded; a rate estimated from the samples is no bound",
+      "consequence": "a collision between sampled poses is not excluded over the required travel",
+      "remedy": "compute a swept-distance bound per interval, or refine the grid until a bound covers every interval",
+      "alternatives": [
+        {
+          "text": "2 deg grid plus per-interval bound",
+          "tradeoff": "38 poses, longer run"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "motion.sweep"
+        ],
+        "earliest_stage": "LAYOUT"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v6/sweep/a1/artifacts/poses.json",
+      "sha256": "14eb30d83f840c889ac630135706e8273a17e48b8352bb3efdad6bdea81fe723",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v6/sweep/a1/stdout.txt",
+      "sha256": "eacec033bced5596107396a8c814a59ceebca2a9b47d5b0bef1051d0fe653db6",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "UNKNOWN",
+  "limitations": [
+    "SAMPLED: 19 poses; continuous travel between poses not established"
+  ]
+}

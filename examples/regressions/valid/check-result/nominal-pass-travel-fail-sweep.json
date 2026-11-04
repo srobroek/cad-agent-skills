@@ -1,0 +1,217 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "sweep/a1",
+  "check": "sweep",
+  "attempt": "a1",
+  "family": "motion.sweep",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v7",
+    "version_manifest_sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v7/manifest.json",
+      "sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v7/sweep/a1/source/check.py",
+        "sha256": "f0aaf9a5cf53911d1f0da00984c8185a93f8fa701dff7881abc24a021c6d16ac"
+      },
+      {
+        "path": "hw/checks/v7/sweep/a1/source/check.py.lock",
+        "sha256": "26c93d835d8061ff00d49c88e6e09f9a0431a6d919581221eeab632c34dc38d7"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-sweep-v7/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "CASE",
+        "case": "hinge-travel"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "cases": [
+      "hinge-travel"
+    ],
+    "expected_obligations": [
+      "motion.sweep@case.hinge-travel"
+    ],
+    "coverage_kind": "SAMPLED",
+    "unsampled": [
+      "hinge 0.00..4.17 deg between sampled poses",
+      "hinge 4.17..8.33 deg between sampled poses",
+      "hinge 8.33..12.50 deg between sampled poses",
+      "hinge 12.50..16.67 deg between sampled poses",
+      "hinge 16.67..20.83 deg between sampled poses",
+      "hinge 20.83..25.00 deg between sampled poses",
+      "hinge 25.00..29.17 deg between sampled poses",
+      "hinge 29.17..33.33 deg between sampled poses",
+      "hinge 33.33..37.50 deg between sampled poses",
+      "hinge 37.50..41.67 deg between sampled poses",
+      "hinge 41.67..45.83 deg between sampled poses",
+      "hinge 45.83..50.00 deg between sampled poses",
+      "hinge 50.00..54.17 deg between sampled poses",
+      "hinge 54.17..58.33 deg between sampled poses",
+      "hinge 58.33..62.50 deg between sampled poses",
+      "hinge 62.50..66.67 deg between sampled poses",
+      "hinge 66.67..70.83 deg between sampled poses",
+      "hinge 70.83..75.00 deg between sampled poses"
+    ]
+  },
+  "outcomes": [
+    {
+      "obligation": "motion.sweep@case.hinge-travel",
+      "requirement": "REQ-003",
+      "subject": {
+        "kind": "CASE",
+        "case": "hinge-travel"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "value": 121.3757,
+        "units": "mm3"
+      },
+      "criterion": {
+        "id": "no_interference",
+        "property": "shared_volume",
+        "comparator": "LE",
+        "value": 0.001,
+        "units": "mm3",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md Pair measurement",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md Pair measurement"
+        }
+      },
+      "method": {
+        "name": "full-travel grid sweep, every occurrence pair per pose (cad-verify references/geometry-motion.md motion.sweep)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v7/sweep/a1/artifacts/poses.json",
+          "sha256": "0be2b0460292bf38a2c825148c71321dddc48ac1916d183843748a607d13685e"
+        }
+      ],
+      "configuration": "interference at 11 of 19 poses; largest shared volume 121.3757 mm3 at 0 deg, smallest 0.2886 mm3 at 75 deg",
+      "sampling": {
+        "kind": "GRID",
+        "count": 19,
+        "step": {
+          "value": 4.1667,
+          "units": "deg"
+        }
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "motion.sweep:case.hinge-travel:arm_base_collision",
+      "family": "motion.sweep",
+      "obligation": "motion.sweep@case.hinge-travel",
+      "subject": {
+        "kind": "CASE",
+        "case": "hinge-travel"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": 121.3757,
+        "units": "mm3"
+      },
+      "criterion": {
+        "id": "no_interference",
+        "property": "shared_volume",
+        "comparator": "LE",
+        "value": 0.001,
+        "units": "mm3",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md Pair measurement",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md Pair measurement"
+        }
+      },
+      "requirements": [
+        "REQ-003"
+      ],
+      "method": {
+        "name": "full-travel grid sweep, every occurrence pair per pose (cad-verify references/geometry-motion.md motion.sweep)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "shared volume by adaptive integration; 1e-7 mm fuzzy value",
+      "consequence": "the arm collides with the base over most of the required travel",
+      "remedy": "relocate the hinge axis 4 mm aft or relieve the base under the arm, then rerun the full-travel sweep",
+      "alternatives": [
+        {
+          "text": "limit travel to 30..75 deg",
+          "tradeoff": "changes REQ-001, a SPECIFY change"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "motion.sweep"
+        ],
+        "earliest_stage": "LAYOUT"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v7/sweep/a1/artifacts/poses.json",
+      "sha256": "0be2b0460292bf38a2c825148c71321dddc48ac1916d183843748a607d13685e",
+      "role": "DATA"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "FAIL stands on the sampled poses; intervals are not needed to establish it"
+  ]
+}

@@ -1,0 +1,320 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "secondary/a1",
+  "check": "secondary",
+  "attempt": "a1",
+  "family": "process.secondary",
+  "producer_role": "cad-checker",
+  "stage": "DETAIL",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "c9ce3e804c731feb6fb9b77b675295a915d1854e9c4f858b5b8b39b893a92812"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v6/manifest.json",
+      "sha256": "c9ce3e804c731feb6fb9b77b675295a915d1854e9c4f858b5b8b39b893a92812"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v6/secondary/a1/source/check.py",
+        "sha256": "e83cdb485c6a76ac82a8e486c2c37f885881dea3799772ecbc9a805589c67661"
+      },
+      {
+        "path": "hw/checks/v6/secondary/a1/source/check.py.lock",
+        "sha256": "ea9d9028fbc7535815fc2f1b93d770ed3bf8f7027989715324f640c1e09cf726"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-secondary-v6/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "build123d",
+        "version": "0.13.0"
+      },
+      {
+        "name": "cadquery-ocp-novtk",
+        "version": "8.0.1.1.0"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "LMP-0007"
+      }
+    ],
+    "components": [
+      "bracket"
+    ],
+    "operations": [
+      "drill",
+      "ream",
+      "anodise"
+    ],
+    "expected_obligations": [
+      "process.secondary@LMP-0007.bracket/drill#mount_holes",
+      "process.secondary@LMP-0007.bracket/ream#pivot_bore",
+      "process.secondary@LMP-0007.bracket/anodise#pivot_bore"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "process.secondary@LMP-0007.bracket/drill#mount_holes",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0007",
+        "feature": "mount_holes",
+        "component": "bracket",
+        "operation": "drill"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "PASS",
+      "value": {
+        "text": "4 x 4.5 mm through holes, drill access from +Z, depth 10 mm"
+      },
+      "criterion": {
+        "id": "secondary_items",
+        "property": "secondary_items",
+        "comparator": "EQUALS",
+        "value": "met: datum transfer, access, tool size, allowance and compensation",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.secondary",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.secondary"
+        }
+      },
+      "method": {
+        "name": "process.secondary items per DRILLING, REAMING and COATING operation (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/secondary/a1/artifacts/secondary.json",
+          "sha256": "b345236d7c8730930c6d4a0f2e4f8fc597e89ca7feec47694ec655c916e5c860"
+        }
+      ]
+    },
+    {
+      "obligation": "process.secondary@LMP-0007.bracket/ream#pivot_bore",
+      "requirement": "REQ-011",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0007",
+        "feature": "pivot_bore",
+        "component": "bracket",
+        "operation": "ream"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "value": 0.0,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "ream_stock",
+        "property": "ream_allowance",
+        "comparator": "BETWEEN",
+        "value": [
+          0.1,
+          0.3
+        ],
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "capability profile hand_ream_h7: reaming stock",
+          "origin": "workshop owner",
+          "document": "hw/manufacturing/capabilities.yaml"
+        }
+      },
+      "method": {
+        "name": "process.secondary items per DRILLING, REAMING and COATING operation (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/secondary/a1/artifacts/secondary.json",
+          "sha256": "b345236d7c8730930c6d4a0f2e4f8fc597e89ca7feec47694ec655c916e5c860"
+        }
+      ],
+      "configuration": "the mill operation forms pivot_bore at the finished 10.000 mm size"
+    },
+    {
+      "obligation": "process.secondary@LMP-0007.bracket/anodise#pivot_bore",
+      "requirement": "REQ-011",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0007",
+        "feature": "pivot_bore",
+        "component": "bracket",
+        "operation": "anodise"
+      },
+      "facet": "GEOMETRICALLY_MANUFACTURABLE",
+      "outcome": "FAIL",
+      "value": {
+        "text": "bore finished to 10.000-10.015 mm before anodising; 20-30 um diametral build-up not compensated"
+      },
+      "criterion": {
+        "id": "coating_compensated_on_fit",
+        "property": "coating_compensation",
+        "comparator": "EQUALS",
+        "value": true,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.secondary",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.secondary"
+        },
+        "conditions": "IF-003 H7 bore, anodise 10-15 um per side"
+      },
+      "method": {
+        "name": "process.secondary items per DRILLING, REAMING and COATING operation (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/secondary/a1/artifacts/secondary.json",
+          "sha256": "b345236d7c8730930c6d4a0f2e4f8fc597e89ca7feec47694ec655c916e5c860"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.secondary:LMP-0007.bracket/ream#pivot_bore:ream_allowance",
+      "family": "process.secondary",
+      "obligation": "process.secondary@LMP-0007.bracket/ream#pivot_bore",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0007",
+        "feature": "pivot_bore",
+        "component": "bracket",
+        "operation": "ream"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": 0.0,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "ream_stock",
+        "property": "ream_allowance",
+        "comparator": "BETWEEN",
+        "value": [
+          0.1,
+          0.3
+        ],
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "capability profile hand_ream_h7: reaming stock",
+          "origin": "workshop owner",
+          "document": "hw/manufacturing/capabilities.yaml"
+        }
+      },
+      "method": {
+        "name": "process.secondary items per DRILLING, REAMING and COATING operation (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "model sizes",
+      "consequence": "the reamer has no stock to remove; the H7 size is not produced by the ream",
+      "remedy": "mill the bore 0.2 mm under size, then ream",
+      "recheck": {
+        "families": [
+          "process.secondary"
+        ],
+        "earliest_stage": "DETAIL"
+      }
+    },
+    {
+      "id": "process.secondary:LMP-0007.bracket/anodise#pivot_bore:coating_compensation",
+      "family": "process.secondary",
+      "obligation": "process.secondary@LMP-0007.bracket/anodise#pivot_bore",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "LMP-0007",
+        "feature": "pivot_bore",
+        "component": "bracket",
+        "operation": "anodise"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "no compensation"
+      },
+      "criterion": {
+        "id": "coating_compensated_on_fit",
+        "property": "coating_compensation",
+        "comparator": "EQUALS",
+        "value": true,
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md process.secondary",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md process.secondary"
+        },
+        "conditions": "IF-003 H7 bore, anodise 10-15 um per side"
+      },
+      "method": {
+        "name": "process.secondary items per DRILLING, REAMING and COATING operation (cad-verify references/process-checks.md)",
+        "tool": "build123d",
+        "version": "0.13.0"
+      },
+      "uncertainty": "coating thickness range from the anodiser source",
+      "consequence": "the bushing press fit tightens by 20-30 um",
+      "remedy": "mask the bore during anodising, or ream after anodising and record the bare-bore corrosion limit",
+      "recheck": {
+        "families": [
+          "process.secondary"
+        ],
+        "earliest_stage": "DETAIL"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v6/secondary/a1/artifacts/secondary.json",
+      "sha256": "b345236d7c8730930c6d4a0f2e4f8fc597e89ca7feec47694ec655c916e5c860",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v6/secondary/a1/stdout.txt",
+      "sha256": "5123830f70dde5dbde5e1ef1e4cdc19216b6e420a0ac01e4d01fc260f8395e4e",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": []
+}

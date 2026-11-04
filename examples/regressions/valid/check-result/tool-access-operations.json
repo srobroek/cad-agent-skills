@@ -1,0 +1,174 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "operations/a1",
+  "check": "operations",
+  "attempt": "a1",
+  "family": "assembly.operations",
+  "producer_role": "cad-checker",
+  "stage": "DETAIL",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v5",
+    "version_manifest_sha256": "5f9765254eb4086d1631df9089f625aef6cecb6d1ef8899aa77ed476020f4eff"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v5/manifest.json",
+      "sha256": "5f9765254eb4086d1631df9089f625aef6cecb6d1ef8899aa77ed476020f4eff"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v5/operations/a1/source/check.py",
+        "sha256": "b388d693cfd6b1599eaca1b01034b43a601504307a35766857035202c26716be"
+      },
+      {
+        "path": "hw/checks/v5/operations/a1/source/check.py.lock",
+        "sha256": "90b795054e26d1803b4735d2384015e9388f675893b91bebb59b709c9d4435da"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-operations-v5/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "insert_nut"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "assembly.operations@op.insert_nut"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "assembly.operations@op.insert_nut",
+      "subject": {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "insert_nut"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "text": "nut pocket closed by op.fit_cover, which precedes op.insert_nut"
+      },
+      "criterion": {
+        "id": "order_feasible",
+        "property": "operation_feasible",
+        "comparator": "EQUALS",
+        "value": "insertion path clear and access open in the stated order",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md assembly.operations",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md assembly.operations"
+        }
+      },
+      "method": {
+        "name": "insertion sweep and operation order check (cad-verify references/geometry-motion.md assembly.operations)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v5/operations/a1/artifacts/operations.json",
+          "sha256": "d6975e7ad035824d4bc464d6b7bdf4a7d11239153dc56652b30a8c1b772a426f"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "assembly.operations:op.insert_nut:closed_before_install",
+      "family": "assembly.operations",
+      "obligation": "assembly.operations@op.insert_nut",
+      "subject": {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "insert_nut"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "pocket closed before install"
+      },
+      "criterion": {
+        "id": "order_feasible",
+        "property": "operation_feasible",
+        "comparator": "EQUALS",
+        "value": "insertion path clear and access open in the stated order",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md assembly.operations",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md assembly.operations"
+        }
+      },
+      "method": {
+        "name": "insertion sweep and operation order check (cad-verify references/geometry-motion.md assembly.operations)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "operation order from assembly.yaml",
+      "consequence": "the nut cannot be inserted in the stated order",
+      "remedy": "move op.insert_nut before op.fit_cover",
+      "recheck": {
+        "families": [
+          "assembly.operations"
+        ],
+        "earliest_stage": "LAYOUT"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v5/operations/a1/artifacts/operations.json",
+      "sha256": "d6975e7ad035824d4bc464d6b7bdf4a7d11239153dc56652b30a8c1b772a426f",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v5/operations/a1/stdout.txt",
+      "sha256": "47955b7da5142772d3c777f08f2a823f3c5bad0ce34b0fffdd3a5eeac6c79272",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": []
+}

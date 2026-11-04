@@ -1,0 +1,488 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "DETAIL",
+  "version": "v10",
+  "predecessor": {
+    "stage": "PARTS",
+    "version": "v8",
+    "verdict": {
+      "path": "hw/versions/v8/stage-verdict.json",
+      "sha256": "807229ff3b1d3fff2e20aef18a56d83fc0de8206fea4bc80670bc7a277a441d2"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-019.yaml",
+      "sha256": "bee55e2d6cea329b08f2c32fa2a02ebebf17fe516548555f7de361319d94ceb4"
+    }
+  },
+  "supersedes": {
+    "version": "v9",
+    "verdict": {
+      "path": "hw/versions/v9/stage-verdict.json",
+      "sha256": "cbe0c130cfeb135806b010697d2becc576321c9a6ba55f1e53935c98ba699ca4"
+    },
+    "reason": "support plan changed after v9"
+  },
+  "version_manifest": {
+    "path": "hw/versions/v10/manifest.json",
+    "sha256": "9bcc3bf5db1e0f9e92eedeada190cbbb03dbd4a0d79229f8f2bc5cfd169f854e"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "record.schema@product",
+    "record.semantic@product",
+    "record.ownership@product",
+    "record.inputs@product",
+    "delivery.integrity@product",
+    "material.properties@STD-0001.body",
+    "material.properties@STD-0002.body",
+    "purchase.identity@STD-0003",
+    "geometry.build@assembly",
+    "geometry.build@STD-0001",
+    "geometry.build@STD-0002",
+    "geometry.build@STD-0003",
+    "geometry.readback@assembly",
+    "geometry.readback@STD-0001",
+    "geometry.readback@STD-0002",
+    "geometry.readback@STD-0003",
+    "geometry.export@STD-0001",
+    "geometry.export@STD-0002",
+    "geometry.export@STD-0003",
+    "geometry.export@assembly",
+    "geometry.identity@STD-0001.body",
+    "geometry.identity@STD-0002.body",
+    "geometry.identity@STD-0003.pin",
+    "geometry.manufacture@STD-0001",
+    "geometry.manufacture@STD-0002",
+    "geometry.interference@assembly",
+    "geometry.clearance@assembly",
+    "geometry.clearance@IF-001#hinge_bore",
+    "motion.sweep@case.hinge-travel",
+    "motion.play@case.hinge-travel",
+    "motion.play@IF-001",
+    "motion.access@op.insert_pin",
+    "assembly.operations@op.insert_pin",
+    "capability.route@STD-0001.body/print",
+    "capability.route@STD-0002.body/print",
+    "process.fdm@STD-0001.body/print",
+    "process.fdm@STD-0001.body/print#front_face",
+    "process.fdm@STD-0001.body/print#hinge_bore",
+    "process.fdm@STD-0002.body/print",
+    "process.fdm@STD-0002.body/print#pivot_boss",
+    "fit.limits@IF-001#hinge_bore",
+    "fit.stack@case.hinge-stack",
+    "drawing.coverage@STD-0001",
+    "drawing.preview@STD-0001",
+    "preview.render@assembly",
+    "preview.render@STD-0001",
+    "preview.render@STD-0002",
+    "preview.render@STD-0003"
+  ],
+  "results": [
+    {
+      "check": "record-schema",
+      "attempt": "a1",
+      "family": "record.schema",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/record-schema/a1/result.json",
+        "sha256": "d4863d642da4b74ea2cbe01ecb2a033245273840f0abdf7fc7f0f182d3e810c2"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/record-schema/a1/bundle-manifest.json",
+        "sha256": "0c0f5ff46850b1c5108d6a794eaa6c8513e95b0b79af2b447c956155e6e3eb61"
+      }
+    },
+    {
+      "check": "record-semantic",
+      "attempt": "a1",
+      "family": "record.semantic",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/record-semantic/a1/result.json",
+        "sha256": "fea0c54f790c86bf60bb3db701452d126f800afdd51fad446259c36fddd3447b"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/record-semantic/a1/bundle-manifest.json",
+        "sha256": "987163a41080af56cd587dfdc9d8e4cf9457acbc993a6b2b2f400ee1060610f6"
+      }
+    },
+    {
+      "check": "record-ownership",
+      "attempt": "a1",
+      "family": "record.ownership",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/record-ownership/a1/result.json",
+        "sha256": "1681eea5c14c7488a0efd6b465390818d151aca5cf6260d25014bcf8437a0025"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/record-ownership/a1/bundle-manifest.json",
+        "sha256": "deba1823b3e55109139c26d4e147523b98a9da856f6dfa708e8cfc8823014817"
+      }
+    },
+    {
+      "check": "record-inputs",
+      "attempt": "a1",
+      "family": "record.inputs",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/record-inputs/a1/result.json",
+        "sha256": "57ed99252c21669ce3b86bd68cec6c541ad33f1941ee3c9b8f8ce47d22e6f81d"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/record-inputs/a1/bundle-manifest.json",
+        "sha256": "5fa87ee96e1c58f454fca78d7b30f40728cdfbfd7332636598aa9838550ef66a"
+      }
+    },
+    {
+      "check": "delivery-integrity",
+      "attempt": "a1",
+      "family": "delivery.integrity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/delivery-integrity/a1/result.json",
+        "sha256": "b71b655c226e97f87c8c16ac76d8dfa949459ad9bfe67006f7e3e820547a2b2f"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/delivery-integrity/a1/bundle-manifest.json",
+        "sha256": "0b18be330aa51fd9986faaed60d214eb02b3fb8d56c51a509946a165521dcd11"
+      }
+    },
+    {
+      "check": "material-properties",
+      "attempt": "a1",
+      "family": "material.properties",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/material-properties/a1/result.json",
+        "sha256": "7ad184f744bd1d325ad1bbc8153a821632a9e020d84d40d5b6e8cfcd5a2e9047"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/material-properties/a1/bundle-manifest.json",
+        "sha256": "3faa63fc43c02161eb9628eec8585e9d539ffa98bd17f98c597ec176d6ba86c4"
+      }
+    },
+    {
+      "check": "purchase-identity",
+      "attempt": "a1",
+      "family": "purchase.identity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/purchase-identity/a1/result.json",
+        "sha256": "c70beee12d4b59be07172b06bd2418e8d020552b63e027983e297a248d6dc68f"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/purchase-identity/a1/bundle-manifest.json",
+        "sha256": "c1933a8e06045ff62234f7df110c7316097d86ee5b1f132f2b7954a12cd124d1"
+      }
+    },
+    {
+      "check": "geometry-build",
+      "attempt": "a1",
+      "family": "geometry.build",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/geometry-build/a1/result.json",
+        "sha256": "5db461e5eb7225e4114282cf06b6d7cb154f230c3c931907cabd4ea27811bdfb"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/geometry-build/a1/bundle-manifest.json",
+        "sha256": "dbfa42fbe5be7c3f49c326968826e6b2340daa76e5777371903aec20bf582130"
+      }
+    },
+    {
+      "check": "geometry-readback",
+      "attempt": "a1",
+      "family": "geometry.readback",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/geometry-readback/a1/result.json",
+        "sha256": "2feb371a8de1415fa46793b095cddb21d98991398eb73a1af41da3c1fc3a5633"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/geometry-readback/a1/bundle-manifest.json",
+        "sha256": "89bc934018bab379d2650474202cd5665c1c1f8145e44c2e8b36fac3fbe0a48a"
+      }
+    },
+    {
+      "check": "geometry-export",
+      "attempt": "a1",
+      "family": "geometry.export",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/geometry-export/a1/result.json",
+        "sha256": "44aff79c66948a57f27c9c41925a504642e804b248c29a9ee2368453dd38a3ae"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/geometry-export/a1/bundle-manifest.json",
+        "sha256": "27e66ad75b96a56f2853e419bb16886da64a32a26112c66a09d71fae04e00d31"
+      }
+    },
+    {
+      "check": "geometry-identity",
+      "attempt": "a1",
+      "family": "geometry.identity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/geometry-identity/a1/result.json",
+        "sha256": "21be9284c3338775796ed4383776ef4901784c8ed5fb6b6d17e3150b15e82a43"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/geometry-identity/a1/bundle-manifest.json",
+        "sha256": "19fba90a4ebc14beff79ec2ce0dba96440ff0350f4bd67990f83f2a160ebcffd"
+      }
+    },
+    {
+      "check": "geometry-manufacture",
+      "attempt": "a1",
+      "family": "geometry.manufacture",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/geometry-manufacture/a1/result.json",
+        "sha256": "68423abaea767f278c40c2f167e9388769bcf325f0fcbe48dd1e87963aed1ccc"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/geometry-manufacture/a1/bundle-manifest.json",
+        "sha256": "25edb88d0ef95a70b49851aab53d2fa16db130e3363f11497d0882b7a79003dc"
+      }
+    },
+    {
+      "check": "interference",
+      "attempt": "a1",
+      "family": "geometry.interference",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/interference/a1/result.json",
+        "sha256": "08c942a76521fcc14712d818250bf4700aa59511d257bba0c22f5d85a90355f6"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/interference/a1/bundle-manifest.json",
+        "sha256": "01b3d885abed29ab7b84f0459c833c80e778358b48906e5077cb3c33f7629231"
+      }
+    },
+    {
+      "check": "clearance",
+      "attempt": "a1",
+      "family": "geometry.clearance",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/clearance/a1/result.json",
+        "sha256": "145a08184f242d9ebc0944973e4a7dad8a72f5f88f3b6982f3a360c9b5d8efbe"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/clearance/a1/bundle-manifest.json",
+        "sha256": "aa838498402efa6af37835c077147f7cc35fa7f0caa1743c0981b5bd0dd61a65"
+      }
+    },
+    {
+      "check": "sweep",
+      "attempt": "a1",
+      "family": "motion.sweep",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/sweep/a1/result.json",
+        "sha256": "fef5338429df61a0c844570eca85b20a2da848ea77070d6bb31fb26177045a68"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/sweep/a1/bundle-manifest.json",
+        "sha256": "b6ccfcd93cbdd14bd7e1d5360fc27def70df2b9211396636309c38a117c1fa3d"
+      }
+    },
+    {
+      "check": "play",
+      "attempt": "a1",
+      "family": "motion.play",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/play/a1/result.json",
+        "sha256": "ae6fa7135574b532be01f51297f576f3bf9cf8255f0e8ef68870ec922913d92c"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/play/a1/bundle-manifest.json",
+        "sha256": "b00e77d1683e2d609986d4142297eb81a426fc0a0a607fdee6e28d2ccab309f9"
+      }
+    },
+    {
+      "check": "access",
+      "attempt": "a1",
+      "family": "motion.access",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/access/a1/result.json",
+        "sha256": "ade30c9e17ab3e946e23ce42df4902d9d6219e1bce883fea0cb899f9ff19821d"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/access/a1/bundle-manifest.json",
+        "sha256": "666f51d30957c486de28739ac1f413fa9e989072aba42653d33772f359d08117"
+      }
+    },
+    {
+      "check": "operations",
+      "attempt": "a1",
+      "family": "assembly.operations",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/operations/a1/result.json",
+        "sha256": "aa7db305ac1384aa9554d4f1ed0a92e5162121f0ed6a2d6a6f7c268f57e6f2f0"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/operations/a1/bundle-manifest.json",
+        "sha256": "81d1443407988a75485b245d3849facf374bdfa5de13b1709aea3dd786a84edc"
+      }
+    },
+    {
+      "check": "capability",
+      "attempt": "a1",
+      "family": "capability.route",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/capability/a1/result.json",
+        "sha256": "3c7b6881e8c16ab2cf24415c1a9b13ca592e2822de6f19bb0680ff0dc9d88a02"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/capability/a1/bundle-manifest.json",
+        "sha256": "1bffa7f5d4dc151f7f0804017a3bb5704148ed76651de533d4710e1625b18485"
+      }
+    },
+    {
+      "check": "fdm",
+      "attempt": "a1",
+      "family": "process.fdm",
+      "result": "WAIVED",
+      "waiver": "WV-001",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/fdm/a1/result.json",
+        "sha256": "559c0abb1c22d50b5fe228569bc0de8389495c9a4ccf331c9f41a0d17901d728"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/fdm/a1/bundle-manifest.json",
+        "sha256": "85b39d7b445fe62cbf85fa876684a317aeab9fa973bd5512ebb1141848be7478"
+      }
+    },
+    {
+      "check": "fits",
+      "attempt": "a1",
+      "family": "fit.limits",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/fits/a1/result.json",
+        "sha256": "abd054728829378eaeab01f1c5b39338bbce23a9ff09b6834e9b4f395f0f8c64"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/fits/a1/bundle-manifest.json",
+        "sha256": "0a448ad45629d05e3c389995d030adf830cf992ff145e9b5de7503051efea025"
+      }
+    },
+    {
+      "check": "stack",
+      "attempt": "a1",
+      "family": "fit.stack",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/stack/a1/result.json",
+        "sha256": "0cc06d27897c3db3eb537277b3b5cf6bc7c7d6c475906b9e57cc320e1b19021e"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/stack/a1/bundle-manifest.json",
+        "sha256": "c2e55fe36789de5284184d5fda2dd5d126b03fa7852f444aeb4801c6c350ed19"
+      }
+    },
+    {
+      "check": "drawing-std-0001",
+      "attempt": "a1",
+      "family": "drawing.coverage",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/drawings/v10/STD-0001/coverage.json",
+        "sha256": "1d20c2f073a91c4fc37a4ecd95f1675beab1461b807df1054ba85c16e92cac59"
+      },
+      "bundle": {
+        "path": "hw/drawings/v10/STD-0001/bundle-manifest.json",
+        "sha256": "1163787c479326e49c6e289a9228b63dc6afbc78a07cafe1c9547f1cda26b754"
+      }
+    },
+    {
+      "check": "drawing-preview",
+      "attempt": "a1",
+      "family": "drawing.preview",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/drawing-preview/a1/result.json",
+        "sha256": "d49e420f21221dc87fc26452bfa88b227c7116bf55a40217466f0e4a870ddaa1"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/drawing-preview/a1/bundle-manifest.json",
+        "sha256": "482c6723b69a4a014684b9a39345578dd7ea8ba28b64188a38f958f46de2ac3c"
+      }
+    },
+    {
+      "check": "preview-render",
+      "attempt": "a1",
+      "family": "preview.render",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v10/preview-render/a1/result.json",
+        "sha256": "1ccf254ab0bb09876bfd7c2ecd05a5d7358e213fc8bf41057f139f8cb7c53ac9"
+      },
+      "bundle": {
+        "path": "hw/checks/v10/preview-render/a1/bundle-manifest.json",
+        "sha256": "9490c2d79280600188101fc44365f9b076e963452082c49bcb77aa7c542d5e92"
+      }
+    }
+  ],
+  "bundles": [
+    {
+      "kind": "DRAWING",
+      "manifest": {
+        "path": "hw/drawings/v10/STD-0001/bundle-manifest.json",
+        "sha256": "1163787c479326e49c6e289a9228b63dc6afbc78a07cafe1c9547f1cda26b754"
+      }
+    }
+  ],
+  "waivers": [
+    {
+      "id": "WV-001",
+      "decision": "DR-021"
+    }
+  ],
+  "future": [],
+  "blockers": [],
+  "review": {
+    "required": false
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T12:00:00Z"
+}

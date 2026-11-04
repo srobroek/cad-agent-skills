@@ -1,0 +1,92 @@
+PN: STD-0006
+rev: X1
+title: Cable tidy
+sourcing: MAKE
+model:
+  kind: AUTHORED
+  kernel: cadquery
+  path: hw/parts/STD-0006/model.py
+  frame: PART_LOCAL
+transparency: OPAQUE
+components:
+- id: frame
+  witness:
+  - 0
+  - 0
+  - 4
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+- id: foot_left
+  witness:
+  - -30
+  - 0
+  - 1
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+- id: foot_right
+  witness:
+  - 30
+  - 0
+  - 1
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+- id: spacer_a
+  witness:
+  - -10
+  - 12
+  - 2
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+- id: spacer_b
+  witness:
+  - 10
+  - 12
+  - 2
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+- id: tab
+  witness:
+  - 0
+  - -14
+  - 1
+  material_profile: fdm_petg_polylite
+  multiplicity: 1
+manufacture:
+  relationship: SAME
+intent:
+  functions:
+  - function: STRUCTURAL
+  material_profile: fdm_petg_polylite
+  service:
+    requirements:
+    - REQ-001
+    environment: indoor desk
+  critical_surfaces:
+    status: NOT_APPLICABLE
+    reason: no surface of the cable tidy carries a fit, seal or datum
+    reviewed_by: cad-part-designer unit pd-std-0006
+  route:
+  - id: print
+    kind: FDM
+    capability: bambu_x1c
+    provider: LOCAL
+    components:
+    - frame
+    - foot_left
+    - foot_right
+    - spacer_a
+    - spacer_b
+    orientation:
+      status: APPROVED
+      rotation:
+        quaternion:
+        - 1
+        - 0
+        - 0
+        - 0
+      decision: DR-014
+    supports:
+      strategy: NONE
+drawing:
+  status: NOT_REQUIRED
+  reason: no toleranced characteristic

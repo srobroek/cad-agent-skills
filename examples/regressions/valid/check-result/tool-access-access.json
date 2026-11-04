@@ -1,0 +1,261 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "access/a1",
+  "check": "access",
+  "attempt": "a1",
+  "family": "motion.access",
+  "producer_role": "cad-checker",
+  "stage": "DETAIL",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v5",
+    "version_manifest_sha256": "5f9765254eb4086d1631df9089f625aef6cecb6d1ef8899aa77ed476020f4eff"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v5/manifest.json",
+      "sha256": "5f9765254eb4086d1631df9089f625aef6cecb6d1ef8899aa77ed476020f4eff"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v5/access/a1/source/check.py",
+        "sha256": "68710b7b4c25dc8be4768b3442b1e0c68f9609017efa3576d4df7f6226b1973a"
+      },
+      {
+        "path": "hw/checks/v5/access/a1/source/check.py.lock",
+        "sha256": "fb421852114b5d5fe61722d247e1e0e31413077d66e268766ca933b4fe11d946"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-access-v5/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "fasten_hinge"
+      },
+      {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "fit_cover"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "motion.access@op.fasten_hinge",
+      "motion.access@op.fit_cover"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "motion.access@op.fasten_hinge",
+      "subject": {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "fasten_hinge"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "value": -2.4,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "tool_reaches_engagement",
+        "property": "tool_path_clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md motion.access",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md motion.access"
+        }
+      },
+      "method": {
+        "name": "tool envelope swept along the approach direction in the pre-operation assembly state (cad-verify references/geometry-motion.md motion.access)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v5/access/a1/artifacts/access.json",
+          "sha256": "718ed95df18578567ccf2693464f656b20a63270a818c3ed45f860fd084bdfc8"
+        }
+      ],
+      "configuration": "hex key ISO 2936 3 mm, 2D approach from -Y; arm LMP-0002 installed by op.mount_arm before this operation"
+    },
+    {
+      "obligation": "motion.access@op.fit_cover",
+      "subject": {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "fit_cover"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "UNKNOWN",
+      "reason": "tool named \"small screwdriver\" with no identity or dimensions",
+      "unknown_code": "MISSING_INPUT",
+      "criterion": {
+        "id": "tool_reaches_engagement",
+        "property": "tool_path_clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md motion.access",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md motion.access"
+        }
+      },
+      "method": {
+        "name": "tool envelope swept along the approach direction in the pre-operation assembly state (cad-verify references/geometry-motion.md motion.access)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "motion.access:op.fasten_hinge:tool_blocked",
+      "family": "motion.access",
+      "obligation": "motion.access@op.fasten_hinge",
+      "subject": {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "fasten_hinge"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": -2.4,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "tool_reaches_engagement",
+        "property": "tool_path_clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md motion.access",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md motion.access"
+        }
+      },
+      "method": {
+        "name": "tool envelope swept along the approach direction in the pre-operation assembly state (cad-verify references/geometry-motion.md motion.access)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "tool envelope from ISO 2936 dimensions",
+      "consequence": "the hinge screw cannot be tightened once the arm is mounted",
+      "remedy": "swap op.fasten_hinge before op.mount_arm, or open a 6 mm access slot in the arm",
+      "recheck": {
+        "families": [
+          "motion.access"
+        ],
+        "earliest_stage": "LAYOUT"
+      }
+    },
+    {
+      "id": "motion.access:op.fit_cover:tool_unidentified",
+      "family": "motion.access",
+      "obligation": "motion.access@op.fit_cover",
+      "subject": {
+        "kind": "ASSEMBLY_OPERATION",
+        "assembly_operation": "fit_cover"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "tool dimensions unknown"
+      },
+      "criterion": {
+        "id": "tool_reaches_engagement",
+        "property": "tool_path_clearance",
+        "comparator": "GE",
+        "value": 0,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md motion.access",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md motion.access"
+        }
+      },
+      "method": {
+        "name": "tool envelope swept along the approach direction in the pre-operation assembly state (cad-verify references/geometry-motion.md motion.access)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "uncertainty": "none: input missing",
+      "consequence": "cover screw access unestablished",
+      "remedy": "name the screwdriver by standard or catalogue with blade and shaft dimensions",
+      "recheck": {
+        "families": [
+          "motion.access"
+        ],
+        "earliest_stage": "LAYOUT"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v5/access/a1/artifacts/access.json",
+      "sha256": "718ed95df18578567ccf2693464f656b20a63270a818c3ed45f860fd084bdfc8",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v5/access/a1/stdout.txt",
+      "sha256": "6d64f9fd255db2d9c86f57be691284da7133bb01081f1ab4b03b8365129f9c21",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "access in the stated pre-operation states only"
+  ]
+}
