@@ -1,0 +1,322 @@
+# Reference record for examples/lamp-arm: hw/product.yaml after the approved import (DR-001) and GROUND stage
+# work, before the GROUND gate. Built from the cad-record template; mapped fields cite the import, every other
+# KNOWN fact cites a scripted owner answer in brief.md.
+format: cad-agent-skills
+record_version: 1
+id: lamp-arm
+title: Three-joint desk lamp arm
+identity:
+  description:
+    status: KNOWN
+    value: Three-joint desk lamp arm with a bench-fixed base, two links and a head carrying a purchased USB LED module, positioned by hand
+    basis: USER_DECLARED
+    sources:
+    - &l02 {kind: USER, reference: brief.md answer L-02, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  owner:
+    status: KNOWN
+    value: SYNTHETIC demo owner; approves every gate, waiver and release
+    basis: USER_DECLARED
+    sources:
+    - &l03 {kind: USER, reference: brief.md answer L-03, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor: pro
+regime: ISO
+general_tolerance:
+  status: KNOWN
+  value: ISO 2768-m
+  basis: USER_DECLARED
+  sources:
+  - {kind: POLICY, reference: imported cad-agent v0.1.1 product.yaml general_tolerance, origin: import mapping DR-001, decision: DR-001}
+  - &l05 {kind: USER, reference: brief.md answer L-05, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+intake:
+  status: DRAFT
+  purpose:
+    status: KNOWN
+    value: Supervised bench demonstration of reach and pose holding
+    basis: USER_DECLARED
+    sources:
+    - &l12 {kind: USER, reference: brief.md answer L-12, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  users:
+    status: KNOWN
+    value: The owner alone, on a workbench; assembles, adjusts and services it
+    basis: USER_DECLARED
+    sources:
+    - &l06 {kind: USER, reference: brief.md answer L-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  loads:
+  - id: head_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value: {value: 7.85, units: N}
+      basis: CALCULATED
+      sources:
+      - &l07 {kind: USER, reference: brief.md answer L-07, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+      - {kind: CALCULATION, reference: 0.8 kg head times 9.81 m/s2, reason: weight of the heaviest stated head}
+    direction:
+      status: KNOWN
+      value: -Z through the head's centre of mass, worst at full horizontal reach of 450 mm
+      basis: USER_DECLARED
+      sources:
+      - *l07
+  - id: hand_push
+    kind: STATIC
+    magnitude:
+      status: UNKNOWN
+      reason: the owner pushes the head by hand and does not know the force; it sizes joint friction and the tipping moment
+      owner: user
+      question: Q-020
+      consequential: true
+    direction:
+      status: KNOWN
+      value: any direction at the head while repositioning
+      basis: USER_DECLARED
+      sources:
+      - *l07
+  environment:
+    temperature:
+      status: KNOWN
+      value: {lower: 15, upper: 30, units: deg_C}
+      basis: USER_DECLARED
+      sources:
+      - &l08 {kind: USER, reference: brief.md answer L-08, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    heat_sources:
+      status: KNOWN
+      value: the LED module in the head, listed at 5 V and 1 A; its housing temperature is unknown (Q-023)
+      basis: USER_DECLARED
+      sources:
+      - *l08
+    moisture:
+      status: KNOWN
+      value: dry indoor air
+      basis: USER_DECLARED
+      sources:
+      - *l08
+    chemicals:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *l08
+    uv:
+      status: KNOWN
+      value: no sun on the workbench
+      basis: USER_DECLARED
+      sources:
+      - *l08
+    corrosion:
+      status: KNOWN
+      value: dry indoor bench; contact pairs between dissimilar metals are assessed at INTENT
+      basis: USER_DECLARED
+      sources:
+      - *l08
+  motion:
+    speed:
+      status: NOT_APPLICABLE
+      reason: positioned slowly by hand; no speed requirement
+      reviewed_by: SYNTHETIC demo owner
+    range:
+      status: KNOWN
+      value: {lower: -120, upper: 80, units: deg}
+      basis: USER_DECLARED
+      note: the span of all three joint ranges; each joint's range is in REQ-001 to REQ-003
+      sources:
+      - &l09 {kind: USER, reference: brief.md answer L-09, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    duty_cycle:
+      status: KNOWN
+      value: about 20 hand repositionings per two-hour session, three sessions a week
+      basis: USER_DECLARED
+      sources:
+      - *l09
+    service_life:
+      status: KNOWN
+      value: {value: 90, units: d}
+      basis: USER_DECLARED
+      note: three months of demonstration
+      sources:
+      - *l09
+    wear:
+      status: UNKNOWN
+      reason: the owner does not know what joint wear is acceptable over three months
+      owner: user
+      question: Q-021
+      consequential: true
+    friction:
+      status: KNOWN
+      value: each joint holds its pose under the head load when the user lets go
+      basis: USER_DECLARED
+      sources:
+      - *l09
+  accuracy:
+    tolerance:
+      status: KNOWN
+      value: no precision positioning; head drift at most 5 mm in 10 minutes at full reach
+      basis: USER_DECLARED
+      sources:
+      - &l10 {kind: USER, reference: brief.md answer L-10, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    repeatability:
+      status: NOT_APPLICABLE
+      reason: positions are set by eye; no repeatability requirement
+      reviewed_by: SYNTHETIC demo owner
+    surface_finish:
+      status: KNOWN
+      value: no sharp burrs on user-accessible edges; no other finish requirement
+      basis: USER_DECLARED
+      sources:
+      - *l10
+    dimensional_stability:
+      status: UNKNOWN
+      reason: creep of loaded joints and links under the head weight and the module heat is unknown until a material and route are chosen
+      owner: lead (at INTENT)
+      question: Q-026
+      consequential: true
+  logistics:
+    quantity:
+      status: KNOWN
+      value: {value: 1, units: count}
+      basis: USER_DECLARED
+      sources:
+      - &l11 {kind: USER, reference: brief.md answer L-11, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    budget:
+      status: KNOWN
+      value: {amount: 120, currency: EUR}
+      basis: USER_DECLARED
+      note: including purchased parts
+      sources:
+      - *l11
+    lead_time:
+      status: KNOWN
+      value: {value: 42, units: d}
+      basis: USER_DECLARED
+      sources:
+      - *l11
+    maintenance:
+      status: KNOWN
+      value: the owner retightens the joints monthly
+      basis: USER_DECLARED
+      sources:
+      - *l11
+    repair:
+      status: KNOWN
+      value: the owner replaces parts
+      basis: USER_DECLARED
+      sources:
+      - *l11
+  capability:
+    equipment:
+    - bambu_p1s_home
+    - machine_shop_cnc
+    operator:
+      status: KNOWN
+      value: the owner prints; the machine shop runs its own machines
+      basis: USER_DECLARED
+      sources:
+      - &l13 {kind: USER, reference: brief.md answer L-13, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    outsourcing:
+      status: KNOWN
+      value: aluminium milling at a local machine shop whose machines and tolerances are unknown (Q-024); standard pins, bushings and fasteners may be bought
+      basis: USER_DECLARED
+      sources:
+      - *l13
+service:
+  class: FUNCTIONAL_DEMO
+  decision: DR-002
+risk:
+  failure_consequence:
+    status: KNOWN
+    value: a joint gives way and the 0.8 kg head drops onto the bench or the user's hand
+    basis: USER_DECLARED
+    sources:
+    - &l14 {kind: USER, reference: brief.md answer L-14, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  severity: MINOR
+  forbidden_outcomes:
+    status: KNOWN
+    value:
+    - the head falls on a person
+    - the LED cable is crushed
+    basis: USER_DECLARED
+    sources:
+    - *l14
+  standards:
+    status: UNKNOWN
+    reason: the owner does not know which standards apply to a supervised bench lamp arm
+    owner: user
+    question: Q-022
+    consequential: true
+  supervision:
+    status: KNOWN
+    value: the owner is always present when it is on
+    basis: USER_DECLARED
+    sources:
+    - *l14
+authority:
+  approver:
+    name: SYNTHETIC demo owner
+    role: OWNER
+    basis: product owner (brief.md answers L-03 and L-15)
+    scope: every gate, waiver, change and release of this product
+  competent:
+    status: NOT_APPLICABLE
+    reason: FUNCTIONAL_DEMO bench scope; no production or safety-critical release
+    reviewed_by: SYNTHETIC demo owner
+release_scope:
+  purpose:
+    status: KNOWN
+    value: build one unit for a supervised bench demonstration of reach and pose holding
+    basis: USER_DECLARED
+    sources:
+    - &l16 {kind: USER, reference: brief.md answer L-16, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  operating_limits:
+    status: KNOWN
+    value:
+    - supervised by the owner at all times
+    - two-hour sessions on an indoor bench at 15 to 30 deg C
+    - LED module powered from a 5 V USB supply only
+    - three months from first assembly
+    basis: USER_DECLARED
+    sources:
+    - *l16
+  exclusions:
+    status: KNOWN
+    value:
+    - unsupervised, mains-powered or production use
+    - any life, creep or thermal claim beyond the physical tests actually performed
+    - drawings are reviewed model-generated engineering drawings, not producer-ready and not standards-conformant
+    basis: USER_DECLARED
+    sources:
+    - *l16
+storage:
+  results_in_git:
+    status: KNOWN
+    value: true
+    basis: USER_DECLARED
+    sources:
+    - &l17 {kind: USER, reference: brief.md answer L-17, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  retention:
+    status: KNOWN
+    value: for the life of the project
+    basis: USER_DECLARED
+    sources:
+    - *l17
+license:
+  hardware:
+    status: KNOWN
+    value: CERN-OHL-S-2.0
+    basis: USER_DECLARED
+    sources:
+    - &l18 {kind: USER, reference: brief.md answer L-18, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  documentation:
+    status: KNOWN
+    value: CC-BY-SA-4.0
+    basis: USER_DECLARED
+    sources:
+    - *l18
+import:
+  source_format: cad-agent v0.1.1 record (no record_version), tag v0.1.1 commit b8f7a2ecb410e68d62a38464ffd800396cdb06c5
+  original_snapshot: hw/docs/import/original
+  mapping: hw/decisions/proposals/DR-001/mapping.yaml
+  decision: DR-001
+  date: '2026-11-03'

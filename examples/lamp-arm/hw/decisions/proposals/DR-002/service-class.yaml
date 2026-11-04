@@ -1,0 +1,9 @@
+# Immutable proposal bound by DR-002 (decision binding PROPOSAL), published before the decision was recorded.
+question: Q-012
+proposed:
+  service_class: FUNCTIONAL_DEMO
+basis: owner answer L-12 in examples/lamp-arm/brief.md
+consequences:
+- every in-scope physical criterion needs PHYSICALLY_VALIDATED evidence before release (cad-verify "Evidence by service class")
+- a missing physical test of a non-safety requirement can only be covered by an approved, supervised, expiring UNVALIDATED_TRIAL waiver
+- a safety requirement without physical evidence blocks the release; the scope is never lowered to pass a gate

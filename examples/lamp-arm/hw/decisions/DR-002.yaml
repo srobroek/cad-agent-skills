@@ -1,0 +1,21 @@
+id: DR-002
+kind: QUESTION
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-002/service-class.yaml
+  sha256: b34db17211261c1adafac530c6395d32e732cde1a1f892c53961323e020235b2
+title: Service class of this release scope
+scope: Q-012, service class of the lamp-arm release scope
+rationale: The owner wants a supervised bench demonstration of reach and pose holding for up to three months, not unsupervised or everyday use.
+limits:
+- every in-scope physical criterion needs physical evidence before a release
+- a safety requirement without physical evidence blocks the release
+actor:
+  kind: USER
+  name: SYNTHETIC demo owner (scripted answer L-12)
+time: '2026-11-03T10:30:00Z'
+statement:
+  transcript_sha256: 5fc444f1e68f8e0f8a281f3cc42b71bbeedc9d6d5647a41383fd6f9fd2f2f013
+  quote: 'FUNCTIONAL_DEMO: a supervised bench demonstration of reach and pose holding, run by me for up to three months; not unsupervised or everyday use.'
+  time: '2026-11-03T10:30:00Z'
