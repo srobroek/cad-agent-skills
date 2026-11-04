@@ -64,7 +64,7 @@ Output: `hw/assembly.yaml` (root `assembly`), member placement in `hw/interfaces
 7. Part units, one `cad-part-designer` unit per group of PNs that share one kernel and interact (cad-flow
    references/worker-brief.md):
    - `task`: the LAYOUT model of each PN per references/parts.md "Fidelity by stage", in the kernel the task names
-     (an existing part keeps its `model.kernel`; a new part takes the chosen variant's geometry kernel when present);
+     (an existing part keeps its `model.kernel`);
    - `subjects`: the PNs; inputs: assembly, interfaces, requirements, selection, the chosen variant;
    - `expected.outputs`: `hw/parts/<PN>/part.yaml` and, for an AUTHORED or PROXY model, `hw/parts/<PN>/model.py`;
    - `expected.checks`: `geometry-build`, `geometry-readback` and `geometry-identity` (UNIT);

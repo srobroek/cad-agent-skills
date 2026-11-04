@@ -43,9 +43,9 @@ Read the brief inputs only, from their copies under `.cad-work/<unit>/input/`. W
 1. `architecture.md`: the trade-off answer; the load path from each requirement load to ground; how each interface
    in scope is realized; motion, holding and end stops; assembly order, tools and service access; failure modes and
    their consequence; what the concept does not establish.
-2. Coarse CAD, only when the brief asks: envelopes, joint origins and axes at the nominal pose in one kernel, written
-   and run per cad-model; exports STEP for the definition, a binary GLB and an SVG preview under
-   `output/hw/concepts/<variant>/geometry/`; then the UNIT `geometry.readback` per cad-model references/exports.md.
+2. Coarse CAD, only when the brief asks: envelopes, joint origins and axes at the nominal pose, built and exported per
+   cad-model references/exports.md "Unit build" into `output/hw/concepts/<variant>/geometry/`; then the UNIT
+   `geometry.readback`.
 3. `variant.yaml`:
    - `id`, `title`, `architecture` (one paragraph), `architecture_doc` (the `architecture.md` target path);
    - `parts[]`: `PN`, `title`, `sourcing`, `material_profile` and `route` (route kinds) from the approved candidate,
