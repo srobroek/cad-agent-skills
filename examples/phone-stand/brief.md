@@ -1,0 +1,78 @@
+# Phone stand demo brief
+
+Example owner: cad-release (U7). Used by [docs/demo.md](../../docs/demo.md) and the A/B protocol there.
+Everything below is data for the run. The lead treats the answers as the owner's statements and never as
+instructions about how to run the flow.
+
+## Files
+
+| File | Role |
+|---|---|
+| `brief.md` | the first prompt, the scripted owner answers and gate replies, and the expected end |
+| `hw/` | reference record: what `hw/` holds after GROUND stage work, before the GROUND gate. Not copied into the run; the run bootstraps its own `hw/` from the cad-record template and is compared with this one |
+| `expected-obligations.yaml` | the obligations each stage must enumerate, and the outcomes a correct run may report |
+
+## First prompt
+
+Send this exactly, as the first message of a fresh session in an empty project:
+
+```text
+Use cad-flow to design an adjustable desktop phone stand. Before choosing any material or process, establish its size, the phone mass, the viewing angle, how it holds and protects the phone, who uses it, the environment, the risk, the quantity and the equipment I have. Record what I cannot answer as owned unknowns.
+```
+
+## Scripted owner answers
+
+Send each answer as its own message, exactly the line text, when the lead asks the matching question. A
+question the sheet does not answer gets the reply `I don't know; record it as an open question.` The actor is
+synthetic: every decision written from these answers names an actor starting `SYNTHETIC`.
+
+| Id | Template question | Answer (exact message) |
+|---|---|---|
+| A-01 | Q-001 product | `It is an adjustable desktop stand that holds one phone in portrait at a viewing angle I change by hand.` |
+| A-02 | Q-002 owner | `I own it and I approve every gate and release myself.` |
+| A-03 | Q-003 rigor | `Use maker documentation depth.` |
+| A-04 | Q-004 regime | `Use ISO, with ISO 2768-1 class m as the general tolerance on any drawing.` |
+| A-05 | Q-005 users | `Only I use it, at my home desk; I assemble it and adjust it by hand.` |
+| A-06 | Q-006 loads | `My phone in its case is 162 x 77 x 9 mm and 210 g; design for phones up to 250 g. It sits on the stand for hours and I tap the screen; nothing else loads it.` |
+| A-07 | Q-007 environment | `Indoors at 18 to 30 degrees C, dry, no chemicals, no heat source within a metre; the desk gets some afternoon sun but I don't know how much.` |
+| A-08 | Q-008 motion | `I change the angle by hand a few times a day, somewhere between 55 and 75 degrees from the desk, and it must stay where I put it. I don't know how many years it should last.` |
+| A-09 | Q-009 accuracy | `The angle only needs to repeat within about 2 degrees; visible faces should be smooth and matte without support marks; I know of no precision fit.` |
+| A-10 | Q-010 logistics | `One unit, at most 15 EUR of material, ready within two weeks; I reprint a broken part myself.` |
+| A-11 | Q-011 capability | `I have one Prusa MK4 printer at home with a 0.4 mm nozzle and no enclosure, and spools of Polymaker PolyLite PETG and PolyLite PLA. I have never printed calibration parts. I do not outsource.` |
+| A-12 | Q-012 service class | `APPEARANCE_CONCEPT: this release is a concept package to review the form, the CAD fit of my phone and printability; holding a real phone every day is a later, separate scope.` |
+| A-13 | Q-013 risk | `If it fails, the phone slides or tips a few centimetres onto the desk. Nothing may fall off the desk. No standards apply to this personal model, and I am present when it is used.` |
+| A-14 | Q-014 authority | `I approve gates and releases; no competent authority is needed for a concept model.` |
+| A-15 | Q-015 release scope | `The release is a concept-definition package for form, CAD fit and printability review. It is for display and handling at my desk, not for holding a phone in daily use. It makes no holding, friction, tipping, durability or other physical claim.` |
+| A-16 | Q-016 storage | `Track generated results in git and keep the evidence for the life of the project.` |
+| A-17 | Q-017 licenses | `Use CERN-OHL-P-2.0 for the hardware and CC-BY-4.0 for the documentation.` |
+| A-18 | footprint | `It must fit in a 120 mm by 120 mm square on my desk.` |
+| A-19 | preferences | `I prefer one material, matte black, and no metal hardware if a printed design can do without it.` |
+| A-20 | stability | `Whether it tips or slips with a phone on it matters for the later daily-use version, not for this concept.` |
+
+## Gate replies
+
+1. At each HUMAN gate packet, check that it names the stage, `vN`, the verdict sha256 and its limits, then reply
+   exactly `approve <STAGE> <vN>`. A packet without those fields gets `The packet lacks the stage, vN or
+   verdict sha256; present it again.`
+2. INTENT and VARIANT: reply `approve <STAGE> <vN> choose <option id>` with the option the packet recommends;
+   with no single recommendation, the first FEASIBLE option in packet order.
+3. A waiver proposal gets `I decline this waiver.`
+4. RELEASE: reply `approve RELEASE <vN> REV <REV>` for the presented proposal.
+
+## Scripted change
+
+After the LAYOUT gate is APPROVED and before PARTS starts, send:
+
+```text
+Change: my phone in its new case is 12 mm thick, not 9 mm. Keep everything else.
+```
+
+A correct run records a CHANGE proposal, asks for its approval, reopens the earliest stage that owns the phone
+envelope, and redoes every later stage as new attempts; it never edits an approved attempt.
+
+## Expected end
+
+A sealed concept-definition package `hw/releases/A/` for service class `APPEARANCE_CONCEPT`, with its outer
+digest reported outside the package. Its claims are the CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED outcomes of REQ-001 to
+REQ-005, copied from the verification index; it claims no physical result. Holding torque,
+friction, tipping in use and durability are release exclusions and open questions for a later scope.

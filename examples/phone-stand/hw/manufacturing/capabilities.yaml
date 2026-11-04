@@ -1,0 +1,46 @@
+# Reference record for examples/phone-stand: the owner's printer as declared at GROUND. Envelope, material
+# approvals and calibrations stay UNKNOWN until a retained source or the owner states them; nothing is assumed.
+profiles:
+- id: prusa_mk4_home
+  revision: 1
+  title: Prusa MK4, owner's home printer
+  process: FDM
+  provider: LOCAL
+  machine:
+    identity:
+      status: KNOWN
+      value: Prusa MK4 with a 0.4 mm nozzle, no enclosure
+      basis: USER_DECLARED
+      sources:
+      - &a11 {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    location: owner's home office
+  operator:
+    status: KNOWN
+    value: the owner, hobby FDM use
+    basis: USER_DECLARED
+    sources:
+    - *a11
+  envelope:
+    x: &envelope_unknown {status: UNKNOWN, reason: build envelope not stated by the owner and no supplier specification retained, owner: lead (sourcing unit at INTENT), question: Q-023, consequential: true}
+    y: *envelope_unknown
+    z: *envelope_unknown
+  materials:
+    status: UNKNOWN
+    reason: the owner prints PolyLite PETG and PolyLite PLA (A-11); approvals are recorded once those profiles are in hw/manufacturing/materials.yaml at INTENT
+    owner: lead (at INTENT)
+    question: Q-024
+    consequential: true
+  parameters:
+    nozzle_diameter:
+      status: KNOWN
+      value: {value: 0.4, units: mm}
+      basis: USER_DECLARED
+      sources:
+      - *a11
+    enclosure:
+      status: KNOWN
+      value: false
+      basis: USER_DECLARED
+      sources:
+      - *a11
+  calibrations: []
