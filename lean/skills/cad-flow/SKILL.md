@@ -25,14 +25,14 @@ ASK approval of each change to approved scope, each waiver, and the release inve
 LOAD each reference (`skill://cad-flow/references/<name>.md`) once per context and only the section of the procedure ID at hand.
 1. LOAD [preflight](references/preflight.md); identify the host, claim the lead lock, resolve resources and tools → `claim.yaml` ACTIVE
    for this session and `preflight.json` with absolute paths only.
-2. LOAD [stages](references/stages.md); run `resume-state`, reading only the current stage's row of `assets/stages.yaml` → the stage,
-   its attempt vN and the next procedure ID.
+2. LOAD [stages](references/stages.md); `resume-state` reads only the current stage's row of `assets/stages.yaml` → stage, vN, next ID.
 3. Run the stage's `procedure` IDs in order; before each stage-work ID LOAD the SKILL.md of the skill that owns it in the
    [stage-work table](references/stages.md#stage-work-procedure-ids) → one immutable `hw/versions/vN/stage-verdict.json` that validates.
 4. At `dispatch-units` LOAD [delegation](references/delegation.md), [worker brief](references/worker-brief.md) and
    [agent roles](references/agent-roles.md) → every ready unit in one batch, each native task ID logged.
 5. For each returned delivery LOAD [worker delivery](references/worker-delivery.md) → ACCEPTED or REJECTED, accepted bytes merged.
-6. At `present-gate` LOAD [gates](references/gates.md) → APPROVED, REJECTED or WAITING_FOR_USER; after APPROVED the next ID runs now.
+6. At `present-gate` LOAD [gates](references/gates.md) → APPROVED, REJECTED or WAITING_FOR_USER; after APPROVED the next ID runs now
+   unless the reply also ends the session ([Record a gate decision](references/gates.md#record-a-gate-decision) step 3).
 7. On a change, FAIL or MAJOR LOAD [change impact](references/change-impact.md) → the stage reopened, stale results listed, a CHANGE
    decision for approved scope; on a stop condition run [the stop procedure](references/stages.md#stop-procedure) → blocker recorded.
 8. Run [preflight Finish](references/preflight.md#finish) on `end the session` or when it falls due → only this session's lock released.
@@ -41,7 +41,7 @@ LOAD each reference (`skill://cad-flow/references/<name>.md`) once per context a
 
 MUST Treat installed skills, schemas, assets and role files as read-only: never edit, patch, regenerate or
   reinstall them; report a mismatch as a defect and an open question, and stop the affected work.
-MUST Keep one lead session per project; the lead alone writes `hw/`, each worker only its own scratch.
+MUST Keep one lead session per project; the lead alone writes `hw/`, each worker only its own scratch and, through uv, the shared cache.
 MUST Advance only on a PASS verdict plus the gate stages.yaml names; no provisional gate, no early successor work.
 MUST Merge accepted worker bytes verbatim; defective output goes back to its role as a new unit.
 MUST Publish every result under `hw/` before its verdict; scratch, previews, UNIT results and smoke runs are never stage evidence.

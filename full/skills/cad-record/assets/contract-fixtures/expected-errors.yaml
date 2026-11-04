@@ -318,10 +318,14 @@ version-manifest/invalid/includes-itself.json: '$.record[3].path: ''hw/versions/
 version-manifest/invalid/pre-cad-no-reason.json: "$.geometry: 'reason' is a required property"
 # runtime records environments[], never a top-level kernel, python or packages
 version-manifest/invalid/runtime-single-kernel.json: "$.runtime: Additional properties are not allowed ('kernel', 'packages', 'python' were unexpected)"
+# a checker or reviewer brief lists the obligation IDs it covers, so a lost unit's obligations can be recorded UNKNOWN
+worker-brief/invalid/checker-without-obligations.yaml: "$.expected: 'obligations' is a required property"
 # installed skills are never hashed: installed_sha256 is not a field
 worker-brief/invalid/installed-hash.yaml: "$.resources: Additional properties are not allowed ('installed_sha256' was unexpected)"
 # a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
 worker-brief/invalid/lock-outside-scratch.yaml: '$.boundary.writable[1]: ''hw/parts/STD-0001/build.py.lock'' does not match ''^\\.cad-work/'
+# every brief carries its unit limits (wall seconds and model turns) for the stall rule
+worker-brief/invalid/missing-limits.yaml: "$: 'limits' is a required property"
 # resources name the installed plugin name and version
 worker-brief/invalid/missing-plugin.yaml: "$.resources: 'plugin' is a required property"
 # resources name the cad-review rubric reference every role grades with
@@ -346,6 +350,10 @@ worker-brief/invalid/reserved-unit.yaml: "$.unit: 'lead' does not match '^(?!lea
 worker-brief/invalid/scratch-input.yaml: "$.input_inventory.files[0].path: '.cad-work/base-part/input/part.yaml' does not match '^hw/"
 # resource entries carry name, absolute path and URI, never a sha256
 worker-brief/invalid/skill-hash.yaml: "$.resources.skills[0]: Additional properties are not allowed ('sha256' was unexpected)"
+# an installed asset reaches the unit as a snapshot named by its skill-relative logical path, never an absolute path
+worker-brief/invalid/snapshot-absolute-installed.yaml: "$.input_inventory.snapshots[1].path: '/Users/me/.agents/skills/cad-record/assets/project-template/hw/product.yaml' does not match"
+# a snapshot path is lead/attempts.txt or installed/<skill-name>/<path>, with no dot segment
+worker-brief/invalid/snapshot-outside-lead.yaml: "$.input_inventory.snapshots[0].path: 'lead/../hw/product.yaml' does not match"
 # a sourcing brief carries its seed URLs (empty only with a host search tool)
 worker-brief/invalid/sourcing-without-seed-urls.yaml: "$: 'seed_urls' is a required property"
 # templates are the installed delivery template or a valid check-result fixture, never an invalid one

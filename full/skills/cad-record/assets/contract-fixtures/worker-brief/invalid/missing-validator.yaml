@@ -81,3 +81,6 @@ expected:
   report: VERDICT line, delivery.json path, findings, unknowns
 lead:
   session: omp-2026-11-03-a
+limits:
+  wall_seconds: 2400
+  model_turns: 150

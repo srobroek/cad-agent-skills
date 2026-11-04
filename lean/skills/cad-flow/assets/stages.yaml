@@ -40,7 +40,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: GROUND
     waiver_policy: FORBIDDEN
   - family: intake.use_case
@@ -87,7 +87,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: INTENT
     waiver_policy: FORBIDDEN
   - family: selection.feasibility
@@ -147,7 +147,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: SPECIFY
     waiver_policy: FORBIDDEN
   - family: requirements.completeness
@@ -261,7 +261,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: VARIANT
     waiver_policy: FORBIDDEN
   - family: variant.integrity
@@ -311,7 +311,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: LAYOUT
     waiver_policy: FORBIDDEN
   - family: interfaces.completeness
@@ -815,7 +815,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: BOM
     waiver_policy: FORBIDDEN
   - family: geometry.build
@@ -890,7 +890,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: ANALYSIS
     waiver_policy: FORBIDDEN
   - family: geometry.build
@@ -992,7 +992,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: CRITIQUE
     waiver_policy: FORBIDDEN
   - family: review.mechanical_dfm
@@ -1049,7 +1049,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: FREEZE
     waiver_policy: FORBIDDEN
   - family: intake.use_case
@@ -1314,7 +1314,7 @@ stages:
     waiver_policy: FORBIDDEN
   - family: delivery.integrity
     applicability: CONDITIONAL
-    condition: this attempt merges at least one worker delivery, a published checker or reviewer result included
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
     due: RELEASE
     waiver_policy: FORBIDDEN
   - family: verification.index

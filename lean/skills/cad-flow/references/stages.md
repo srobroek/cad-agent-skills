@@ -27,9 +27,16 @@ post-approval package check inside `publish-release`.
 
 The lead writes and stages scratch only at the `.cad-work` paths of [cad-record's layout](../../cad-record/layout.json), never at the
 `.cad-work/` root and never in a system temp directory such as `/tmp`: `.cad-work/lead/scratch/` for stage work before `freeze-inputs`
-allocates `vN` (candidate, input and assessment lists), `.cad-work/stage-vN/` from then on, and its check program `.cad-work/lead/checks.py`
-with `checks.py.lock` ([run-checks](#run-checks) step 1). Every byte the lead copies into `hw/` comes from `.cad-work/`. Its uv cache and
-validator follow [preflight](preflight.md#probe-tools). Nothing in scratch is evidence.
+allocates `vN` (candidate, input and assessment lists), `.cad-work/stage-vN/` from then on, `.cad-work/lead/tmp/` for temporary files,
+and its check program `.cad-work/lead/checks.py` with `checks.py.lock` ([run-checks](#run-checks) step 1). Its uv cache, `TMPDIR` and
+validator follow [preflight](preflight.md#probe-tools) and [uv commands](agent-roles.md#uv-commands). Nothing in scratch is evidence.
+
+Every byte the lead copies into `hw/` comes from `.cad-work/`, and every record file among them is validated there first: YAML loads
+with [cad-record's YAML loader](../../cad-record/references/validation.md#yaml-loader), then a file of a schema root validates against it
+with the [schema command](../../cad-record/references/validation.md#schema-validation) → exit 0, and a file of a prose root conforms to
+its [prose-contract](../../cad-record/references/prose-contract.md) table → every field, type, pattern and rule holds. A file that fails
+is corrected in scratch and never published. A bad file an earlier attempt already published follows
+[cad-record validation — Earlier snapshots](../../cad-record/references/validation.md#earlier-snapshots).
 
 ## Lifecycle procedure IDs (owner cad-flow)
 
@@ -50,8 +57,10 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 
 1. Diagnose first: load every authored YAML file the attempt will inventory whose bytes differ from its latest `hw/versions/v*/`
    snapshot, or that has none, with [cad-record's YAML loader](../../cad-record/references/validation.md#yaml-loader), and validate it
-   with the [schema command](../../cad-record/references/validation.md#schema-validation), logging into `.cad-work/lead/scratch/`. Fix
-   each failure in the record before step 2. This run is a diagnostic, never a result ([run-checks](#run-checks) step 7).
+   against its layout root: a schema root with the [schema command](../../cad-record/references/validation.md#schema-validation), a prose
+   root against its [prose-contract](../../cad-record/references/prose-contract.md) table, every ID pattern included; log into
+   `.cad-work/lead/tmp/`. Fix each failure in the record before step 2: the snapshot publishes these bytes
+   ([Lead scratch](#lead-scratch)). This run is a diagnostic, never a result ([run-checks](#run-checks) step 7).
 2. Allocate `vN`: the next integer above every `hw/versions/v*`, `hw/checks/v*` and `.cad-work/stage-v*`; `mkdir .cad-work/stage-vN` must
    succeed. Never reuse a number.
 3. Write `.cad-work/stage-vN/input-inventory.txt`: every record file, part model, check plan and case, retained source and accepted decision
@@ -75,7 +84,8 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 
 ### enumerate-obligations
 
-1. Evaluate every `checks[]` entry on the frozen inputs; record each false `condition` with its reason.
+1. Evaluate every `checks[]` entry on the frozen inputs and on this attempt's units: those its stage work dispatched and those the
+   [run-checks](#run-checks) step 1 split sends out. Record each false `condition` with its reason.
 2. Take anchors from [cad-verify's check plan](../../cad-verify/references/check-plan.md). A family the check plan does not anchor uses
    `<family>@product`.
 3. `due` equal to the stage → `expected`; a later `due` → `future`.
@@ -112,12 +122,12 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    runs with that program after the attempt's last merge-deliveries, over every triple logged in the attempt, and is published last.
 2. Every stage result binds `VERSION` (vN and manifest digest). A worker's UNIT result is never stage evidence; a checker may read scratch
    first, then emits its VERSION result on the identical inventoried input.
-3. Publish nothing unvalidated: the lead writes its own results and bundle manifests in `.cad-work/stage-vN/checks/<check>/<attempt>/`
-   first, and a worker's arrive through [worker-delivery](worker-delivery.md) acceptance. Each validates against its schema root, or
-   conforms to its prose root, before any of its bytes is copied under `hw/`; a file that fails is never published (the lead corrects its
-   own in scratch; a worker's delivery is rejected). When the batch has returned and every delivery is ACCEPTED or REJECTED, apply step 4,
-   then publish the surviving results in `check_order` to `hw/checks/vN/<check>/<attempt>/`, each before the batch of any family that
-   reads it is dispatched.
+3. Publish nothing unvalidated ([Lead scratch](#lead-scratch)): the lead writes its own results, and every check bundle manifest by
+   [cad-record record — Bundle manifest](../../cad-record/references/record.md#bundle-manifest), in
+   `.cad-work/stage-vN/checks/<check>/<attempt>/` first, and a worker's arrive through [worker-delivery](worker-delivery.md) acceptance.
+   A file that fails is never published (the lead corrects its own in scratch; a worker's delivery is rejected). When the batch has
+   returned and every unit is ACCEPTED, REJECTED or STOPPED, apply step 4, then publish the surviving results in `check_order` to
+   `hw/checks/vN/<check>/<attempt>/`, each before the batch of any family that reads it is dispatched.
 4. Stop rule, applied at acceptance in `check_order`: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every
    later family; any other FAIL or UNKNOWN stops the families that read its result, artifacts or geometry. A stopped family's speculative
    result, the lead's or a unit's, stays unpublished in scratch, and `checks.py` records each stopped obligation in a lead result of its
@@ -166,7 +176,7 @@ HUMAN gates only: [gates](gates.md).
 
 ### advance
 
-1. PASS verdict and satisfied gate → start the successor's procedure in the same turn
+1. PASS verdict and satisfied gate → start the successor's procedure in the same turn, except after a gate reply that ends the session
    ([gates — Record a gate decision](gates.md#record-a-gate-decision) step 3).
 2. FAIL or BLOCKED → the stop procedure; the next attempt or reopen follows [change-impact](change-impact.md).
 3. Batches never cross a stage whose gate is not satisfied.
@@ -184,10 +194,10 @@ the procedure ID.
 | ID                     | Owner reference                                                                                   | Output                                                       |
 | ---------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | `record-bootstrap`     | [cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap)             | `hw/` from the template or an approved import                |
-| `intake-use-case`      | [cad-select intake-use-case](../../cad-select/references/selection.md#intake-use-case)            | intake, service, risk, authority, release scope, questions   |
+| `intake-use-case`      | [cad-select intake-use-case](../../cad-select/references/selection.md#intake-use-case)            | intake, service, risk, authority, release scope, requirements, preferences, assumptions, questions |
 | `select-candidates`    | [cad-select select-candidates](../../cad-select/references/selection.md#select-candidates)        | candidates and the facts to source: one `cad-sourcing-researcher` unit per material family or capability without retained sources, all in one batch |
 | `assess-selection`     | [cad-select assess-selection](../../cad-select/references/selection.md#assess-selection)          | `selection.yaml` assessment and recommendation               |
-| `specify-requirements` | [cad-verify specify-requirements](../../cad-verify/references/check-plan.md#specify-requirements) | requirement criteria, methods, facets, due stages            |
+| `specify-requirements` | [cad-verify specify-requirements](../../cad-verify/references/check-plan.md#specify-requirements) | requirements checked complete; a gap is a change             |
 | `specify-interfaces`   | [cad-design specify-interfaces](../../cad-design/references/layout.md#specify-interfaces)         | functional interface contracts                               |
 | `plan-checks`          | [cad-verify plan-checks](../../cad-verify/references/check-plan.md#plan-checks)                   | `check-plan.yaml` checks and cases                           |
 | `draft-variants`       | [cad-design draft-variants](../../cad-design/references/concepts.md#draft-variants)               | 2–4 concept units and their merged variants                  |
@@ -207,7 +217,10 @@ the procedure ID.
 
 Stop on any condition below; the code is the verdict blocker when an attempt has a manifest. An outcome condition (`DUE_UNKNOWN`,
 `DUE_FAIL`, `REVIEW_MAJOR`, `REVIEW_MINOR`) holds only for an outcome a check returned in a frozen attempt: a predicted outcome stops
-nothing, so freeze the attempt, run its checks and write its verdict.
+nothing, so freeze the attempt, run its checks and write its verdict. Likewise a stage-work unit that ends REJECTED or lost
+([delegation Lost and stalled units](delegation.md#lost-and-stalled-units)) stops nothing before a manifest: the facts it was to settle
+stay typed UNKNOWN with owner and question in the record, and the lead freezes the attempt, runs its checks and writes its verdict, which
+carries `DUE_UNKNOWN` or `DELIVERY_FAILED` where they fall due.
 
 | Condition                                                                                                                                                                                                                  | Blocker                                                |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |

@@ -52,6 +52,8 @@ boundary:
   - .cad-work/base-part/build.py.lock
   - .cad-work/base-part/check.py
   - .cad-work/base-part/check.py.lock
+  - .cad-work/base-part/tmp
+  - .cad-work/lead/.uv-cache
   - .cad-work/base-part/delivery.json
   locked:
   - hw/interfaces.yaml
@@ -73,3 +75,6 @@ expected:
 lead:
   session: omp-2026-11-03-a
   task_id: task-17
+limits:
+  wall_seconds: 3600
+  model_turns: 200

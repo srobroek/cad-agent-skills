@@ -366,10 +366,11 @@ Generated YAML: the self-contained assignment of one worker.
 | `task` | yes | `text` |
 | `subjects` | yes | `subjects` |
 | `seed_urls` | iff `role` is `cad-sourcing-researcher` | `[url]` unique; empty only when the host gives the role a search tool |
-| `input_inventory` | yes | `{sha256 sha256, files}`: `sha256` is the set digest over `files`; `files [{path hw_path, sha256 sha256}]≥1` required, optional `bytes` integer ≥ 0 |
+| `input_inventory` | yes | `{sha256 sha256, files}`: `sha256` is the set digest over `files`; `files [{path hw_path, sha256 sha256}]≥1` required, optional `bytes` integer ≥ 0; optional `snapshots [{path, sha256 sha256}]` unique, optional `bytes` integer ≥ 0, `path` `lead/attempts.txt` or `installed/<skill>/<path>` with `<skill>` one of the eight `cad-*` skills and `<path>` relative under the safe-path rules of `hw_path`, never absolute; a snapshot sha256 binds the copy as a check input, never an install audit |
 | `resources` | yes | `{plugin plugin, skills, rubric, schemas, tools, templates, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
 | `boundary` | yes | `{project_root absolute_path, scratch scratch_path, writable [scratch_path]≥1 unique, locked [hw_path] unique}` required, optional `read_only [project_path] unique`; a worker writes only under `.cad-work/` |
-| `expected` | yes | `{outputs, checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique` |
+| `limits` | yes | `{wall_seconds integer ≥ 1, model_turns integer ≥ 1}`, both required |
+| `expected` | yes | `{outputs, checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique`, required when `role` is `cad-checker` or `cad-mech-dfm-reviewer` |
 | `lead` | yes | `{session text}` required, optional `task_id text` |
 
 - `resources.skills`: `[{name skill, path absolute_path}]≥1` required, optional `uri` matching

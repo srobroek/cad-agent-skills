@@ -18,6 +18,8 @@ input_inventory:
     sha256: '0000000000000000000000000000000000000000000000000000000000000000'
   - path: hw/interfaces.yaml
     sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  # Lead-owned facts outside hw/ (references/worker-brief.md, Compose step 2); a part designer reads none.
+  snapshots: []
 resources:
   plugin:
     name: cad-agent-skills-lean
@@ -69,7 +71,8 @@ boundary:
   - .cad-work/example-part/build.py.lock
   - .cad-work/example-part/check.py
   - .cad-work/example-part/check.py.lock
-  - .cad-work/example-part/.uv-cache
+  - .cad-work/example-part/tmp
+  - .cad-work/lead/.uv-cache
   - .cad-work/example-part/__pycache__
   - .cad-work/example-part/delivery.json
   locked:
@@ -89,5 +92,9 @@ expected:
   - a locked interface needs a change
   - a required capability, method or tool is UNKNOWN
   report: VERDICT line, delivery.json absolute path, findings, unknowns, proposals
+limits:
+  # references/worker-brief.md, limits row: a designer unit.
+  wall_seconds: 3600
+  model_turns: 200
 lead:
   session: REPLACE-WITH-CLAIM-SESSION
