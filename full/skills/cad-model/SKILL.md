@@ -35,7 +35,8 @@ MUST Use one kernel per `model.py` and per process; geometry crosses the CadQuer
 MUST Keep `PARAMS` the single authority for dimensions, in mm and degrees; records hold criteria and sources only.
 MUST Keep models and programs deterministic: no clock, network, randomness, unsorted traversal, host font or
   read of a mutable record file; text only from a retained, identified font file.
-MUST Run every build and check as a locked script (`uv lock --script`, then `uv run --locked --script`).
+MUST Run every build and check as a locked script: lock, then run locked, in the forms of cad-flow references/agent-roles.md
+  "uv commands".
 MUST Stop on a failed build, Boolean bound or functional round; report a cosmetic fallback, never hide it.
 NOT Name geometry by face, edge or solid index, or guess a frame or orientation from the shape.
 NOT Treat a successful build, a preview or an exit code as readback, verification or manufacturability.
