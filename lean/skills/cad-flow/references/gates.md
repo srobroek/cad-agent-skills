@@ -21,9 +21,9 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 ## present-gate
 
 1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
-2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path and sha256; the manifest sha256; results per family;
-   limits (each UNKNOWN, PLANNED future obligation, waiver, SAMPLED coverage and absent physical evidence); each preview, GLB, drawing and
-   BOM as an absolute path on its own line.
+2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
+   each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, SAMPLED coverage and absent physical
+   evidence); each preview, GLB, drawing and BOM as an absolute path on its own line.
 3. INTENT and VARIANT add the options the verdict assessed
    ([cad-select assess-selection](../../cad-select/references/selection.md#assess-selection) and
    [cad-design compare-variants](../../cad-design/references/concepts.md#compare-variants)): feasible, conditional (with its unknowns) and
@@ -36,14 +36,17 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 An approval is an explicit statement from the user, or from the authority `product.yaml` names for this scope, that names the stage and `vN`
 (and the option for INTENT or VARIANT).
 
-1. Allocate the next unused DR number and save the message bytes unchanged at `hw/decisions/statements/DR-###.txt`, `test ! -e` first
-   (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)).
+1. Allocate the next unused DR number and save the message bytes exactly as received at `hw/decisions/statements/DR-###.txt`, `test ! -e`
+   first (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)): no newline or whitespace added or trimmed, so write them with
+   the host's file-write tool or `printf '%s'`, never `echo` or a heredoc.
 2. Write `hw/decisions/DR-###.yaml` with that number and `test ! -e` first: `kind: GATE`, `state: APPROVED` or `REJECTED`,
    `binding: {kind: STAGE, stage, version, verdict: {path, sha256}, verdict_result}` with `verdict_result` copied from that verdict's
    `result` (PASS), `title`, `scope` (the gate subject), `rationale` (the user's reason, or "approved as presented"), `limits` (the
    packet limits), `options` and `choice` for INTENT and VARIANT, `actor`, `time`, and `statement` `{path, transcript_sha256, quote,
    time}`: the saved file, its sha256, a quote from it and its time
    ([cad-record decision schema](../../cad-record/schemas/decision.schema.json)).
+3. APPROVED → run the stage's next procedure ID in the same turn: [advance](stages.md#advance) and the successor's `resume-state`, or
+   `publish-release` at RELEASE. Never end the turn or ask to continue between recording the decision and that ID.
 
 RELEASE uses `kind: RELEASE` with `binding: {kind: RELEASE_INVENTORY, rev, version, proposal: {path, sha256}, verdict: {path, sha256}}`.
 `proposal` hashes the PROPOSAL manifest; `verdict` hashes the PASS RELEASE readiness verdict. The proposal omits `readiness` (forbidden in

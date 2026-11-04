@@ -9,21 +9,26 @@ never cad-flow SKILL.md or another lead reference. Grading uses the rubric owned
 
 1. Read the brief at the absolute path in your task. Every resource is the literal absolute path or `skill://` URI in `resources`; never
    search the product directory or guess an install path.
-2. LOAD the SKILL.md of each `resources.skills` entry, and read the cad-review rubric at `resources.rubric`.
-3. Read the `input_inventory` files from their copies at `.cad-work/<unit>/input/<path>`, and the `boundary.read_only` paths; nothing else.
-   A needed file outside them → stop.
-4. Writers: take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) before your first
-   write as `boundary.before_sha256`, and again after your last write as `boundary.after_sha256`.
+2. LOAD the SKILL.md of each `resources.skills` entry and no other skill, and read the cad-review rubric at `resources.rubric`.
+3. Run `shasum -a 256 -c <root>/.cad-work/<unit>/input/SHA256SUMS` once (Linux: `sha256sum -c` of the same file) → every line OK, else
+   stop. Read the `input_inventory` files from their copies at `.cad-work/<unit>/input/<path>`, and the `boundary.read_only` paths;
+   nothing else. A needed file outside them → stop.
+4. Writers: take the tree digest with the command of
+   [cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest), no other form, before your first write as
+   `boundary.before_sha256`, and again after your last write as `boundary.after_sha256`.
 5. Do the role duty below; write only the `boundary.writable` paths of the brief.
-6. Writers build and check with their own programs `.cad-work/<unit>/build.py` and `check.py`. Use
-   [cad-model's unit build procedure](../../cad-model/references/exports.md#unit-build) and
+6. Writers build and check with their own programs `.cad-work/<unit>/build.py` and `check.py`, locked and run with the
+   [uv commands](#uv-commands). Use [cad-model's unit build procedure](../../cad-model/references/exports.md#unit-build) and
    [cad-verify's implementation contract](../../cad-verify/references/results.md#implementation-kind); keep each program's uv lock beside it
    as `build.py.lock` or `check.py.lock`, at the unit root, never under `output/` and never as a delivery output: the lead retains them
-   at acceptance. Each expected check gets its result file under `output/checks/<check>/`, bound `VERSION` when the brief names a
-   `version`, else `UNIT`; its `source_files` name `source/<file>` beside the result's target with each program's sha256.
+   at acceptance. A checker whose `input_inventory` lists an earlier result's `source/check.py` and its lock may start its `check.py` from
+   that copy (cad-verify implementation kind, step 2). Each expected check gets its result file under `output/checks/<check>/`, started
+   from the brief's check-result template, bound `VERSION` when the brief names a `version`, else `UNIT`; its `source_files` name
+   `source/<file>` beside the result's target with each program's sha256.
 7. Grade the whole delivery PASS, MINOR or MAJOR with the [cad-review rubric](../../cad-review/references/rubric.md).
-8. Writers write `.cad-work/<unit>/delivery.json` (root [worker-delivery](../../cad-record/schemas/worker-delivery.schema.json), fields
-   below) and validate it against the brief's schema path → exit 0.
+8. Writers write `.cad-work/<unit>/delivery.json` from the brief's worker-delivery template (root
+   [worker-delivery](../../cad-record/schemas/worker-delivery.schema.json), fields below) and validate it with the brief's
+   `check-jsonschema` argv against the brief's schema path → exit 0.
 9. Reply in the format below.
 
 Stop and deliver MAJOR with `ready: false` and the reason when: a brief `stop` condition holds; an input or resource is missing; the task
@@ -53,13 +58,15 @@ is a missing tool: stop as above.
 
 ## Roles
 
-| Role                      | Duty                                                                                                                                                                                                                                                                                                                            | Skills to LOAD                                                                              | Writes                                                                                 | Delivers to                                                                 |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `cad-concept-designer`    | one variant from the brief's use case, requirements, preferences and feasible route: architecture, load paths, interfaces, coarse CAD and GLB when asked, feasibility per hard constraint, unknowns, own build and geometry readback                                                                                            | cad-design, cad-model, cad-select, cad-verify, cad-record                                   | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `delivery.json` | `hw/concepts/<variant>/{variant.yaml,architecture.md,geometry/**}`          |
-| `cad-part-designer`       | the brief's part numbers and any required assembly drawing: part record, one-kernel model, components, manufacturing state, route, part drawing intent at DETAIL, own build, readback and UNIT checks; draw each briefed subject per [cad-release's drawing procedure](../../cad-release/references/drawings.md#draft-drawings) | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL and FREEZE | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `delivery.json` | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` and briefed drawing bundles |
-| `cad-checker`             | independent checks of the brief's version or unit inputs: own programs, results, artifacts, logs, coverage                                                                                                                                                                                                                      | cad-verify, cad-model, cad-select, cad-design, cad-release, cad-record                      | `output/**`, `check.py`, `check.py.lock`, `delivery.json`                              | `hw/checks/<vN>/<check>/<attempt>/**`                                       |
-| `cad-mech-dfm-reviewer`   | separate mechanical and DFM outcomes for the exact version: premises, requirements, routes, evidence, drawings, BOM                                                                                                                                                                                                             | cad-review, cad-verify, cad-select, cad-record                                              | nothing                                                                                | `hw/checks/<vN>/<check>/<attempt>/result.json`                              |
-| `cad-sourcing-researcher` | the brief's purchased families, stock or capability: retained source bytes, profile proposals, catalogue alternatives with citations                                                                                                                                                                                            | cad-select, cad-record                                                                      | `output/**`, `delivery.json`                                                           | `hw/manufacturing/sources/<sha256>/<name>`, `hw/parts/<PN>/sources/**`      |
+| Role                      | Duty                                                                                                                                                                                                                                                                                                                            | Skills a brief may list                                                                     | Writes                                                                                                                 | Delivers to                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `cad-concept-designer`    | one variant from the brief's use case, requirements, preferences and feasible route: architecture, load paths, interfaces, coarse CAD and GLB when asked, feasibility per hard constraint, unknowns, own build and geometry readback                                                                                            | cad-design, cad-model, cad-select, cad-verify, cad-record                                   | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `.uv-cache/**`, `__pycache__/**`, `delivery.json` | `hw/concepts/<variant>/{variant.yaml,architecture.md,geometry/**}`          |
+| `cad-part-designer`       | the brief's part numbers and any required assembly drawing: part record, one-kernel model, components, manufacturing state, route, part drawing intent at DETAIL, own build, readback and UNIT checks; draw each briefed subject per [cad-release's drawing procedure](../../cad-release/references/drawings.md#draft-drawings) | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL and FREEZE | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `.uv-cache/**`, `__pycache__/**`, `delivery.json` | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` and briefed drawing bundles |
+| `cad-checker`             | independent checks of the brief's version or unit inputs: own programs, results, artifacts, logs, coverage                                                                                                                                                                                                                      | cad-verify, cad-model, cad-select, cad-design, cad-release, cad-record                      | `output/**`, `check.py`, `check.py.lock`, `.uv-cache/**`, `__pycache__/**`, `delivery.json`                              | `hw/checks/<vN>/<check>/<attempt>/**`                                       |
+| `cad-mech-dfm-reviewer`   | separate mechanical and DFM outcomes for the exact version: premises, requirements, routes, evidence, drawings, BOM                                                                                                                                                                                                             | cad-review, cad-verify, cad-select, cad-record                                              | nothing                                                                                                                | `hw/checks/<vN>/<check>/<attempt>/result.json`                              |
+| `cad-sourcing-researcher` | the brief's purchased families, stock or capability: retained source bytes, profile proposals, catalogue alternatives with citations                                                                                                                                                                                            | cad-select, cad-record                                                                      | `output/**`, `delivery.json`                                                                                           | `hw/manufacturing/sources/<sha256>/<name>`, `hw/parts/<PN>/sources/**`      |
+
+The brief lists only the skills that own its methods ([worker-brief](worker-brief.md#compose)); a role loads no other.
 
 - Concept designer: NOT compare, rank or select variants ([cad-design](../../cad-design/references/concepts.md#compare-variants)).
 - Part designer: NOT change an interface, the assembly or another PN; shared changes are proposals.
@@ -70,9 +77,35 @@ is a missing tool: stop as above.
   document as one fenced `json` block with `implementation.kind: REVIEW` and `inspected` listing every file read with its sha256 from
   the brief inventory. The lead writes those bytes unchanged and writes the delivery for it.
 - Sourcing researcher: profiles are proposals to the shared libraries ([cad-select materials](../../cad-select/references/materials.md));
-  NOT purchase, select, approve or write a shared record. Retain each source's original bytes with
-  `curl -fsSL -o <root>/.cad-work/<unit>/output/<path> <url>`, never a web-fetch text conversion; hash them with `shasum -a 256` (or
-  `sha256sum`).
+  NOT purchase, select, approve or write a shared record. Retain each source's original bytes with this one command, never a web-fetch
+  text conversion; the retained bytes are the body curl wrote, hashed with `shasum -a 256` (or `sha256sum`), and each is delivered to a
+  brief pattern with `<sha256>` its hash:
+
+  ```sh
+  curl -fsSL -o <root>/.cad-work/<unit>/output/<path> --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 <url>
+  ```
+
+  Budget per unit: at most 8 retained sources, 16 fetch attempts and 3 attempts per host; a host that answered 403 or 429 or failed TLS
+  is not fetched again. Discover only through the host's search tool or the brief's `seed_urls`; never scan an archive CDX index or a
+  store's product JSON. A spent budget leaves each unfound fact a typed UNKNOWN with owner and question, and the attempt log
+  (URL → outcome) goes in `limits`.
+
+## uv commands
+
+Every uv command of a unit or of the lead names its own cache and never downloads Python. `<cache>` is
+`<root>/.cad-work/<unit>/.uv-cache` for a unit and `<root>/.cad-work/lead/.uv-cache` for the lead; `<program>` is the absolute path of
+the PEP 723 script:
+
+```sh
+uv lock --cache-dir <cache> --no-python-downloads --script <program>
+uv run --cache-dir <cache> --no-python-downloads --locked --script <program> <arguments>
+```
+
+- The interpreter is the Python 3.12 preflight found ([preflight Probe tools](preflight.md#probe-tools)); none found is a missing tool.
+- A unit's `.uv-cache/` and any `__pycache__/` stay in its own directory, outside every digest; neither is an output or evidence
+  ([worker-delivery Accept](worker-delivery.md#accept) step 8).
+- Schema validation and YAML loading run only the brief's `resources.tools` argv: binaries preflight installed, executed read-only,
+  never resolved through `uvx`.
 
 ## Rules for every role
 

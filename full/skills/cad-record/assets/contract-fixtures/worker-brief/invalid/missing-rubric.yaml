@@ -25,6 +25,16 @@ resources:
   schemas:
   - name: part
     path: /Users/me/.agents/skills/cad-record/schemas/part.schema.json
+  tools:
+  - name: check-jsonschema
+    argv:
+    - /Users/me/projects/phone-stand/.cad-work/lead/validator/bin/check-jsonschema
+    version: check-jsonschema, version 0.39.0
+  templates:
+  - name: worker-delivery
+    path: /Users/me/.agents/skills/cad-flow/assets/worker-delivery.yaml
+  - name: check-result-unit
+    path: /Users/me/.agents/skills/cad-record/assets/contract-fixtures/check-result/valid/unit-prebuild.json
   role_reference:
     name: agent-roles
     path: /Users/me/.agents/skills/cad-flow/references/agent-roles.md

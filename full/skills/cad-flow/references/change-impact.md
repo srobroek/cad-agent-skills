@@ -55,9 +55,18 @@ strength or wear coupon or test. A physical test of a changed design no longer a
 
 ## Carry-forward
 
-A result enters a later verdict as `CARRIED_FORWARD` only when a `record.inputs` result of the new version shows
-every input file of that result byte-identical and none of its subjects affected; `carried_from` names the
-original version, that recheck result and the reason. Without that explicit assessment the obligation reruns.
+Before dispatch ([enumerate-obligations](stages.md#enumerate-obligations) step 6) the lead carries a check forward, instead of
+rerunning it, when an accepted result of that check-plan check, published for an earlier version, holds all of:
+
+- its `expected_obligations` equal this attempt's for the check, and every outcome is PASS or NOT_APPLICABLE;
+- every input file it read is byte-identical to this attempt's inventory, and none of its subjects is affected;
+- its family's method is the same at this stage: a family whose [cad-verify families](../../cad-verify/references/families.md) Method
+  differs by stage (`interfaces.completeness`, `variant.integrity`) carries only between attempts of one stage;
+- its family is none of the attempt audits `record.*` and `delivery.integrity`, which always rerun.
+
+The `record.inputs` result of the new version records that byte comparison. The verdict entry is `CARRIED_FORWARD` with the result's
+own binding and bytes, and `carried_from` names the original version, that `record.inputs` result and the reason. Without that explicit
+assessment the check reruns; a FAIL or UNKNOWN result is never carried.
 
 ## Findings
 

@@ -34,6 +34,22 @@ resources:
     path: /Users/me/.agents/skills/cad-record/schemas/check-result.schema.json
   - name: worker-delivery
     path: /Users/me/.agents/skills/cad-record/schemas/worker-delivery.schema.json
+  tools:
+  - name: check-jsonschema
+    argv:
+    - /Users/me/projects/phone-stand/.cad-work/lead/validator/bin/check-jsonschema
+    version: check-jsonschema, version 0.39.0
+  - name: yaml-loader
+    argv:
+    - /Users/me/projects/phone-stand/.cad-work/lead/validator/bin/python
+    version: PyYAML 6.0.3
+  templates:
+  - name: worker-delivery
+    path: /Users/me/.agents/skills/cad-flow/assets/worker-delivery.yaml
+  - name: check-result-version
+    path: /Users/me/.agents/skills/cad-record/assets/contract-fixtures/check-result/valid/version-pass.json
+  - name: check-result-semantic
+    path: /Users/me/.agents/skills/cad-record/assets/contract-fixtures/check-result/valid/semantic-aggregate-fail.json
   role_reference:
     name: agent-roles
     path: /Users/me/.agents/skills/cad-flow/references/agent-roles.md
