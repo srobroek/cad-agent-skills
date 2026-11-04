@@ -62,8 +62,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          forbidden='(^|/)(scripts|tools|hooks)(/|$)|\.(py|js|ts|sh|ipynb)$'
-          violations="$(git ls-files | grep -Ei "$forbidden" || true)"
+          forbidden='(^|/)(scripts|tools|hooks)(/|$)|\.(py|js|ts|mjs|cjs|sh|bash|zsh|ps1|rb|ipynb|FCMacro|scad)$'
+          files="$(git ls-files)"
+          violations="$(grep -Ei "$forbidden" <<<"$files" || true)"
+          executables="$(git ls-files -s | awk '$1 == "100755" { print $4 }')"
+          violations+="${executables:+$'\n'$executables}"
           if [[ -n "$violations" ]]; then
             printf '%s\n' 'Tracked executable source, scripts/, tools/, and hooks/ are not permitted.' "$violations" >&2
             exit 1
@@ -102,14 +105,42 @@ jobs:
             check-jsonschema --schemafile "$schema" "$@"
           }
 
-          # All valid fixtures of a root validate in one call; each invalid fixture must fail on its own.
+          # All valid fixtures of a root validate together; invalid fixtures must report their indexed error.
+          expected_error() {
+            local index_file="$1" key="$2"
+            awk -v key="$key" '
+              substr($0, 1, length(key) + 1) == key ":" {
+                value = substr($0, length(key) + 2)
+                sub(/^[[:space:]]+/, "", value)
+                quote = substr(value, 1, 1)
+                if (quote == "\047" || quote == "\042") { value = substr(value, 2, length(value) - 2) }
+                if (quote == "\047") { gsub(/\047\047/, "\047", value) }
+                print value
+                found = 1
+                exit
+              }
+              END { if (!found) exit 1 }
+            ' "$index_file"
+          }
+
+          assert_invalid() {
+            local schema="$1" instance="$2" index_file="$3" key="$4" expected actual
+            expected="$(expected_error "$index_file" "$key")" || fail "Missing intended error in $index_file: $key"
+            if actual="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then fail "Invalid fixture unexpectedly validated: $instance"; fi
+            if ! grep -Fq -- "$expected" <<<"$actual"; then
+              printf 'Validation error mismatch: %s\nExpected substring: %s\nValidator output:\n%s\n\n' "$instance" "$expected" "$actual" >&2
+              fail "Invalid fixture reported an unexpected error: $instance"
+            fi
+          }
+
           validate_fixtures() {
-            local schema="$1" fixture_dir="$2" instance
+            local schema="$1" fixture_dir="$2" instance key index_file="${fixture_dir%/*}/expected-errors.yaml"
             local -a valid=("$fixture_dir"/valid/*) invalid=("$fixture_dir"/invalid/*)
             ((${#valid[@]} > 0 && ${#invalid[@]} > 0)) || fail "Missing valid or invalid fixtures in $fixture_dir"
             validate_many "$schema" "${valid[@]}"
             for instance in "${invalid[@]}"; do
-              if check-jsonschema --schemafile "$schema" "$instance" >/dev/null 2>&1; then fail "Invalid fixture unexpectedly validated: $instance"; fi
+              key="${fixture_dir##*/}/invalid/${instance##*/}"
+              assert_invalid "$schema" "$instance" "$index_file" "$key"
             done
           }
 
@@ -266,6 +297,12 @@ jobs:
             version="$(skill_metadata "$skill" version)" || fail "Missing metadata.version in $skill"
             [[ "$plugin" == "$claude_name" && "$version" == "$claude_version" ]] || fail "cad-flow provenance mismatch: $skill"
           done
+          phase 'Plugin-root license and notice equality'
+          for variant in full lean; do
+            cmp -s LICENSE "$variant/LICENSE" || fail "$variant/LICENSE differs from root LICENSE"
+            cmp -s NOTICE "$variant/NOTICE" || fail "$variant/NOTICE differs from root NOTICE"
+          done
+
 
           phase 'Regressions (full schemas)'
           regressions=examples/regressions

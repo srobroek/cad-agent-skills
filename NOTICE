@@ -9,17 +9,24 @@ srobroek/cad-agent and srobroek/omp-plugins repositories:
 
 The cad-agent project records its historical import of skill material from
 omp-plugins. This project reorganizes and adapts that instruction material into
-a different skill, role and record contract. It does not include cad-agent's
+different skill, role and record contract. It does not include cad-agent's
 runnable helper scripts or tooling, or the separately attributed AgentCAD
 scripts documented by cad-agent's original NOTICE files.
 
-The full variant's material profiles cite individual supplier and standards
-source documents in their `sources[].url`, `reference` and `revision` fields.
-The source families include Hydro; Polymaker and Fiberon/Polymaker; Fiberlogy;
-PLEXIGLAS/POLYVANTIS; Makrolon/Covestro and Exolon; Outokumpu; Salzgitter;
-Ensinger; Formlabs; and ISO standards. The cited product and standard titles,
-source paths, editions, access dates and conditions remain in each profile.
-See [the profile README](full/skills/cad-record/assets/manufacturing/material-profiles/README.md)
+The "1e-7 relative (at least 1e-6 mm³) kernel noise" boolean volume bound,
+adapted from AgentCAD 0.7.0 by James Dillard, is attributed in the model
+contract; AgentCAD's runnable scripts are not included.
+
+Both `full/` and `lean/` variants' material profiles (identical copies) cite
+individual supplier and standards source documents in their `sources[].url`,
+`reference` and `revision` fields. The source families include Hydro;
+Polymaker and Fiberon/Polymaker; Fiberlogy; PLEXIGLAS/POLYVANTIS;
+Makrolon/Covestro and Exolon; Outokumpu; Salzgitter; Ensinger; Formlabs; and
+ISO standards. The cited product and standard titles, source paths, editions,
+access dates and conditions remain in each profile. See [the full profile
+README](full/skills/cad-record/assets/manufacturing/material-profiles/README.md)
+and [the lean profile
+README](lean/skills/cad-record/assets/manufacturing/material-profiles/README.md)
 for common caveats and each source field for its specific attribution. Some
 sources have incomplete conditions; ISO material was accessed through
 third-party previews. Profile attribution does not establish rights to

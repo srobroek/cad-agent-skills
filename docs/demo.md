@@ -1,6 +1,6 @@
 # Demonstrations and the full-versus-lean A/B protocol
 
-Owner: release and demonstration docs (U7). Two scripted demonstrations exercise the whole flow, and an A/B protocol
+Two scripted demonstrations exercise the whole flow, and an A/B protocol
 compares the `full` and `lean` variants on them. A demonstration shows what the skills make a model do and record; it
 is no product approval, and its synthetic answers stand for no owner. Install with [install.md](install.md); run the
 [smoke](smoke.md) for the harness first.
@@ -34,7 +34,7 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 |---|---|---|
 | GROUND | answers A-01 to A-20 | all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question, apart from rigor |
 | INTENT | the INTENT reply | at least two complete candidates; hard outcomes before preferences; printer and spool facts retained from sources or UNKNOWN |
-| SPECIFY | the SPECIFY reply | APPEARANCE_CONCEPT facets only; holding, tipping and durability listed as exclusions and open questions |
+| SPECIFY | the SPECIFY reply | APPEARANCE_CONCEPT facets only; functional, performance, interface, environmental, service, safety and regulatory kinds listed as exclusions; holding, tipping and durability remain open questions |
 | CONCEPT, VARIANT | the VARIANT reply | two to four unchanged variants; the lead repairs none |
 | LAYOUT | the LAYOUT reply, then the scripted change | hinge frames, play and hand access; the sweep over the full 55 to 75 degree travel, not the nominal pose |
 | change | the CHANGE approval | the 12 mm phone reopens SPECIFY; SPECIFY to LAYOUT rerun as new attempts, every gate presented again |
@@ -43,8 +43,8 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 | BOM | none | rows per occurrence and component; made-part mass UNKNOWN until ANALYSIS |
 | ANALYSIS | the ANALYSIS reply | mass and centre of mass with their density basis; no stability, friction or holding claim |
 | CRITIQUE | none | separate mechanical and DFM outcomes; a MAJOR finding reopens its causal stage |
-| FREEZE | the FREEZE reply | promoted revisions; the exact frozen version and digest in the packet |
-| RELEASE | the RELEASE reply | a proposal without readiness or approval; after approval a sealed `hw/releases/A/`, integrity PASS, claims copied from the verification index, the outer digest reported outside the package |
+| FREEZE | the FREEZE reply | promote revisions; run checks before deriving the BOM; build the verification index, then accept results; exact frozen version and digest in the packet |
+| RELEASE | the RELEASE reply | enumerate the `vM` verification index before proposing; no readiness or approval is in the proposal; after approval a sealed `hw/releases/A/`, integrity PASS, claims copied from `vM`, and outer digest reported outside the package |
 
 ## Lamp arm walk-through
 
@@ -55,7 +55,7 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 | SPECIFY | the SPECIFY reply | PHYSICALLY_VALIDATED facets on REQ-001 to REQ-009; physical tests PLANNED; REQ-004, REQ-006 and REQ-009 safety, never waivable |
 | LAYOUT to DETAIL | the gate replies | full joint sweeps, cable path, hex-key access, purchased pins and bushings with retention and service |
 | ANALYSIS | the ANALYSIS reply | worst-pose load and tipping with qualified or labelled properties and their limits; no FEA without an installed approved solver; creep, wear, thermal and life withheld |
-| RELEASE | waiver replies as scripted | non-safety trial waivers may be approved and appear as WAIVED; the readiness verdict stays BLOCKED on the safety physical tests; nothing is published and the scope is not lowered |
+| RELEASE | waiver replies as scripted | enumerate the `vM` verification index before proposing; non-safety trial waivers may be approved and appear as WAIVED; readiness stays BLOCKED on safety physical tests; nothing is published and scope is not lowered |
 
 ## A/B protocol: full versus lean
 

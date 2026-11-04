@@ -32,7 +32,7 @@ owns the five role contracts:
 | `cad-concept-designer` | Produce an assigned concept variant and coarse architecture. |
 | `cad-part-designer` | Design assigned part records, models and manufacturing intent. |
 | `cad-checker` | Independently run assigned checks and publish scoped results. |
-| `cad-mech-dfm-reviewer` | Review frozen evidence read-only; run no commands or design work. |
+| `cad-mech-dfm-reviewer` | Review frozen evidence read-only; write nothing and do no design work. |
 | `cad-sourcing-researcher` | Research and cite material, process and procurement options. |
 
 Each role has profiles for Claude Code, Codex CLI, OpenCode, Kiro CLI V3 and OMP
@@ -94,8 +94,8 @@ for exact bindings and inventory rules.
 
 ## Full and lean variants
 
-Decision 1 defines two self-contained plugin roots. Full carries eight skills,
-five roles and all 28 record roots, plus fixtures, assets and harness files.
+Full carries eight skills, five roles and all 28 record roots, plus fixtures,
+assets and harness files.
 Lean uses the same skills, roles and procedures with 11 direct record roots:
 `common`, `product`, `requirements`, `part`, `assembly`, `decision`,
 `check-result`, `stage-verdict`, `material-profile`, `bom-row` and
@@ -104,7 +104,7 @@ Lean uses the same skills, roles and procedures with 11 direct record roots:
 Model-written `record.semantic` item 17 checks those tables.
 Applicable embedded item shapes retain schemas.
 
-Decision 7 requires parity for 13 stage IDs, gate kinds, 30 procedure IDs and
+The variants share 13 stage IDs, gate kinds, 30 procedure IDs and
 54 check-family names. Only the record schema set differs. Shared lean roots
 are byte-identical to full, so each shared-root lean record is full-valid. CI
 checks lean layout, material-profile wrappers, capabilities and flow policy

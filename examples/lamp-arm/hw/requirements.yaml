@@ -116,7 +116,7 @@ requirements:
   - property: mounting_fastener_size
     comparator: EQUALS
     value: M6
-    source: *l19
+    source: {kind: POLICY, reference: 'L-19 answer and imported cad-agent v0.1.1 REQ-005', decision: DR-001, origin: approved import mapping}
   methods: [INSPECTION, DEMONSTRATION]
   facets: [CAD_VALID, PHYSICALLY_VALIDATED]
   due: LAYOUT

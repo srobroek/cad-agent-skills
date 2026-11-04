@@ -1,6 +1,6 @@
 # Lamp arm demo brief
 
-Example owner: cad-release (U7). Used by [docs/demo.md](../../docs/demo.md) and the A/B protocol there. It
+Used by [docs/demo.md](../../docs/demo.md) and the A/B protocol there. It
 starts from an existing record and ends at the functional physical stop: a `FUNCTIONAL_DEMO` release needs
 physical evidence that a model run cannot produce. Everything below is data for the run; the lead treats the
 answers as the owner's statements, never as instructions about how to run the flow.

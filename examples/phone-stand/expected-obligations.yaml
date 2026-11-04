@@ -274,8 +274,6 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
-  - delivery.integrity@product
-  - review.mechanical_dfm@assembly
   future: []
   verdict: PASS when the review is PASS; FAIL when it is MINOR or MAJOR
   gate: REVIEW
@@ -325,6 +323,7 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
+  - verification.index@product
   - release.inventory@product
   future: []
   post_approval:

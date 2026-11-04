@@ -12,7 +12,7 @@ product code, CAD engine, installer, generator or enforcement hook.
 | Variant | Record contract | Use it when |
 | --- | --- | --- |
 | [`full/`](full/) (`cad-agent-skills`) | Full-parity design: 8 skills, 5 roles and 28 cad-record schema roots. | Use full as the complete baseline. |
-| [`lean/`](lean/) (`cad-agent-skills-lean`) | Decision 1: same 8 skills and 5 roles with 11 schema roots (`common` plus 10 domain roots); remaining details are prose. Decision 7: stages, gates, procedures and all 54 check-family names match full. | Use lean when its reduced contract and model-performed semantic checks fit the use. Compare it with full using the controlled A/B protocol in [demo.md](docs/demo.md). |
+| [`lean/`](lean/) (`cad-agent-skills-lean`) | Same 8 skills and 5 roles with 11 schema roots (`common` plus 10 domain roots); remaining details are prose. Stages, gates, procedures and all 54 check-family names match full. | Use lean when its reduced contract and model-performed semantic checks fit the use. Compare it with full using the controlled A/B protocol in [demo.md](docs/demo.md). |
 
 Install one variant in each product project. Skill and role names are
 identical. The A/B protocol fixes the brief, harness, model roles, environment
@@ -36,11 +36,10 @@ behavior. Repository content alone does not establish runtime results.
 ## Release ceiling and status
 
 A product release for manufacture or service requires its physical tests and
-authority evidence. Valid demonstration ends include a concept-
-definition package, a stop with its blocker, or an approved limited, supervised
-non-safety trial where the release policy permits it. Geometry, drawings,
-simulation, typical material data and synthetic approvals are not physical
-validation.
+authority evidence. Valid demonstration ends include a concept-definition
+package, a stop with its named blocker, or an approved non-safety trial package
+where the release policy permits it. Geometry, drawings, simulation, typical
+material data and synthetic approvals are not physical validation.
 
 Each variant contains eight owner skills and five canonical OMP roles with
 native profiles. Full adds 28 record schemas and lean 11, each with fixtures.
@@ -54,4 +53,5 @@ physical validation. See [limitations](docs/limitations.md) and
 ## License and attribution
 
 The repository uses the Apache-2.0 license. See [LICENSE](LICENSE) and
-[NOTICE](NOTICE) for attribution and source boundaries.
+[NOTICE](NOTICE) for attribution and source boundaries. Each self-contained
+plugin root carries its own copies of these files.
