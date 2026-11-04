@@ -15,9 +15,9 @@ may be carried forward. Stage `reopen` lists live in `assets/stages.yaml`.
 
 | Changed element | Reopen |
 |---|---|
-| `product.yaml`: intake, service, risk, authority, release scope, rigor | GROUND |
+| `product.yaml`: intake, service, risk, authority, release scope, rigor; `requirements.yaml` | GROUND |
 | `hw/manufacturing/{materials,capabilities,selection}.yaml`, retained sources | INTENT |
-| `requirements.yaml`, functional contracts in `interfaces.yaml`, `check-plan.yaml` and its cases | SPECIFY |
+| functional contracts in `interfaces.yaml`, `check-plan.yaml` and its cases | SPECIFY |
 | `hw/concepts/**` | CONCEPT |
 | the VARIANT gate choice | VARIANT |
 | `assembly.yaml`, interface placement, PN allocation | LAYOUT |

@@ -69,3 +69,6 @@ expected:
 lead:
   session: omp-2026-11-03-a
   task_id: task-17
+limits:
+  wall_seconds: 3600
+  model_turns: 200

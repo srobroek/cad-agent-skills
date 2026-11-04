@@ -34,7 +34,7 @@ Runs before every other preflight command.
 ## Claim the project
 
 1. `root` is `pwd -P` of the product project: the directory that holds, or will hold, `hw/`.
-2. `mkdir -p .cad-work/lead/sessions`, then `mkdir .cad-work/lead/active` (exclusive).
+2. `mkdir -p .cad-work/lead/sessions .cad-work/lead/tmp`, then `mkdir .cad-work/lead/active` (exclusive).
 3. Success → write `claim.yaml`: `root`, `host`, `harness`, `session`, `owner`, `started` (UTC), `resumes: []`, `state: ACTIVE`; check it
    against the `lead-claim` table → every field and rule holds.
 4. Failure → read `claim.yaml`:
@@ -76,11 +76,12 @@ session as an installation defect: report the path and the observation as an ope
 
 ## Probe tools
 
-`<lead-cache>` is `<root>/.cad-work/lead/.uv-cache` ([uv commands](agent-roles.md#uv-commands)) and `<tools>` is
-`<root>/.cad-work/lead/validator`.
+`<cache>` is `<root>/.cad-work/lead/.uv-cache`, the one shared uv cache ([uv commands](agent-roles.md#uv-commands)), `<tmp>` is
+`<root>/.cad-work/lead/tmp` and `<tools>` is `<root>/.cad-work/lead/validator`.
 
 | Probe                                                                                                                                                                                    | Required |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `command -v uv curl` prints one absolute path per tool                                                                                                                                   | yes      |
 | `uv --version`                                                                                                                                                                           | yes      |
 | `uv python find 3.12`                                                                                                                                                                    | yes      |
 | `<tools>/bin/check-jsonschema --version` prints the [pinned version](../../cad-record/references/validation.md#schema-validation)                                                         | yes      |
@@ -88,20 +89,34 @@ session as an installation defect: report the path and the observation as an ope
 | `curl --version` reports 7.83 or later (`--remove-on-error`; a mid-transfer `--max-filesize` abort needs 8.4)                                                                            | yes      |
 | each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a check `hw/check-plan.yaml` already plans; none at GROUND | no       |
 
-Run the required probes as one shell command. When a `<tools>` probe fails, install both tools once with the pins of those links, with
-network (the host may ask to escalate), then probe again:
-
-```sh
-uv venv --cache-dir <lead-cache> --no-python-downloads --clear --python 3.12 <tools>
-uv pip install --cache-dir <lead-cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
-```
+Run the required probes as one shell command. When a `<tools>` probe fails, the warm-up below installs both tools; then probe again.
 
 Record in `tools[]` `check-jsonschema` with argv `[<tools>/bin/check-jsonschema]` and `yaml-loader` with argv `[<tools>/bin/python]`,
-each with its printed version, and `curl`, `uv` and the found `python` with theirs. Every schema validation and YAML load of the session,
-the lead's and each unit's, runs exactly these argv; briefs copy them into `resources.tools`, and a unit only executes them.
+`uv` and `curl` with argv `[<the path command -v printed>]`, and `python` with the path `uv python find 3.12` printed, each with its
+printed version; never a typed or remembered path. Every schema validation and YAML load of the session, the lead's and each unit's,
+runs exactly these argv; briefs copy them into `resources.tools`, and a unit only executes them.
 
 A missing required tool stops with `MISSING_RESOURCE`. A missing optional tool is recorded; its checks become UNKNOWN `UNSUPPORTED_METHOD`,
 never a fallback method.
+
+### Warm the uv cache
+
+The lead fills `<cache>` with network so that every later uv command, the lead's and each unit's, runs `--offline` against it. The warm
+sets are those of [uv commands](agent-roles.md#uv-commands): `yaml` in preflight, and the kernel sets before the session's first unit or
+lead program of a stage from CONCEPT on.
+
+Each warm-up is one shell command, the lines below joined with `&&`, run once with network; the host's one escalation for it is
+expected. The venv lines run only when a `<tools>` probe failed; the lock and run lines repeat for each warm set due, with
+`<tmp>/warm-<set>.py` holding only that set's header:
+
+```sh
+TMPDIR=<tmp> uv venv --cache-dir <cache> --no-python-downloads --clear --python 3.12 <tools>
+TMPDIR=<tmp> uv pip install --cache-dir <cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
+TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --script <tmp>/warm-<set>.py
+TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --script <tmp>/warm-<set>.py
+```
+
+A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched to warm its own environment.
 
 ## preflight.json
 
@@ -112,9 +127,9 @@ from this file only. The session's first reply follows the [SKILL.md OUTPUT](../
 
 ## Finish
 
-Run at session end: when the user says `end the session` or otherwise states that the session ends. With an `UNAVAILABLE-*` session, also
-run it before ending every turn, whether it ends `WAITING_FOR_USER`, on a stop or with a report: a later turn cannot prove it is this
-session, so it claims anew.
+Run at session end: when the user says `end the session`, alone or in a gate reply ([gates](gates.md#record-a-gate-decision) step 3), or
+otherwise states that the session ends. With an `UNAVAILABLE-*` session, also run it before ending every turn, whether it ends
+`WAITING_FOR_USER`, on a stop or with a report: a later turn cannot prove it is this session, so it claims anew.
 
 1. Stop this session's units that still run (`.cad-work/lead/units.yaml`); never another session's.
 2. Copy `claim.yaml` to `.cad-work/lead/sessions/<stamp>/claim.yaml` with `state: RELEASED` and `released` (UTC), and copy `preflight.json`
