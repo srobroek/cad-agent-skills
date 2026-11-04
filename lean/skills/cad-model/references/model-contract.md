@@ -73,12 +73,9 @@ Every program starts with an inline script header (PEP 723) pinning one row exac
 # ///
 ```
 
-Lock, then run only locked (uv 0.13.6; the lock is written next to the script):
-
-```sh
-uv lock --script /abs/project/.cad-work/<unit>/build.py
-uv run --locked --script /abs/project/.cad-work/<unit>/build.py <arguments>
-```
+Lock, then run only locked, in the `uv lock` and `uv run` forms of
+[cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) (uv 0.13.6; the lock is written next to the
+script):
 
 - Worker locks are `.cad-work/<unit>/build.py.lock` and `.cad-work/<unit>/check.py.lock` (layout
   `scratch.unit_build_lock`, `scratch.unit_check_lock`). Always pass the absolute script path.

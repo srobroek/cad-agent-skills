@@ -44,10 +44,12 @@ For a `cad-part-designer` or `cad-concept-designer` unit:
 2. Write `.cad-work/<unit>/build.py` (layout `scratch.unit_build`). It reads the brief inputs under
    `.cad-work/<unit>/input/hw/` and the unit's own models, and takes two arguments: the export directory and the
    work directory. Lock it (`.cad-work/<unit>/build.py.lock`, layout `scratch.unit_build_lock`), then run it with
-   stdout and stderr in `.cad-work/<unit>/output/logs/`:
+   stdout and stderr in `.cad-work/<unit>/output/logs/`, in the `uv run` form of
+   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) with the unit's cache and
+   these arguments:
 
-   ```sh
-   uv run --locked --script <root>/.cad-work/<unit>/build.py <root>/.cad-work/<unit>/output/build/version <root>/.cad-work/<unit>/output/build/work
+   ```text
+   <root>/.cad-work/<unit>/output/build/version <root>/.cad-work/<unit>/output/build/work
    ```
 
    A concept designer builds in the build123d environment and exports directly to
@@ -80,10 +82,12 @@ Run by the lead in cad-flow `build-version`. The stage tree mirrors the publishe
    STEP and writes the assembly STEP, the GLB, the previews and the flat profiles. Each takes the record, version and
    work directories as arguments.
 4. Lock each program, then run `source/cadquery/build.py` first and `source/build123d/build.py` second, each with
-   its own work directory:
+   its own work directory, in the `uv run` form of
+   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) with the lead's cache, on
+   the program `<root>/.cad-work/stage-vN/version/source/<kernel>/build.py` and these arguments:
 
-   ```sh
-   uv run --locked --script <root>/.cad-work/stage-vN/version/source/<kernel>/build.py <root>/.cad-work/stage-vN/version/record <root>/.cad-work/stage-vN/version <root>/.cad-work/stage-vN/build/<kernel>
+   ```text
+   <root>/.cad-work/stage-vN/version/record <root>/.cad-work/stage-vN/version <root>/.cad-work/stage-vN/build/<kernel>
    ```
 
 5. The build123d program reads `assembly.step` back after writing it and reports its solid count, instance count
@@ -146,8 +150,9 @@ a model. Compare against the signature of a fresh rebuild:
 
 ## geometry.build
 
-1. In fresh scratch, run every version program from `hw/versions/vN/source/` with `uv run --locked --script` on
-   `hw/versions/vN/record/`, CadQuery first; for a UNIT check, rerun the unit's `build.py` into new directories.
+1. In fresh scratch, run every version program from `hw/versions/vN/source/` in the `uv run` form of
+   [cad-flow agent-roles — uv commands](../../cad-flow/references/agent-roles.md#uv-commands) on `hw/versions/vN/record/`,
+   CadQuery first; for a UNIT check, rerun the unit's `build.py` into new directories.
 2. Read the fresh exports back and compare them with the published exports and the signature tolerances of Readback.
 
 FAIL when a program exits non-zero; a shape is invalid or has no positive volume; a component binding or Boolean

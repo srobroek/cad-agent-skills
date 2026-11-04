@@ -51,12 +51,15 @@ Read the brief inputs only, from their copies under `.cad-work/<unit>/input/`. W
    - `parts[]`: `PN`, `title`, `sourcing`, `material_profile` and `route` (route kinds) from the approved candidate,
      or the alternative candidate the variant depends on;
    - `requirements`: the REQ ids the variant addresses;
-   - `hard_outcomes[]`: one per mandatory requirement in scope. `PASS` or `FAIL` needs the requirement's criterion,
-     a geometric method at concept level (envelope, reach, travel, clearance) and its `source`; a criterion that
-     rests on a material property, a load or a life is `UNKNOWN` with the `reason`, as is any criterion without such
-     a method;
-   - `feasibility`: `FEASIBLE` with no FAIL and no UNKNOWN, `CONDITIONAL` with an UNKNOWN and no FAIL, `EXCLUDED`
-     with a FAIL;
+   - `hard_outcomes[]`: one per criterion of each mandatory requirement in scope. `PASS` or `FAIL` needs the
+     requirement's criterion, a concept-level method and its `source`: envelope, reach, travel or clearance on the
+     coarse geometry, or, for a criterion on the route itself, the approved selection's outcome for that route. A
+     criterion the concept cannot settle (no coarse geometry for it, or it rests on a material property, a load, a
+     life or a part's process plan) is `PLANNED` with its `due` stage and `reason`, as in
+     [cad-select assess-selection](../../cad-select/references/selection.md#eliminate-on-mandatory-constraints-first);
+     an UNKNOWN criterion, or a concept-level method that lacks an input, is `UNKNOWN` with the `reason`;
+   - `feasibility`: `FEASIBLE` with no FAIL and no UNKNOWN (PLANNED outcomes allowed), `CONDITIONAL` with an UNKNOWN
+     and no FAIL, `EXCLUDED` with a FAIL;
    - `dependencies`: each route, PN or functional-contract change beyond approved scope;
    - `unknowns`: typed UNKNOWN facts, owner and question when consequential;
    - `limits`: at least `concept estimate; preview is not verification`;
