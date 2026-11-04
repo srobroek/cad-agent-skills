@@ -1,0 +1,16 @@
+requirement: REQ-002
+subject:
+  kind: PRODUCT
+method: ANALYSIS
+criterion:
+  status: UNKNOWN
+  reason: tipping criterion not yet sourced
+  owner: user
+  question: Q-001
+  consequential: true
+facet: SIMULATION_SUPPORTED
+due: ANALYSIS
+outcome: UNKNOWN
+obligations: []
+reason: tipping criterion unknown
+unknown_code: REQUIRED_UNKNOWN

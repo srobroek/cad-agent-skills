@@ -1,0 +1,21 @@
+probe: cad-agent-skills.common
+waiver:
+- id: WV-001
+  decision: DR-015
+  obligation: physical.test@REQ-001
+  subject:
+    kind: ASSEMBLY
+  criterion: angle holds after 100 cycles
+  classification: NON_SAFETY_DEVIATION
+  retained_outcome: UNKNOWN
+  safety_or_regulatory: false
+  limitation: cycle life unverified
+  operating_envelope: desk use, phone <= 250 g
+  reason: trial to collect cycle data
+  consequence: arm may loosen
+  authority:
+    name: Sjors
+    role: OWNER
+    basis: owner
+    scope: non-safety trial
+  until_change: until the hinge geometry changes

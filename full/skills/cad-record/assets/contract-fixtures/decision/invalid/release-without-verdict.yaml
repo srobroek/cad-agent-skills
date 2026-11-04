@@ -16,6 +16,7 @@ actor:
   name: Sjors
 time: '2026-11-03T11:00:00Z'
 statement:
+  path: hw/decisions/statements/DR-021.txt
   transcript_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
   quote: 'Approved: RELEASE v13 as REV A'
   time: '2026-11-03T11:00:00Z'

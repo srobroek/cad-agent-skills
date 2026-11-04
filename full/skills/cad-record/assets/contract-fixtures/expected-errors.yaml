@@ -14,6 +14,7 @@ bundle-manifest/invalid/check-without-result.json: a CHECK bundle inventories it
 bundle-manifest/invalid/installed-policy-hash.json: installed policy is recorded by path and plugin name/version, never hashed
 bundle-manifest/invalid/lists-itself.json: a bundle manifest excludes itself
 bundle-manifest/invalid/review-recipe-with-commands.json: a REVIEW recipe forbids commands
+bundle-manifest/invalid/scratch-file.json: bundle files are published hw/ paths; scratch is never bundle evidence
 bundle-manifest/invalid/unsafe-path.json: paths have no dot segments
 capability-library/invalid/template-invents-envelope.yaml: items are capability-profile roots; a template never states an envelope
 capability-profile/invalid/artifact-without-sha.yaml: a retained artifact needs its sha256
@@ -26,6 +27,7 @@ check-plan/invalid/na-check-unreviewed.yaml: 'NOT_APPLICABLE needs reviewed_by: 
 check-plan/invalid/rss-without-justification.yaml: JUSTIFIED_RSS needs distribution, independence, centering, sigma, confidence, capability and decision
 check-plan/invalid/safety-check-waivable.yaml: a safety check is never waivable
 check-plan/invalid/sampled-without-justification.yaml: a SAMPLED or CONSTRAINED_PATH sampling states its justification
+check-result/invalid/artifact-lists-coverage-json.json: artifacts and source files exclude result.json, bundle-manifest.json, coverage.json and package-integrity.json, which are check results or bundle manifests themselves
 check-result/invalid/artifact-lists-result-json.json: artifacts exclude result.json and bundle-manifest.json
 check-result/invalid/command-without-commands.json: a COMMAND implementation needs at least one command
 check-result/invalid/integrity-hashes-release-manifest.json: the package-integrity result never hashes or inspects release-manifest.json, which hashes it
@@ -49,9 +51,12 @@ common/invalid/estimate-without-uncertainty.yaml: ESTIMATE needs uncertainty
 common/invalid/interval-and-value.yaml: a quantity is a value or an interval, not both
 common/invalid/na-unreviewed.yaml: NOT_APPLICABLE needs reviewed_by
 common/invalid/obligation-bad-anchor.yaml: obligation ids are <family>@<anchor> with a registered family and anchor grammar
+common/invalid/outcome-entry-waived.yaml: a check result never writes WAIVED; only a stage verdict maps a covered FAIL or UNKNOWN to WAIVED
 common/invalid/path-traversal.yaml: project paths have no dot segments
 common/invalid/safety-waiver.yaml: safety or regulatory obligations are never waived
+common/invalid/trial-waiver-unsupervised.yaml: an UNVALIDATED_TRIAL waiver needs expires and supervision
 common/invalid/unknown-unit.yaml: units are the closed symbol set
+common/invalid/until-change-text.yaml: until_change lists the files whose byte change ends the waiver, never free text
 common/invalid/waiver-without-id.yaml: a waiver carries its WV-### id
 decision/invalid/approval-without-statement.yaml: an approval records the transcript hash, quote and time
 decision/invalid/gate-approves-failed-verdict.yaml: an approved gate binds a PASS verdict
@@ -59,6 +64,7 @@ decision/invalid/gate-binds-proposal.yaml: a GATE decision binds a STAGE verdict
 decision/invalid/lead-approves-gate.yaml: only a USER or AUTHORITY approves
 decision/invalid/proposal-in-scratch.yaml: a PROPOSAL binding names an immutable proposal under hw/decisions/proposals/DR-###/, never scratch
 decision/invalid/release-without-verdict.yaml: a RELEASE approval binds the proposal and the RELEASE readiness verdict that hashes it
+decision/invalid/statement-in-scratch.yaml: 'approval statement bytes are published at hw/decisions/statements/DR-###.txt, never in scratch'
 decision/invalid/supersede-without-refers.yaml: SUPERSEDED refers to the old DR
 interfaces/invalid/face-index-feature.yaml: features are semantic lower ids, never face indices
 interfaces/invalid/missing-play.yaml: play is required (a value or an explicit UNKNOWN/NOT_APPLICABLE)
@@ -107,6 +113,7 @@ requirements/invalid/resolved-without-resolution.yaml: a RESOLVED question requi
 requirements/invalid/safety-waivable.yaml: a safety requirement must have waiver_policy FORBIDDEN
 selection/invalid/conditional-ranked.yaml: preferences rank feasible candidates only
 selection/invalid/final-without-decision.yaml: a FINAL recommendation names its decision
+selection/invalid/inputs-list-selection.yaml: assessment.inputs never lists hw/manufacturing/selection.yaml, which holds them
 selection/invalid/not-assessed-with-candidates.yaml: NOT_ASSESSED has no candidates, assessment or recommendation
 selection/invalid/purchase-on-made-step.yaml: only a PURCHASED step carries a purchase
 selection/invalid/weighted-pass-over-fail.yaml: a hard FAIL makes a candidate EXCLUDED; preferences cannot rank it feasible
@@ -119,6 +126,7 @@ stage-verdict/invalid/missing-predecessor.json: every stage after GROUND names i
 stage-verdict/invalid/pass-with-blocker.json: PASS requires no blockers
 stage-verdict/invalid/pass-with-fail-item.json: a PASS verdict accepts only PASS, WAIVED and NOT_APPLICABLE results
 stage-verdict/invalid/pass-with-unknown-result.json: PASS cannot accept a FAIL or UNKNOWN result
+stage-verdict/invalid/pass-without-obligations.json: a PASS verdict hashes its published obligations.yaml
 stage-verdict/invalid/provisional-result.json: verdicts are PASS, FAIL or BLOCKED; no provisional stage
 stage-verdict/invalid/review-required-not-passed.json: a required review must be PASS
 stage-verdict/invalid/unit-result-accepted.json: only VERSION or CARRIED_FORWARD results are accepted
@@ -130,6 +138,7 @@ variant/invalid/geometry-absent-no-reason.yaml: NOT_APPLICABLE geometry states a
 variant/invalid/missing-source.yaml: a variant names its delivering unit, role and brief digest
 variant/invalid/source-delivery-hash.yaml: a variant never holds its delivery digest (the delivery outputs hash the variant)
 verification-row/invalid/cites-verification-index.yaml: a row never cites the verification.index obligation that checks this index
+verification-row/invalid/no-obligation-required-unknown.yaml: a row with no obligation is UNKNOWN INCOMPLETE
 verification-row/invalid/pass-with-unknown-criterion.yaml: PASS requires a real criterion
 verification-row/invalid/pass-without-results.yaml: PASS requires result references
 verification-row/invalid/planned-with-results.yaml: PLANNED rows carry no results

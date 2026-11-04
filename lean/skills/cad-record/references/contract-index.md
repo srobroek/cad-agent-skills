@@ -49,7 +49,8 @@ references/prose-contract.md, checked by `record.semantic` item 17.
   and the ten schema roots; the intended error of each invalid case is in `contract-fixtures/expected-errors.yaml`.
 - Authoring schemas (Draft-07, repository `full/schemas/authoring/`): `skill-frontmatter`, `omp-agent-frontmatter`,
   `claude-agent-frontmatter`, `opencode-agent-frontmatter`, `codex-agent`, `kiro-agent`, `claude-plugin`,
-  `omp-plugin`, `claude-marketplace`, `omp-marketplace`; fixtures under `full/schemas/authoring/fixtures/`.
+  `omp-plugin`, `claude-marketplace`, `omp-marketplace`, `expected-obligations`; fixtures under
+  `full/schemas/authoring/fixtures/`.
 
 ## ID families
 
@@ -122,7 +123,8 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 - Stages, in order: `GROUND`, `INTENT`, `SPECIFY`, `CONCEPT`, `VARIANT`, `LAYOUT`, `PARTS`, `DETAIL`, `BOM`, `ANALYSIS`,
   `CRITIQUE`, `FREEZE`, `RELEASE`.
 - Facets: `CAD_VALID`, `GEOMETRICALLY_MANUFACTURABLE`, `PROCESS_PLANNED`, `SIMULATION_SUPPORTED`, `PHYSICALLY_VALIDATED`.
-- Obligation outcome: `PASS|FAIL|UNKNOWN|NOT_APPLICABLE|WAIVED`; verification row adds `PLANNED`.
+- Obligation outcome a check result observes: `PASS|FAIL|UNKNOWN|NOT_APPLICABLE` (`observed_outcome`); a stage verdict and
+  the verification index map a covered FAIL or UNKNOWN to `WAIVED`; a verification row adds `PLANNED`.
 - Check `result`: `PASS|FAIL|UNKNOWN|NOT_APPLICABLE`; stage verdict `result`: `PASS|FAIL|BLOCKED`.
 - Review and worker verdict: `PASS|MINOR|MAJOR`. Severity: `CRITICAL|MAJOR|MINOR|INFO`.
 - `unknown_code`: `NOT_RUN`, `INCOMPLETE`, `STALE`, `MISSING_INPUT`, `UNSUPPORTED_METHOD`, `TIMEOUT`,
@@ -156,14 +158,14 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |
 | `findings[]` | `{id, family, subject, severity, outcome, measured, criterion, method, uncertainty, consequence, remedy, alternatives, recheck}` |
-| `artifacts[]` | `{path, sha256, role}`; never `result.json` or `bundle-manifest.json` |
-| `complete`, `result`, `limitations` | PASS needs complete, FULL or SAMPLED coverage, no FAIL/UNKNOWN/WAIVED outcome |
+| `artifacts[]` | `{path, sha256, role}`; never `result.json`, `bundle-manifest.json`, `coverage.json` or `package-integrity.json` |
+| `complete`, `result`, `limitations` | PASS needs complete, FULL or SAMPLED coverage, no FAIL or UNKNOWN outcome |
 | `review` | reviewer only: `{verdict, mechanical[], dfm[]}; verdict PASS, MINOR or MAJOR` coverage of obligations |
 | `release` | `release.integrity` only: `{rev, approval, planned_inventory}` |
 | `supersedes` | `{attempt, reason}` for a retry |
 
 Outcome rules: PASS needs `value`, a real `criterion` and `evidence`; FAIL the same; UNKNOWN needs `reason` and
-`unknown_code`; NOT_APPLICABLE needs `reason` and `reviewed_by`; WAIVED needs the waiver DR and its `limitation`.
+`unknown_code`; NOT_APPLICABLE needs `reason` and `reviewed_by`. A result never writes `WAIVED`.
 
 Result files outside `hw/checks/`: drawing `coverage.json` uses family `drawing.coverage`, check
 `drawing-<subject in lowercase>` and attempt `a1`; `acceptance/package-integrity.json` uses family
@@ -205,19 +207,20 @@ or `REVIEW_MAJOR`.
 [references/prose-contract.md](prose-contract.md).
 
 - `bundle-manifest`: `kind CHECK|DRAWING|BOM|VERIFICATION`, `binding`, `input[{path, sha256}]`, `recipe` (`kind: COMMAND`
-  `{commands, packages, platform}` or `kind: REVIEW` `{inspected}`), `policy{path, plugin}`, `files[{path, sha256, role}]`
-  without itself, `complete`.
-- `worker-brief`: `resources{plugin{name, version}, skills[{name, path, uri}], schemas[{name, path}],
+  `{commands, packages, platform}` or `kind: REVIEW` `{inspected}`), `policy{path, plugin}`, `files[{path under hw/, sha256,
+  role}]` without itself, `complete`.
+- `worker-brief`: `resources{plugin{name, version}, skills[{name, path, uri}], rubric{name, path, uri}, schemas[{name, path}],
   role_reference{name, path, uri}}` with absolute paths and no hashes of installed files; `input_inventory{sha256,
   files[{path under hw/, sha256}]}`.
 - `worker-delivery`: `brief_sha256`, `input_inventory_sha256`, `boundary{method, before_sha256, after_sha256, violations}`.
 - `release-manifest`: `phase: PROPOSAL` (`hw/versions/vN/release-proposal.json`) has `rev`, `frozen{version,
   version_manifest, verdict, decision}` (the FREEZE attempt), `decisions`, `planned`, `scope`, `claims`, `waivers`,
   `licenses`, `exclusions`, and never `readiness`, `approval`, `integrity` or `inventory`. `phase: FINAL` adds the
-  required `readiness` (RELEASE stage verdict), `approval`, `integrity` and `inventory`. The RELEASE checks and
-  verdict hash the proposal, so the proposal cannot hash them; the RELEASE approval DR binds both.
-- `selection`: `assessment.input_sha256` is the set digest of the `hw/` files the assessment read, never of
-  `hw/manufacturing/selection.yaml` itself.
+  required `readiness` (RELEASE stage verdict), `approval`, `integrity` and `inventory`. The proposal carries the RELEASE
+  results and verification index published before it; the `release.inventory` check and the RELEASE verdict hash the
+  proposal, so the proposal cannot hash them; the RELEASE approval DR binds both.
+- `selection`: `assessment.inputs[{path under hw/, sha256}]` lists every file the assessment read, never
+  `hw/manufacturing/selection.yaml`; `assessment.input_sha256` is the set digest over them.
 - Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
   policy are identified by `plugin{name, version}` and their resolved absolute paths; nothing installed is hashed.
   On every host the version source is the installed cad-flow SKILL.md frontmatter
@@ -235,7 +238,8 @@ and `check_order[family]` (the fixed cost order). Full table: [prose contract](p
 `binding.kind`: `PROPOSAL{path under hw/decisions/proposals/DR-###/, sha256}`, `STAGE{stage, version, verdict, verdict_result}`,
 `FROZEN{version, version_manifest_sha256, verdict}`, `RELEASE_INVENTORY{rev, version, proposal, verdict}` (`proposal`
 the release proposal, `verdict` the RELEASE readiness verdict that hashes it). A GATE DR binds STAGE;
-an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTHORITY actor and a transcript statement.
+an APPROVED gate binds a PASS verdict and copies its `result` as `verdict_result`; APPROVED and REJECTED need a USER or
+AUTHORITY actor and a `statement` whose `path` is `hw/decisions/statements/DR-###.txt`, hashed by `transcript_sha256`.
 
 ## Paths
 
@@ -259,6 +263,7 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `record.variant_geometry`: `hw/concepts/{VARIANT}/geometry/{NAME}`
 - `record.decision`: `hw/decisions/{DR}.yaml` → `decision`
 - `record.decision_proposal`: `hw/decisions/proposals/{DR}/{NAME}`
+- `record.decision_statement`: `hw/decisions/statements/{DR}.txt`
 - `record.import_original`: `hw/imports/{DR}/original/**` (immutable byte-identical originals of an approved import,
   legacy programs included; no gate credit, never executed; `product.import.original_snapshot` names its root)
 - `notes.docs`: `hw/docs/**`
@@ -266,6 +271,7 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `version.source`: `hw/versions/{V}/source/**`
 - `version.manifest`: `hw/versions/{V}/manifest.json` → `version-manifest` (prose)
 - `version.stage_verdict`: `hw/versions/{V}/stage-verdict.json` → `stage-verdict`
+- `version.obligations`: `hw/versions/{V}/obligations.yaml`
 - `version.release_proposal`: `hw/versions/{V}/release-proposal.json` → `release-manifest`
 - `version.definition_step`: `hw/versions/{V}/definition/assembly.step`
 - `version.definition_glb`: `hw/versions/{V}/definition/assembly.glb`
@@ -289,6 +295,8 @@ an APPROVED gate binds a PASS verdict; APPROVED and REJECTED need a USER or AUTH
 - `drawing.sheet_pdf`: `hw/drawings/{V}/{SUBJECT}/sheet-{N}.pdf`
 - `drawing.sheet_png`: `hw/drawings/{V}/{SUBJECT}/sheet-{N}.png`
 - `drawing.coverage`: `hw/drawings/{V}/{SUBJECT}/coverage.json` → `check-result`
+- `drawing.source`: `hw/drawings/{V}/{SUBJECT}/source/**`
+- `drawing.artifacts`: `hw/drawings/{V}/{SUBJECT}/artifacts/**`
 - `drawing.bundle_manifest`: `hw/drawings/{V}/{SUBJECT}/bundle-manifest.json` → `bundle-manifest` (prose)
 - `bom.yaml`: `hw/bom/{V}/bom.yaml` → `bom` (prose)
 - `bom.csv`: `hw/bom/{V}/bom.csv`

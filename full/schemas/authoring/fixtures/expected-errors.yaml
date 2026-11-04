@@ -11,6 +11,7 @@ codex-agent/invalid/missing-instructions.toml: developer_instructions is require
 codex-agent/invalid/model-override.toml: model is omitted
 codex-agent/invalid/sandbox-override.toml: no agent sandbox override
 expected-obligations/invalid/bad-obligation.yaml: expected obligations are <family>@<anchor>, placeholders allowed
+expected-obligations/invalid/misspelled-family.yaml: the family of an expected or future obligation is a registered check family
 expected-obligations/invalid/twelve-stages.yaml: stages lists exactly the 13 stages in order
 expected-obligations/invalid/unregistered-family.yaml: condition keys are registered check families
 kiro-agent/invalid/mcp-included.json: includeMcpJson is false
