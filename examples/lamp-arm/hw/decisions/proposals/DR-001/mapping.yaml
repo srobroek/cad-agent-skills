@@ -1,10 +1,10 @@
 # Immutable import proposal bound by DR-001 (decision binding PROPOSAL); cad-record references/import.md step 4.
 # Source: cad-agent v0.1.1 (tag v0.1.1, commit b8f7a2ecb410e68d62a38464ffd800396cdb06c5), examples/lamp-arm/hw/.
 # Every row is one source file with its sha256 and size as inventoried before the import. RETAINED_ONLY files move
-# byte-identical to hw/docs/import/original/<path below hw/> as readable history: no gate credit, no CAD validity,
+# byte-identical to hw/imports/DR-001/original/<path below hw/> as readable history: no gate credit, no CAD validity,
 # no approval and no evidence. The owner's answers at GROUND restate what is still wanted.
 source_format: cad-agent v0.1.1 record (no record_version)
-original_snapshot: hw/docs/import/original
+original_snapshot: hw/imports/DR-001/original
 rows:
 - {source: hw/product.yaml, sha256: b09ed1420c1802f95c9b3d89815890b8044fbf3ec5d55e96951b37d02926179c, bytes: 1008, target: hw/product.yaml}
 - {source: hw/requirements.yaml, sha256: 28a0c9da4186692ca2461922d9dd315065096438ac791049447cbf105fb31e3a, bytes: 2267, target: RETAINED_ONLY}

@@ -13,7 +13,9 @@ result fields are the `check-result` root; anchors and producers of the two draw
 
 The part designer writes `drawing` in `hw/parts/<PN>/part.yaml` at DETAIL
 ([cad-design `detail-parts`](../../cad-design/references/parts.md#detail-parts)), from
-`<skill-dir>/assets/drawing-intent.yaml`.
+`<skill-dir>/assets/drawing-intent.yaml`. The lead writes the same block as `drawing` in `hw/assembly.yaml` (the
+assembly root's optional drawing intent) when the assembly needs a sheet, for example to show insertion order,
+joint ranges or service access.
 
 | Part | `drawing.status` |
 |---|---|
@@ -28,21 +30,24 @@ The part designer writes `drawing` in `hw/parts/<PN>/part.yaml` at DETAIL
   solid index.
 - A `criterion` comes from a requirement, interface, fit or the record's regime with its source; never from
   the model. The drawn value always comes from the STEP.
-- The assembly has no drawing intent field in the record contract, so the `assembly` subject is never
-  REQUIRED; assembly operations reach the build guide from `assembly.yaml` (references/release.md).
+- An assembly characteristic names a feature id that exactly one occurrence's part witnesses; the unit places it
+  through that occurrence; an id two occurrences witness is UNKNOWN `MISSING_INPUT`. Operations stay in
+  `assembly.yaml` `operations` and reach the build guide from there (references/release.md).
 
 ## draft-drawings
 
 Runs in DETAIL and FREEZE after `build-version`, so every sheet binds the version manifest.
 
-1. Subjects: every PN of the version whose snapshot `part.yaml` has `drawing.status: REQUIRED`. None →
-   output "no REQUIRED drawing"; the drawing families' condition is false at `enumerate-obligations`.
+1. Subjects: every PN of the version whose snapshot `part.yaml` has `drawing.status: REQUIRED`, and `assembly` when
+   the snapshot `assembly.yaml` has `drawing.status: REQUIRED`. None → output "no REQUIRED drawing"; the drawing
+   families' condition is false at `enumerate-obligations`.
 2. Dispatch one `cad-part-designer` unit per subject in one batch (cad-flow references/delegation.md,
    references/worker-brief.md), skills including cad-release. `input_inventory`, copied into the unit's `input/`:
    `hw/versions/vN/manifest.json`, every file of `hw/versions/vN/record/**` and `hw/versions/vN/source/**`
-   (the version programs and their locks), and the PN's STEP in the state the intent draws
-   (`hw/versions/vN/definition/parts/<PN>.step` or `hw/versions/vN/manufacturing/<PN>/part.step`). Expected
-   outputs: `sheet-<N>.svg`, `.pdf` and `.png` for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`.
+   (the version programs and their locks), and the STEP in the state the intent draws
+   (`hw/versions/vN/definition/parts/<PN>.step` or `hw/versions/vN/manufacturing/<PN>/part.step`;
+   `hw/versions/vN/definition/assembly.step` for `assembly`). Expected outputs: `sheet-<N>.svg`, `.pdf` and `.png`
+   for every sheet, targets `hw/drawings/vN/<SUBJECT>/sheet-<N>.<ext>`.
 3. The unit reproduces the feature witnesses, runs the font check (Drawing program), then writes, locks and runs
    `.cad-work/<unit>/build.py`; it reviews each PNG itself and reports every characteristic it could not draw as an
    UNKNOWN in the delivery. A font check that does not match delivers MAJOR with `ready: false`; the lead stops
@@ -82,6 +87,7 @@ the ones [cad-model build123d calls](../../cad-model/references/build123d.md) ch
   or points nearest the named feature's witness, with `label` left unset so the printed value is the measured
   length, and `tolerance` taken from the criterion. Never type a numeric label.
 - Fonts: the font file and its license come from the version record, `hw/versions/vN/record/parts/<PN>/sources/`
+  (for `assembly`, the part sources the brief names)
   ([cad-model Determinism](../../cad-model/references/model-contract.md#determinism),
   [Text and fonts](../../cad-model/references/build123d.md#text-and-fonts)). `Text` takes it by `font_path`.
   `Draft(font=...)` takes a family name only (0.13.0 has no font path there), so dimension labels use the installed
@@ -107,7 +113,7 @@ d1 = ExtensionLine(border=bore_edge, offset=8 * MM, draft=draft, tolerance=crite
 ## drawing.coverage
 
 The method of family `drawing.coverage`: check `drawing-<subject in lowercase>`, attempt `a1`, obligation
-`drawing.coverage@<PN>`, `facet: CAD_VALID`, result `hw/drawings/vN/<SUBJECT>/coverage.json`, binding
+`drawing.coverage@<PN>` or `@assembly`, `facet: CAD_VALID`, result `hw/drawings/vN/<SUBJECT>/coverage.json`, binding
 `VERSION`. A `cad-checker` unit runs it with its own program on the draft-drawings inputs: it reproduces the
 witnesses the same way, reads the STEP and opens every actual SVG, PNG and PDF of the subject.
 
@@ -134,9 +140,10 @@ The result is PASS only when every entry is PASS.
 
 ## drawing.preview
 
-The method of family `drawing.preview`: check id `drawing-preview`, obligations `drawing.preview@<PN>`,
-`facet: CAD_VALID`, one result under `hw/checks/vN/drawing-preview/<attempt>/`, run by a `cad-checker` unit on
-every sheet file actually present, with each file's sha256 in `artifacts`.
+The method of family `drawing.preview`: check id `drawing-preview`, obligations `drawing.preview@<PN>` and
+`drawing.preview@assembly` per REQUIRED subject, `facet: CAD_VALID`, one result under
+`hw/checks/vN/drawing-preview/<attempt>/`, run by a `cad-checker` unit on every sheet file actually present, with
+each file's sha256 in `artifacts`.
 
 1. SVG: parses; page size equals the title-block page.
 2. PDF: opens; one page per sheet with the same page size; each page rendered at the PNG's dpi shows the same

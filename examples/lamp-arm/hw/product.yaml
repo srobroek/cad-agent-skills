@@ -316,7 +316,7 @@ license:
     - *l18
 import:
   source_format: cad-agent v0.1.1 record (no record_version), tag v0.1.1 commit b8f7a2ecb410e68d62a38464ffd800396cdb06c5
-  original_snapshot: hw/docs/import/original
+  original_snapshot: hw/imports/DR-001/original
   mapping: hw/decisions/proposals/DR-001/mapping.yaml
   decision: DR-001
   date: '2026-11-03'

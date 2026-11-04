@@ -1,4 +1,5 @@
-# cad-release drawing intent template: the `drawing` block of hw/parts/<PN>/part.yaml (part root `$defs/drawing`).
+# cad-release drawing intent template: the `drawing` block of hw/parts/<PN>/part.yaml (part root `$defs/drawing`),
+# and of hw/assembly.yaml when the assembly needs a sheet (same shape).
 # Owner: cad-release, references/drawings.md "Drawing intent". The part designer fills it at DETAIL from the record.
 # Every `replace` text and every number below is a placeholder; write only what a requirement, interface, fit or the
 # record's regime states, with its source. Drawn values come from the version's STEP, never from this block.

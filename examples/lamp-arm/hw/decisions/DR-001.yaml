@@ -4,7 +4,7 @@ state: APPROVED
 binding:
   kind: PROPOSAL
   path: hw/decisions/proposals/DR-001/mapping.yaml
-  sha256: 74e91068258f7edfa892e21858ce4ec74e5cf3754707f88ac168f31d3727b3aa
+  sha256: 01b1021aec5fab1111a89ebb7c65dbc029688a2963efdeeb9167bf4e4618f51c
 title: Import of the cad-agent v0.1.1 lamp-arm record as readable history
 scope: every file of the existing hw/ as inventoried in the mapping
 rationale: The owner keeps the old record for reference, carries over only what is restated at GROUND, and assumes none of the old CAD, results or decisions valid.
