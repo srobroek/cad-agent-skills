@@ -84,13 +84,13 @@
     "unknowns": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/fact_unknown"}},
     "limits": {"$ref": "common.schema.json#/$defs/texts"},
     "source": {
+      "description": "the producing unit, copied from its brief; never the delivery digest, because the delivery's outputs hash this file",
       "type": "object",
       "additionalProperties": false,
-      "required": ["unit", "role", "delivery_sha256", "brief_sha256"],
+      "required": ["unit", "role", "brief_sha256"],
       "properties": {
         "unit": {"$ref": "common.schema.json#/$defs/unit_id"},
         "role": {"$ref": "common.schema.json#/$defs/role"},
-        "delivery_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
         "brief_sha256": {"$ref": "common.schema.json#/$defs/sha256"}
       }
     },

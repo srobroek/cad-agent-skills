@@ -164,7 +164,13 @@ Outcome rules: PASS needs `value`, a real `criterion` and `evidence`; FAIL the s
 
 Result files outside `hw/checks/`: drawing `coverage.json` uses family `drawing.coverage`, check
 `drawing-<subject in lowercase>` and attempt `a1`; `acceptance/package-integrity.json` uses family
-`release.integrity`, check `package-integrity`, attempt `a1` and VERSION binding. A redo is a new vN or REV.
+`release.integrity`, check `package-integrity`, attempt `a1` and VERSION binding; its `input_files`, `artifacts`,
+`source_files` and `inspected` never name a `release-manifest.json` (the FINAL manifest hashes this result).
+A redo is a new vN or REV.
+
+Other cycle bans: `variant.source` is `{unit, role, brief_sha256}` with no delivery digest (the delivery's
+`outputs` hash `variant.yaml`); verification rows never cite a `verification.index@…` obligation, and citing that
+check's result file is a semantic failure (references/validation.md item 16).
 The `common` root validates contract probes only (`probe: cad-agent-skills.common`); no runtime file uses it.
 
 ## Version manifest runtime (`version-manifest`)
