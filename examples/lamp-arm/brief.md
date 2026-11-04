@@ -70,13 +70,16 @@ answers names an actor starting `SYNTHETIC`.
    present it again.`
 2. INTENT and VARIANT: `approve <STAGE> <vN> choose <option id>` with the option the packet recommends: at INTENT the
    recommendation's `primary`; at VARIANT, with no single recommendation, the first FEASIBLE option in packet order.
-   An INTENT recommendation of NONE presents no gate: answer its blocking questions as in "Scripted owner answers".
+   An INTENT recommendation of NONE presents no gate: its attempt ends BLOCKED, and its report asks each blocking
+   question by id; answer them as in "Scripted owner answers".
 3. A waiver proposal: `approve <DR-###> waiver <WV-###>` when it is an `UNVALIDATED_TRIAL` of a requirement with
    `safety: false`; otherwise `reject <DR-###>; I decline this waiver.`
 4. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
    change or a selection): `approve <DR-###>` when it restates a scripted answer or the option rule 2 would choose;
    otherwise `reject <DR-###>; record it as an open question.`
 5. RELEASE, only if a PASS readiness verdict is presented: `approve RELEASE <vN> REV <REV>`.
+6. After the expected end, or after a stop the lead reports that asks nothing these rules answer, reply exactly
+   `end the session`. This is the last scripted turn: the lead releases its claim on it.
 
 ## Expected end
 

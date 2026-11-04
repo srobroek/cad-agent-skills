@@ -17,7 +17,7 @@ conditions:
 # Conditions whose truth depends on the run's own frozen design. The run's obligations.yaml must list the family
 # exactly when the condition holds on its frozen inputs, and record the reason when it does not.
 design_dependent:
-  delivery.integrity: "the attempt merges at least one worker delivery"
+  delivery.integrity: "the attempt merges at least one worker delivery, a published checker or reviewer result included"
   motion.sweep: "the assembly has a joint that is not FIXED (expected: three revolute joints)"
   motion.play: "a joint, coupling or interface states play or backlash"
   motion.access: "an assembly, tool or service operation needs access (expected for REQ-007)"
@@ -60,7 +60,7 @@ stages:
   - record.semantic@product
   - record.ownership@product
   - record.inputs@product
-  - delivery.integrity@product (when this attempt merges at least one worker delivery)
+  - delivery.integrity@product
   - intake.use_case@product
   future: []
   verdict: PASS
@@ -88,17 +88,21 @@ stages:
   - selection.sourcing@product
   - material.properties@product
   future: []
-  verdict: PASS, or BLOCKED naming the unsourced fact (machine shop capability, PETG creep, LED module data)
+  verdict: PASS, or BLOCKED on a frozen attempt whose report asks each blocking question by id (machine shop capability, PETG creep, LED module data)
   gate: APPROVED after `approve INTENT <vN> choose <option>`
   must_show:
   - polymer, metal, purchased-pivot and hybrid candidates, the old v0.1.1 layout as one candidate only
   - complete routes per part and every contacting joint pair (pin, bushing, link, retention, wear)
+  - hard outcomes per criterion of each mandatory requirement before any preference ranking; a criterion only a later stage evidences PLANNED with its due stage; every UNKNOWN names its question id
   - a polymer load path under sustained head load and module heat CONDITIONAL or EXCLUDED until creep data exist (Q-026)
   - retained sources for the LED module, the printer envelope and the machine shop, or their UNKNOWNs
   must_not:
   - use supplier-typical strength as an allowable
   - rank a CONDITIONAL candidate by preference
   - infer the shop tolerance from a general tolerance label
+  - rate FEASIBLE a candidate whose material, machine or provider the owner neither has nor has approved acquiring
+  - ask the owner for a supplier or capability fact before a sourcing unit returned it UNKNOWN
+  - stop BLOCKED without a frozen attempt and its verdict
 - stage: SPECIFY
   expected:
   - record.schema@product

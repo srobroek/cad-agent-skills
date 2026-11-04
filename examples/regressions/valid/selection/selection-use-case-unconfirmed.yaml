@@ -84,6 +84,7 @@ candidates:
       consequential: true
     method: holding torque needs the confirmed head mass and reach
     reason: use case unconfirmed
+    question: Q-019
   feasibility: CONDITIONAL
   economics:
     quantity:
@@ -148,6 +149,7 @@ candidates:
     criterion: *id003
     method: holding torque needs the confirmed head mass and reach
     reason: use case unconfirmed
+    question: Q-019
   - requirement: REQ-013
     outcome: PASS
     criterion:

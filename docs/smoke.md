@@ -26,7 +26,9 @@ available). `BLOCKED` is reported with its cause, never counted as `PASS`.
   `git -C "$CAD_AGENT_SKILLS_SRC" describe --tags --exact-match` and `git -C "$CAD_AGENT_SKILLS_SRC" rev-parse HEAD`;
   `git -C "$CAD_AGENT_SKILLS_SRC" status --porcelain` prints nothing.
 - The harness CLI, logged in; record its `--version` output.
-- `uv` on `PATH`; `uvx --from check-jsonschema==0.39.0 check-jsonschema --version` succeeds.
+- `uv` on `PATH`, with network for the one validator install at preflight: preflight installs check-jsonschema
+  0.39.0 and PyYAML 6.0.3 into `$SMOKE_PROJECT/.cad-work/lead/validator` and passes its probes
+  ([preflight](../full/skills/cad-flow/references/preflight.md#probe-tools)); `uvx` is not used.
 - The model roles the harness uses (model id and reasoning effort per role), written down before the run. OMP keeps
   them in the files passed with `--config`.
 - The demo brief: [examples/phone-stand/brief.md](../examples/phone-stand/brief.md). The smoke uses its first prompt,
@@ -66,6 +68,10 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    `.cad-work/` are absent. Never reuse a project between cells.
 2. Install the variant at project scope with the commands in [install.md](install.md) for this harness. For Claude
    Code and OMP, the marketplace route is the release route; a run with `--plugin-dir` is recorded as a local run.
+   For Claude Code, declare the marketplace at project scope too, from `SMOKE_PROJECT`:
+   `claude plugin marketplace add <source> --scope project` (2.1.318 `--help` lists `--scope user|project|local`).
+   Each cell then registers its own marketplace and no user-level registration is shared, so cells can run in
+   parallel.
 3. Start the harness in `SMOKE_PROJECT` with the start command below. One session, one lead: every reply resumes the
    same session id, and a second session for the project (a fork, or a reply sent to an older id) fails the cell.
    Never set an operator-side deadline shorter than the harness turn limit. OMP can exceed an hour per turn; `--max-time 2h`
@@ -89,15 +95,34 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    `approve GROUND <vN>`.
 7. INTENT: the lead dispatches at least one worker unit (sourcing for the printer and spools) through the host's
    native subagent call, logs its native task id, accepts or rejects the delivery, writes the INTENT verdict and
-   presents its packet. Send the scripted INTENT reply. Stop the session once the INTENT decision is recorded.
-8. Validate: for every JSON and YAML file under `hw/` that cad-record `layout.json` maps to a schema, run
-   `uvx --from check-jsonschema==0.39.0 check-jsonschema --schemafile <schema> <file>` with the schema from
-   `$CAD_AGENT_SKILLS_SRC/<variant>/skills/cad-record/schemas/` → every command exits 0.
-9. Compare the GROUND and INTENT obligations in `.cad-work/stage-<vN>/obligations.yaml` and in each verdict with
+   presents its packet. Send the scripted INTENT reply. An INTENT recommendation of NONE ends its attempt BLOCKED with
+   no packet; answer the questions its report asks as the brief says. Once the INTENT decision is recorded, or the
+   lead reports a stop that asks nothing the brief answers, reply exactly `end the session`, the brief's last
+   scripted turn.
+8. Validate, from `SMOKE_PROJECT`, with the run's own preflight tools under `.cad-work/lead/validator/bin/`
+   ([cad-record validation](../full/skills/cad-record/references/validation.md#schema-validation)). First load every
+   YAML file under `hw/` with the pinned loader:
+
+   ```sh
+   .cad-work/lead/validator/bin/python -c 'import sys, yaml; [yaml.safe_load(open(p, "rb")) for p in sys.argv[1:]]' <yaml files>
+   ```
+
+   Then, for each schema root that cad-record `layout.json` maps a file under `hw/` to, run one command over all
+   its files, each path quoted, in sorted order:
+
+   ```sh
+   .cad-work/lead/validator/bin/check-jsonschema --schemafile "$CAD_AGENT_SKILLS_SRC/<variant>/skills/cad-record/schemas/<root>.schema.json" -o json --verbose <files>
+   ```
+
+   Every command exits 0. A lean file that `layout.json` maps to a prose root has no schema and only loads.
+9. Compare the GROUND and INTENT obligations in `hw/versions/<vN>/obligations.yaml` and in each verdict with
    [examples/phone-stand/expected-obligations.yaml](../examples/phone-stand/expected-obligations.yaml): no missing and
    no extra family, every `must_show` present, no `must_not` seen.
 10. Finish: confirm the lead released its own claim (`.cad-work/lead/active/claim.yaml` absent, the session copy
-    present). Keep the project; delete nothing.
+    present). A headless run that stops early, a turn that ends on a stop or a question the brief does not answer
+    before the INTENT decision, still gets `end the session` as the next reply on the same session id; never start
+    a second session to release the claim. A claim still ACTIVE after that reply fails the lead-claim row. Keep the
+    project; delete nothing.
 
 ## Start and listing commands
 
@@ -110,7 +135,7 @@ in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrapper
 |---|---|---|---|
 | Claude Code | `claude_smoke` in `SMOKE_PROJECT` | `claude_smoke -p --max-turns 200 "<prompt>"`; `claude_smoke --resume <session-id> -p --max-turns 200 "<reply>"` | `/cad-agent-skills:cad-flow` or `/cad-agent-skills-lean:cad-flow` |
 | Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; from `SMOKE_PROJECT` (`exec resume` has no `-C`): `codex exec resume <thread-id> "<reply>"` | `$cad-flow` |
-| OpenCode | start `opencode serve --port <p>` in the isolated environment, with fixed `--model <provider/model#variant>` | `opencode run --standalone --format json --model <provider/model#variant> "<prompt>"`; replies use `opencode run --standalone --model <provider/model#variant> --session <session-id> "<reply>"` | `/cad-flow` |
+| OpenCode | start one persistent private server for the cell, `opencode serve --hostname 127.0.0.1 --port <p>`, in the isolated environment; it takes no `--model` (2.2.5) | `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --title <cell> "<prompt>"`; replies use `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --session <session-id> "<reply>"` | `/cad-flow` |
 | Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
 | OMP | `omp_cell` in `SMOKE_PROJECT` | `omp_cell -p "<prompt>"`; `omp_cell --resume <session-id> -p "<reply>"`; recover interactively with `omp_cell --restore <session-id>` | `/cad-flow` |
 
@@ -118,7 +143,7 @@ in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrapper
 |---|---|---|
 | Claude Code | `claude_smoke -p --no-session-persistence --output-format stream-json --verbose --max-turns 1 "Reply OK."`: `skills` array of first `system` `init` event, names prefixed `<plugin>:` | `agents` array of same event |
 | Codex CLI | `codex debug prompt-input` in `SMOKE_PROJECT`: each `- cad-<name>:` skill entry | each native `spawn_agent` call in the transcript, or fallback |
-| OpenCode | fallback (v2.2.5 has no skill listing command; `opencode agent list` does not exist) | run `opencode debug agents --standalone`, save JSON, retry until it parses, then use `jq -r '.[].name' <file>` |
+| OpenCode | fallback (v2.2.5 has no skill listing command; `opencode agent list` does not exist) | run `opencode debug agents --server http://127.0.0.1:<p>`, save JSON, retry until it parses, then use `jq -r '.[].name' <file>` |
 | Kiro CLI V3 | interactive `/context show`; headless: fallback | `kiro-cli agent list` in `SMOKE_PROJECT`: rows marked `Workspace` (it also prints global profiles) |
 | OMP | `omp_smoke read skill://<name>/SKILL.md` per skill: header shows resolved path | fallback over `<installPath>/agents/*.md`, with `installPath` from `omp_smoke plugin list --json` (`.marketplace[].entries[].installPath`) |
 
@@ -132,7 +157,7 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 |---|---|
 | Claude Code | Start, resume and list through `claude_smoke` below: `--setting-sources project,local --strict-mcp-config`, an auth-only `--settings` file, and `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`. `claude plugin` install and cleanup commands run without the wrapper. |
 | Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. The toolbox wrapper rewrites the config: pre-create an empty `.builder-mcp-setup-complete` to prevent the builder-mcp server; it still adds `approvals_reviewer` and telemetry, which must be recorded as deviations. |
-| OpenCode | Set `OPENCODE_CONFIG_DIR` to an empty directory and `OPENCODE_DISABLE_CLAUDE_CODE=1`. Use `--standalone` on each `opencode run` and agent listing; that starts a private server and avoids the background service. Pass provider credentials and region in environment variables and fix the model with `--model <provider/model#variant>`. |
+| OpenCode | For the server and every client command: `OPENCODE_CONFIG_DIR` an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`, and `XDG_DATA_HOME`, `XDG_STATE_HOME` and `XDG_CACHE_HOME` per-cell directories outside the project and evidence, so the session database, logs and state are the cell's own. The server prints `server password <random>`: keep it in a mode `0600` file outside the project and evidence, pass it to every client as `OPENCODE_PASSWORD`, and redact it in the server log. Pass provider credentials and region in environment variables (logins stored with `opencode auth` live in the default data directory) and fix the model with `--model <provider/model#variant>` on each `run`. |
 | Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
 | OMP | `omp_smoke` from the procedure: temporary HOME, named profile `cad-smoke`, `OMP_SKIP_SETUP=1`; the profile settings below turn off memory, advisor, autolearn, TTSR and project MCP config; `omp_cell` adds the model-role overlay and `--no-rules --no-context-files --no-extensions --skills 'cad-*' --max-time 2h`. |
 
@@ -218,9 +243,28 @@ isolation, not an OS boundary.
   tool and MCP server) is a recorded deviation: the installed role files no longer equal the release. Kiro's
   workspace-trust prompt writes `~/.kiro/workspace-roots/`; record this user-level side effect and remove the entry
   after the cell.
-- OpenCode: use `--standalone` on all run and agent-list commands to isolate from an existing background server. Check
-  with `opencode debug config --standalone`; `~/.config/opencode` must not appear. If `run --session` fails mid-turn,
-  save the failure, send one neutral recorded line and note the deviation, or restart the cell with a fresh project.
+- Kiro CLI V3 approval screens (3.0.0). Approve each call with "Allow once" (`y`) only after reading the whole
+  command; never create an allow rule.
+  - Dispatch: `orchestrate_subagent requires approval` with `subagent -> <role>`.
+  - Subagent calls: the `⚠ N tool approval pending` panel offers `(a)` approve all, `(f)` approve all and auto-approve
+    future requests, `(c)` configure individually (agent monitor) and `(x)` exit. Use `(c)`, never `(a)` or `(f)`.
+  - Agent monitor: it shows only the selected subagent's panel, and its header "The agent needs permission to run a
+    tool" appears while any subagent waits. Select the row marked `⚠` by its digit (`SUBAGENTS [/] ←→ select · 1-2
+    jump`), then approve with `y`.
+  - Tall panels: a command taller than the pane pushes `Allow once` and `Deny once` below it, so the panel is easy to
+    miss. Read the command (scroll with `j`/`k` or `^d`/`^u`), select the waiting subagent's row and press `y`; a
+    taller pane avoids it.
+  - `web_search`: its panel reads `web_search requires approval` and has no `category →` line.
+
+  The native session store's `pending_interaction` record is the reliable sign that a call waits.
+- OpenCode: run the whole cell against its one private server, `opencode serve` with `run --server`, never
+  `--standalone`: round 2 showed `--standalone` kills background subagents. With the per-cell `XDG_*` directories the
+  server shares no session database with the user's background service, which otherwise "recovers" the cell's busy
+  session and aborts it ([limitations](limitations.md#observed-host-limitations)). `opencode debug paths` takes no
+  `--server`; run it locally with the cell environment and check that `data`, `db`, `log` and `state` sit under the
+  cell directories (`tmp` stays `/tmp/opencode`). Check with `opencode debug config --server http://127.0.0.1:<p>`;
+  `~/.config/opencode` must not appear. If `run --session` fails mid-turn, save the failure, send one neutral
+  recorded line and note the deviation, or restart the cell with a fresh project. Stop the server after the cell.
 
 ## Evidence to capture
 
@@ -233,8 +277,8 @@ isolation, not an OS boundary.
 | lead claim and session | `.cad-work/lead/active/claim.yaml` during the run, the session copy after | one ACTIVE claim whose `session` is the host's native id (or `UNAVAILABLE-<stamp>` with the limit reported), released at finish |
 | GROUND and INTENT verdicts | `hw/versions/<vN>/stage-verdict.json` and their sha256 | each validates; PASS before its gate is presented |
 | gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`, the quoted reply equals the scripted text |
-| native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only; no turn ends while a dispatched unit still runs |
-| deliveries | `.cad-work/<unit>/delivery.json` | validates against `worker-delivery`; boundary digests equal; accepted bytes merged verbatim |
+| native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only; no turn ends while a dispatched unit still runs. On Kiro, whose `invoke_sub_agent` returns only the reply text to the lead, `task_id` `UNAVAILABLE: <what the call returned>` passes when the operator maps each unit to its `subSessionId`: the `sub_agent_start` and `sub_agent_complete` records in the session store's `messages.jsonl` (`~/.kiro/sessions/<workspace>/<session>/`) whose prompt names that unit's brief path |
+| deliveries | `.cad-work/<unit>/delivery.json` | full: validates against `worker-delivery`; lean, which has no worker-delivery schema: conforms to the prose contract ([prose-contract](../lean/skills/cad-record/references/prose-contract.md#worker-delivery)); both: boundary digests equal; accepted bytes merged verbatim |
 | writes | the transcript's tool calls | no write to an installed file and no record/evidence write outside `hw/` and `.cad-work/`; uv/package caches, bytecode, session stores and other named host caches may be elsewhere and are recorded |
 | schema results | step 8 output | every command exits 0 |
 | obligations | step 9 comparison | no missing or extra family; no `must_not` |

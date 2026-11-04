@@ -119,6 +119,7 @@ candidates:
       consequential: true
     method: creep of the printed pivot under sustained torque
     reason: no sourced creep data at 60 deg_C
+    question: Q-020
   feasibility: CONDITIONAL
   economics:
     quantity:
@@ -310,6 +311,7 @@ candidates:
     criterion: *id005
     method: sheet laser and press brake providers
     reason: no provider identified for LASER or SHEET_FORMING
+    question: Q-021
   feasibility: CONDITIONAL
   economics:
     quantity:

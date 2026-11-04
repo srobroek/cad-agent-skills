@@ -23,17 +23,18 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
    model roles, as in [smoke.md](smoke.md) "Prerequisites".
 3. Send the brief's first prompt; answer only with its scripted answers and gate replies. Keep one session; resume it
    after an interruption, never start a second lead.
-4. At every stage, compare `.cad-work/stage-<vN>/obligations.yaml` and the verdict with the example's
+4. At every stage, compare `hw/versions/<vN>/obligations.yaml` and the verdict with the example's
    `expected-obligations.yaml`; note each missing or extra family and each `must_show` or `must_not` hit.
 5. At every gate packet, check the stage, `vN`, verdict path and sha256, limits and file paths before replying.
-6. Stop at an acceptable end. Keep the project, its transcript and `.cad-work/`; delete nothing.
+6. Stop at an acceptable end: reply exactly `end the session`, the brief's last scripted turn, so the lead releases
+   its claim. Keep the project, its transcript and `.cad-work/`; delete nothing.
 
 ## Phone stand walk-through
 
 | Stage | Send | Observe |
 |---|---|---|
 | GROUND | answers A-01 to A-20 | all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question from A-12 without asking it again, apart from rigor; release scope form, CAD validity and printability review only, with fit excluded |
-| INTENT | the INTENT reply | at least two complete candidates; hard outcomes before preferences; printer and spool facts retained from sources or UNKNOWN |
+| INTENT | the INTENT reply | at least two complete candidates; hard outcomes before preferences; printer and spool facts retained from sources or UNKNOWN; later-stage criteria PLANNED with their due stage; a NONE recommendation ends in a BLOCKED verdict that asks its questions by id |
 | SPECIFY | the SPECIFY reply | APPEARANCE and MANUFACTURING requirements with APPEARANCE_CONCEPT facets only; REQ-002 sizes the cradle as a form dimension, never a fit; functional, performance, interface, environmental, service, safety and regulatory kinds listed as exclusions; fit, holding, friction, tipping and durability are release exclusions and service life remains an open question |
 | CONCEPT, VARIANT | the VARIANT reply | two to four unchanged variants; the lead repairs none |
 | LAYOUT | the LAYOUT reply, then the scripted change | hinge frames, play and hand access; the sweep over the full 55 to 75 degree travel, not the nominal pose |
