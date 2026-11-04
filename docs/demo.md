@@ -34,7 +34,7 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 |---|---|---|
 | GROUND | answers A-01 to A-20 | all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question, apart from rigor |
 | INTENT | the INTENT reply | at least two complete candidates; hard outcomes before preferences; printer and spool facts retained from sources or UNKNOWN |
-| SPECIFY | the SPECIFY reply | APPEARANCE_CONCEPT facets only; functional, performance, interface, environmental, service, safety and regulatory kinds listed as exclusions; holding, tipping and durability remain open questions |
+| SPECIFY | the SPECIFY reply | APPEARANCE_CONCEPT facets only; functional, performance, interface, environmental, service, safety and regulatory kinds excluded. Holding, friction, tipping and durability are release exclusions; service life is the open question. |
 | CONCEPT, VARIANT | the VARIANT reply | two to four unchanged variants; the lead repairs none |
 | LAYOUT | the LAYOUT reply, then the scripted change | hinge frames, play and hand access; the sweep over the full 55 to 75 degree travel, not the nominal pose |
 | change | the CHANGE approval | the 12 mm phone reopens SPECIFY; SPECIFY to LAYOUT rerun as new attempts, every gate presented again |
