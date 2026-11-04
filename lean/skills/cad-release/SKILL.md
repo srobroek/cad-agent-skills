@@ -25,7 +25,8 @@ ASK explicit approval of the exact release proposal and REV (`kind: RELEASE`) be
    (`skill://cad-release/references/drawings.md`) → every REQUIRED subject has sheets and a coverage result
    that validates, or the obligation is UNKNOWN and the stage BLOCKED.
 3. `derive-bom` or `bom.derivation`: LOAD references/bom.md (`skill://cad-release/references/bom.md`)
-   → `hw/bom/vN/{bom.yaml,bom.csv,bundle-manifest.json}`, each YAML and JSON file conforming to its cad-record prose root.
+   → `hw/bom/vN/{bom.yaml,bom.csv,bundle-manifest.json}`: each `bom.yaml` row validates against the `bom-row` schema
+   root, and `bom.yaml` and the bundle manifest conform to the cad-record `bom` and `bundle-manifest` prose roots.
 4. `promote-revisions`, `propose-release`, `publish-release`, `release.inventory` or `release.integrity`:
    LOAD references/release.md (`skill://cad-release/references/release.md`) → a validating proposal, or after
    approval one sealed `hw/releases/<REV>/` and its outer digest reported.

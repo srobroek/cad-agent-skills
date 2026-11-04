@@ -61,12 +61,15 @@ Per MOTION case:
    - `CONSTRAINED_PATH`: the justified path the mechanism permits;
    - `ENDPOINTS_EVENTS`: only for a criterion stated at those states;
    - `SAMPLED`: any other declared set, with its justification.
-3. At every pose apply "Pair measurement" to the case's pairs (`ALL` unless the case names them) in the tool and service state the case
-   states. Dropping a pair that collides is a `SCOPE_GAP`.
+3. At every pose apply "Pair measurement" to the case's pairs (every occurrence pair for `ALL`) in the tool and service state the case
+   states. An interface's declared fit or contact excuses overlap only inside its declared feature region, as in
+   [geometry.interference](#geometryinterference) step 2; the pair is measured everywhere else. A pair, pose or feature left out is a
+   `SCOPE_GAP`.
 4. Outcome value: the minimum clearance or the maximum shared volume over all poses, with its pose and pair; the DATA artifact holds every
    pose × pair.
-5. Coverage `SAMPLED` lists the intervals between poses in `scope.unsampled`. A continuous-travel criterion over those intervals is UNKNOWN
-   `INCOMPLETE` unless a computed bound covers each interval; a rate estimated from the samples is no bound.
+5. Coverage follows [results.md — Coverage](results.md#coverage): poses that sample continuous travel give `SAMPLED`, whatever the sampling
+   kind, and `scope.unsampled` lists every interval between consecutive poses. A computed bound can cover an interval; a rate estimated from
+   the samples is no bound.
 6. A smoke run, a nominal pose or a render is never this evidence: a design that passed nominal checks has collided at 11 of 19 full-travel
    poses.
 
@@ -87,7 +90,8 @@ Per assembly operation or service task with tool or hand access:
 2. Build the assembly state before the operation: its predecessors installed, later occurrences absent; for a service task, the assembled
    state.
 3. Move the envelope along the stated approach direction to engagement, sampled at a stated step, and apply "Pair measurement" against every
-   occurrence present. Contact before engagement is FAIL.
+   occurrence present; coverage and the intervals between steps follow [motion.sweep](#motionsweep) step 5. Contact before engagement is
+   FAIL.
 4. Access checked only in the final assembled pose does not cover an earlier operation.
 
 ## assembly.operations
@@ -97,6 +101,7 @@ Per assembly operation:
 1. Occurrences exist; `predecessors` form one acyclic order; `into`, `direction`, engagement, torque and retention are KNOWN with sources or
    typed UNKNOWN.
 2. Insertion: sweep the inserted occurrence along `direction` from clear of the assembly to its placement against the occurrences installed
-   before it; contact outside the declared fit region is FAIL.
+   before it, sampled at a stated step with coverage per [motion.sweep](#motionsweep) step 5; contact outside the declared fit region is
+   FAIL.
 3. A fastener or part whose access an earlier operation closes is FAIL (closed before install).
 4. Every non-fixed occurrence has a retention; every service task has a removal path checked as in steps 2–3.

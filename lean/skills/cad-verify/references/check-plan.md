@@ -18,34 +18,41 @@ Input: the approved GROUND and INTENT record (`hw/product.yaml` service class, r
    question; never a default or a typical value.
 3. Methods: `ANALYSIS` for geometry, process, stack, mass and load evidence; `INSPECTION` of the model or drawing for CAD_VALID, of a made
    article for PHYSICALLY_VALIDATED; `DEMONSTRATION` and `TEST` only for PHYSICALLY_VALIDATED.
-4. For each requirement, list the facets relevant to it, chosen from those allowed for its service class and kind in the table below. A
-   requirement need not list every allowed facet. If it omits a facet mandatory for its service class, that omission is a scope gap: the
-   affected outcome is UNKNOWN, never PASS.
+4. For each requirement, list facets from those its service class and kind allow in the table below: every facet the Mandatory facets
+   column requires, and any other allowed facet relevant to it. An omitted mandatory facet is a scope gap: the affected outcome is
+   UNKNOWN, never PASS.
 5. `due`: the earliest stage whose verdict needs the evidence (CAD_VALID from LAYOUT, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED from
    PARTS, SIMULATION_SUPPORTED at ANALYSIS, PHYSICALLY_VALIDATED at RELEASE).
 6. `safety: true` for kind SAFETY or REGULATORY and for any requirement whose failure the product risk names as a harm to people; then
    `waiver_policy: FORBIDDEN`. Otherwise `APPROVAL_REQUIRED` only where a waiver class in
-   [cad-flow gates — Waivers](../../cad-flow/references/gates.md#waivers) can apply, else `FORBIDDEN`.
+   [cad-flow gates — Waivers](../../cad-flow/references/gates.md#waivers) can apply, else `FORBIDDEN`. A class whose Safety requirement
+   cell below admits none records no safety requirement.
 7. Validate `hw/requirements.yaml` against the requirements root → exit 0.
 
 `requirements.completeness@product` is PASS only when: at least one requirement exists; the service class is KNOWN with its DR; every
-requirement has KNOWN criteria, a method, its applicable facets and `due` per step 4; every safety requirement is FORBIDDEN; every
-requirement kind outside the class's scope is listed in `product.yaml` `release_scope.exclusions`. A consequential UNKNOWN criterion or
-service class is UNKNOWN `REQUIRED_UNKNOWN`; omission of a facet mandatory for that service class is also a `SCOPE_GAP`. A missing method or
-exclusion is FAIL.
+requirement has KNOWN criteria, a method, every mandatory facet and `due` per step 4; every safety requirement is FORBIDDEN and admitted
+by its class; every requirement kind is in the class's scope, and every kind outside it is listed in `product.yaml`
+`release_scope.exclusions`. A consequential UNKNOWN criterion or service class is UNKNOWN `REQUIRED_UNKNOWN`; an omitted mandatory facet
+is UNKNOWN `INCOMPLETE` with a `SCOPE_GAP` blocker. A missing method or exclusion, or a requirement its class does not admit, is FAIL.
 
 ### Evidence by service class
 
-| Service class                   | Requirement kinds in scope                                                | Facets                                                   | PHYSICALLY_VALIDATED for                          | `UNVALIDATED_TRIAL` |
-| ------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------- | ------------------- |
-| `APPEARANCE_CONCEPT`            | APPEARANCE, MANUFACTURING, SAFETY, REGULATORY                             | CAD_VALID, GEOMETRICALLY_MANUFACTURABLE, PROCESS_PLANNED | none; no fit or function claim                    | not applicable      |
-| `FIT_ASSEMBLY`                  | + INTERFACE, SERVICE                                                      | all five                                                 | fit, clearance, play and assembly criteria        | non-safety only     |
-| `FUNCTIONAL_DEMO`               | + FUNCTIONAL, PERFORMANCE, ENVIRONMENTAL inside the demo operating limits | all five                                                 | every in-scope physical criterion                 | non-safety only     |
-| `WORKING_PROTOTYPE`             | every kind                                                                | all five                                                 | every physical criterion                          | non-safety only     |
-| `PRODUCTION`, `SAFETY_CRITICAL` | every kind                                                                | all five                                                 | every physical criterion, with AUTHORITY evidence | never               |
-| `UNKNOWN`                       | none: `requirements.completeness` UNKNOWN `REQUIRED_UNKNOWN`              | —                                                        | —                                                 | —                   |
+| Service class                   | Requirement kinds in scope                                                | Facets                                                   | Mandatory facets                                                                              | PHYSICALLY_VALIDATED for                          | Safety requirement (`safety: true`)                                                                                                                           | `UNVALIDATED_TRIAL` |
+| ------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `APPEARANCE_CONCEPT`            | APPEARANCE, MANUFACTURING                                                 | CAD_VALID, GEOMETRICALLY_MANUFACTURABLE, PROCESS_PLANNED | the base facet of each criterion                                                              | none; no fit or function claim                    | none: SAFETY and REGULATORY are outside the scope, a harm the product risk names is a `release_scope.exclusions` entry, and the release makes no safety claim | not applicable      |
+| `FIT_ASSEMBLY`                  | + INTERFACE, SERVICE, SAFETY, REGULATORY                                  | all five                                                 | the base facet of each criterion, and PHYSICALLY_VALIDATED where the next two columns name it | fit, clearance, play and assembly criteria        | PHYSICALLY_VALIDATED for every criterion, fit criterion or not                                                                                                | non-safety only     |
+| `FUNCTIONAL_DEMO`               | + FUNCTIONAL, PERFORMANCE, ENVIRONMENTAL inside the demo operating limits | all five                                                 | as `FIT_ASSEMBLY`                                                                             | every in-scope physical criterion                 | PHYSICALLY_VALIDATED for every criterion                                                                                                                      | non-safety only     |
+| `WORKING_PROTOTYPE`             | every kind                                                                | all five                                                 | as `FIT_ASSEMBLY`                                                                             | every physical criterion                          | PHYSICALLY_VALIDATED for every criterion                                                                                                                      | non-safety only     |
+| `PRODUCTION`, `SAFETY_CRITICAL` | every kind                                                                | all five                                                 | as `FIT_ASSEMBLY`                                                                             | every physical criterion, with AUTHORITY evidence | PHYSICALLY_VALIDATED for every criterion, with AUTHORITY evidence                                                                                             | never               |
+| `UNKNOWN`                       | none: `requirements.completeness` UNKNOWN `REQUIRED_UNKNOWN`              | —                                                        | —                                                                                             | —                                                 | —                                                                                                                                                             | —                   |
 
-A SAFETY or REGULATORY requirement is in scope at every class and never waived. Rigor never removes a facet.
+The base facet of a criterion follows what it constrains: a dimension, envelope, shape, travel, clearance, interference, access or count
+on the model → CAD_VALID; a limit of the route's process capability → GEOMETRICALLY_MANUFACTURABLE; a route, capability, material,
+orientation, setup, support or finish condition → PROCESS_PLANNED. A criterion only a made article shows (load, drift, temperature, life)
+has no base facet. SIMULATION_SUPPORTED is never mandatory.
+
+This table is the one rule for what a safety requirement needs at each class; a safety requirement is never waived. Rigor never removes a
+facet.
 
 ## plan-checks
 
@@ -67,11 +74,12 @@ cad-flow and the installed tools in `.cad-work/lead/preflight.json`.
    - `waiver_policy`: FORBIDDEN when the family ceiling, a covered requirement or `safety` says so.
    - `producer_role`: `cad-checker`; `cad-mech-dfm-reviewer` for `review.mechanical_dfm`.
 3. Write the cases the methods need:
-   - MOTION per functional motion: joints, sampling and steps per [geometry-motion.md](geometry-motion.md), `pairs: ALL` unless an interface
-     excludes a pair with its reason, `play_extremes: true` when any member states play.
+   - MOTION per functional motion: joints, sampling and steps per [geometry-motion.md](geometry-motion.md), `pairs: ALL`,
+     `play_extremes: true` when any member states play. A case names pairs only for a criterion stated between those occurrences, beside
+     the `pairs: ALL` case of that motion; an interface excuses contact only in its declared feature region, never a whole pair.
    - STACK per critical dimension chain: signed contributors, state and source; WORST_CASE unless a [JUSTIFIED_RSS](fits.md#fitstack) block
      and DR exist.
-   - LOAD per stated load, with `material.basis_required: ALLOWABLE` for a strength criterion ([mass-loads.md](mass-loads.md#loadhand)).
+   - LOAD per stated load, with `material.basis_required` from [mass-loads — load.hand](mass-loads.md#loadhand) step 4.
    - FEA only when preflight found an installed solver and the user approved it ([fea.md](fea.md#loadfea)).
    - MASS once for the product: densities per made component and every purchased mass.
 4. Check `hw/check-plan.yaml` against the cad-record `check-plan` prose table → every field and rule holds.
@@ -122,22 +130,33 @@ Runs at ANALYSIS before `freeze-inputs`; it edits no case.
 
 ## index-verification
 
-Runs at ANALYSIS and FREEZE after `run-checks` has published this attempt's results.
+Runs at ANALYSIS, FREEZE and RELEASE after `run-checks` has published this attempt's results.
 
-1. Read the snapshot `requirements.yaml`, `obligations.yaml`, every accepted result of `vN` (VERSION or CARRIED_FORWARD) and every APPROVED
-   WAIVER DR.
+1. Read the snapshot `requirements.yaml`, `hw/versions/vN/obligations.yaml`, every accepted result of `vN` (VERSION or CARRIED_FORWARD) and
+   every APPROVED WAIVER DR. At RELEASE, also read the approved `vF` verdict and its accepted results: its `expected` obligations count as
+   expected here with their accepted outcomes, and its `future` obligations are this attempt's expected ones, so every row carries the
+   frozen outcomes and the RELEASE `physical.test` outcomes, and no row is future.
 2. One row per requirement × subject × facet × criterion. `obligations`: the expected obligations whose outcomes name that requirement,
-   subject and facet, plus the future obligations of that requirement and facet in
+   subject and facet, plus the future obligations of that requirement and facet in `obligations.yaml`. Row `outcome`, first match:
    - WAIVED when every FAIL or UNKNOWN obligation is covered by an approved waiver under
      [cad-flow stages — write-verdict](../../cad-flow/references/stages.md#write-verdict) step 2 (there is at least one); the row cites the
      waiver DR;
    - FAIL when any is FAIL; UNKNOWN (with the result's `unknown_code`) when any is UNKNOWN;
    - PLANNED when any is future;
-   - NOT_APPLICABLE when all are; else PASS. A row with no obligation is UNKNOWN `INCOMPLETE` and a `SCOPE_GAP`. A row never cites the
-     `verification.index` result, which reads this index.
+   - NOT_APPLICABLE when all are; else PASS.
+
+   A row with no obligation is written with `obligations: []`, UNKNOWN `INCOMPLETE`, a `reason` and no `results`; it is a `SCOPE_GAP`. A
+   row never cites the `verification.index` result, which reads this index.
 3. `results` lists each cited `result.json` with its sha256; nothing is copied from a prior index, a CSV or a summary.
-4. Write `hw/verification/vN/verification.yaml` (prose root `verification`, rows sorted by requirement, subject, facet), then
-   `verification.csv` with the same rows and columns requirement, subject, facet, criterion, method, due, outcome, unknown_code, waiver,
-   results; then the VERIFICATION bundle manifest.
-5. Dispatch the `verification.index` check (references/families.md): an independent checker re-derives the rows and compares them; its
+4. Write `hw/verification/vN/verification.yaml`: `format: cad-agent-skills.verification`, `schema_version: 1`, `version` (vN), `stage`,
+   `version_manifest_sha256` (the sha256 of `hw/versions/vN/manifest.json`) and `rows`, sorted by requirement, subject anchor
+   ([cad-record contract index — ID families](../../cad-record/references/contract-index.md#id-families)), facet, then criterion `id`,
+   else `property`, an UNKNOWN criterion last. It conforms to the cad-record prose `verification` table.
+5. Write `verification.csv` with the same rows and columns requirement, subject, facet, criterion, method, due, outcome, unknown_code,
+   waiver, results.
+6. Write `hw/verification/vN/bundle-manifest.json` last: `kind: VERIFICATION`, binding `VERSION` (vN and the manifest digest), `input`
+   each cited `result.json` and `obligations.yaml` with its sha256, `recipe: {kind: REVIEW, inspected: <the input files>}`, `policy` from
+   preflight, `files` `verification.yaml` and `verification.csv` (role `DATA`), `complete: true` → it conforms to the cad-record prose
+   `bundle-manifest` table.
+7. Dispatch the `verification.index` check (references/families.md): an independent checker re-derives the rows and compares them; its
    result is published before `accept-results`.

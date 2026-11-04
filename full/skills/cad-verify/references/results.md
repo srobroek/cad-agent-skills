@@ -13,12 +13,19 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
 | `REVIEW`  | `review.mechanical_dfm` only, always        | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts                  |
 
 1. A COMMAND producer writes its own program `.cad-work/<unit>/check.py` as a PEP 723 script, locks it with
-   `uv lock --script <absolute path>` and runs it with `uv run --locked --script <absolute path>`; the lead retains the program and lock
-   under `hw/checks/vN/<check>/<attempt>/source/`.
+   `uv lock --script <absolute path>` and runs it with `uv run --locked --script <absolute path>`. Program and lock stay at the unit root,
+   never delivery outputs ([cad-flow agent-roles — Every role](../../cad-flow/references/agent-roles.md#every-role) step 6); at merge the
+   lead copies them into the result bundle's `source/`
+   ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3):
+   `hw/checks/vN/<check>/<attempt>/source/`, or for `drawing.coverage` `hw/drawings/vN/<SUBJECT>/source/`
+   ([cad-release drawings — drawing.coverage](../../cad-release/references/drawings.md#drawingcoverage)).
 2. The checker never runs or imports a producer's `build.py` or `check.py` as its method; producer exports are inputs only.
 3. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
    `MISSING_RESULT` at acceptance.
-4. A REVIEW result that lists commands, or a reviewer that executed anything, fails acceptance; the lead never edits the reviewer's bytes.
+4. A REVIEW result that lists commands, or a reviewer that wrote any file or ran anything other than read-only inspection commands (the lead
+   compares its tree digest before dispatch and after return; per-host reading rule:
+   [cad-flow agent roles — Roles](../../cad-flow/references/agent-roles.md#roles)), fails acceptance; the lead never edits the reviewer's
+   bytes.
 
 ## Outcomes
 
@@ -50,12 +57,16 @@ Result: FAIL when any outcome is FAIL; else UNKNOWN when any is UNKNOWN or `comp
 
 ## Coverage
 
-- `FULL`: every pair, pose, feature or contributor in the scope was evaluated.
-- `SAMPLED`: the declared sampling ran completely; a PASS holds for the sampled states only, and `scope.unsampled` lists every interval
-  between samples. A criterion stated over continuous travel is UNKNOWN `INCOMPLETE` over those intervals unless a computed bound covers
-  them.
+- `FULL`: every item of a finite scope was evaluated: every pair, feature or contributor, and every discrete state a criterion is stated at
+  (`ENDPOINTS_EVENTS`). Poses that sample continuous travel are never `FULL`.
+- `SAMPLED`: poses that sample continuous travel, whatever the sampling kind (`GRID`, `CONSTRAINED_PATH`, `SAMPLED`, or the stepped
+  approach and insertion of `motion.access` and `assembly.operations`); the declared sampling ran completely; a PASS holds for the sampled
+  states only, and `scope.unsampled` lists every interval between samples. A criterion stated over continuous travel is UNKNOWN
+  `INCOMPLETE` over those intervals unless a computed bound covers them.
 - `PARTIAL`: any scope item missing; the result is never PASS.
 - Excluding a pair, pose, component or feature from the scope is a `SCOPE_GAP`, never a smaller PASS.
+- `FULL` on continuous travel violates
+  [cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 8.
 
 ## Facets
 

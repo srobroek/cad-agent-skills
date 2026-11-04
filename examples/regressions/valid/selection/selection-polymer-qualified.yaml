@@ -1,13 +1,15 @@
 status: CONFIRMED
 assessment:
   inputs:
-  - path: hw/product.yaml
-    sha256: ebcd3cdaf09096604a095c92fbd8b83afc3bec52ba2028f18dc02995094fa7a5
-  - path: hw/requirements.yaml
-    sha256: f837dccc93d7f9b9957dc601769a32e77fd78bad985ac9e331061a9c537d7a60
   - path: hw/manufacturing/capabilities.yaml
-    sha256: 17c9c44149bf70a351e9f524ac3d8e652dbdc0d7953928430de082f138ec80a9
-  input_sha256: 2e91f33441ae93ab2b7c9bf700f13a02a712fb6a01ac9c2d60217655ebd0ae7a
+    sha256: d1908217a11458b7c068c00fa8f1a5fcc904e4eb52927ca4ca67824031b1a5bf
+  - path: hw/manufacturing/materials.yaml
+    sha256: 41addc6afa0c0d393d61ad5b58322173ad69fb6b66bc9f187ab9f2d0b3ea0592
+  - path: hw/product.yaml
+    sha256: fdf9a09a694554cd880cd469b85ea5ff881ad41f2ed08e8ca58928e8207fae69
+  - path: hw/requirements.yaml
+    sha256: 90989dc3f8af7de4c9a0042eb3627f3f67a314aa60a530506359b77e0137ea68
+  input_sha256: 0a9214995f17db416e5c201fd436d194e3320ded4cb8d539b96accef984b6e3c
   method: hard outcomes per requirement, then PRF-001 over FEASIBLE candidates
   date: '2026-11-03'
   decision: DR-008

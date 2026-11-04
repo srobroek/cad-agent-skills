@@ -11,13 +11,13 @@ Fidelity describes the form a stage expects; it is review language, never a chec
 
 | Stage | Made part | Purchased part |
 |---|---|---|
-| LAYOUT | envelope solids at the `assembly.yaml` placement; joint origins and axes and every interface member feature witnessed | supplier model, or a PROXY envelope |
+| LAYOUT | envelope solids at the `assembly.yaml` placement; joint origins and axes and every interface member feature witnessed | supplier model, or a PROXY with sourced bounds |
 | PARTS | real interfaces and route-appropriate form: bores, bosses, mating faces, walls, ribs and reliefs; every component and every feature the route needs | supplier model, or a PROXY with sourced dimensions |
 | DETAIL | fit, fastener, insert and retention features; chamfers, rounds, text and finish features | as bought: supplier model, or a PROXY whose `bounds` are sourced |
 
 - Relief and clearance hold over the full joint `limits`, never only at the nominal pose.
 - A part whose interface changes returns to PARTS form for the affected features.
-- A purchased part that is only a guessed shape blocks DETAIL: source its model or dimensions first.
+- A purchased part that is only a guessed shape blocks every stage, LAYOUT included: source its model or bounds first.
 
 ## design-parts
 

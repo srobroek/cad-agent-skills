@@ -28,7 +28,7 @@ Template: [worker-brief template](../assets/worker-brief.yaml). Role duties, ski
 | `boundary.scratch`, `boundary.writable` | `.cad-work/<unit>`; the role's write set from [agent-roles](agent-roles.md) |
 | `boundary.locked` | `hw/` files the unit may not change: interfaces, assembly, other PNs, criteria |
 | `boundary.read_only` | other paths it may read |
-| `expected.outputs` | each `hw/` target with its kind |
+| `expected.outputs` | each `hw/` target with its kind, including each check's `result.json` target; never a program, lock or `source/` path: the lead retains programs and locks from the unit root ([worker-delivery merge-deliveries](worker-delivery.md#merge-deliveries)) |
 | `expected.checks`, `expected.obligations` | the check-plan checks and obligation IDs the unit must run and cover ([cad-verify check plan](../../cad-verify/references/check-plan.md)) |
 | `expected.stop` | the unit's stop conditions beyond the role's own |
 | `expected.report` | `VERDICT line, delivery.json absolute path, findings, unknowns, proposals` |

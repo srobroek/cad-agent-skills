@@ -113,4 +113,8 @@ service:
     sources:
     - *id001
 drawing:
+  status: REQUIRED
+  reason: assembly drawing shows the hinge pin insertion
+  views:
+  - front
   operations: []

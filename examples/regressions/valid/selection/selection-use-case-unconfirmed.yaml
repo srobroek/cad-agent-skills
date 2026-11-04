@@ -1,13 +1,15 @@
 status: ASSESSED
 assessment:
   inputs:
-  - path: hw/product.yaml
-    sha256: 17df03b34812b8cccb85ae46f8470baf303bcaec4b3f675f194a0116c0130026
-  - path: hw/requirements.yaml
-    sha256: dae8160f9bbc1831632871cd40fe7156a41cd81d691adc647993c1b5870f24a4
   - path: hw/manufacturing/capabilities.yaml
-    sha256: d7f9623a3175dd324c883822cbf7bf5ae333439f9b4a71688d35225c08075017
-  input_sha256: 1ae5425586e90e76033edc97facd60952969edbc708ead799fa1aa113b0472d8
+    sha256: 3d4aac099590b569232866a2ceb5558a55883c10196ec0125930d28dc361d63d
+  - path: hw/manufacturing/materials.yaml
+    sha256: e893a20a889744e83536c954dcd27dcdf3bc8a25b4bc8f76429fbc0d2a26e022
+  - path: hw/product.yaml
+    sha256: 2b5dedcdfb0cced7c5f93f45b02ebb3272b96249a7e190effc49fdd60200f3b3
+  - path: hw/requirements.yaml
+    sha256: 4441e90e5a5365b811972b4c69df8e606b73fbc069ac6e09bd292efa811bcbcb
+  input_sha256: f9431fb93aa138879f0a5264298f62ec60549e8b7074ca8664a09ea98950080b
   method: hard outcomes per requirement; use case DRAFT
   date: '2026-11-03'
 candidates:
@@ -195,16 +197,14 @@ candidates:
   - 6082 values are typical, not allowables
   reversal: re-assess on a changed load or temperature
 recommendation:
-  status: CONDITIONAL
-  primary: asa-print
-  fallback: cnc-6082
+  status: NONE
   governing_requirements:
   - REQ-011
   reasons:
   - 'the intake is DRAFT: head mass and reach are open (Q-019)'
   - no candidate can be FEASIBLE until REQ-011 has a criterion
   limits:
-  - conditional report only; no final recommendation before Q-019 is answered
+  - 'no route recommended: no candidate is FEASIBLE while Q-019 (lamp head mass and reach, owner: product owner) is UNKNOWN'
   reversal: re-assess both candidates once Q-019 is answered
   what_would_change:
   - the confirmed head mass and reach

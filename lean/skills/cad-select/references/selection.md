@@ -19,12 +19,14 @@ Ask only questions that resolve this product's actual intended function and cons
 
 ### Ask and finish intake
 
-1. Ask every open template question in one message, grouped by domain; skip none. Ask focused questions, not a generic questionnaire dump.
+1. Ask every open template question in one message, grouped by domain; skip none. Each asked question carries exactly one question id, and
+   each id covers one template question. Ask focused questions, not a generic questionnaire dump.
 2. After the reply, record every answered fact as KNOWN with a `USER` source
    ([cad-record Facts](../../cad-record/references/record.md#facts)); record "I don't know", a refusal and each question the reply
    leaves out as a typed UNKNOWN with owner and question ([Scope of each unknown](#scope-of-each-unknown)); that question is done.
    Validate each changed file once ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4).
-3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; record its reply as in step 2.
+3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; each follow-up gets a new question id.
+   Record its reply as in step 2.
 4. Go to `freeze-inputs`. Never ask an answered or recorded question again. The owner's name is recorded as the owner states it, and
    every decision from the owner's statements names that `actor.name`.
 
@@ -36,7 +38,7 @@ CAD geometry or from the phrase “prototype”.
 Capture **requirements**, **preferences**, **assumptions** and **open questions** separately in `hw/requirements.yaml`. Do not turn an
 assumption into a requirement or use an unanswered question as evidence. Resolve questions whose answers can change a material, route,
 architecture, safety conclusion or mandatory criterion before making a final recommendation; otherwise label the recommendation CONDITIONAL
-and bound the unresolved choice.
+and bound the unresolved choice ([Recommend](#recommend)).
 
 Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses
 documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of
@@ -94,12 +96,12 @@ For every candidate and mandatory requirement, record a sourced criterion, metho
 - `PASS`: cited evidence and method show that this complete candidate route meets the mandatory criterion.
 - `FAIL`: cited evidence and method show that the route cannot meet it; eliminate this candidate.
 - `UNKNOWN`: evidence, capability, method, source conditions or material-driving use-case data are unresolved. Keep the candidate
-  CONDITIONAL; do not call it feasible or recommend it as meeting the requirement.
+  CONDITIONAL; do not call it feasible or recommend it ([Recommend](#recommend)).
 
 Classify the whole candidate using the selection prose root (`cad-record/references/prose-contract.md#selection`): FEASIBLE has no mandatory
 FAIL or UNKNOWN; CONDITIONAL has at least one UNKNOWN and no FAIL; EXCLUDED has a FAIL. An UNKNOWN is not a pass. A score, preference, low
-price, availability or aesthetic cannot restore an EXCLUDED or CONDITIONAL candidate to feasible status. Do not assign preference scores to
-non-FEASIBLE candidates. Do not convert missing cost or data to zero.
+price, availability or aesthetic cannot restore an EXCLUDED or CONDITIONAL candidate to feasible status. Do not convert missing cost or data
+to zero.
 
 If hard constraints leave one credible candidate, document the forced choice and its evidence/limits; do not manufacture a second option.
 Otherwise compare at least two credible complete candidate routes for consequential decisions.
@@ -112,14 +114,28 @@ using these columns (add project-specific explanation in prose, not novel record
 | Candidate / complete route | Material family and exact grade; form/state | Use suitability; strength, stiffness, fatigue, creep, heat and wear | Accuracy, finish and dimensional stability | Equipment, secondary operations and inspection | Architecture, design changes and assembly interfaces | Cost and lead time at stated quantity | Maintenance, repair and replacement | Evidence confidence and open validation | Pros, cons and accepted tradeoffs |
 | -------------------------- | ------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------- | ---------------------------------------------------- | ------------------------------------- | ----------------------------------- | --------------------------------------- | --------------------------------- |
 
-Keep hard outcomes distinct from preferences; rank only FEASIBLE candidates against recorded preferences such as cost, convenience, mass or
-appearance. Explain the governing requirements, evidence basis, uncertainties and why the primary is preferred. For each candidate record
-economics with source-backed facts or explicit UNKNOWNs, limits, pros/cons/tradeoffs and a reversal condition. Never use an opaque composite
-score to conceal a mandatory outcome.
+Keep hard outcomes distinct from preferences. For each candidate record economics with source-backed facts or explicit UNKNOWNs, limits,
+pros/cons/tradeoffs and a reversal condition. Never use an opaque composite score to conceal a mandatory outcome.
 
-Give a primary route and, when useful and separately justified, a low-cost prototype route, end-use route and fallback. Name what changes
-the recommendation, such as greater measured load or temperature, longer duty/life, tighter fit, different provider capability or production
-quantity. State what a prototype can and cannot validate; a printed mock-up does not establish final strength, life or thermal performance.
+### Recommend
+
+The candidates' classes decide the recommendation:
+
+| Candidates | `recommendation` |
+| --- | --- |
+| at least one FEASIBLE | `status` CONDITIONAL or FINAL ([Ask and finish intake](#ask-and-finish-intake)); a `primary` route and, when useful and separately justified, a low-cost `prototype`, an `end_use` and a `fallback` route, each a FEASIBLE candidate ranked against recorded preferences such as cost, convenience, mass or appearance |
+| none FEASIBLE | `status: NONE` with no `primary`, `prototype`, `end_use`, `fallback` or `decision`; `limits` names each blocking UNKNOWN with its owner and question as a gate limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate) step 2) |
+
+A CONDITIONAL candidate is presented labelled with its UNKNOWNs; it is never scored, ranked or named as a route. Where the release scope
+needs a route, a NONE recommendation blocks INTENT: `selection.feasibility@product` is UNKNOWN `REQUIRED_UNKNOWN`, the
+[stop procedure](../../cad-flow/references/stages.md#stop-procedure) reports the blocking UNKNOWNs and their owners as what unblocks it, and
+they are resolved per [Ask and finish intake](#ask-and-finish-intake) before any route is recommended.
+[cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 3 checks that every route field
+names a FEASIBLE candidate and that a FINAL recommendation's decision binds this selection.
+
+Explain the governing requirements, evidence basis, uncertainties and why the primary is preferred. Name what changes the recommendation,
+such as greater measured load or temperature, longer duty/life, tighter fit, different provider capability or production quantity. State
+what a prototype can and cannot validate; a printed mock-up does not establish final strength, life or thermal performance.
 
 ### Evidence and approval boundary
 
@@ -130,11 +146,15 @@ allowable. Density is not strength. Do not transfer bulk, cast or wrought proper
 moisture state or service condition.
 
 A starter profile is a sourced comparison aid, not lot identification, process approval, physical qualification or an allowable. Confirm
-procurement identity and all relevant conditions. Typical supplier data and standard minima remain `typical_not_allowable`; structural
-calculations require an independently justified allowable with competent authority, conditions and derivation.
+procurement identity and all relevant conditions. Typical supplier data and standard minima remain `typical_not_allowable`; which
+calculations need an allowable, and which may use a typical value with its uncertainty, is
+[cad-verify mass-loads — load.hand](../../cad-verify/references/mass-loads.md#loadhand) step 4.
 
-Store the assessed options and recommendation in the cad-record `selection` prose root. The lead checks the selection table, input inventory
-and evidence; the INTENT gate packet presents the options, and its `choose` reply approves the selection
+Store the assessed options and recommendation in the cad-record `selection` prose root. Its `assessment` lists `inputs`, every `hw/` file
+the assessment read with its sha256 (never `hw/manufacturing/selection.yaml` or a decision written from this assessment), `input_sha256`,
+the set digest over `inputs` ([cad-record record — Inventory digest](../../cad-record/references/record.md#inventory-digest)), `method` and
+`date`. The lead checks the selection table, input inventory and evidence; the INTENT gate packet presents the options, and its `choose`
+reply approves the selection
 ([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates)); no separate SELECTION approval is
 asked. Selection work does not itself alter a part, requirement, interface, material library or design; until the gate is APPROVED, report
 WAITING_FOR_USER and make no design change.

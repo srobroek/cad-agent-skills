@@ -2,9 +2,15 @@
 # Same convention as cad-record contract-fixtures/expected-errors.yaml; keys are relative to examples/regressions/.
 # Every valid/<root>/* case exits 0 and every invalid/<root>/* case exits 1 against <cad-record>/schemas/<root>.schema.json;
 # a valid case may still fail the semantic check its scenario names.
+# a REVIEW implementation forbids commands; the transcribed critique reply is refused
 invalid/check-result/review-with-commands-critique.json: 'Additional properties are not allowed (''commands'' was unexpected)'
+# a waiver is bounded by expires or until_change; one with neither is refused
 invalid/decision/waiver-out-of-scope-unbounded.yaml: "'until_change' is a required property"
+# an EXCLUDED candidate is never scored or recommended
 invalid/selection/selection-score-revives-excluded.yaml: "should not be valid under {'required': ['preference_scores']}"
+# a PASS readiness verdict never accepts the UNKNOWN physical result
 invalid/stage-verdict/release-without-physical-pass.json: "'UNKNOWN' is not one of ['PASS', 'WAIVED', 'NOT_APPLICABLE']"
+# a PASS verdict needs a PASS review; MINOR fails the gate
 invalid/stage-verdict/review-minor-pass.json: "$.review.verdict: 'PASS' was expected"
+# a CARRIED_FORWARD result names carried_from
 invalid/stage-verdict/stale-after-change-no-recheck.json: "'carried_from' is a required property"

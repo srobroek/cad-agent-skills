@@ -277,6 +277,7 @@ release_scope:
     value:
     - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL, SERVICE, SAFETY and REGULATORY requirements are outside this APPEARANCE_CONCEPT scope
     - no holding-force, friction, tipping, durability, physical-fit or other physical claim
+    - no safety claim; the harm the risk names (the phone slides or tips onto the desk, or the phone or the stand falls off the desk) is not evaluated in this scope
     - drawings are reviewed model-generated engineering drawings, not producer-ready and not standards-conformant
     basis: USER_DECLARED
     sources:

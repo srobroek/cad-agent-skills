@@ -18,13 +18,14 @@ published package is.
 
 | Release scope service class | The package is |
 |---|---|
-| `APPEARANCE_CONCEPT` | a concept-definition package: form, CAD validity and planned process only; `exclusions` name every functional and physical claim |
+| `APPEARANCE_CONCEPT` | a concept-definition package: form, CAD validity and planned process only; `exclusions` name every functional, physical, safety and regulatory claim |
 | `FIT_ASSEMBLY`, `FUNCTIONAL_DEMO`, `WORKING_PROTOTYPE` | a qualified package when every due `physical.test` is PASS on physical evidence; with an approved non-safety `UNVALIDATED_TRIAL` waiver, a trial package whose `scope.trial` states the waiver DR, envelope, supervision and expiry |
 | `PRODUCTION`, `SAFETY_CRITICAL` | a qualified package only with the criteria, allowables, evidence and approval of the competent AUTHORITY `product.yaml` names; never by waiver |
 | `UNKNOWN` | none |
 
-- A safety or regulatory obligation without its physical or authority evidence leaves RELEASE BLOCKED and
-  publishes nothing.
+- What a safety requirement needs at each service class, and the APPEARANCE_CONCEPT exclusion of every safety claim, is the
+  [cad-verify Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class) row. A due safety
+  obligation without that evidence leaves RELEASE BLOCKED and publishes nothing.
 - The service class and release scope are the ones GROUND recorded. Another scope is a CHANGE from GROUND
   (cad-flow references/change-impact.md), never an edit at RELEASE.
 - A demonstration run ends in a concept-definition package, an approved non-safety trial package, or a stop

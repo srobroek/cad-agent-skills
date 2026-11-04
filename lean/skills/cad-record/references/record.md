@@ -14,7 +14,9 @@ Owner: cad-record. `layout.json` (beside SKILL.md) is the path authority; the te
   kernel `cadquery|build123d`, unit symbols (`mm`, `deg_C`, `g_cm3`…) and quoted source text.
 - New geometry is authored `PART_LOCAL`, millimetres, right-handed, +Z up. An imported part keeps
   `ASSEMBLY_ZERO` only with `model.import` naming its original and approving DR, until migrated by a new DR.
-- Dates are `YYYY-MM-DD`, instants UTC `YYYY-MM-DDThh:mm:ssZ`, both quoted in YAML.
+- Dates are `YYYY-MM-DD`, instants UTC `YYYY-MM-DDThh:mm:ssZ`, both quoted in YAML. Every recorded time and stamp is read
+  from the clock when the file is written (`date -u +%Y-%m-%dT%H:%M:%SZ`, or the writing program's own clock call); never a
+  constant in a program, a guess or a copied earlier value.
 - Paths inside records are project-relative (`hw/…` or `.cad-work/…`): no `..`, `.`, empty segment,
   trailing slash, backslash or control character. Paths a human reads in a report are absolute.
 

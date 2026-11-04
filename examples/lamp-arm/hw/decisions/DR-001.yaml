@@ -17,6 +17,6 @@ actor:
 time: '2026-11-03T10:05:00Z'
 statement:
   path: hw/decisions/statements/DR-001.txt
-  transcript_sha256: 4e91a39982d3643113714275d475f83d67774a76240ad13ce40d31c70e7118bc
+  transcript_sha256: 7ef818b6d6ca1bfe013a60217af08424c4610e7edf59087cf279a0d0dd8373df
   quote: approve DR-001 import mapping as presented; I am SYNTHETIC demo owner.
   time: '2026-11-03T10:05:00Z'
