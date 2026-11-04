@@ -10,6 +10,9 @@ claude-plugin/invalid/missing-agent.json: all five agents are listed
 codex-agent/invalid/missing-instructions.toml: developer_instructions is required
 codex-agent/invalid/model-override.toml: model is omitted
 codex-agent/invalid/sandbox-override.toml: no agent sandbox override
+expected-obligations/invalid/bad-obligation.yaml: expected obligations are <family>@<anchor>, placeholders allowed
+expected-obligations/invalid/twelve-stages.yaml: stages lists exactly the 13 stages in order
+expected-obligations/invalid/unregistered-family.yaml: condition keys are registered check families
 kiro-agent/invalid/mcp-included.json: includeMcpJson is false
 kiro-agent/invalid/subagent-tool.json: 'roles never delegate: no subagent tool'
 kiro-agent/invalid/v2-allowed-tools.json: V2 allowedTools is refused
