@@ -73,6 +73,7 @@ stages:
   - choose a material, process, printer setting, tolerance or clearance
   - turn an "I don't know" answer into a value or a default
   - ask again a question already answered, or ask for a separate approval of the service class A-12 already states
+  - ask for a sunlight bound, a severity rating or a dimensional-stability value again; A-07 and A-09 leave them UNKNOWN out of scope, A-13 rates the severity
 - stage: INTENT
   expected:
   - record.schema@product

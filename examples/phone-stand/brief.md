@@ -30,7 +30,7 @@ written from these answers names an actor starting `SYNTHETIC`.
 | Id | Template question | Answer (exact message) |
 |---|---|---|
 | A-01 | Q-001 product | `It is an adjustable desktop stand that holds one phone in portrait at a viewing angle I change by hand.` |
-| A-02 | Q-002 owner | `I own it and I approve every gate and release myself.` |
+| A-02 | Q-002 owner | `I am SYNTHETIC demo owner; I own it and I approve every gate and release myself.` |
 | A-03 | Q-003 rigor | `Use maker documentation depth.` |
 | A-04 | Q-004 regime | `Use ISO, with ISO 2768-1 class m as the general tolerance on any drawing.` |
 | A-05 | Q-005 users | `Only I use it, at my home desk; I assemble it and adjust it by hand.` |

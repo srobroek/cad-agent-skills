@@ -31,6 +31,9 @@ available). `BLOCKED` is reported with its cause, never counted as `PASS`.
   them in the files passed with `--config`.
 - The demo brief: [examples/phone-stand/brief.md](../examples/phone-stand/brief.md). The smoke uses its first prompt,
   scripted answers and gate replies.
+- An isolated host environment: the cell runs without the operator's user-level instructions, rules, hooks, plugins,
+  extra skills and MCP servers, with the host settings below ("Environment isolation"); whatever stays active is
+  recorded as a deviation.
 
 ## Procedure
 
@@ -75,15 +78,15 @@ discovery forms were verified on 2026-11-04 with Claude Code 2.1.316, Codex CLI 
 | Harness | Interactive start | Headless start and resume | Prompt prefix |
 |---|---|---|---|
 | Claude Code | `claude` in `SMOKE_PROJECT` | `claude -p --max-turns 200 "<prompt>"`; `claude --resume <session-id> -p "<reply>"` | `/cad-agent-skills:cad-flow` or `/cad-agent-skills-lean:cad-flow` |
-| Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; `codex exec resume <session-id> "<reply>"` | `$cad-flow` |
+| Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; from `SMOKE_PROJECT` (`exec resume` has no `-C`): `codex exec resume <thread-id> "<reply>"` | `$cad-flow` |
 | OpenCode | `opencode` | `opencode run --format json "<prompt>"`; `opencode run --session <session-id> "<reply>"` | `/cad-flow` |
-| Kiro CLI V3 | `kiro-cli chat --v3` | `kiro-cli chat --v3 --no-interactive "<prompt>"`; `kiro-cli chat --v3 --resume-id <session-id> "<reply>"` | name the skill in prose: `Use the cad-flow skill.` |
+| Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
 | OMP | `omp --config "$MODEL_ROLES" --config "$MODELS"` | the same with `-p "<prompt>"`; `--resume <session-id> -p "<reply>"` | `/cad-flow` |
 
 | Harness | Skills | Roles |
 |---|---|---|
 | Claude Code | `claude -p --output-format stream-json --verbose --max-turns 1 "Reply OK."`: the `skills` array of the first `system` `init` event, names prefixed `<plugin>:` | the `agents` array of the same event |
-| Codex CLI | `codex debug prompt-input` in `SMOKE_PROJECT`: each `- cad-<name>:` skill entry | fallback |
+| Codex CLI | `codex debug prompt-input` in `SMOKE_PROJECT`: each `- cad-<name>:` skill entry | each native `spawn_agent` call in the transcript, or fallback |
 | OpenCode | fallback (v2.2.5 has no skill listing command; `opencode agent list` does not exist) | `opencode debug agents \| jq -r '.[].name'` in `SMOKE_PROJECT` |
 | Kiro CLI V3 | interactive `/context show`; headless: fallback | `kiro-cli agent list` in `SMOKE_PROJECT`: the rows marked `Workspace` (it also prints global profiles) |
 | OMP | `omp read skill://<name>/SKILL.md` per skill: the header shows the resolved path | fallback over `<installPath>/agents/*.md`, `installPath` from `omp plugin list --json` |
@@ -92,18 +95,34 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 `<skills dir>/<name>/SKILL.md`; roles the role files), read each frontmatter `name` (Codex TOML `name`, Kiro JSON
 `name`) and record the command and its output → each expected name once.
 
-- Host steering: run without the operator's own rules, context files, hooks, extra skills and MCP servers where the
-  host offers a flag, and record what stayed active. A lead that follows host steering (a prose linter, a review
-  ritual) is a smoke finding, not plugin behaviour. OMP: add `--no-rules --no-context-files --no-extensions --skills
-  'cad-*'`.
+### Environment isolation
+
+| Harness | Settings for the cell |
+|---|---|
+| Claude Code | `--setting-sources project,local --strict-mcp-config` |
+| Codex CLI | `--ignore-user-config --ignore-rules` on `codex exec`, `--ignore-user-config` on `codex exec resume`; or `CODEX_HOME` set to a directory holding only a copied `auth.json` |
+| OpenCode | `OPENCODE_CONFIG_DIR` set to an empty directory and `OPENCODE_DISABLE_CLAUDE_CODE=1` |
+| Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
+| OMP | `--no-rules --no-context-files --no-extensions --skills 'cad-*'` |
+
+The Claude Code, Codex and OMP flags are in each CLI's `--help` (versions above). `CODEX_HOME` is the Codex
+configuration-home variable. The OpenCode variable names are in the 2.2.5 binary. Neither variable's effect was
+tested in a live cell. A lead that follows host steering (a prose linter, a review ritual) is a smoke finding, not
+plugin behaviour.
+
 - Claude Code: the plugin's own permission settings are not applied by the host; the parent session's permission mode
   applies to every role. Record that mode.
 - Codex CLI: custom agents inherit the parent sandbox and approval mode. Run the smoke in the default
   `workspace-write` sandbox; a step the sandbox blocks is a finding, never a reason to switch to full access.
 - OpenCode: do not pass `--auto`; it approves permissions broadly and hides gate behaviour.
-- Kiro CLI V3: grant only exact tool ids with `--trust-tools`; a run that needs `--trust-all-tools` is a finding. In
-  3.0.0 a denied approval cannot be granted in `--no-interactive` mode, so a headless cell needing one is `BLOCKED`;
-  run the cell interactively. Parent permissions must allow what a role profile allows.
+- Kiro CLI V3: grant only exact V3 tool ids, never `--trust-all-tools`. In 3.0.0, `--no-interactive` denied
+  `execute_bash` even when the exact id was trusted, so the headless route needs `--trust-all-tools` and is not used;
+  run the cell interactively in `tmux` and approve each call. The ids: `read_file`, `list_directory`, `file_search`,
+  `grep_search`, `code`, `introspect` (read); `fs_write`, `fs_append`, `str_replace`, `delete_file` (write);
+  `execute_bash` (shell); `web_fetch`, `remote_web_search` (web); `disclose_context` (skill activation),
+  `invoke_sub_agent` and `subagent/<agent>`. Parent permissions must allow what a role profile allows. A machine
+  agent that rewrites the installed `.kiro/agents/cad-*.json` (observed: an AIM `creds-agent` injector adding its
+  tool and MCP server) is a recorded deviation: the installed role files no longer equal the release.
 - OMP: `omp config get task.isolation.enabled --json` prints `false` before the run; a local run adds
   `--plugin-dir "$CAD_AGENT_SKILLS_SRC/<variant>"`. A project-scope install still writes its files to the user cache
   `installPath`, shared by every project on the account: run one OMP cell per account at a time and uninstall only
@@ -116,8 +135,8 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 | tag, commit, variant, plugin name and version | prerequisites; preflight report | the reported plugin and version equal the variant and tag installed |
 | CLI version, model roles | `--version`; the written role list | recorded before the first prompt |
 | discovered skills and roles | step 4 listing, verbatim | eight skills and five roles, each once |
-| resolved resources | `.cad-work/lead/preflight.json` | every path absolute and existing; no path inside `SMOKE_PROJECT` for an installed file |
-| lead claim and session | `.cad-work/lead/active/claim.yaml` during the run, the session copy after | one ACTIVE claim for this session, released at finish |
+| resolved resources | `.cad-work/lead/preflight.json` | every path absolute and existing; no installed file under `hw/` or `.cad-work/` |
+| lead claim and session | `.cad-work/lead/active/claim.yaml` during the run, the session copy after | one ACTIVE claim whose `session` is the host's native id (or `UNAVAILABLE-<stamp>` with the limit reported), released at finish |
 | GROUND and INTENT verdicts | `hw/versions/<vN>/stage-verdict.json` and their sha256 | each validates; PASS before its gate is presented |
 | gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`, the quoted reply equals the scripted text |
 | native dispatch | the harness transcript and `.cad-work/lead/units.yaml` | each unit's role, native task id, brief sha256 and state; the task text is the role, brief path and role reference only |
