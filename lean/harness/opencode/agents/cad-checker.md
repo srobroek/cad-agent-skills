@@ -11,13 +11,15 @@ permission:
     .cad-work/**: allow
   bash:
     "*": deny
-    "TMPDIR=/*/.cad-work/*/tmp uv lock --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --script /*/.cad-work/*/check.py": allow
-    "TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py": allow
-    "TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py *": allow
-    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
-    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
-    "TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/python -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
-    "TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/python\" -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
+    "env TMPDIR=/*/.cad-work/*/tmp uv lock --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --script /*/.cad-work/*/check.py": allow
+    "env TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py": allow
+    "env TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py *": allow
+    "env TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
+    "env TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
+    "env TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/python -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
+    "env TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/python\" -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
+    "cp /*/.cad-work/*/input/hw/checks/*/source/check.py /*/.cad-work/*/check.py": allow
+    "cp /*/.cad-work/*/input/hw/checks/*/source/check.py.lock /*/.cad-work/*/check.py.lock": allow
     "shasum -a 256 *": allow
     "sha256sum *": allow
     "shasum -a 256": allow
@@ -43,6 +45,7 @@ permission:
     "LC_ALL=C sort *--output*": deny
     "sort *--output*": deny
     "mkdir -p /* ?*": deny
+    "cp * * ?*": deny
     "*>*/hw/*": deny
     "*>hw/*": deny
     "*> hw/*": deny
