@@ -57,10 +57,10 @@ life, quantity, budget, lead time, stress or physical test. Record each reply by
 these differences:
 
 - Each part count, arrangement, feature, dimension, envelope, geometric clearance between modelled parts and static pose the owner states is
-  a criterion of an APPEARANCE requirement with the CAD_VALID facet, due LAYOUT
-  ([cad-verify check-plan — specify-requirements](../../cad-verify/references/check-plan.md#specify-requirements)), never only prose in
-  `product.yaml`. The record holds at least one such requirement, and no MANUFACTURING requirement, capability profile, material
-  criterion or finish-process criterion.
+  a criterion of an APPEARANCE requirement with the CAD_VALID facet, due LAYOUT, in the criterion form of
+  [cad-verify check-plan — Lite build](../../cad-verify/references/check-plan.md#lite-build); never only prose in `product.yaml`. The
+  record holds at least one such requirement, and no MANUFACTURING requirement, capability profile, material criterion or finish-process
+  criterion.
 - `release_scope.exclusions` opens with the exact LITE disclosure line of the [cad-flow skill](../../cad-flow/SKILL.md) OUTPUT, with the
   LITE answer to `Q-000` among that fact's `USER` sources; the owner's own exclusions follow it unchanged.
 - A fact an answer volunteers on a topic lite never asks, such as an item's mass, is recorded typed where the lite record has a field for
