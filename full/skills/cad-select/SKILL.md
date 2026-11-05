@@ -20,8 +20,10 @@ TRIGGER
    accuracy, finish, failure consequence/standards, quantity, budget, lead time, maintenance/repair, equipment, operators and outsourcing.
 2. Record each reply whole in one batch at GROUND (`references/selection.md` → `Ask and finish intake` step 2): its facts, volunteered ones
    included, and its requirements, preferences, assumptions and open questions as distinct collections, each criterion one a stage can
-   evidence (→ `Write criteria a stage can evidence`). Never re-open an answered fact or question a release-scope exclusion. Confirm
-   service class separately from documentation rigor; block a final recommendation on a material-driving or safety-critical unknown.
+   evidence (→ `Write criteria a stage can evidence`). An answer that states a field's value or that it asks nothing settles that field
+   (→ `Settle each intake field`); never re-open it or question a release-scope exclusion. After the GROUND gate `hw/requirements.yaml`
+   changes only through change impact. Confirm service class separately from documentation rigor; a material-driving or safety-critical
+   unknown keeps the candidates it feeds CONDITIONAL.
 3. Read `references/selection.md` and `references/materials.md` (OMP: `skill://cad-select/references/selection.md`,
    `skill://cad-select/references/materials.md`). Use the cad-record skill, schema roots and literal absolute paths supplied in the active
    brief; they are read-only.

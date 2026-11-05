@@ -24,37 +24,51 @@ Ask only questions that resolve this product's actual intended function and cons
 2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
    ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4):
    - Every fact the reply states, including a fact no question asked, as KNOWN with a `USER` source
-     ([cad-record Facts](../../cad-record/references/record.md#facts)). Read each answer against every intake field its template question
-     names: a field the answer states in any words is KNOWN from it, a field it rules out is NOT_APPLICABLE with that answer as `reason`,
-     and a field one answer records is never another question.
+     ([cad-record Facts](../../cad-record/references/record.md#facts)), and every intake field settled or left open by
+     [Settle each intake field](#settle-each-intake-field).
    - Every requirement, preference and assumption those facts state
      ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
-   - "I don't know", a refusal and each intake field the reply neither states nor rules out, as a typed UNKNOWN with owner and question
-     ([Scope of each unknown](#scope-of-each-unknown)); that question is done.
+   - Each field that table leaves open, as a typed UNKNOWN with owner and a new question id
+     ([Scope of each unknown](#scope-of-each-unknown)); the template question the reply answered is RESOLVED.
 3. Ask at most one follow-up batch, only for an answer that contradicts the record or is ambiguous; each follow-up gets a new question id.
-   Record its reply as in step 2. A topic `release_scope.exclusions` excludes that no intake field holds, such as a protection, access or
-   fit claim the request or a reply names, gets no question and no UNKNOWN: the exclusion is its whole record. An intake field on such a
-   topic is recorded per [Scope of each unknown](#scope-of-each-unknown).
+   Record its reply as in step 2. An answer in words without a number, such as "for hours", is its value, never ambiguous. A topic
+   `release_scope.exclusions` excludes that no intake field holds, such as a protection, access or fit claim the request or a reply names,
+   gets no question and no UNKNOWN: the exclusion is its whole record. An exclusion never reopens an intake field: step 2 settles or leaves
+   open a field on an excluded topic like any other.
 4. Go to `freeze-inputs`. Never ask an answered or recorded question again. The owner's name is recorded as the owner states it, and
    every decision from the owner's statements names that `actor.name`.
-
-Resolving material-, route- and safety-driving questions before a final recommendation (below) governs INTENT, never the GROUND exit.
 
 Before any material comparison, inspect the relevant existing product record and ask what is missing for those needs. Do not infer use from
 CAD geometry or from the phrase “prototype”.
 
-Capture **requirements**, **preferences**, **assumptions** and **open questions** separately in `hw/requirements.yaml`; GROUND writes all
-four (step 2). Do not turn an assumption into a requirement or use an unanswered question as evidence. INTENT reads requirements and never
-writes them; after the GROUND gate, a requirement or criterion to add or change follows
-[cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure). Resolve questions whose answers can change a
-material, route, architecture, safety conclusion or mandatory criterion before making a final recommendation; otherwise label the
-recommendation CONDITIONAL and bound the unresolved choice ([Recommend](#recommend)).
+Capture **requirements**, **preferences**, **assumptions** and **open questions** separately in `hw/requirements.yaml`. GROUND writes the
+file whole (step 2) and no later stage writes a byte of it: a requirement, criterion, preference, assumption or question to add, change or
+resolve after the GROUND gate, an owner's later answer included, follows
+[cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure). A question a later stage settles from a
+retained source stays OPEN there; the retained fact answers it in its own file. Do not turn an assumption into a requirement or use an
+unanswered question as evidence. At INTENT, a question still open whose answer can change a material, route, architecture, safety
+conclusion or mandatory criterion keeps each candidate whose hard outcome it feeds CONDITIONAL ([assess-selection](#assess-selection)); at
+GROUND it blocks nothing ([Scope of each unknown](#scope-of-each-unknown)).
 
 Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses
 documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of
 rigor. Do not infer either from CAD or example geometry. Record the class as a QUESTION decision whose statement is the owner's answer
 naming it ([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates)); `service.class` cites
 that DR in this attempt.
+
+#### Settle each intake field
+
+Read each answer against every intake field its template question names, in its own words and in the context of the whole reply, and
+record the field by the first row that matches. A statement on the shared subject of several fields, such as upkeep for maintenance and
+repair, answers each of them. A field an answer settles is never an UNKNOWN or a question, also when `release_scope.exclusions` excludes
+its topic.
+
+| The answer, for this field | Record |
+| --- | --- |
+| the owner does not know or will not say, or names the field as present without its value, such as a load of unstated force | typed UNKNOWN ([Scope of each unknown](#scope-of-each-unknown)) |
+| it asks nothing of the product, in any words: "none", "not needed", "not applicable" or "no requirement"; the conditions it depends on are absent, as dry air without chemicals is for corrosion; a motion the user makes by hand when wanted, which has no speed requirement; the owner's own repair stated as the whole upkeep, which leaves no other maintenance | settled: KNOWN with the answer's words as value and the answer as `USER` source, or NOT_APPLICABLE with `reason` quoting the answer and its question id and `reviewed_by` the owner who gave it ([cad-record Facts](../../cad-record/references/record.md#facts)); a field that holds a quantity takes NOT_APPLICABLE |
+| its value in any words: a number, range, description or frequency | KNOWN with the answer as `USER` source. A quantity it states only in words, such as "for hours", stays in those words in a text field or the item's `note`, and an optional quantity field stays absent; never a question for a number |
+| nothing about the field | typed UNKNOWN ([Scope of each unknown](#scope-of-each-unknown)) |
 
 ### Write criteria a stage can evidence
 
@@ -68,25 +82,35 @@ each criterion a property such a facet evidences:
   `support_on_visible_faces EQUALS false`.
 - The owner's equipment, materials on hand and outsourcing: one MANUFACTURING requirement whose criteria are route properties in this form.
   `make_capability_profile EQUALS <profile id>` (`ONE_OF` for several machines or providers) names the capability profile GROUND writes in
-  `hw/manufacturing/capabilities.yaml` from the owner's statement, each field the owner leaves unstated a typed UNKNOWN.
-  `make_material ONE_OF [<material profile ids>]` names the owner's materials on hand by identity.
+  `hw/manufacturing/capabilities.yaml` from the owner's statement, each subject the owner leaves unstated a typed UNKNOWN
+  ([Scope of each unknown](#scope-of-each-unknown)). `make_material ONE_OF [<material profile ids>]` names the owner's materials on hand
+  by identity. Its facets are PROCESS_PLANNED, which `capability.route` evidences, and GEOMETRICALLY_MANUFACTURABLE, which the process
+  obligations of each part made on that profile evidence
+  ([cad-verify process rules](../../cad-verify/references/process-checks.md#rules-for-every-process-family) step 4); `due` PARTS.
 - A material criterion settles at INTENT by identity: a candidate whose material profile is one `make_material` names passes it. Whether the
   machine runs that material in the consumable form the owner holds, such as a filament diameter or a stock size, is
-  [cad-verify process-checks — capability.route](../../cad-verify/references/process-checks.md#capabilityroute) step 2 at PARTS; until then
-  it is a candidate limit due at PARTS, never an INTENT outcome, question or reason to keep a candidate CONDITIONAL.
-- Every quantity the owner states is recorded typed, never dropped: in the intake fact its template question fills, where one does; also
-  as a criterion of the requirement it constrains when a facet the class admits evidences it, each stated dimension its own criterion; and
-  as an assumption with `bounds`, `owner` and `validation` when it bounds what the product serves rather than the product, such as the
-  heaviest item it must carry.
+  [cad-verify process-checks — capability.route](../../cad-verify/references/process-checks.md#capabilityroute) step 2 at PARTS. Until
+  then the consumable form, like a process setting such as supports or drying, is no intake field and no subject of its own: no UNKNOWN or
+  question records it at GROUND or INTENT, and it is never an INTENT outcome, a reason to keep a candidate CONDITIONAL or an answer a gate
+  packet invites. Each candidate states it as a limit due at PARTS.
+- Every quantity the owner states is recorded typed, never dropped: in the intake fact its template question fills, where one does
+  ([Settle each intake field](#settle-each-intake-field)). A quantity that sizes or bounds the product, such as a dimension of an item it
+  must hold, receive, fit within or clear, a footprint or a travel, is also a criterion of the requirement it constrains, each stated
+  dimension its own criterion, and never an assumption instead. Such a dimension on the model has the CAD_VALID facet in every class, so
+  where `release_scope.exclusions` excludes fit it stays a form dimension whose `conditions` say that no fit is claimed. A quantity that
+  bounds a load the product carries, such as the heaviest item it holds, is a criterion where a facet the class admits evidences that load;
+  otherwise, like a value the owner gives as an estimate or does not commit to, it is an assumption with `bounds`, `owner` and
+  `validation`.
 - Quantity, budget and lead time: `product.yaml` intake facts, never a requirement, because no facet evidences them; each candidate's
   `economics` states its figures against them ([Compare the feasible routes](#compare-the-feasible-routes)).
 
 ### Scope of each unknown
 
-Set `consequential` on each UNKNOWN intake fact once the service class and `release_scope` are recorded; until then every UNKNOWN is
-consequential. Apart from the service class itself, GROUND records every unknown and none of them blocks it; the GROUND gate packet lists
-each consequential one as a limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate)). Each blocks only where
-it falls due:
+This table types each field [Settle each intake field](#settle-each-intake-field) leaves open and each fact sourcing or a check
+establishes; it never reopens a field an answer settles. Set `consequential` on each UNKNOWN intake fact once the service class and
+`release_scope` are recorded; until then every UNKNOWN is consequential. Apart from the service class itself, GROUND records every unknown
+and none of them blocks it; the GROUND gate packet lists each consequential one as a limit
+([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate)). Each blocks only where it falls due:
 
 | The UNKNOWN is | Record | Blocks |
 | --- | --- | --- |
@@ -100,8 +124,9 @@ missing. A fact that only a later criterion or case uses, such as a printer enve
 there and falls due at the stage whose obligation uses it.
 
 Record each fact sourcing establishes (third row) as its own typed UNKNOWN with its own question, even when one source may settle several;
-never fold two such subjects into one UNKNOWN or question. Each unstated field of a capability profile the owner names is its own subject:
-machine identity, operator, envelope and material approvals each get their own.
+never fold two such subjects into one UNKNOWN or question. A capability profile the owner names has four such subjects, each its own
+UNKNOWN when the owner leaves it unstated: machine identity, operator, envelope and material approvals. Its consumable form and process
+settings are none of them ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
 
 Set each question's `material_to_choice` and `safety_relevant` by the same table.
 
@@ -148,9 +173,11 @@ criterion only when INTENT holds its evidence:
 - `PASS`: cited evidence and method show that this complete candidate route meets the criterion.
 - `FAIL`: cited evidence and method show that the route cannot meet it; eliminate this candidate.
 - `UNKNOWN`: the evidence, capability, method or source conditions of an INTENT criterion are unresolved, or the criterion itself is UNKNOWN
-  ([Scope of each unknown](#scope-of-each-unknown)). `question` names the OPEN question in `hw/requirements.yaml` whose answer settles it:
-  the intake question that left it UNKNOWN, or a new one with the next unused id, written before the version is built. Keep the candidate
-  CONDITIONAL; do not call it feasible or recommend it ([Recommend](#recommend)).
+  ([Scope of each unknown](#scope-of-each-unknown)). `question` names the OPEN question in `hw/requirements.yaml` whose answer settles it,
+  the one GROUND wrote for that fact. INTENT writes no question ([Ask and finish intake](#ask-and-finish-intake)): an UNKNOWN that no OPEN
+  question covers is a change to the GROUND record
+  ([cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure)). Keep the candidate CONDITIONAL; do not
+  call it feasible or recommend it ([Recommend](#recommend)).
 - `PLANNED`: a KNOWN later-stage criterion, with `due` and a `reason` naming the evidence that stage produces. PLANNED is never a pass: the
   requirement's obligation at `due` settles it, and a FAIL or UNKNOWN there blocks that stage
   ([cad-flow stages — Stop procedure](../../cad-flow/references/stages.md#stop-procedure)). Under a class without PHYSICALLY_VALIDATED, a
@@ -189,17 +216,17 @@ The candidates' classes decide the recommendation:
 
 | Candidates | `recommendation` |
 | --- | --- |
-| at least one FEASIBLE | `status` CONDITIONAL or FINAL ([Ask and finish intake](#ask-and-finish-intake)); a `primary` route and, when useful and separately justified, a low-cost `prototype`, an `end_use` and a `fallback` route, each a FEASIBLE candidate ranked against recorded preferences such as cost, convenience, mass or appearance; `limits` names each PLANNED outcome of a named route with its `due` stage as a gate limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate) step 2) |
+| at least one FEASIBLE | `status` CONDITIONAL, since FINAL needs `decision`, the APPROVED INTENT gate DR, which INTENT stage work never has ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 3); a `primary` route and, when useful and separately justified, a low-cost `prototype`, an `end_use` and a `fallback` route, each a FEASIBLE candidate ranked against recorded preferences such as cost, convenience, mass or appearance; `limits` names each PLANNED outcome of a named route with its `due` stage as a gate limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate) step 2) |
 | none FEASIBLE | `status: NONE` with no `primary`, `prototype`, `end_use`, `fallback` or `decision`; `limits` names each blocking UNKNOWN by its `question` id and owner as a gate limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate) step 2) |
 
 A CONDITIONAL candidate is presented labelled with its UNKNOWNs; it is never scored, ranked or named as a route. Where the release scope
 needs a route, a NONE recommendation blocks INTENT: `selection.feasibility@product` is UNKNOWN `REQUIRED_UNKNOWN`. Record the NONE
 selection and finish the attempt to its BLOCKED verdict, as the [stop procedure](../../cad-flow/references/stages.md#stop-procedure)
 requires; its report asks each blocking question by its id, in one message, as [Ask and finish intake](#ask-and-finish-intake) step 1
-asks. Record the reply per step 2, "I don't know" included; it resolves those questions. The next INTENT attempt, or the reopen that
-[cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure) names, then follows even when it can only
-record NONE again; its report names the decision that unblocks each remaining UNKNOWN, such as a requirement change or an approved
-acquisition, and never asks a recorded question again.
+asks. The reply, "I don't know" included, changes the GROUND record: record it per step 2 through
+[cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure); it resolves those questions. The INTENT
+attempt after that reopen follows even when it can only record NONE again; its report names the decision that unblocks each remaining
+UNKNOWN, such as a requirement change or an approved acquisition, and never asks a recorded question again.
 [cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 3 checks that every route field
 names a FEASIBLE candidate and that a FINAL recommendation's decision binds this selection.
 
