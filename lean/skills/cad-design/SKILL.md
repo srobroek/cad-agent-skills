@@ -19,7 +19,8 @@ TRIGGER
 
 1. Read the approved scope: the candidate the APPROVED INTENT gate decision chose in
    `hw/manufacturing/selection.yaml`, and the APPROVED SPECIFY requirements and interfaces → per PN its sourcing,
-   material profile and route, or the typed UNKNOWN it carries.
+   material profile and route, or the typed UNKNOWN it carries. A LITE build (frozen product `build_mode` LITE)
+   reads the approved GROUND record only → references/layout.md "Lite layout" and references/parts.md "Lite part".
 2. LOAD references/layout.md (`skill://cad-design/references/layout.md`) for `specify-interfaces` and
    `define-layout`.
 3. LOAD references/concepts.md (`skill://cad-design/references/concepts.md`) for `draft-variants`,
@@ -34,7 +35,7 @@ TRIGGER
 ## Rules
 
 MUST Take each part's sourcing, material profile and route from the approved selection; a PN without one carries a
-  typed UNKNOWN with owner and question, never an invented choice.
+  typed UNKNOWN with owner and question, never an invented choice. A lite part carries none of the three.
 MUST Name every interface member, datum, critical surface and route target by a semantic feature id that the
   part model witnesses (cad-record references/record.md "IDs").
 MUST Size fits, fasteners, threads and inserts from a retained standard or supplier source, never from memory or

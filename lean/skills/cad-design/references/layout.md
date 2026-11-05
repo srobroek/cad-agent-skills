@@ -39,6 +39,8 @@ field (`interfaces.completeness`).
 
 ## define-layout
 
+A LITE build runs [Lite layout](#lite-layout) instead.
+
 Input: the variant the APPROVED VARIANT gate decision names as `choice` (`hw/concepts/<variant>/**`, unchanged), the
 approved requirements, interfaces and selection.
 Output: `hw/assembly.yaml` (root `assembly`), member placement in `hw/interfaces.yaml`, and the part units below.
@@ -79,3 +81,41 @@ Output: `hw/assembly.yaml` (root `assembly`), member placement in `hw/interfaces
 
 Done when every occurrence has a PN with a part unit, every joint limit comes from a requirement or is a typed
 UNKNOWN, every interface member is placed, and every operation states its retention and access.
+
+## Lite layout
+
+`define-layout` of a LITE build: the frozen `hw/product.yaml` `build_mode` is KNOWN `LITE`. No selection, variant,
+interface or manufacturing decision precedes it; the approved GROUND record is the whole design input.
+
+Input: the approved GROUND record:
+
+- `hw/product.yaml` (release scope and exclusions);
+- `hw/requirements.yaml`: the part count, arrangement, static pose and every requested feature, dimension, envelope
+  and clearance, as CAD_VALID criteria due LAYOUT
+  ([cad-select lite intake](../../cad-select/references/selection.md#lite-intake));
+- `hw/check-plan.yaml` and the APPROVED GROUND gate decision.
+
+Output: `hw/assembly.yaml` (root `assembly`) and the part units below. No interface is written; a template
+`hw/interfaces.yaml` stays an empty wrapper.
+
+1. PNs: one per part the requirements name, allocated as [define-layout](#define-layout) step 1 with revision `X1`.
+   A lite part keeps draft `X` revisions, since no FREEZE promotes it.
+2. `occurrences[]` and `root` as define-layout step 2, one occurrence per physical instance (a one-part product has
+   one), each at the explicit nominal placement of the approved arrangement. A depicted mechanism stands at its named
+   static pose.
+3. `joints`, `couplings`, `operations` and `service` stay empty: a lite layout claims no motion, assembly step,
+   retention or service. A requested clearance stays a requirement criterion, never an interface fit, contact or
+   material field.
+4. Part units as [define-layout](#define-layout) step 7, with its `expected.checks`, and with:
+   - `task`: the finished prototype form of each PN, as a [Lite part](parts.md#lite-part);
+   - `subjects`: the PNs; inputs: product, requirements, check plan, assembly and the GROUND gate decision;
+   - `expected.outputs`: `hw/parts/<PN>/part.yaml` and `hw/parts/<PN>/model.py`;
+   - `boundary.locked`: product, requirements, check plan, assembly and every other PN.
+5. Every lite PN is AUTHORED. A purchased part, a supplier model or any need outside the approved GROUND scope stops
+   the stage, and a CHANGE proposal reopens GROUND (cad-flow references/change-impact.md, or its
+   [promotion to full](../../cad-flow/references/change-impact.md#promotion-to-full) for full-build scope). Never
+   model a guessed shape.
+6. Validate `assembly.yaml` → exit 0; tree and quaternion rules as define-layout step 9.
+
+Done when every occurrence has a PN with a part unit, and every requested feature and dimension is in one unit's
+task.
