@@ -22,14 +22,30 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 
 1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
 2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
-   each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, SAMPLED coverage and absent physical
-   evidence); each preview, GLB, drawing and BOM as an absolute path on its own line.
+   each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, MINOR finding, SAMPLED coverage and
+   absent physical evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. A lite build adds
+   [Lite packets](#lite-packets).
 3. INTENT and VARIANT add the options the verdict assessed
    ([cad-select assess-selection](../../cad-select/references/selection.md#assess-selection) and
    [cad-design compare-variants](../../cad-design/references/concepts.md#compare-variants)): feasible, conditional (with its unknowns) and
    excluded (with the failed hard constraint).
 4. End with the exact approval form: `approve <STAGE> <vN>`, plus `choose <option>` for INTENT and VARIANT, or a description of what to
    change. The state is now `WAITING_FOR_USER`.
+
+### Lite packets
+
+Every lite packet opens with the Mode lines of the [SKILL.md OUTPUT](../SKILL.md), adds these items to step 2 and states, just before
+the approval form, what that approval covers.
+
+- GROUND, while no geometry exists: the build mode with its source; the proposed form in prose; the part count and arrangement; every
+  dimension and measurement criterion; the service class, release scope and exclusions; each geometry-driving UNKNOWN; the checks
+  `hw/check-plan.yaml` plans; FreeCAD availability from [preflight.json](preflight.md#freecad) (the executable and version line, or
+  absent). Covers: `approve GROUND <vN>` approves exactly this brief, never geometry not yet built.
+- RELEASE: the render shown, not only named: the SVG preview displayed in the reply where the host renders images, else opened in the
+  system viewer (`open <path>` on macOS, `xdg-open <path>` on Linux) and that stated; the STEP and model-source paths; the measured
+  dimensions, solid count and volumes of the accepted geometry results; the FreeCAD version and outcomes `geometry.readback` recorded; the
+  independent intent findings of LAYOUT's `intake.use_case`; the exclusions; the proposal's full sha256 beside the verdict and manifest;
+  the inventory and REV. Covers: `approve RELEASE <vN>` approves that exact model and package, never fitness for use.
 
 ## Record a gate decision
 
@@ -112,5 +128,8 @@ A waiver qualifies readiness for a stated scope; it is never evidence, and the o
 4. The verdict maps each covered result to `WAIVED` with its `WV-###` and lists `{id, decision}`
    ([cad-flow write-verdict](stages.md#write-verdict)); every report and the release manifest show it; existence, scope and expiry are
    checked by [cad-record semantic validation](../../cad-record/references/validation.md), and an expired waiver is `EXPIRED`.
+
+A lite build has no waiver: every lite check is `FORBIDDEN` (`lite_stages` in `assets/stages.yaml`), and a material, fit, strength or
+manufacturing need is a [promotion to full](change-impact.md#promotion-to-full).
 
 NOT Reclassify the service class or the release scope to avoid an obligation: a concept release stays concept scope.
