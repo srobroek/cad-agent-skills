@@ -1,10 +1,11 @@
-# cad-agent-skills record template, copied by cad-record only when hw/ is absent.
+# cad-agent-skills FULL build record template, copied by cad-record only when hw/ is absent and the owner chose a full build.
 # Every essential fact starts UNKNOWN with its owner and question (hw/requirements.yaml); nothing here is a default.
 # GROUND replaces id and title with the user's product name and resolves each question with a sourced answer.
 format: cad-agent-skills
 record_version: 1
 id: unnamed-product
 title: Unnamed product
+build_mode: {status: UNKNOWN, reason: 'not yet asked: full or lite build', owner: user, question: Q-000, consequential: true}
 identity:
   description: {status: UNKNOWN, reason: 'not yet asked: what the product is and does', owner: user, question: Q-001, consequential: true}
   owner: {status: UNKNOWN, reason: 'not yet asked: who owns the product and its approvals', owner: user, question: Q-002, consequential: true}

@@ -1,0 +1,290 @@
+{
+  "format": "cad-agent-skills.release-manifest",
+  "schema_version": 1,
+  "build_mode": "LITE",
+  "phase": "FINAL",
+  "rev": "A",
+  "frozen": {
+    "version": "v2",
+    "version_manifest": {
+      "path": "hw/versions/v2/manifest.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    "verdict": {
+      "path": "hw/versions/v2/stage-verdict.json",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+    }
+  },
+  "decisions": [
+    {
+      "path": "hw/decisions/DR-001.yaml",
+      "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    {
+      "path": "hw/decisions/DR-002.yaml",
+      "sha256": "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f"
+    }
+  ],
+  "planned": [
+    {
+      "path": "definition/assembly.step",
+      "source": "hw/versions/v2/definition/assembly.step",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "definition/parts/STD-0001.step",
+      "source": "hw/versions/v2/definition/parts/STD-0001.step",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "definition/assembly.glb",
+      "source": "hw/versions/v2/definition/assembly.glb",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "docs/previews/assembly.svg",
+      "source": "hw/versions/v2/previews/assembly.svg",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "role": "DOCUMENT"
+    },
+    {
+      "path": "docs/build-guide.md",
+      "source": "hw/docs/build-guide.md",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "role": "DOCUMENT"
+    },
+    {
+      "path": "record/versions/v2/manifest.json",
+      "source": "hw/versions/v2/manifest.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/versions/v2/stage-verdict.json",
+      "source": "hw/versions/v2/stage-verdict.json",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/versions/v2/obligations.yaml",
+      "source": "hw/versions/v2/obligations.yaml",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "role": "RECORD"
+    },
+    {
+      "path": "checks/v2/geometry-readback/a1/result.json",
+      "source": "hw/checks/v2/geometry-readback/a1/result.json",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "role": "CHECK"
+    },
+    {
+      "path": "checks/v2/geometry-readback/a1/source/freecad-readback.FCScript",
+      "source": "hw/checks/v2/geometry-readback/a1/source/freecad-readback.FCScript",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "role": "CHECK"
+    },
+    {
+      "path": "verification.yaml",
+      "source": "hw/verification/v3/verification.yaml",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "role": "VERIFICATION"
+    },
+    {
+      "path": "verification.csv",
+      "source": "hw/verification/v3/verification.csv",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "role": "VERIFICATION"
+    },
+    {
+      "path": "record/verification/bundle-manifest.json",
+      "source": "hw/verification/v3/bundle-manifest.json",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "role": "VERIFICATION"
+    },
+    {
+      "path": "docs/LICENSE-hardware.txt",
+      "source": "hw/docs/LICENSE-hardware.txt",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "role": "LICENSE"
+    }
+  ],
+  "scope": {
+    "service_class": "APPEARANCE_CONCEPT",
+    "purpose": "geometry-only appearance prototype that renders and opens in FreeCAD",
+    "operating_limits": [
+      "viewing in a CAD viewer or FreeCAD only"
+    ],
+    "exclusions": [
+      "LITE prototype: geometry only; no material, fit, strength or manufacturing claims"
+    ]
+  },
+  "claims": [
+    {
+      "requirement": "REQ-001",
+      "facets": [
+        "CAD_VALID"
+      ],
+      "outcome": "PASS"
+    },
+    {
+      "requirement": "REQ-002",
+      "facets": [
+        "CAD_VALID"
+      ],
+      "outcome": "PASS"
+    }
+  ],
+  "waivers": [],
+  "licenses": {
+    "hardware": "CC0-1.0",
+    "documentation": "CC0-1.0",
+    "third_party": []
+  },
+  "exclusions": [],
+  "readiness": {
+    "path": "hw/versions/v3/stage-verdict.json",
+    "sha256": "1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"
+  },
+  "approval": {
+    "decision": "DR-003",
+    "file": {
+      "path": "hw/decisions/DR-003.yaml",
+      "sha256": "2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b"
+    }
+  },
+  "inventory": [
+    {
+      "path": "definition/assembly.step",
+      "source": "hw/versions/v2/definition/assembly.step",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "definition/parts/STD-0001.step",
+      "source": "hw/versions/v2/definition/parts/STD-0001.step",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "definition/assembly.glb",
+      "source": "hw/versions/v2/definition/assembly.glb",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "DEFINITION"
+    },
+    {
+      "path": "docs/previews/assembly.svg",
+      "source": "hw/versions/v2/previews/assembly.svg",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "role": "DOCUMENT"
+    },
+    {
+      "path": "docs/build-guide.md",
+      "source": "hw/docs/build-guide.md",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "role": "DOCUMENT"
+    },
+    {
+      "path": "record/versions/v2/manifest.json",
+      "source": "hw/versions/v2/manifest.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/versions/v2/stage-verdict.json",
+      "source": "hw/versions/v2/stage-verdict.json",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/versions/v2/obligations.yaml",
+      "source": "hw/versions/v2/obligations.yaml",
+      "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+      "role": "RECORD"
+    },
+    {
+      "path": "checks/v2/geometry-readback/a1/result.json",
+      "source": "hw/checks/v2/geometry-readback/a1/result.json",
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "role": "CHECK"
+    },
+    {
+      "path": "checks/v2/geometry-readback/a1/source/freecad-readback.FCScript",
+      "source": "hw/checks/v2/geometry-readback/a1/source/freecad-readback.FCScript",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "role": "CHECK"
+    },
+    {
+      "path": "verification.yaml",
+      "source": "hw/verification/v3/verification.yaml",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "role": "VERIFICATION"
+    },
+    {
+      "path": "verification.csv",
+      "source": "hw/verification/v3/verification.csv",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "role": "VERIFICATION"
+    },
+    {
+      "path": "record/verification/bundle-manifest.json",
+      "source": "hw/verification/v3/bundle-manifest.json",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "role": "VERIFICATION"
+    },
+    {
+      "path": "docs/LICENSE-hardware.txt",
+      "source": "hw/docs/LICENSE-hardware.txt",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "role": "LICENSE"
+    },
+    {
+      "path": "record/release/stage-verdict.json",
+      "source": "hw/versions/v3/stage-verdict.json",
+      "sha256": "1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/release/obligations.yaml",
+      "source": "hw/versions/v3/obligations.yaml",
+      "sha256": "3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/release/release-proposal.json",
+      "source": "hw/versions/v3/release-proposal.json",
+      "sha256": "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/decisions/DR-003.yaml",
+      "source": "hw/decisions/DR-003.yaml",
+      "sha256": "2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b",
+      "role": "RECORD"
+    },
+    {
+      "path": "record/decisions/statements/DR-003.txt",
+      "source": "hw/decisions/statements/DR-003.txt",
+      "sha256": "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e",
+      "role": "RECORD"
+    },
+    {
+      "path": "checks/v3/release-inventory/a1/result.json",
+      "source": "hw/checks/v3/release-inventory/a1/result.json",
+      "sha256": "6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f",
+      "role": "CHECK"
+    },
+    {
+      "path": "acceptance/package-integrity.json",
+      "sha256": "7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a",
+      "role": "ACCEPTANCE"
+    }
+  ],
+  "integrity": {
+    "path": "acceptance/package-integrity.json",
+    "sha256": "7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a",
+    "result": "PASS"
+  }
+}

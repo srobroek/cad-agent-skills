@@ -1,0 +1,286 @@
+# every due LITE check is FORBIDDEN to waive
+format: cad-agent-skills.stage-policy
+schema_version: 1
+stages:
+- id: GROUND
+  order: 1
+  predecessor: null
+  gate: HUMAN
+  owner: cad-flow
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: GROUND
+  - family: intake.use_case
+    applicability: ALWAYS
+    due: GROUND
+  reopen: []
+  gate_subject: use case and assumptions
+- id: INTENT
+  order: 2
+  predecessor: GROUND
+  gate: HUMAN
+  owner: cad-select
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: selection.feasibility
+    applicability: ALWAYS
+    due: INTENT
+  reopen: []
+  gate_subject: selection and tradeoff
+- id: SPECIFY
+  order: 3
+  predecessor: INTENT
+  gate: HUMAN
+  owner: cad-flow
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: requirements.completeness
+    applicability: ALWAYS
+    due: SPECIFY
+  reopen: []
+  gate_subject: requirements, interfaces and criteria
+- id: CONCEPT
+  order: 4
+  predecessor: SPECIFY
+  gate: NONE
+  owner: cad-design
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: variant.integrity
+    applicability: ALWAYS
+    due: CONCEPT
+  reopen: []
+- id: VARIANT
+  order: 5
+  predecessor: CONCEPT
+  gate: HUMAN
+  owner: cad-design
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks: []
+  reopen: []
+  gate_subject: variant
+- id: LAYOUT
+  order: 6
+  predecessor: VARIANT
+  gate: HUMAN
+  owner: cad-design
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: geometry.interference
+    applicability: ALWAYS
+    due: LAYOUT
+  - family: motion.sweep
+    applicability: CONDITIONAL
+    due: LAYOUT
+    condition: assembly has non-FIXED joints
+  reopen: []
+  gate_subject: layout boundary
+- id: PARTS
+  order: 7
+  predecessor: LAYOUT
+  gate: HUMAN
+  owner: cad-design
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: capability.route
+    applicability: ALWAYS
+    due: PARTS
+  reopen: []
+  gate_subject: part architecture and routes
+- id: DETAIL
+  order: 8
+  predecessor: PARTS
+  gate: HUMAN
+  owner: cad-design
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: drawing.coverage
+    applicability: ALWAYS
+    due: DETAIL
+  reopen: []
+  gate_subject: detail and process intent
+- id: BOM
+  order: 9
+  predecessor: DETAIL
+  gate: NONE
+  owner: cad-release
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: bom.derivation
+    applicability: ALWAYS
+    due: BOM
+  reopen: []
+- id: ANALYSIS
+  order: 10
+  predecessor: BOM
+  gate: HUMAN
+  owner: cad-verify
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: mass.properties
+    applicability: ALWAYS
+    due: ANALYSIS
+  reopen: []
+  gate_subject: evidence and limits
+- id: CRITIQUE
+  order: 11
+  predecessor: ANALYSIS
+  gate: REVIEW
+  owner: cad-review
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: review.mechanical_dfm
+    applicability: ALWAYS
+    due: CRITIQUE
+  reopen: []
+  gate_subject: review PASS
+- id: FREEZE
+  order: 12
+  predecessor: CRITIQUE
+  gate: HUMAN
+  owner: cad-flow
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: record.inputs
+    applicability: ALWAYS
+    due: FREEZE
+  reopen: []
+  gate_subject: manifest, verdict and scope
+- id: RELEASE
+  order: 13
+  predecessor: FREEZE
+  gate: HUMAN
+  owner: cad-release
+  procedure:
+  - reread-claim
+  - freeze-inputs
+  - enumerate-obligations
+  - verdict
+  checks:
+  - family: release.inventory
+    applicability: ALWAYS
+    due: RELEASE
+  - family: physical.test
+    applicability: CONDITIONAL
+    due: RELEASE
+    condition: service class needs physical evidence
+    safety: true
+    waiver_policy: FORBIDDEN
+  reopen: []
+  gate_subject: inventory and REV
+check_order:
+- record.schema
+- record.semantic
+- geometry.build
+- geometry.interference
+- motion.sweep
+- review.mechanical_dfm
+lite_stages:
+  method_profile: LITE_V1
+  stages:
+  - id: GROUND
+    order: 1
+    predecessor: null
+    gate: HUMAN
+    gate_subject: build mode, geometry scope, requirements, check plan and FreeCAD availability
+    owner: cad-select
+    procedure:
+    - record-bootstrap
+    - intake-use-case
+    - freeze-inputs
+    - enumerate-obligations
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: intake.use_case
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    reopen: []
+  - id: LAYOUT
+    order: 2
+    predecessor: GROUND
+    gate: NONE
+    owner: cad-design
+    procedure:
+    - define-layout
+    - build-version
+    - enumerate-obligations
+    checks:
+    - family: geometry.readback
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.interference
+      applicability: CONDITIONAL
+      condition: more than one geometric occurrence
+      due: LAYOUT
+      waiver_policy: APPROVAL_REQUIRED
+    reopen: [GROUND]
+  - id: RELEASE
+    order: 3
+    predecessor: LAYOUT
+    gate: HUMAN
+    gate_subject: render, FreeCAD evidence, proposal inventory and disclosure
+    owner: cad-release
+    procedure:
+    - propose-release
+    - enumerate-obligations
+    checks:
+    - family: release.inventory
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    reopen: [LAYOUT]

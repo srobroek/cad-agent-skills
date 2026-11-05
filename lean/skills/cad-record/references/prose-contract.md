@@ -335,7 +335,7 @@ a facet due at a later stage.
 
 The installed stage policy (cad-flow `assets/stages.yaml`): ordered stages with predecessor, gate, owner, procedure
 IDs, registered check families with applicability, due stage and reopen policy, and the fixed cost order of check
-families.
+families; `lite_stages` is the LITE build's chain over the same IDs ([record — Build mode](record.md#build-mode)).
 
 | Field | Req | Type and rule |
 | --- | --- | --- |
@@ -343,6 +343,7 @@ families.
 | `schema_version` | yes | `=1` |
 | `stages` | yes | `[stage entry]`, exactly 13 |
 | `check_order` | yes | `[check_family]≥1 unique` |
+| `lite_stages` | — | `{method_profile =LITE_V1, stages [lite stage entry], exactly 3}`, both required |
 
 Stage entry: `{id stage, order integer 1–13, predecessor (stage or null), gate HUMAN|NONE|REVIEW, owner skill,
 procedure, checks, reopen}`, all required; `gate_subject text` when the gate is HUMAN or REVIEW. `procedure` is
@@ -351,6 +352,10 @@ alias. Order and predecessor consistency is a semantic check.
 
 Stage check: `{family check_family, applicability ALWAYS|CONDITIONAL, due stage}` required; `condition text` when
 CONDITIONAL; optional `required_by stage`, `safety` boolean and `waiver_policy waiver_policy`.
+
+Lite stage entry: a stage entry whose every check has `waiver_policy` `FORBIDDEN` and `due` equal to its own `id`. The
+three entries are, in order, `id` GROUND, `order` 1, `predecessor` null, `gate` HUMAN; LAYOUT, 2, GROUND, NONE; and
+RELEASE, 3, LAYOUT, HUMAN.
 
 ## worker-brief
 

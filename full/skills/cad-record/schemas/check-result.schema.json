@@ -285,9 +285,30 @@
           }
         }
       }
+    },
+    {
+      "if": {"required": ["family"], "properties": {"family": {"const": "delivery.integrity"}}},
+      "then": {
+        "description": "an integrity result names each unit and its merged hw/ target with the sha256, never a scratch source (cad-record validation item 12)",
+        "properties": {
+          "input_files": {"items": {"$ref": "#/$defs/hw_file"}},
+          "artifacts": {"items": {"$ref": "#/$defs/hw_file"}},
+          "implementation": {
+            "properties": {
+              "source_files": {"items": {"$ref": "#/$defs/hw_file"}},
+              "inspected": {"items": {"$ref": "#/$defs/hw_file"}}
+            }
+          },
+          "outcomes": {"items": {"properties": {"evidence": {"items": {"$ref": "#/$defs/hw_file"}}}}}
+        }
+      }
     }
   ],
   "$defs": {
+    "hw_file": {
+      "description": "a cited file published under hw/, never a .cad-work/ path",
+      "properties": {"path": {"$ref": "common.schema.json#/$defs/hw_path"}}
+    },
     "not_release_manifest": {
       "description": "the FINAL release manifest hashes the package-integrity result, so that result never hashes or inspects any release-manifest.json",
       "properties": {"path": {"not": {"pattern": "(^|/)release-manifest\\.json$"}}}

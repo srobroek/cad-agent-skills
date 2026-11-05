@@ -67,7 +67,7 @@
       "writer": "lead",
       "mutability": "CONTROLLED",
       "stage": "GROUND",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL record; optional in a LITE record"},
       "gate_credit": true,
       "meaning": "functional interface contracts; empty until SPECIFY"
     },
@@ -109,7 +109,7 @@
       "writer": "lead",
       "mutability": "CONTROLLED",
       "stage": "GROUND",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL record; never in a LITE record"},
       "gate_credit": true,
       "meaning": "sourced material profiles the project uses"
     },
@@ -123,7 +123,7 @@
       "writer": "lead",
       "mutability": "CONTROLLED",
       "stage": "GROUND",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL record; never in a LITE record"},
       "gate_credit": true,
       "meaning": "actual machine, provider and operator capability profiles with calibrations"
     },
@@ -137,7 +137,7 @@
       "writer": "lead",
       "mutability": "CONTROLLED",
       "stage": "GROUND",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL record; never in a LITE record"},
       "gate_credit": true,
       "meaning": "material, process and architecture candidates and the recommendation"
     },
@@ -377,7 +377,7 @@
       "stage": "ANY",
       "condition": {"kind": "CONDITIONAL", "when": "the attempt reached enumerate-obligations"},
       "gate_credit": true,
-      "meaning": "expected, future and inapplicable obligations of this attempt with reasons, written before any check; the verdict hashes it"
+      "meaning": "expected, future and inapplicable obligations of this attempt with reasons, written before any check; a LITE attempt adds its captured build mode and LITE_V1 policy projection; the verdict hashes it"
     },
     {
       "id": "version.release_proposal",
@@ -795,7 +795,7 @@
       "writer": "lead",
       "mutability": "IMMUTABLE",
       "stage": "ANALYSIS",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "FULL: every attempt from ANALYSIS on; LITE: the RELEASE attempt"},
       "gate_credit": true,
       "meaning": "derived verification index; check results stay the authority"
     },
@@ -809,7 +809,7 @@
       "writer": "lead",
       "mutability": "DERIVED",
       "stage": "ANALYSIS",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "FULL: every attempt from ANALYSIS on; LITE: the RELEASE attempt"},
       "gate_credit": false,
       "meaning": "CSV derivative of verification.yaml only"
     },
@@ -823,7 +823,7 @@
       "writer": "lead",
       "mutability": "IMMUTABLE",
       "stage": "ANALYSIS",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "FULL: every attempt from ANALYSIS on; LITE: the RELEASE attempt"},
       "gate_credit": true,
       "meaning": "inventory of the verification bundle"
     },
@@ -879,7 +879,7 @@
       "writer": "lead",
       "mutability": "IMMUTABLE",
       "stage": "RELEASE",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL release; never in a LITE release"},
       "gate_credit": true,
       "meaning": "copied manufacturing outputs, rehashed against the approved inventory"
     },
@@ -893,7 +893,7 @@
       "writer": "lead",
       "mutability": "IMMUTABLE",
       "stage": "RELEASE",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL release; never in a LITE release"},
       "gate_credit": true,
       "meaning": "copied drawing sheets, rehashed against the approved inventory"
     },
@@ -949,7 +949,7 @@
       "writer": "lead",
       "mutability": "IMMUTABLE",
       "stage": "RELEASE",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL release; never in a LITE release"},
       "gate_credit": true,
       "meaning": "copied bom.yaml"
     },
@@ -963,7 +963,7 @@
       "writer": "lead",
       "mutability": "IMMUTABLE",
       "stage": "RELEASE",
-      "condition": {"kind": "ALWAYS"},
+      "condition": {"kind": "CONDITIONAL", "when": "every FULL release; never in a LITE release"},
       "gate_credit": true,
       "meaning": "copied bom.csv"
     },

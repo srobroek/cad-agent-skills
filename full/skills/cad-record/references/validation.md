@@ -144,12 +144,14 @@ is reported as a brief defect.
    ([cad-flow change impact — Carry-forward](../../cad-flow/references/change-impact.md#carry-forward)); calibrations and waivers
    are unexpired at the verdict time; a changed input makes the old evidence stale (UNKNOWN, `STALE`).
 8. Coverage: a result's outcomes cover exactly its `expected_obligations`; a stage verdict's `expected` and `future` equal the
-   published `hw/versions/vN/obligations.yaml` its `obligations` hashes, and that file follows the stage policy row: each family
+   published `hw/versions/vN/obligations.yaml` its `obligations` hashes, and that file follows its stage row: the installed
+   `stages` row for a FULL attempt, its captured `policy.row` for a LITE attempt (item 18): each family
    listed, or `inapplicable` with the reason its condition is false; future facets are `PLANNED`. A result whose obligation covers
    continuous travel (a MOTION case, or the approach or insertion of `motion.access` or `assembly.operations`) with any sampled pose set
    has `scope.coverage_kind` SAMPLED (PARTIAL when a scope item is missing), whatever its sampling kind; FULL is valid only for a finite
    scope ([cad-verify results — Coverage](../../cad-verify/references/results.md#coverage)).
-9. Chain and authority: predecessor verdict and gate DR exist and bind, and the predecessor verdict's `result` is PASS; every
+9. Chain and authority: the predecessor verdict exists and binds and its `result` is PASS, and its gate DR exists and binds when
+   the predecessor's stage row (captured in its `obligations.yaml` for a LITE attempt) has gate HUMAN; every
    `binding.verdict_result` equals the `result` of the verdict it hashes; a RELEASE DR binds a PASS RELEASE verdict of its
    `version` whose `release.inventory` result inspected the bound `proposal`; vN is the last line of `input/lead/attempts.txt`;
    approvals are USER or AUTHORITY statements whose `statement.path` file hashes to `transcript_sha256`; PRODUCTION and
@@ -172,14 +174,17 @@ is reported as a brief defect.
 12. Immutability and layout: published DRs, verdicts, manifests and results match their recorded hashes; every inventoried
     `hw/` file matches a layout entry (the whole tree is `record.ownership`'s:
     [cad-verify families](../../cad-verify/references/families.md#record-intake-and-selection)); no path field of evidence
-    names a `.cad-work/` file, a command's `stdout` and `stderr` included
-    ([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1); a
-    command's `argv` and `cwd` record where it ran and are no evidence path.
+    names a `.cad-work/` file. Every path a result, its bundle manifest and each artifact it cites record counts, item-table
+    rows and a command's `stdout` and `stderr` included
+    ([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1), and a
+    `delivery.integrity` row names its unit and `hw/` target, never the unit's scratch source. A command's `argv` and `cwd`
+    record where it ran and are no evidence path.
 13. Derived files: BOM rows sorted by path then component; verification rows by requirement, subject anchor
     ([contract index anchor grammar](contract-index.md)), facet, then criterion `id`, else `property`, an UNKNOWN criterion
     last; each CSV equals its YAML authority.
-14. Bootstrap: after GROUND, `product.yaml` `id` and `title` differ from those of the installed template copy
-    `input/installed/cad-record/assets/project-template/hw/product.yaml`.
+14. Bootstrap: after GROUND, `product.yaml` `id` and `title` differ from those of the installed copy of the template its
+    build mode selects ([record — record-bootstrap](record.md#record-bootstrap)),
+    `input/installed/cad-record/assets/project-template/hw/product.yaml` or `project-template-lite/hw/product.yaml`.
 15. Version runtime: each `runtime.environments[].lock` equals one `build.locks` entry (path and sha256), no
     two environments share a lock, and every built PN's `model.kernel` has the environment of that kernel.
 16. Self-referencing evidence: no verification row cites a `verification.index` result file, and no variant,
@@ -190,6 +195,26 @@ is reported as a brief defect.
     equals a check program an earlier version's result retains is a reused one: some such result of the same family is
     listed in a stage verdict ([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind)
     steps 2 and 3).
+18. Build mode ([record — Build mode](record.md#build-mode)):
+    - Mode: vN's snapshot `hw/product.yaml` has a KNOWN `build_mode`. An earlier snapshot without one is a legacy FULL
+      record; it is read as FULL and never judged by this item. The mode differs from the predecessor's only through an
+      APPROVED CHANGE DR that reopens GROUND.
+    - Discriminators: every `part.yaml` of vN's snapshot has `build_mode: LITE` exactly when the product mode is LITE, and
+      so does a release proposal or manifest of vN. A LITE manifest's `frozen` is the PASS LAYOUT verdict of the attempt's
+      chain and its `scope.exclusions` holds the cad-flow disclosure line; a LITE PROPOSAL plans no RELEASE result,
+      readiness verdict, approval or integrity file.
+    - Profile: a LITE attempt's `obligations.yaml` has `build_mode: LITE` and `method_profile`, `policy.row`,
+      `policy.check_order` and `policy.chain` equal to the installed `lite_stages` method profile, the `lite_stages` row of
+      its stage, the installed `check_order` filtered to that row's families in installed order, and the `lite_stages`
+      IDs in order; `policy.producers` follows [cad-flow run-checks](../../cad-flow/references/stages.md#run-checks) step 1.
+      A FULL attempt's file has none of these keys. A verdict of an earlier attempt is judged against the profile its own
+      `obligations.yaml` captured, never against today's rows.
+    - Lite chain: a LITE attempt's predecessor is the PASS verdict of the `lite_stages` stage before its own (GROUND,
+      LAYOUT, RELEASE), with a GATE DR only after GROUND (item 9).
+    - Promotion: a FULL attempt after LITE attempts has an APPROVED LITE→FULL CHANGE DR that reopens GROUND and binds the
+      lite baseline, `FROZEN` only to the PASS LAYOUT a sealed LITE FINAL froze; no live `part.yaml` keeps
+      `build_mode: LITE`; a lite result enters a FULL verdict only by carry-forward under item 7; and no release REV letter
+      repeats.
 
 ### Inputs
 
@@ -200,14 +225,15 @@ the statement and proposal files it hashes; these items read more:
 
 | Items | Also read |
 |---|---|
-| 1, 2, 12 | every inventoried file; 1 and 2 skip an earlier snapshot ([Earlier snapshots](#earlier-snapshots)) |
+| 1, 2, 12, 18 | every inventoried file; 1 and 2 skip an earlier snapshot ([Earlier snapshots](#earlier-snapshots)) |
 | 3 | the `requirements.yaml` and `manufacturing/selection.yaml` snapshots of the version an APPROVED INTENT `GATE` DR binds |
 | 7, 8, 10, 11, 12, 16, 17 | each result an inventoried verdict lists, CARRIED_FORWARD ones included: its `result.json`, `bundle-manifest.json`, `source/` files, each `artifacts[]` file, the published `stdout` and `stderr` logs named in `commands[]`, and every file its `inspected` lists (REVIEW results have no commands or artifacts; [cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1) |
-| 8, 9 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
+| 8, 9, 18 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
 | 9 | `input/lead/attempts.txt`: one `v<M>` line per attempt number in use when the lead wrote the brief, ascending |
 | 13, 16 | `hw/bom/vN/**` and `hw/verification/vN/**` |
-| 14 | `input/installed/cad-record/assets/project-template/hw/product.yaml` |
+| 14 | `input/installed/cad-record/assets/project-template/hw/product.yaml` or `project-template-lite/hw/product.yaml`, the template the build mode selects |
 | 17 | every producer program: `hw/versions/v*/source/**`, `hw/parts/<PN>/model.py`, `hw/drawings/v*/<SUBJECT>/source/build.py` |
+| 18 | every `hw/versions/v*/record/product.yaml` snapshot and `hw/releases/*/release-manifest.json` |
 
 ## Unit dimensions
 
@@ -255,7 +281,7 @@ check result ([cad-verify results — Outcomes](../../cad-verify/references/resu
 | `UNKNOWN` | otherwise, when a file row or an item could not be assessed: the `unknown_code` all those share, else `INCOMPLETE` |
 
 - Item table: `artifacts/items.json` in the check bundle, role `REPORT`. It is the aggregate's `evidence`; the
-  aggregate's `value` is the tally as text (`42 of 42 files pass`, `17 of 17 items hold`).
+  aggregate's `value` is the tally as text (`42 of 42 files pass`, `18 of 18 items hold`).
   - `record.schema`: one row per universe file of its [scope](#scope), one per earlier snapshot file
     ([Earlier snapshots](#earlier-snapshots)) and one for the stage policy: file, root, sha256 (none for the stage policy,
     which is never hashed), basis `VALIDATED`, `UNCHANGED` or `RECORDED`, outcome and messages. A VALIDATED file is PASS

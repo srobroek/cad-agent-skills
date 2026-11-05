@@ -3,6 +3,12 @@ requirements: []
 preferences: []
 assumptions: []
 questions:
+  - id: Q-000
+    question: 'Would you like a full or lite build?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
   - id: Q-001
     question: 'What is the product, what does it do and what is its purpose?'
     owner: user

@@ -1,0 +1,41 @@
+# cad-agent-skills LITE build record template, copied by cad-record only when hw/ is absent and the owner chose a lite build.
+# A geometry-only prototype record (references/record.md#build-mode): it holds no regime, tolerance, load, environment,
+# motion, accuracy, logistics, capability, severity, standards, supervision or competent-authority placeholder.
+# Every fact starts UNKNOWN with its owner and question (hw/requirements.yaml); nothing here is a default.
+# GROUND replaces id and title with the user's product name and resolves each question with a sourced answer.
+format: cad-agent-skills
+record_version: 1
+id: unnamed-product
+title: Unnamed product
+build_mode: {status: UNKNOWN, reason: 'not yet asked: full or lite build', owner: user, question: Q-000, consequential: true}
+identity:
+  description: {status: UNKNOWN, reason: 'not yet asked: what the product is and does', owner: user, question: Q-001, consequential: true}
+  owner: {status: UNKNOWN, reason: 'not yet asked: who owns the product and its approvals', owner: user, question: Q-002, consequential: true}
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor: {status: UNKNOWN, reason: 'not yet asked: documentation depth maker, pro or regulated', owner: user, question: Q-003, consequential: true}
+intake:
+  status: UNKNOWN
+  purpose: {status: UNKNOWN, reason: 'not yet asked: purpose and use case', owner: user, question: Q-001, consequential: true}
+  users: {status: UNKNOWN, reason: 'not yet asked: who uses, installs and services it', owner: user, question: Q-005, consequential: true}
+service:
+  class: UNKNOWN
+  question: Q-000
+risk:
+  failure_consequence: {status: UNKNOWN, reason: 'not yet asked: consequence of failure', owner: user, question: Q-013, consequential: true}
+  forbidden_outcomes: {status: UNKNOWN, reason: 'not yet asked: outcomes that must never happen', owner: user, question: Q-013, consequential: true}
+authority:
+  approver: {status: UNKNOWN, reason: 'not yet asked: who approves gates and releases', owner: user, question: Q-014, consequential: true}
+release_scope:
+  purpose: {status: UNKNOWN, reason: 'not yet asked: what a release is for', owner: user, question: Q-015, consequential: true}
+  operating_limits: {status: UNKNOWN, reason: 'not yet asked: operating limits a release states', owner: user, question: Q-015, consequential: true}
+  exclusions: {status: UNKNOWN, reason: 'not yet asked: what a release excludes', owner: user, question: Q-015, consequential: true}
+storage:
+  results_in_git: {status: UNKNOWN, reason: 'not yet asked: whether generated results are tracked in git', owner: user, question: Q-016, consequential: true}
+  retention: {status: UNKNOWN, reason: 'not yet asked: how long evidence is retained', owner: user, question: Q-016, consequential: true}
+license:
+  hardware: {status: UNKNOWN, reason: 'not yet asked: hardware license approved by the owner', owner: user, question: Q-017, consequential: true}
+  documentation: {status: UNKNOWN, reason: 'not yet asked: documentation license approved by the owner', owner: user, question: Q-017, consequential: true}

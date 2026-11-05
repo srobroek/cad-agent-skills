@@ -13,10 +13,10 @@ references/prose-contract.md, checked by `record.semantic` item 17.
 | Root | Contract | Instances |
 |---|---|---|
 | `common` | IDs, paths, hashes, units, facts, sources, criteria, subjects, obligations, findings, waivers, authority, binding | none (definitions; root validates contract probes only) |
-| `product` | namespace, record version, identity, frame, rigor, regime, intake, service, risk, authority, release scope, storage, license | `hw/product.yaml` |
+| `product` | namespace, record version, build mode, identity, frame, rigor, regime, intake, service, risk, authority, release scope, storage, license | `hw/product.yaml` |
 | `requirements` | requirements, preferences, assumptions, questions | `hw/requirements.yaml` |
 | [`interfaces`](prose-contract.md#interfaces) (prose) | functional interface contracts | `hw/interfaces.yaml` |
-| `part` | one part: sourcing, model, components, manufacture, intent, procurement, drawing | `hw/parts/{PN}/part.yaml` |
+| `part` | one part: sourcing, model, components, manufacture, intent, procurement, drawing; a LITE part only model, components and functions | `hw/parts/{PN}/part.yaml` |
 | `assembly` | occurrence tree, joints, couplings, operations, service, optional `drawing` (the part drawing-intent shape, `part.schema.json#/$defs/drawing`) | `hw/assembly.yaml` |
 | `bom-row` | one derived BOM row | items of `bom.rows` |
 | [`bom`](prose-contract.md#bom) (prose) | derived BOM for vN | `hw/bom/{V}/bom.yaml`, `hw/releases/{REV}/bom.yaml` |
@@ -25,7 +25,7 @@ references/prose-contract.md, checked by `record.semantic` item 17.
 | `decision` | one immutable DR | `hw/decisions/{DR}.yaml` |
 | `check-result` | one check attempt result (sole observation authority) | `hw/checks/{V}/{CHECK}/{ATTEMPT}/result.json`, `hw/drawings/{V}/{SUBJECT}/coverage.json`, `hw/releases/{REV}/acceptance/package-integrity.json` |
 | `stage-verdict` | one immutable stage verdict | `hw/versions/{V}/stage-verdict.json` |
-| [`stage-policy`](prose-contract.md#stage-policy) (prose) | ordered stage, gate and check policy | `<cad-flow>/assets/stages.yaml` |
+| [`stage-policy`](prose-contract.md#stage-policy) (prose) | ordered stage, gate and check policy; the LITE chain `lite_stages` | `<cad-flow>/assets/stages.yaml` |
 | `material-profile` | one material profile | items of a material library `profiles` |
 | [`material-library`](prose-contract.md#material-library) (prose) | material profiles wrapper | `hw/manufacturing/materials.yaml`, `<cad-record>/assets/manufacturing/material-profiles/*.yaml` |
 | [`capability-profile`](prose-contract.md#capability-profile) (prose) | one capability profile or template | items of a capability library `profiles` |
@@ -43,8 +43,9 @@ references/prose-contract.md, checked by `record.semantic` item 17.
 
 ## Assets
 
-- Template: `<cad-record>/assets/project-template/hw/` (product, requirements, interfaces, assembly, check-plan,
-  manufacturing/{materials,capabilities,selection}); open questions `Q-001`…`Q-017`.
+- Templates: FULL `<cad-record>/assets/project-template/hw/` (product, requirements, interfaces, assembly, check-plan,
+  manufacturing/{materials,capabilities,selection}; open questions `Q-000`…`Q-017`) and LITE
+  `<cad-record>/assets/project-template-lite/hw/` (product, requirements, check-plan, assembly; [record — Template](record.md#template)).
 - Contract fixtures: `<cad-record>/assets/contract-fixtures/<root>/{valid,invalid}/<case>.{yaml,json}` for `common`
   and the ten schema roots; the intended error of each invalid case is in `contract-fixtures/expected-errors.yaml`.
 - Authoring schemas (Draft-07, repository `full/schemas/authoring/`): `skill-frontmatter`, `omp-agent-frontmatter`,
@@ -131,6 +132,8 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
   `REQUIRED_UNKNOWN`, `PHYSICAL_EVIDENCE_REQUIRED`.
 - Service class: `APPEARANCE_CONCEPT`, `FIT_ASSEMBLY`, `FUNCTIONAL_DEMO`, `WORKING_PROTOTYPE`, `PRODUCTION`,
   `SAFETY_CRITICAL`, `UNKNOWN`. Rigor: `maker|pro|regulated`. Kernel: `cadquery|build123d`.
+- Build mode: `FULL|LITE` (`build_mode`), the product source fact `build_mode_fact`; a part or release manifest carries
+  `build_mode: LITE` as its local discriminator ([record — Build mode](record.md#build-mode)).
 - Sourcing: `MAKE|BUY|MADE_TO_DRAWING`. Primary process: `FDM`, `RESIN`, `CNC`, `LASER`, `WATERJET`, `PLASMA`,
   `SHEET_FORMING`, `CASTING`, `MOULDING`, `EXTRUSION`, `PURCHASED`, `OTHER`.
 - Route kind: `FDM`, `RESIN`, `CNC`, `LASER`, `WATERJET`, `PLASMA`, `SHEET_FORMING`, `JOINING`, `CASTING`, `MOULDING`,
@@ -219,7 +222,8 @@ or `REVIEW_MAJOR`.
   `licenses`, `exclusions`, and never `readiness`, `approval`, `integrity` or `inventory`. `phase: FINAL` adds the
   required `readiness` (RELEASE stage verdict), `approval`, `integrity` and `inventory`. The proposal carries the RELEASE
   results and verification index published before it; the `release.inventory` check and the RELEASE verdict hash the
-  proposal, so the proposal cannot hash them; the RELEASE approval DR binds both.
+  proposal, so the proposal cannot hash them; the RELEASE approval DR binds both. A `build_mode: LITE` manifest freezes
+  the PASS LAYOUT attempt with no `frozen.decision` ([record — Acyclic hash graph](record.md#acyclic-hash-graph) step 8).
 - `selection`: `assessment.inputs[{path under hw/, sha256}]` lists every file the assessment read, never
   `hw/manufacturing/selection.yaml`; `assessment.input_sha256` is the set digest over them.
 - Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
@@ -232,7 +236,9 @@ or `REVIEW_MAJOR`.
 
 `stages[13]{id, order, predecessor, gate HUMAN|NONE|REVIEW, gate_subject, owner (skill), procedure[ids],
 checks[{family, applicability ALWAYS|CONDITIONAL, condition, due, required_by, safety, waiver_policy}], reopen[stage]}`,
-and `check_order[family]` (the fixed cost order). Full table: [prose contract](prose-contract.md#stage-policy).
+and `check_order[family]` (the fixed cost order). Optional `lite_stages{method_profile LITE_V1, stages[3]}`: GROUND
+(HUMAN), LAYOUT (NONE), RELEASE (HUMAN) rows of the same shape, every check due at its stage and `waiver_policy` FORBIDDEN.
+Full table: [prose contract](prose-contract.md#stage-policy).
 
 ## Decision bindings (`decision`)
 

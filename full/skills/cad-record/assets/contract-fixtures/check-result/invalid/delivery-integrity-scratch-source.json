@@ -1,0 +1,133 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "delivery-integrity/a1",
+  "check": "delivery-integrity",
+  "attempt": "a1",
+  "family": "delivery.integrity",
+  "producer_role": "lead",
+  "stage": "LAYOUT",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v6/manifest.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "path": "hw/parts/STD-0001/part.yaml",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "path": "hw/parts/STD-0001/model.py",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "path": ".cad-work/part-std-0001/output/part.yaml",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v6/delivery-integrity/a1/source/checks.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/lead/checks.py"
+        ],
+        "cwd": "/p",
+        "exit_code": 0,
+        "stdout": "hw/checks/v6/delivery-integrity/a1/stdout.txt"
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "delivery.integrity@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "delivery.integrity@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "PASS",
+      "value": {
+        "text": "2 of 2 merged targets match"
+      },
+      "criterion": {
+        "property": "merged_targets_matching",
+        "comparator": "EQUALS",
+        "value": 2,
+        "units": "count",
+        "source": {
+          "kind": "POLICY",
+          "reference": "delivery.integrity",
+          "origin": "cad-agent-skills cad-verify skill",
+          "document": "references/families.md"
+        }
+      },
+      "method": {
+        "name": "lead hash audit of merged deliveries",
+        "tool": "checks.py"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/delivery-integrity/a1/artifacts/items.json",
+          "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "artifacts": [
+    {
+      "path": "hw/checks/v6/delivery-integrity/a1/artifacts/items.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "role": "REPORT"
+    },
+    {
+      "path": "hw/checks/v6/delivery-integrity/a1/stdout.txt",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "PASS",
+  "limitations": [
+    "hash equality of merged bytes only; never the delivered content's correctness"
+  ]
+}

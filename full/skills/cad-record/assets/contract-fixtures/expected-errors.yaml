@@ -63,6 +63,8 @@ check-result/invalid/artifact-lists-result-json.json: '$.artifacts[2].path: ''hw
 check-result/invalid/command-log-scratch.json: "$.implementation.commands[0].stdout: '.cad-work/chk/output/stdout.txt' does not match '^hw/"
 # a COMMAND implementation needs at least one command
 check-result/invalid/command-without-commands.json: '$.implementation.commands: [] should be non-empty'
+# a delivery.integrity result names each unit's merged hw/ target, never its .cad-work/ source (references/validation.md item 12)
+check-result/invalid/delivery-integrity-scratch-source.json: "$.input_files[3].path: '.cad-work/part-std-0001/output/part.yaml' does not match '^hw/"
 # the package-integrity result never hashes or inspects release-manifest.json, which hashes it
 check-result/invalid/integrity-hashes-release-manifest.json: '$.input_files[2].path: ''hw/releases/A/release-manifest.json'' should not be valid under {''pattern'': ''(^|/)release-manifest\\.json$''}'
 # the lead writes a review.mechanical_dfm result only for a review stopped at acceptance or a lost or stalled reviewer unit:
@@ -93,6 +95,12 @@ check-result/invalid/unregistered-family.json: "$.family: 'geometry.magic' is no
 # the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.
 # ALLOWABLE needs authority, conditions and derivation
 common/invalid/allowable-without-authority.yaml: "$.fact[4]: 'authority' is a required property"
+# a build mode is the owner's answer: a KNOWN mode cites a USER source, never a policy or an inference
+common/invalid/build-mode-inferred.yaml: "$.build_mode_fact[0].sources: [{'kind': 'POLICY', 'reference': 'a prototype request means a lite build', 'origin': 'lead', 'document': 'cad-flow/SKILL.md'}] does not contain items matching the given schema"
+# a build mode is KNOWN or UNKNOWN, never NOT_APPLICABLE
+common/invalid/build-mode-not-applicable.yaml: "$.build_mode_fact[0]: {'status': 'NOT_APPLICABLE', 'reason': 'the owner did not care', 'reviewed_by': 'lead'} is not valid under any of the given schemas"
+# an unanswered build mode is a consequential UNKNOWN with owner and question
+common/invalid/build-mode-unknown-without-question.yaml: "$.build_mode_fact[0]: {'status': 'UNKNOWN', 'reason': 'not yet asked: full or lite build', 'owner': 'user'} is not valid under any of the given schemas"
 # a COMPONENT subject names its PN
 common/invalid/component-without-pn.yaml: "$.subject[0]: 'PN' is a required property"
 # a datasheet source names a url or a retained artifact
@@ -185,20 +193,40 @@ part/invalid/assembly-zero-without-import.yaml: "$.model: 'import' is a required
 part/invalid/bad-revision.yaml: "$.rev: 'I' does not match"
 # FINISHED_CRITICAL supports need allowance, finish and inspection
 part/invalid/finished-critical-support-incomplete.yaml: "$.intent.route[0].supports: 'allowance' is a required property"
+# a part without build_mode keeps the FULL shape
+part/invalid/full-without-sourcing.yaml: "$: 'sourcing' is a required property"
+# a LITE part names no material: a component material_profile is forbidden
+part/invalid/lite-component-material.yaml: "$.components[0]: False schema does not allow 'pla_generic'"
+# every LITE intent function links the requirements its geometry meets
+part/invalid/lite-function-without-requirement.yaml: "$.intent.functions[1]: 'requirements' is a required property"
+# a LITE part keeps a draft X revision
+part/invalid/lite-released-revision.yaml: "$.rev: 'A' does not match '^X[1-9][0-9]*$'"
+# a LITE part has no sourcing, transparency, manufacture, procurement or drawing field
+part/invalid/lite-sourcing.yaml: "$: False schema does not allow 'MAKE'"
 # a made operation requires capability (profile id or UNKNOWN)
 part/invalid/made-op-without-capability.yaml: "$.intent.route[1]: 'capability' is a required property"
 # a MAKE part requires manufacture
 part/invalid/make-without-manufacture.yaml: "$: 'manufacture' is a required property"
+# the part discriminator is LITE or absent
+part/invalid/part-mode-full.yaml: "$.build_mode: 'LITE' was expected"
 # a PURCHASED operation forbids capability
 part/invalid/purchased-with-capability.yaml: "should not be valid under {'anyOf': [{'required': ['capability']}, {'required': ['supports']}, {'required': ['orientation']}]}"
 # a consequential UNKNOWN requires owner and question
 product/invalid/consequential-unknown-without-question.yaml: "$.risk.severity: 'question' is a required property"
 # additionalProperties: product carries no workflow stage (flow)
 product/invalid/flow-stage-field.yaml: "$: Additional properties are not allowed ('flow' was unexpected)"
+# a KNOWN FULL build keeps the full product shape
+product/invalid/full-mode-without-regime.yaml: "$: 'regime' is a required property"
 # an import's originals live at hw/imports/DR-###/original, never under hw/docs/
 product/invalid/import-snapshot-in-docs.yaml: "$.import.original_snapshot: 'hw/docs/import/original' does not match"
 # a KNOWN fact requires sources
 product/invalid/known-fact-without-source.yaml: "$.identity.owner: 'sources' is a required property"
+# a legacy product without build_mode keeps the full product shape
+product/invalid/legacy-without-loads.yaml: "$.intake: 'loads' is a required property"
+# a LITE build is an APPEARANCE_CONCEPT prototype
+product/invalid/lite-fit-assembly.yaml: "$.service.class: 'APPEARANCE_CONCEPT' was expected"
+# the product build mode is a sourced fact, never a bare value
+product/invalid/mode-raw-value.yaml: "$.build_mode: 'LITE' is not valid under any of the given schemas"
 # rigor is maker|pro|regulated (lowercase) or an UNKNOWN fact; PRO matches neither
 product/invalid/rigor-default-pro.yaml: "$.rigor: 'PRO' is not valid under any of the given schemas"
 # a known service class requires its decision
@@ -209,6 +237,18 @@ product/invalid/wrong-format.yaml: "$.format: 'cad-agent-skills' was expected"
 release-manifest/invalid/final-without-integrity.json: "$: 'integrity' is a required property"
 # a FINAL manifest names the RELEASE readiness verdict
 release-manifest/invalid/final-without-readiness.json: "$: 'readiness' is a required property"
+# a FULL package names its FREEZE gate decision
+release-manifest/invalid/full-without-frozen-decision.json: "$.frozen: 'decision' is a required property"
+# a LITE package payload has no manufacturing, drawing or BOM file
+release-manifest/invalid/lite-manufacture-payload.json: "$.planned[14].role: 'MANUFACTURE' should not be valid under {'enum': ['MANUFACTURE', 'DRAWING', 'BOM']}"
+# a LITE package claims CAD_VALID PASS only, never a physical facet
+release-manifest/invalid/lite-physical-claim.json: "$.claims[1].facets[0]: 'CAD_VALID' was expected"
+# no LITE check is waived
+release-manifest/invalid/lite-waiver.json: "$.waivers: ['DR-004'] is expected to be empty"
+# a LITE package freezes a PASS LAYOUT version, which has no gate decision
+release-manifest/invalid/lite-with-frozen-decision.json: "$.frozen: False schema does not allow 'DR-002'"
+# a LITE package states the exact LITE disclosure line in its scope exclusions
+release-manifest/invalid/lite-without-disclosure.json: "$.scope.exclusions: ['no functional or physical claim'] does not contain items matching the given schema"
 # a PROPOSAL excludes the not-yet-written approval and integrity
 release-manifest/invalid/proposal-with-approval.json: "should not be valid under {'anyOf': [{'required': ['approval']}, {'required': ['integrity']}, {'required': ['inventory']}, {'required': ['readiness']}]}"
 # a PROPOSAL never hashes the RELEASE readiness verdict (that verdict hashes the proposal)
@@ -259,6 +299,12 @@ selection/invalid/weighted-pass-over-fail.yaml: "should not be valid under {'con
 stage-policy/invalid/conditional-without-condition.yaml: "$.stages[5].checks[1]: 'condition' is a required property"
 # HUMAN and REVIEW gates name their gate subject
 stage-policy/invalid/human-gate-without-subject.yaml: "$.stages[0]: 'gate_subject' is a required property"
+# a LITE check is due at its own stage; the LITE chain has no future obligation
+stage-policy/invalid/lite-future-due.yaml: "$.lite_stages.stages[0].checks[1].due: 'GROUND' was expected"
+# the LITE chain is GROUND/HUMAN -> LAYOUT/NONE -> RELEASE/HUMAN
+stage-policy/invalid/lite-layout-human-gate.yaml: "$.lite_stages.stages[1].gate: 'NONE' was expected"
+# every due LITE check is FORBIDDEN to waive
+stage-policy/invalid/lite-waivable-check.yaml: "$.lite_stages.stages[1].checks[1].waiver_policy: 'FORBIDDEN' was expected"
 # no old stage aliases: FREEZE, not DESIGN_FREEZE
 stage-policy/invalid/old-stage-alias.yaml: "$.stages[11].id: 'DESIGN_FREEZE' is not one of ['GROUND', 'INTENT', 'SPECIFY', 'CONCEPT', 'VARIANT', 'LAYOUT', 'PARTS', 'DETAIL', 'BOM', 'ANALYSIS', 'CRITIQUE', 'FREEZE', 'RELEASE']"
 # exactly 13 stages
