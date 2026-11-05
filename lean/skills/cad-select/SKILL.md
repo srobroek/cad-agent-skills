@@ -1,23 +1,26 @@
 ---
 name: cad-select
 description:
-  Establish a product use case and select traceable material, manufacturing routes, and architecture; use for material, process, sourcing,
-  or manufacturing-suitability decisions.
+  Establish a product's build mode and use case, and select traceable material, manufacturing routes, and architecture; use for
+  full-or-lite, material, process, sourcing, or manufacturing-suitability decisions.
 ---
 
 # CAD selection
 
 TRIGGER
 
-- The product use case, service class, materials, manufacturing routes, sourcing, or architecture must be assessed.
+- The build mode (full or lite), product use case, service class, materials, manufacturing routes, sourcing, or architecture must be
+  assessed.
 
 * CAD geometry without a choice → cad-design; manufacturing verification of a fixed choice → cad-verify.
 
 ## Workflow
 
-1. Follow `references/selection.md` → `intake-use-case` in GROUND to establish the use case before comparing candidates. Ask focused
-   questions about purpose, users, environment, load magnitude/direction/cycles, motion/duty/life, heat, moisture, chemicals, UV, corrosion,
-   accuracy, finish, failure consequence/standards, quantity, budget, lead time, maintenance/repair, equipment, operators and outsourcing.
+1. Follow `references/selection.md` → `intake-use-case` in GROUND. Settle the build mode first (→ `Choose the build mode`): ask its exact
+   full-or-lite question in the first batch unless the owner already named a mode, and never infer one. FULL: ask focused questions about
+   purpose, users, environment, load magnitude/direction/cycles, motion/duty/life, heat, moisture, chemicals, UV, corrosion, accuracy,
+   finish, failure consequence/standards, quantity, budget, lead time, maintenance/repair, equipment, operators and outsourcing. LITE: ask
+   only the `Lite intake` questions, never a material, vendor, printer, process or stress question; steps 3-8 do not run.
 2. Record each reply whole in one batch at GROUND (`references/selection.md` → `Ask and finish intake` step 2): its facts, volunteered ones
    included, and its requirements, preferences, assumptions and open questions as distinct collections, each criterion one a stage can
    evidence (→ `Write criteria a stage can evidence`). An answer that states a field's value or that it asks nothing settles that field
@@ -32,9 +35,9 @@ TRIGGER
 5. Follow `references/selection.md` → `select-candidates` in INTENT before sourcing-research units are dispatched to form complete
    material/process/architecture routes per part and contacting pair.
 6. After researcher deliveries are merged, follow `references/selection.md` → `assess-selection` in INTENT. Assess a criterion at INTENT
-   only when INTENT holds its evidence, else mark it PLANNED with its due stage; a material settles by identity, its consumable form at
-   PARTS. Eliminate hard-constraint FAILs before comparing preferences; keep mandatory UNKNOWNs conditional and never let a score revive
-   them.
+   only when INTENT holds its evidence, else mark it PLANNED with its due stage; a material settles by identity, its consumable form,
+   colour and lot at PARTS. Eliminate hard-constraint FAILs before comparing preferences; keep mandatory UNKNOWNs conditional and never let
+   a score revive them.
 7. Record assessed candidates and the recommendation in the selection record per `references/selection.md` → `Recommend`, plus limits,
    accepted tradeoffs and reversal triggers. A NONE recommendation still ends INTENT in a BLOCKED verdict whose report asks each blocking
    question by its id.
