@@ -19,7 +19,7 @@ stages:
 - {stage: ANALYSIS, expected: [verification.index@product], future: [], verdict: PASS, gate: 'APPROVED after `approve ANALYSIS <vN>`', must_show: [mass source]}
 - {stage: CRITIQUE, expected: [review.mechanical_dfm@assembly], future: [], verdict: 'PASS when the review is PASS', gate: REVIEW, must_show: [separate outcomes]}
 - {stage: FREEZE, expected: [record.schema@product], future: [], verdict: PASS, gate: 'APPROVED after `approve FREEZE <vN>`', must_show: [frozen digest]}
-- {stage: RELEASE, expected: [release.inventory@product], future: [], verdict: PASS, gate: 'APPROVED after `approve RELEASE <vN> REV A`', must_show: [release ceiling]}
+- {stage: RELEASE, expected: [release.inventory@product], future: [], verdict: PASS, gate: 'APPROVED after `approve RELEASE <vN>`', must_show: [release ceiling]}
 acceptable_ends:
 - SEALED: REV A released within the ceiling
 open_at_end: []
