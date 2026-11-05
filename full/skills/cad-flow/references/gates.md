@@ -23,7 +23,8 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
 2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
    each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, SAMPLED coverage and absent physical
-   evidence); each preview, GLB, drawing and BOM as an absolute path on its own line.
+   evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. An UNKNOWN is a limit with the stage it falls due
+   at, never a question to answer now: the packet asks only for the decision of step 4.
 3. INTENT and VARIANT add the options the verdict assessed
    ([cad-select assess-selection](../../cad-select/references/selection.md#assess-selection) and
    [cad-design compare-variants](../../cad-design/references/concepts.md#compare-variants)): feasible, conditional (with its unknowns) and
@@ -36,9 +37,11 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 An approval is an explicit statement from the user, or from the authority `product.yaml` names for this scope, that names the stage and `vN`
 (and the option for INTENT or VARIANT).
 
-1. Allocate the next unused DR number and save the message bytes exactly as received at `hw/decisions/statements/DR-###.txt`, `test ! -e`
-   first (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)): no newline or whitespace added or trimmed, so write them with
-   the host's file-write tool or `printf '%s'`, never `echo` or a heredoc.
+1. Allocate the next unused DR number and save the message exactly as received at `hw/decisions/statements/DR-###.txt`, `test ! -e` first
+   (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)): the file holds the message's own bytes and nothing else, with no
+   quotation marks around it and no newline or whitespace added or trimmed. Write it with the host's file-write tool, the message alone as
+   the content, or with `printf '%s' '<message>' > <file>`, whose single quotes are shell syntax and inside which each `'` of the message
+   is written `'\''`; never `echo` or a heredoc. The reply `approve GROUND v1` is saved as those 17 bytes.
 2. Write `hw/decisions/DR-###.yaml` with that number, composed and validated in scratch ([stages Lead scratch](stages.md#lead-scratch)),
    `test ! -e` first: `kind: GATE`, `state: APPROVED` or `REJECTED`,
    `binding: {kind: STAGE, stage, version, verdict: {path, sha256}, verdict_result}` with `verdict_result` copied from that verdict's
