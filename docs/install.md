@@ -173,6 +173,6 @@ profiles' `env TMPDIR=…` command forms match under its bash and fish parsers a
 Do not copy a plugin manifest for Codex, OpenCode or Kiro. Installed `cad-flow/SKILL.md` frontmatter supplies plugin name/version. If a
 discovered installed skill, role or schema differs, report a defect/open question; never patch installed files.
 
-Each host's per-agent model override mechanism is summarized in [smoke.md](smoke.md#observed-smoke-findings), with links
-to host documentation. This documents configuration only; it does not recommend a model or effort tier. Round-4 A/B
-results do not support changing per-role defaults; see [limitations](limitations.md#model-routing-evidence).
+Each host's per-agent model selection is summarized in [smoke.md](smoke.md#observed-smoke-findings), each row with its host
+documentation or the smoke log that observed it. This documents configuration only; it does not recommend a model or effort
+tier. Round-4 A/B results do not support changing per-role defaults; see [limitations](limitations.md#model-routing-evidence).

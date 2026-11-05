@@ -76,7 +76,7 @@ model routing and resource loads remain unproved until live smoke runs per host.
 
 ### Model-routing evidence
 
-Each host exposes a per-agent model override mechanism; current keys and precedence are documented in
+Each host's per-agent model selection, with the host documentation or smoke log that supports each part, is in
 [smoke.md](smoke.md#observed-smoke-findings). These describe routing only, not which model or effort a role should use.
 
 Round-4 A/B evidence does not support changing per-role defaults. OMP's terra/high and luna/xhigh runs confound model
