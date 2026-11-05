@@ -37,8 +37,14 @@ and host agent definitions. It does not itself build or test a product.
 - Without FreeCAD the readback is UNKNOWN `NOT_RUN` and nothing is sealed; another importer does not substitute.
 - Promotion to a full build is always available as a CHANGE that reopens GROUND, but it guarantees no qualification
   without redesign. Lite geometry enters the full build as concept input only.
-- The lite host time targets are unmeasured goals ([smoke.md](smoke.md#lite-timing-targets)); no completed lite
-  cell has been timed.
+
+Lite uv cache size varies by build and host. One round-7 full lite cell reported about 5 GB and 130,000 files/inodes
+(`smoke-logs-r7/lite-claude-full/EVIDENCE-NOTE-uv-cache.txt`); a separate lean lite cell reported about 1.1 GB and
+130,000 inodes (`smoke-logs-r7/lite-kiro-lean/REPORT.md`). A full-build cell's project used about 43,000 additional
+inodes without its cache (`smoke-logs-r7/lite-claude-full/REPORT.md`). The round-7 `/tmp` tmpfs had 1,048,576 inodes
+and ran out. Keep smoke projects and their caches on a disk-backed filesystem, never `/tmp`; see the
+[smoke procedure](smoke.md#procedure) and [install guidance](install.md#freecad-for-lite-builds).
+- The lite host time targets are unmeasured goals ([smoke.md](smoke.md#lite-timing-targets)); no completed lite cell has been timed.
 
 ## Host and tool limits
 

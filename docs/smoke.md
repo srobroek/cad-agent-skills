@@ -76,8 +76,12 @@ omp_smoke() {
 under the temporary HOME (for mise, use `dirname "$(mise which omp)"`). Settings, credentials and what still loads are
 under "Environment isolation" below. Project `.omp/` discovery remains active, so use only the fresh project and plugin.
 
-1. Fresh project: `SMOKE_PROJECT=$(mktemp -d)`, then `git -C "$SMOKE_PROJECT" init`. Confirm `hw/` and
-   `.cad-work/` are absent. Never reuse a project between cells.
+1. Fresh project: use a disk-backed root such as `$HOME/tmp/cad-agent-skills/projects/`, and verify its backing
+   filesystem with `df` before the run. Never use `/tmp` or another tmpfs for a smoke project, including as `mktemp`'s
+   default. Create each project under the verified root, for example:
+   `mkdir -p "$HOME/tmp/cad-agent-skills/projects" && SMOKE_PROJECT=$(mktemp -d "$HOME/tmp/cad-agent-skills/projects/cell.XXXXXX")`,
+   then `git -C "$SMOKE_PROJECT" init`. Confirm `hw/` and `.cad-work/` are absent. Never reuse a project between
+   cells. Record the absolute project path and backing filesystem, and keep the project on disk after the cell.
 2. Install the variant at project scope with the commands in [install.md](install.md) for this harness. For Claude
    Code and OMP, the marketplace route is the release route; a run with `--plugin-dir` is recorded as a local run.
    For Claude Code, declare the marketplace at project scope too, from `SMOKE_PROJECT`:
@@ -363,24 +367,23 @@ candidate, beside the full-build cells above.
 FreeCAD is a runtime prerequisite of the test host, never part of the plugin or the project
 ([install](install.md#freecad-for-lite-builds)). Before the cell:
 
-1. Install FreeCAD outside the project and the evidence directory.
-   - macOS: the FreeCAD app. Its console `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd` is found
-     by preflight without `PATH`.
-   - Linux: the release's AppImage for the host architecture and its `-SHA256.txt` file from the FreeCAD release
-     page, checked with `sha256sum -c`, then unpacked with `<AppImage> --appimage-extract` in its directory into
-     `squashfs-root/`. The console is `squashfs-root/usr/bin/freecadcmd`.
-2. Linux: make a directory outside the project and the evidence that holds only a `freecadcmd` symlink to that
-   console. Never put the bundle's `usr/bin` itself on `PATH`: its `python` and `pip` would shadow the host's.
-3. Put that directory on the `PATH` of the cell's scrubbed environment, in every harness, server and `tmux` start.
-4. From the cell environment, record `command -v freecadcmd`, its resolved path, the first line `freecadcmd --version`
-   prints, the FreeCAD release and the AppImage's sha256.
+1. Provide FreeCAD outside the project and evidence directory. Use the host's FreeCAD console, whether it is already
+   installed or provisioned for the cell. The macOS app console is
+   `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd`. On Linux, one option is the FreeCAD release
+   AppImage for the host architecture, verified against the release's SHA256 file and unpacked with
+   `<AppImage> --appimage-extract`; its console is `squashfs-root/usr/bin/freecadcmd`. Never put the AppImage
+   bundle's `usr/bin` itself on `PATH`: its `python` and `pip` would shadow the host's.
+2. In the actual preflight and checker shell environments, record `command -v freecadcmd`, the resolved console path
+   (`realpath`), and the first line of `freecadcmd --version`. Compare preflight `tools[]` `argv[0]` and `version` with
+   `freecad-run.json` `argv[0]` and `freecad-readback.json` `FreeCAD.Version()`; they must agree on resolved path and
+   version. Record the SHA-256 of the resolved console binary in external smoke evidence for each environment; these
+   are operator records, not fields in the product JSON files. Use the host-resolved console when they agree; do not
+   require a `PATH` symlink to override the host's shell configuration.
 
-The Linux smoke host provides FreeCAD 1.1.4 this way: the extracted x86_64 AppImage, whose console is
-`~/tmp/cad-agent-skills/freecad/squashfs-root/usr/bin/freecadcmd`. Probed on 2026-11-05 through such a symlink on a
-scrubbed `PATH`, `freecadcmd --version` printed `FreeCAD 1.1.4 Revision: 20260928 (Git shallow)` and exited 0; the
-resolved path lies under `/local/home/`, where that host's home directory resolves. Preflight must report the same
-resolved path and version ([preflight](../full/skills/cad-flow/references/preflight.md#freecad)). The lead never
-installs FreeCAD. A host denial of the checker's FreeCAD call is a finding, never a reason to grant broader access.
+The round-7 Kiro lite cell recorded the AppImage sha256, `command -v`, resolved path and version in external smoke
+evidence. `command -v` returned the cell's `freecadcmd` symlink; its realpath was the existing console under
+`/local/home/`. For each environment, record the sha256 of the resolved console binary itself (not only the AppImage)
+and compare the preflight and checker paths and versions without assuming a PATH symlink overrides shell configuration.
 
 ### Lite procedure
 
@@ -405,11 +408,11 @@ A lite cell also needs these rows:
 
 | Item | Source | PASS when |
 |---|---|---|
-| FreeCAD | the recorded host facts; `.cad-work/lead/preflight.json` `tools[]` | preflight reports the recorded path and version |
+| FreeCAD | host facts and external smoke evidence; `.cad-work/lead/preflight.json` `tools[]`; each LAYOUT `geometry.readback` bundle | preflight `tools[]` `argv[0]` and version match checker `freecad-run.json` `argv[0]` and `freecad-readback.json` `FreeCAD.Version()`; external evidence records `command -v`, resolved console path and that binary's sha256 in both environments |
 | build mode and intake | the first batch in the transcript; `hw/product.yaml`; the QUESTION decision | `Q-000` asked in the first batch with the recommendation and tradeoff line; only lite template questions; `build_mode` KNOWN LITE from A-01; service class `APPEARANCE_CONCEPT` from that answer's QUESTION decision |
 | stages and gates | `hw/versions/<vN>/stage-verdict.json`; `hw/decisions/` | verdicts for GROUND, LAYOUT and RELEASE only, each PASS; GROUND and RELEASE approved with the exact sent bytes; LAYOUT `NOT_REQUIRED`; no verdict or decision for a skipped stage |
-| FreeCAD readback | the LAYOUT `geometry.readback` check bundles | the checker's project-local helper source and its fresh structured output: every delivered STEP's sha256 equal to the frozen file, the resolved executable and FreeCAD version equal to preflight's, and each solid's validity, closure, volume and bounding box; result PASS |
-| package | `hw/releases/A/` and its FINAL `release-manifest.json` | sealed last with `build_mode: LITE` and integrity PASS; every inventoried file's sha256 equals its bytes; the contents of the [lite release](../full/skills/cad-release/references/release.md#lite-release), with no `manufacturing/`, drawing, BOM or STL; the disclosure line in every packet and the build guide; the outer digest reported outside the package |
+| FreeCAD readback | LAYOUT `geometry.readback` bundles plus external smoke evidence | the checker's project-local helper source and fresh output show each delivered STEP's sha256 equals the frozen file; `freecad-run.json` `argv[0]` matches preflight `tools[]` `argv[0]`; `freecad-readback.json` `FreeCAD.Version()` matches the preflight version; the external evidence includes the resolved console's binary sha256 from both environments; every solid's validity, closure, volume and bounding box is present; result PASS |
+| render delivery | RELEASE packet, its SVG path and displayed/opened system-viewer evidence | follow [cad-flow Lite packets](../full/skills/cad-flow/references/gates.md#lite-packets): report the SVG's absolute path and exactly the host-appropriate `Render:` line; a rasterized image read into the lead context is not displayed to the owner |
 | claims | the package claims and `verification.yaml` | only CAD_VALID outcomes copied from the verification index |
 | timing | transcript timestamps | wall time per stage and in total, from the first prompt to the sealed package; operator response time, install, login, warm-up and cleanup recorded apart |
 
@@ -435,7 +438,7 @@ when the run ends with the outcome below and without a sealed package; a rejecte
 
 | Negative | How the operator induces it | Correct outcome |
 |---|---|---|
-| FreeCAD absent | no `freecadcmd` on `PATH` and no macOS app | the GROUND packet shows FreeCAD unavailable; LAYOUT stops BLOCKED with `geometry.readback` UNKNOWN `NOT_RUN` (`FreeCAD executable unavailable; STEP compatibility not tested`), the STEP and render shown as unverified blocked artifacts, and the resume action |
+| FreeCAD absent | no `freecadcmd` on `PATH` and no macOS app | the GROUND packet shows FreeCAD unavailable; LAYOUT stops BLOCKED with `geometry.readback` UNKNOWN `NOT_RUN` (`FreeCAD executable unavailable; STEP compatibility not tested`); any preview's owner visibility is reported using the [lite packet render rule](../full/skills/cad-flow/references/gates.md#lite-packets), never assumed from reading a raster into the lead context; the resume action is stated |
 | console without import | the launcher passes `--version` to the real console and exits 0 on any other call | `geometry.readback` FAIL or UNKNOWN for the missing structured output, never PASS; LAYOUT stops |
 | bare approval | reply `ok` to the GROUND packet | no GATE decision; nothing advances; the lead asks again for `approve GROUND <vN>` |
 | multipart collision | the first prompt, A-02 and A-11 ask for two parts, a base and a back plate whose lower 5 mm sits inside the base | LAYOUT lists `geometry.interference@assembly`, whose condition now holds, and FAILs on the shared volume |

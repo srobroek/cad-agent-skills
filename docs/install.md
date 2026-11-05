@@ -178,19 +178,27 @@ imports each one in FreeCAD's console through a helper it writes in the product 
 runtime prerequisite of the host. Neither plugin ships or installs it, the lead never installs it, and a full build
 does not need it.
 
-Install it on the host, outside the product project:
+Provide a FreeCAD console on the host, outside the product project:
 
 - macOS: the FreeCAD app. Its console is `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd`.
 - Linux: the release AppImage for the host architecture, checked against the release's SHA256 file and unpacked with
-  `--appimage-extract`; then a `PATH` directory that holds only a `freecadcmd` symlink to
-  `squashfs-root/usr/bin/freecadcmd` ([smoke: Provide FreeCAD](smoke.md#provide-freecad)).
+  `--appimage-extract`; its console is `squashfs-root/usr/bin/freecadcmd`. Do not put the bundle's `usr/bin` on
+  `PATH`: its `python` and `pip` would shadow the host's. See [smoke: Provide FreeCAD](smoke.md#provide-freecad).
 
-Preflight resolves `freecadcmd` or `FreeCADCmd` on the lead's `PATH`, then the macOS app path above, and records the
-resolved path and the first line `--version` prints; it never uses the GUI binary
-([preflight](../full/skills/cad-flow/references/preflight.md#freecad)). When neither resolves, the run continues: the
-GROUND packet shows FreeCAD as unavailable, LAYOUT records `geometry.readback` as UNKNOWN `NOT_RUN` and stops BLOCKED,
-and no lite package is sealed. Once FreeCAD is available, the unchanged attempt reruns. A lite release claims that its
-STEP opens in the recorded FreeCAD version only, not in every version.
+Preflight resolves `freecadcmd` or `FreeCADCmd` on the lead's `PATH`, then the macOS app path above
+([preflight](../full/skills/cad-flow/references/preflight.md#freecad)). The checker may use any console the host
+resolves. Compare preflight `tools[]` `argv[0]` and `version` with `freecad-run.json` `argv[0]` and
+`freecad-readback.json` `FreeCAD.Version()`; they must agree on resolved path and version. Record the resolved path,
+`command -v`, version and binary sha256 from each environment in external smoke evidence; the product JSON fields do not
+store the executable hash. When neither executable is found, the run continues: the GROUND packet shows FreeCAD as
+unavailable, LAYOUT records `geometry.readback` as UNKNOWN `NOT_RUN` and stops BLOCKED, and no lite package is sealed.
+Once FreeCAD is available, the unchanged attempt reruns. A lite release claims that its STEP opens in the recorded
+FreeCAD version only, not in every version.
+
+Lite uv cache size and inode count vary by build and host. One round-7 full lite cell reported about 5 GB and
+130,000 files/inodes; a separate lean lite cell reported about 1.1 GB and 130,000 inodes
+([limitations](limitations.md#lite-build-limits)). Keep the smoke project and cache on a disk-backed filesystem, not
+`/tmp`; verify the backing filesystem as [the smoke procedure](smoke.md#procedure) specifies.
 
 ## Variant and provenance
 
