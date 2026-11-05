@@ -46,6 +46,10 @@ env -i HOME="$HOME" PATH="$PATH" TERM="$TERM" <needed credential and region vari
 ```
 
 Include only variables required for that host. Record the exact environment variable names (never secret values).
+`tmux` sets each pane's `SHELL` to its `default-shell`, which the user's tmux configuration can set: start every cell's
+`tmux` server with `-f <cell tmux.conf>` whose `default-shell` is the cell's shell, and record the shell the harness
+reports. Kiro matches role-profile rules with a parser chosen from `SHELL`
+([Kiro shell parsers](limitations.md#observed-host-limitations)).
 Capture every output to `$SMOKE_LOG/<harness>-<variant>/`, outside the project.
 
 For OMP, run every OMP command of the cell, including install, listing and cleanup, through one wrapper with a temporary
@@ -106,8 +110,11 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    copy is `RELEASED` and `.cad-work/lead/active/` is absent. The ordinary gate advances to the successor in the same
    turn ([cad-flow's advance](../full/skills/cad-flow/references/stages.md#advance)); ignore successor-stage work for
    this cell. An INTENT recommendation of NONE ends its attempt BLOCKED with no packet; answer the questions its report
-   asks as the brief says. If the lead reports a stop that asks nothing the brief answers before the decision is
-   recorded, reply exactly `end the session`, the brief's last scripted turn.
+   asks as the brief says. Answer every lead stop as soon as it arrives, from the brief alone, and never wait for or
+   consult anyone outside the cell: a stop that asks nothing the brief answers before the decision is recorded gets
+   exactly `end the session`, the brief's last scripted turn. The neutral line of step 3 is only for the two resume
+   cases there. A stop after a BLOCKED attempt whose blockers are all lead-fixable is also a lead finding
+   ([cad-flow's Stop procedure](../full/skills/cad-flow/references/stages.md#stop-procedure)).
 
 8. Validate, from `SMOKE_PROJECT`, with the run's own preflight tools under `.cad-work/lead/validator/bin/`
    ([cad-record validation](../full/skills/cad-record/references/validation.md#schema-validation)). First load every
@@ -130,7 +137,7 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    no extra family, every `must_show` present, no `must_not` seen.
 10. Finish: confirm the lead released its own claim (`.cad-work/lead/active/claim.yaml` absent, the session copy
     present). A headless run that stops early, a turn that ends on a stop or a question the brief does not answer
-    before the INTENT decision, still gets `end the session` as the next reply on the same session id; never start
+    before the INTENT decision, still gets `end the session` (step 7) as the next reply on the same session id; never start
     a second session to release the claim. A claim still ACTIVE after that reply fails the lead-claim row. Keep the
     project; delete nothing.
 
@@ -174,6 +181,9 @@ as a shell variable because assignment can break command lookup.
 Kiro CLI V3's approval driver used `--poll 1.0` by default; the round-4 driver used `--poll 0.25`. On one full cell,
 approval waits were 6.93% of harness time at the default and 5.33% after switching; the later interval included a
 75.93 s driver stall. Record the poll setting and observed wait share; this does not establish improvement or a target.
+Run the driver with `--poll 0.25 --monitor-linger 20`. At the 3 s default linger the driver leaves the agent monitor
+and reopens it more than 8 times a minute, so its monitor-loop guard stops approving (round-5 lean cell: one call
+waited 46.4 s); after the switch to 20 s it did not recur over 300 approvals.
 When `invoke_sub_agent` returns reply text only, the task id is unavailable to the lead; map each brief path to its
 session-store `sub_agent_start` and `sub_agent_complete` records. An AIM-managed injector rewrote installed role JSON
 at launch in the observed Kiro environment; compare role hashes before and after launch and record any mutation as a
@@ -188,7 +198,7 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 | Claude Code | Start, resume and list through `claude_smoke` below: `--setting-sources project,local --strict-mcp-config`, an auth-only `--settings` file, and `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`. `claude plugin` install and cleanup commands run without the wrapper. |
 | Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. A vendor wrapper around the CLI rewrites a fresh config: if it injects MCP servers, suppress them or record them; it also adds `approvals_reviewer` and telemetry settings, which must be recorded as deviations. |
 | OpenCode | For the server and every client command: `OPENCODE_CONFIG_DIR` an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`, and `XDG_DATA_HOME`, `XDG_STATE_HOME` and `XDG_CACHE_HOME` per-cell directories outside the project and evidence, so the session database, logs and state are the cell's own. The server prints `server password <random>`: keep it in a mode `0600` file outside the project and evidence, pass it to every client as `OPENCODE_PASSWORD`, and redact it in the server log. Pass provider credentials and region in environment variables (logins stored with `opencode auth` live in the default data directory) and fix the model with `--model <provider/model#variant>` on each `run`. |
-| Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load |
+| Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load. Pin `SHELL=/bin/bash` through the cell's tmux `default-shell` (Procedure) and record the session's shell from its system-information `Shell:` line |
 
 | Harness | Per-agent model override | Host reference |
 |---|---|---|
@@ -313,7 +323,7 @@ isolation, not an OS boundary.
 | resolved resources | `.cad-work/lead/preflight.json`; the `.cad-work/<unit>/input/` copies | every path absolute and existing; no write to an installed file; a copy of an installed file under `.cad-work/<unit>/input/` is allowed only when byte-identical to it (equal sha256) |
 | lead claim and session | `.cad-work/lead/active/claim.yaml` during the run, the session copy after | one ACTIVE claim whose `session` is the host's native id (or `UNAVAILABLE-<stamp>` with the limit reported), released at finish |
 | GROUND and INTENT verdicts | `hw/versions/<vN>/stage-verdict.json` and their sha256 | each validates; PASS before its gate is presented |
-| gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`, the quoted reply equals the scripted text |
+| gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`; `choice` is the scripted option and `statement.quote` its `approve` and `choose` words; the statement file holds exactly the sent bytes, `, then end the session` included, with no added quotes or newline ([cad-flow's gate-decision procedure](../full/skills/cad-flow/references/gates.md#record-a-gate-decision)) |
 | native dispatch | native transcript/events and `.cad-work/lead/units.yaml` | each unit's role, native task id (or `UNAVAILABLE` with the host limit stated), brief sha256, state and exact `task_text`. Codex: compare logged `task_text` with the role name, absolute brief path and absolute `agent-roles.md` reference; inspect each rollout's native `spawn_agent` event for `fork_turns: "none"`, even when `message` is encrypted. Kiro: when `invoke_sub_agent` returns reply text only, log `UNAVAILABLE: <what the call returned>` and map each brief path to `sub_agent_start` and `sub_agent_complete` records in the session store's `messages.jsonl` (`~/.kiro/sessions/<workspace>/<session>/`). No turn ends while a dispatched unit still runs |
 | deliveries | `.cad-work/<unit>/delivery.json` | full: validates against `worker-delivery`; lean, which has no worker-delivery schema: conforms to the prose contract ([prose-contract](../lean/skills/cad-record/references/prose-contract.md#worker-delivery)); both: boundary digests equal; accepted bytes merged verbatim |
 | writes | the transcript's tool calls | no write to an installed file and no record/evidence write outside `hw/` and `.cad-work/`; uv/package caches, bytecode, session stores and other named host caches may be elsewhere and are recorded |

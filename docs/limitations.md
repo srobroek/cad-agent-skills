@@ -60,6 +60,16 @@ model routing and resource loads remain unproved until live smoke runs per host.
 - Kiro CLI V3's approval driver used a 1.0 s polling default; the round-4 driver used `--poll 0.25`. One full cell's
   approval wait share was 6.93% at the default and 5.33% after switching, including a 75.93 s driver stall. These
   observed shares do not verify a target. See [smoke findings](smoke.md#observed-smoke-findings).
+- Kiro CLI 3.0.0 matches role-profile shell rules with a parser chosen from `SHELL` (its log records
+  `policy.shell.type.resolved`). The fish parser also evaluates each command without its leading `VAR=value`
+  assignments, and either denial denies: in the round-5 full cell, whose tmux applied the user's fish `default-shell`,
+  every worker `TMPDIR=… uv …` and validator call was denied. The posix parser (bash) keeps assignments but drops
+  output redirects before matching, so a profile cannot deny `> hw/…` in a bash session. The role profiles therefore
+  prefix programs with `env TMPDIR=…`, which both parsers match as written. A redirect into `hw/` is still caught by
+  the lead's boundary digest; one into `.git/` or a host directory lies outside the digest.
+- Kiro role profiles deny file-tool reads of `hw/**`, `.cad-work/lead/**` and `.cad-work/stage-v*/**`. A static
+  profile cannot name the unit, so another unit's `.cad-work/<unit>/` stays readable, and shell commands such as `ls`
+  are not file-tool reads.
 - Claude Code 2.1.318 `claude plugin marketplace add --scope project` declares the marketplace in the project settings,
   but still records it at user level and lists it from other projects (where the plugin stays disabled). Two cells
   that register the same marketplace are therefore not isolated from each other.

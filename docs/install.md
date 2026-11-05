@@ -164,8 +164,9 @@ policy; they admit only the absolute-path commands the role contract runs.
 ```
 
 Trust the workspace for project profiles. Kiro checks each worker tool call against both the role profile and the parent session's policy:
-a call the parent policy does not allow prompts for approval, and a headless run denies it. Restart and verify skill and custom-agent
-discovery.
+a call the parent policy does not allow prompts for approval, and a headless run denies it. Kiro chooses its rule parser from `SHELL`; the
+profiles' `env TMPDIR=…` command forms match under its bash and fish parsers alike, but only the fish parser sees output redirects
+([limitations](limitations.md#observed-host-limitations)). Restart and verify skill and custom-agent discovery.
 
 ## Variant and provenance
 
