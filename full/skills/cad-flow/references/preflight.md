@@ -33,9 +33,11 @@ Runs before every other preflight command.
 ## Claim the project
 
 1. `root` is `pwd -P` of the product project: the directory that holds, or will hold, `hw/`.
-2. `mkdir -p .cad-work/lead/sessions .cad-work/lead/tmp`, then `mkdir .cad-work/lead/active` (exclusive).
-3. Success → write `claim.yaml`: `root`, `host`, `harness`, `session`, `owner`, `started` (UTC), `resumes: []`, `state: ACTIVE`; validate →
-   exit 0.
+2. `mkdir -p .cad-work/lead/sessions .cad-work/lead/tmp`.
+3. Take the lock and write the claim in one shell command, never the exclusive `mkdir` alone:
+   `mkdir .cad-work/lead/active && printf '%s\n' <one quoted argument per claim line> > .cad-work/lead/active/claim.yaml`, the claim
+   holding `root`, `host`, `harness`, `session`, `owner`, `started` (UTC, quoted), `resumes: []`, `state: ACTIVE`. Validate it as soon as
+   [Probe tools](#probe-tools) has the validator → exit 0; a claim that fails is corrected in place before any `hw/` write.
 4. Failure → read `claim.yaml`:
    - same `session` → append `{session, time}` to `resumes` and continue;
    - another session, or the directory without `claim.yaml` → stop and show the user that claim; write nothing.
@@ -44,6 +46,8 @@ Runs before every other preflight command.
    `recovery: {reference (their confirmation), operator, previous_session, time}`.
 
 NOT Treat the claim's age, a PID or a quiet terminal as proof that its owner stopped.
+MUST Before the first `hw/` write of every turn, `.cad-work/lead/active/claim.yaml` exists, has passed step 3's check and names this session
+([stages resume-state](stages.md#resume-state) step 1); otherwise stop and write nothing.
 
 ## Session directory
 
@@ -82,21 +86,42 @@ as an installation defect: report the path and the observation as an open questi
 | `command -v uv curl` prints one absolute path per tool                                                                                                                                   | yes      |
 | `uv --version`                                                                                                                                                                           | yes      |
 | `uv python find --cache-dir <cache> --no-python-downloads 3.12`                                                                                                                         | yes      |
-| `<tools>/bin/check-jsonschema --version` prints the [pinned version](../../cad-record/references/validation.md#schema-validation)                                                         | yes      |
-| `<tools>/bin/python -c 'import yaml; print(yaml.__version__)'` prints the [pinned PyYAML](../../cad-record/references/validation.md#yaml-loader)                                          | yes      |
+| `<tools>/bin/check-jsonschema --version` exits 0                                                                                                                                       | yes      |
+| `test "$(<tools>/bin/python -c 'from importlib.metadata import version as v; print(v("check-jsonschema"), v("PyYAML"))')" = '<check-jsonschema pin> <PyYAML pin>'` exits 0              | yes      |
 | `curl --version` reports 7.83 or later (`--remove-on-error`; a mid-transfer `--max-filesize` abort needs 8.4)                                                                            | yes      |
 | each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a check `hw/check-plan.yaml` already plans; none at GROUND | no       |
+
+Copy both pins from [cad-record Schema validation](../../cad-record/references/validation.md#schema-validation) and
+[YAML loader](../../cad-record/references/validation.md#yaml-loader) in this session, never from memory, into the version probe and the
+warm-up's `uv pip install` line. An installed version other than its pin fails the probe, and the warm-up below reinstalls the pins.
 
 Run the required probes as one shell command. Every uv command of preflight names `--cache-dir <cache>`, except `uv --version`, which
 reads no cache. When a `<tools>` probe fails, the warm-up below installs both tools; then probe again.
 
 Record in `tools[]` `check-jsonschema` with argv `[<tools>/bin/check-jsonschema]` and `yaml-loader` with argv `[<tools>/bin/python]`,
-`uv` and `curl` with argv `[<the path command -v printed>]`, and `python` with the path the `uv python find` probe printed, each with its
-printed version; never a typed or remembered path. Every schema validation and YAML load of the session, the lead's and each unit's,
-runs exactly these argv; briefs copy them into `resources.tools`, and a unit only executes them.
+each with the pin the version probe confirmed, `uv` and `curl` with argv `[<the path command -v printed>]`, and `python` with the path the
+`uv python find` probe printed, each with its printed version; never a typed or remembered path. Every schema validation and YAML load
+of the session, the lead's and each unit's, runs exactly these argv; briefs copy them into `resources.tools`, and a unit only executes
+them.
 
 A missing required tool stops with `MISSING_RESOURCE`. A missing optional tool is recorded; its checks become UNKNOWN `UNSUPPORTED_METHOD`,
 never a fallback method.
+
+### FreeCAD
+
+Lite build only: when `hw/product.yaml` `build_mode` is KNOWN `LITE`, or right after the owner answers LITE and before GROUND's
+`freeze-inputs`. FreeCAD is a project resource of the `geometry.readback` checker unit, run only through its brief's `resources.tools`
+argv inside its unit directory ([agent-roles](agent-roles.md)); the lead runs only this probe and never a result.
+
+1. Resolve the console executable: `command -v freecadcmd FreeCADCmd`, else `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd`
+   when that file exists; take its `realpath`. Never the GUI `FreeCAD` binary, and never install or download FreeCAD without the
+   owner's approval.
+2. `env TMPDIR=<tmp> FREECAD_USER_HOME=<tmp> <freecad> --version` from `<tmp>`, under the shell tool's 60 s timeout → exit 0 and a first
+   line naming FreeCAD and its version (observed: `FreeCAD 1.1.4 Revision: 20260928 (Git shallow)`).
+3. Success → `tools[]` `{name: freecad, argv: [<realpath>], version: <that first line>}`; this version is a probe observation, never
+   evidence. Any failure → `unavailable[]` `{name: freecad, observation}` with what was run and seen. Either way the session continues:
+   the GROUND packet shows it ([gates Lite packets](gates.md#lite-packets)), and an absent FreeCAD makes LAYOUT's readback UNKNOWN
+   `NOT_RUN` ([stages Lite rows](stages.md#lite-rows)).
 
 ### Warm the uv cache
 
@@ -121,8 +146,9 @@ A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched t
 
 Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`, `schemas [{name, path}]`, `layout`,
 `policy {path, plugin}`, `role_reference`, `rubric`, `templates [{name, path}]` (the asset and fixture templates of Resolve resources step
-2), `tools [{name, argv, version}]`, `isolation`, `time`. Every path is absolute. Briefs and verdicts copy resource paths and provenance
-from this file only. The session's first reply follows the [SKILL.md OUTPUT](../SKILL.md) first-reply line.
+2), `tools [{name, argv, version}]`, `unavailable [{name, observation}]` (lite build only, [FreeCAD](#freecad)), `isolation`, `time`.
+Every path is absolute. Briefs and verdicts copy resource paths and provenance from this file only. The session's first reply follows
+the [SKILL.md OUTPUT](../SKILL.md) first-reply line.
 
 ## Finish
 

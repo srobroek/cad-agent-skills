@@ -1398,3 +1398,189 @@ check_order:
 - physical.test
 - release.inventory
 - release.integrity
+# Lite build (product build_mode LITE): three stages, every check due at its own stage and FORBIDDEN to waive.
+# stages[13] above stay the full build. The lite rows reuse the stage, procedure and family IDs and the shared check_order.
+lite_stages:
+  method_profile: LITE_V1
+  stages:
+  - id: GROUND
+    order: 1
+    predecessor: null
+    gate: HUMAN
+    gate_subject: "build mode, geometry intent, part count, dimensions, measurement criteria and check plan, before any geometry"
+    owner: cad-select
+    procedure:
+    - resume-state
+    - record-bootstrap
+    - intake-use-case
+    - specify-requirements
+    - plan-checks
+    - freeze-inputs
+    - build-version
+    - enumerate-obligations
+    - run-checks
+    - accept-results
+    - write-verdict
+    - present-gate
+    - advance
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: record.semantic
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: record.ownership
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: record.inputs
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: delivery.integrity
+      applicability: CONDITIONAL
+      condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: intake.use_case
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: requirements.completeness
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: check_plan.completeness
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    reopen: []
+  - id: LAYOUT
+    order: 2
+    predecessor: GROUND
+    gate: NONE
+    owner: cad-design
+    procedure:
+    - resume-state
+    - define-layout
+    - dispatch-units
+    - merge-deliveries
+    - freeze-inputs
+    - build-version
+    - enumerate-obligations
+    - run-checks
+    - accept-results
+    - write-verdict
+    - advance
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: record.semantic
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: record.ownership
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: record.inputs
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: delivery.integrity
+      applicability: CONDITIONAL
+      condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: intake.use_case
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.build
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.readback
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.export
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.identity
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.interference
+      applicability: CONDITIONAL
+      condition: the assembly has more than one geometric occurrence
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.clearance
+      applicability: CONDITIONAL
+      condition: a requirement states a geometric clearance limit
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: preview.render
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    reopen:
+    - GROUND
+  - id: RELEASE
+    order: 3
+    predecessor: LAYOUT
+    gate: HUMAN
+    gate_subject: "the checked lite prototype model, its package inventory and REV"
+    owner: cad-release
+    procedure:
+    - resume-state
+    - freeze-inputs
+    - build-version
+    - enumerate-obligations
+    - index-verification
+    - propose-release
+    - run-checks
+    - accept-results
+    - write-verdict
+    - present-gate
+    - publish-release
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: record.semantic
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: record.ownership
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: record.inputs
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: delivery.integrity
+      applicability: CONDITIONAL
+      condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: verification.index
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: release.inventory
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    reopen:
+    - GROUND
+    - LAYOUT
