@@ -23,8 +23,7 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
 2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
    each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, SAMPLED coverage and absent physical
-   evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. An UNKNOWN is a limit with the stage it falls due
-   at, never a question to answer now: the packet asks only for the decision of step 4.
+   evidence); each preview, GLB, drawing and BOM as an absolute path on its own line.
 3. INTENT and VARIANT add the options the verdict assessed
    ([cad-select assess-selection](../../cad-select/references/selection.md#assess-selection) and
    [cad-design compare-variants](../../cad-design/references/concepts.md#compare-variants)): feasible, conditional (with its unknowns) and
