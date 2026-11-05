@@ -1,0 +1,10 @@
+probe: cad-agent-skills.common
+build_mode_fact:
+- status: KNOWN
+  value: LITE
+  basis: USER_DECLARED
+  sources:
+  - kind: POLICY
+    reference: a prototype request means a lite build
+    origin: lead
+    document: cad-flow/SKILL.md

@@ -1,11 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills part record (hw/parts/<PN>/part.yaml)",
-  "description": "PN and revision, MAKE, BUY or MADE_TO_DRAWING, model and frame, disconnected components, manufacture relationship, manufacturing intent (functions, material, service, critical surfaces, complete route with orientation, setup, support, finishing and inspection), procurement and drawing intent.",
+  "description": "PN and revision, MAKE, BUY or MADE_TO_DRAWING, model and frame, disconnected components, manufacture relationship, manufacturing intent (functions, material, service, critical surfaces, complete route with orientation, setup, support, finishing and inspection), procurement and drawing intent. A part with build_mode LITE is a geometry-only prototype part: identity, authored model, components and requirement-linked functions, with no sourcing, material, manufacturing, procurement or drawing field (cad-record references/record.md#build-mode).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["PN", "rev", "title", "sourcing", "model", "transparency", "intent", "drawing"],
+  "required": ["PN", "rev", "title", "model", "intent"],
   "properties": {
+    "build_mode": {
+      "description": "local shape discriminator of a LITE part, equal to the frozen product build mode (a semantic check); absent on every FULL and legacy part",
+      "const": "LITE"
+    },
     "PN": {"$ref": "common.schema.json#/$defs/pn"},
     "rev": {"$ref": "common.schema.json#/$defs/part_rev"},
     "title": {"$ref": "common.schema.json#/$defs/text"},
@@ -24,12 +28,53 @@
     "decisions": {"$ref": "common.schema.json#/$defs/decision_ids"}
   },
   "allOf": [
-    {"if": {"properties": {"sourcing": {"const": "MAKE"}}}, "then": {"required": ["manufacture"]}},
     {
-      "if": {"properties": {"sourcing": {"enum": ["BUY", "MADE_TO_DRAWING"]}}},
-      "then": {"required": ["procurement"]}
-    },
-    {"if": {"properties": {"sourcing": {"const": "BUY"}}}, "then": {"not": {"required": ["manufacture"]}}}
+      "if": {"not": {"required": ["build_mode"]}},
+      "then": {
+        "description": "FULL part: the shape before build modes",
+        "required": ["sourcing", "transparency", "drawing"],
+        "properties": {
+          "components": {"items": {"required": ["material_profile"]}},
+          "intent": {"required": ["material_profile", "service", "critical_surfaces", "route"]}
+        },
+        "allOf": [
+          {"if": {"required": ["sourcing"], "properties": {"sourcing": {"const": "MAKE"}}}, "then": {"required": ["manufacture"]}},
+          {
+            "if": {"required": ["sourcing"], "properties": {"sourcing": {"enum": ["BUY", "MADE_TO_DRAWING"]}}},
+            "then": {"required": ["procurement"]}
+          },
+          {
+            "if": {"required": ["sourcing"], "properties": {"sourcing": {"const": "BUY"}}},
+            "then": {"not": {"required": ["manufacture"]}}
+          }
+        ]
+      },
+      "else": {
+        "description": "LITE part: draft revision, AUTHORED PART_LOCAL model, components, requirement-linked functions; every manufacturing and material field absent",
+        "required": ["components"],
+        "properties": {
+          "rev": {"pattern": "^X[1-9][0-9]*$"},
+          "model": {"properties": {"kind": {"const": "AUTHORED"}, "frame": {"const": "PART_LOCAL"}}},
+          "sourcing": false,
+          "transparency": false,
+          "manufacture": false,
+          "procurement": false,
+          "drawing": false,
+          "mass_target": false,
+          "components": {"items": {"properties": {"material_profile": false}}},
+          "intent": {
+            "properties": {
+              "functions": {"type": "array", "items": {"required": ["requirements"]}},
+              "material_profile": false,
+              "service": false,
+              "critical_surfaces": false,
+              "route": false,
+              "selection": false
+            }
+          }
+        }
+      }
+    }
   ],
   "$defs": {
     "model": {
@@ -103,7 +148,7 @@
       "description": "one disconnected solid, bound by an interior witness point in the native frame (mm) or a semantic locator; every solid binds exactly once",
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "material_profile", "multiplicity"],
+      "required": ["id", "multiplicity"],
       "properties": {
         "id": {"$ref": "common.schema.json#/$defs/component_id"},
         "witness": {"$ref": "common.schema.json#/$defs/vector"},
@@ -163,7 +208,7 @@
       "description": "what the part does, its qualified material profile, the service it sees, its critical surfaces and its complete ordered route",
       "type": "object",
       "additionalProperties": false,
-      "required": ["functions", "material_profile", "service", "critical_surfaces", "route"],
+      "required": ["functions"],
       "properties": {
         "functions": {
           "oneOf": [

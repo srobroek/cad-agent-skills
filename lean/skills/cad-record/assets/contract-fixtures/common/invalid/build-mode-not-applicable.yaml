@@ -1,0 +1,5 @@
+probe: cad-agent-skills.common
+build_mode_fact:
+- status: NOT_APPLICABLE
+  reason: the owner did not care
+  reviewed_by: lead

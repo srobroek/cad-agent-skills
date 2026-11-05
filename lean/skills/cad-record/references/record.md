@@ -105,6 +105,12 @@ No input contains downstream result bytes or its own future hash.
    `release.inventory` bundle, and excludes itself; its digest is reported outside it. The package-integrity result
    is hashed by the FINAL manifest, so it never hashes or inspects any `release-manifest.json`; it checks the staged
    payload against the proposal's planned inventory and the files the approval and readiness verdict bind.
+   A LITE release ([cad-release lite release](../../cad-release/references/release.md#lite-release)) freezes the PASS
+   LAYOUT version instead: its PROPOSAL is written after the lite `index-verification` derives the index and before
+   any RELEASE check, and plans no RELEASE result, readiness verdict, approval or integrity result. The readiness verdict
+   binds every RELEASE result; the FINAL manifest adds them as readiness-bound files, with
+   `record/release/{stage-verdict.json,obligations.yaml,release-proposal.json}`, the RELEASE DR and its statement, and the
+   package-integrity result checks each against the readiness verdict and approval hashes.
 9. Worker outputs: a delivery's `outputs` hash each delivered file, so a delivered file (such as
    `variant.yaml`) never holds its delivery digest; it names its unit, role and brief digest, and the lead
    records the accepted delivery digest in `units.yaml`.
@@ -222,22 +228,55 @@ Every fact is `KNOWN`, `UNKNOWN` or `NOT_APPLICABLE` (common.schema.json `fact`)
   never relaxes the evidence a service class needs.
 - PRODUCTION and SAFETY_CRITICAL need a competent authority with supplied criteria, allowables and evidence.
 
+## Build mode
+
+`hw/product.yaml` `build_mode` (common.schema.json `build_mode_fact`) is the owner's answer to `Q-000`: KNOWN `FULL` or
+`LITE` with basis `USER_DECLARED` and a `USER` source, or a consequential UNKNOWN with owner and question. It is never
+inferred from a "prototype" request, rigor, the installed variant or a session setting
+([cad-select](../../cad-select/references/selection.md#choose-the-build-mode)); every attempt reads it from its snapshot.
+
+| Record | FULL, or no `build_mode` | LITE |
+|---|---|---|
+| product | the full shape | the common fields only; `service.class` `APPEARANCE_CONCEPT` citing the QUESTION DR of the mode answer |
+| part | no `build_mode` key; the full shape | `build_mode: LITE`; `X` revision, AUTHORED `PART_LOCAL` model, components, functions linked to requirements; no sourcing, transparency, manufacture, procurement, drawing, mass target, material, service, critical surface, route or selection |
+| release manifest | no `build_mode` key; `frozen` names the FREEZE version and its gate DR | `build_mode: LITE`; `frozen` is a PASS LAYOUT version without a DR; APPEARANCE_CONCEPT scope with the disclosure line; CAD_VALID PASS claims only; no waiver, trial, MANUFACTURE, DRAWING or BOM payload |
+| `hw/versions/vN/obligations.yaml` | unchanged | adds the captured build mode, `method_profile` `LITE_V1` and policy projection ([cad-flow enumerate-obligations](../../cad-flow/references/stages.md#enumerate-obligations)) |
+| other paths | unchanged | no `hw/manufacturing/`, BOM, drawing or manufacturing export; `hw/interfaces.yaml` optional; the verification index at RELEASE (`layout.json` conditions) |
+
+- Stage chain: the stage policy's `lite_stages` (method profile `LITE_V1`): GROUND (HUMAN), LAYOUT (NONE), RELEASE (HUMAN)
+  over the existing stage IDs, procedures and check families; every lite check is due at its stage, FORBIDDEN to waive.
+- The part and release `build_mode` are local shape discriminators equal to the frozen product mode, never a second
+  source fact. A full-only fact a LITE record omits is no UNKNOWN placeholder; a fact the owner volunteers keeps its type.
+- An UNKNOWN mode needs only the common product fields, so both templates are schema-valid; it never passes GROUND.
+- Legacy: a product without `build_mode` is a FULL record from before build modes. Its history stays valid and is read
+  as FULL; a new attempt's snapshot needs a KNOWN mode, adopted by an approved GROUND CHANGE. No snapshot is rewritten.
+- Promotion to FULL is a CHANGE that reopens GROUND ([cad-flow change impact](../../cad-flow/references/change-impact.md#promotion-to-full));
+  every lite version, result, DR and package stays history, and its PN and component IDs stay reserved.
+- The disclosure line is cad-flow's ([cad-flow](../../cad-flow/SKILL.md)); a LITE release manifest carries it verbatim in
+  `scope.exclusions`.
+
 ## Template
 
-- `assets/project-template/hw/` holds empty collections and explicit UNKNOWN facts with owners and the
-  open questions `Q-001`…`Q-017`. It sets no printer, material, process, tolerance, regime, general
+- `assets/project-template/hw/` (FULL) holds empty collections and explicit UNKNOWN facts with owners and the
+  open questions `Q-000`…`Q-017`. It sets no printer, material, process, tolerance, regime, general
   tolerance, clearance, rigor or license.
-- The template's schema-root files are schema-valid and its prose-root files conform, with zero requirements.
-  SPECIFY semantic completeness rejects a mandatory requirement without engineering acceptance.
+- `assets/project-template-lite/hw/` (LITE) holds `product`, `requirements`, `check-plan` and `assembly` only, with
+  the common product facts as UNKNOWN and the open questions `Q-000`…`Q-003`, `Q-005`, `Q-013`…`Q-020`. Shared IDs keep
+  the FULL wording; `Q-018`…`Q-020` ask the form, dimensions and static pose. It has no interfaces, materials,
+  capabilities or selection file.
+- Both templates carry `build_mode` UNKNOWN for `Q-000`. Each template's schema-root files are schema-valid and its
+  prose-root files conform, with zero requirements. SPECIFY semantic completeness rejects a mandatory requirement
+  without engineering acceptance.
 
 ## record-bootstrap
 
 Procedure `record-bootstrap`, run by cad-flow at GROUND from the project root. `<skill-dir>` is the absolute
 cad-record directory from the brief or preflight.
 
-1. When `test ! -e hw && test ! -L hw` succeeds, copy the template, then set `id` and `title` in
-   `hw/product.yaml` from the owner's product name:
-   `cp -R "<skill-dir>/assets/project-template/hw" hw`
+1. When `test ! -e hw && test ! -L hw` succeeds, the owner's mode answer selects the template: KNOWN LITE copies
+   `project-template-lite`, KNOWN FULL copies `project-template`, and an open mode copies nothing (GROUND stops
+   `WAITING_FOR_USER` on `Q-000`). Then set `id` and `title` in `hw/product.yaml` from the owner's product name:
+   `cp -R "<skill-dir>/assets/project-template-lite/hw" hw` or `cp -R "<skill-dir>/assets/project-template/hw" hw`
    Never overwrite, merge into or follow an existing or dangling `hw`.
 2. Otherwise, when `hw/product.yaml` declares `format: cad-agent-skills` and `record_version: 1`, keep the
    record unchanged.
@@ -246,4 +285,5 @@ cad-record directory from the brief or preflight.
 4. Run no check here: `record.schema` and `record.semantic` cover the whole record once per attempt in cad-flow
    `run-checks`. During intake, validate each changed file that has a schema root once per owner reply
    (references/validation.md#schema-validation). UNKNOWN facts with open questions are intake input, not failures.
-5. Report the path taken (`COPIED`, `EXISTING` or `IMPORTED`) and every open question for GROUND intake.
+5. Report the path taken (`COPIED`, `EXISTING`, `IMPORTED`, or `WAITING` when step 1 copied nothing) and every open
+   question for GROUND intake.

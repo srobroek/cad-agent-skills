@@ -2,10 +2,16 @@
 # Same convention as cad-record contract-fixtures/expected-errors.yaml; keys are relative to examples/regressions/.
 # Every valid/<root>/* case exits 0 and every invalid/<root>/* case exits 1 against <cad-record>/schemas/<root>.schema.json;
 # a valid case may still fail the semantic check its scenario names.
+# a delivery.integrity result names each merged hw/ target, never the unit's .cad-work/ source
+invalid/check-result/integrity-scratch-path-ground.json: "$.input_files[1].path: '.cad-work/ground-v1-semantic/output/result.json' does not match '^hw/"
 # a REVIEW implementation forbids commands; the transcribed critique reply is refused
 invalid/check-result/review-with-commands-critique.json: 'Additional properties are not allowed (''commands'' was unexpected)'
 # a waiver is bounded by expires or until_change; one with neither is refused
 invalid/decision/waiver-out-of-scope-unbounded.yaml: "'until_change' is a required property"
+# a LITE part names no material profile
+invalid/part/lite-geometry-only-material.yaml: "$.components[0]: False schema does not allow 'fdm_petg_polylite'"
+# a LITE package claims CAD_VALID only, never manufacturability
+invalid/release-manifest/lite-geometry-only-printable-claim.json: "$.claims[2].facets[0]: 'CAD_VALID' was expected"
 # a PLANNED hard outcome is due at a stage after INTENT
 invalid/selection/selection-planned-due-intent.yaml: "$.candidates[0].hard_outcomes[8].due: 'INTENT' should not be valid under {'enum': ['GROUND', 'INTENT']}"
 # a PLANNED hard outcome names the stage whose evidence settles it

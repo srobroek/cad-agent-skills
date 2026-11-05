@@ -217,3 +217,25 @@ file_hash:
   sha256: '1111111111111111111111111111111111111111111111111111111111111111'
 - path: .cad-work/u1/out.json
   sha256: '2222222222222222222222222222222222222222222222222222222222222222'
+build_mode_fact:
+- status: KNOWN
+  value: LITE
+  basis: USER_DECLARED
+  sources:
+  - kind: USER
+    reference: 'answer to Q-000: lite build'
+    origin: product owner
+    date: '2026-11-05'
+- status: KNOWN
+  value: FULL
+  basis: USER_DECLARED
+  sources:
+  - kind: USER
+    reference: 'prompt: full build'
+    origin: product owner
+    date: '2026-11-05'
+- status: UNKNOWN
+  reason: 'not yet asked: full or lite build'
+  owner: user
+  question: Q-000
+  consequential: true

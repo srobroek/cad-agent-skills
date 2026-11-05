@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills release manifest (hw/releases/<REV>/release-manifest.json)",
-  "description": "PROPOSAL lists the planned payload inventory and excludes the not-yet-written RELEASE readiness verdict, approval and integrity result. FINAL adds the RELEASE readiness verdict, the approval, the package-integrity result and the full inventory, and excludes its own bytes; the outer digest is reported separately, never self-hashed.",
+  "description": "PROPOSAL lists the planned payload inventory and excludes the not-yet-written RELEASE readiness verdict, approval and integrity result. FINAL adds the RELEASE readiness verdict, the approval, the package-integrity result and the full inventory, and excludes its own bytes; the outer digest is reported separately, never self-hashed. A manifest with build_mode LITE is a geometry-only prototype package frozen at a PASS LAYOUT version (cad-record references/record.md#build-mode).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -19,6 +19,10 @@
     "exclusions"
   ],
   "properties": {
+    "build_mode": {
+      "description": "local shape discriminator of a LITE package, equal to the frozen product build mode (a semantic check); absent on every FULL and legacy manifest",
+      "const": "LITE"
+    },
     "format": {"const": "cad-agent-skills.release-manifest"},
     "schema_version": {"const": 1},
     "phase": {"enum": ["PROPOSAL", "FINAL"]},
@@ -26,7 +30,7 @@
     "frozen": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["version", "version_manifest", "verdict", "decision"],
+      "required": ["version", "version_manifest", "verdict"],
       "properties": {
         "version": {"$ref": "common.schema.json#/$defs/version"},
         "version_manifest": {"$ref": "common.schema.json#/$defs/file_hash"},
@@ -234,6 +238,31 @@
               "properties": {"path": {"const": "acceptance/package-integrity.json"}}
             }
           }
+        }
+      }
+    },
+    {
+      "if": {"not": {"required": ["build_mode"]}},
+      "then": {"properties": {"frozen": {"required": ["decision"]}}},
+      "else": {
+        "description": "LITE package: frozen is the PASS LAYOUT version with no gate decision; APPEARANCE_CONCEPT scope with the exact cad-flow disclosure line; CAD_VALID PASS claims only; no waiver, trial, manufacturing, drawing or BOM payload",
+        "properties": {
+          "frozen": {"properties": {"decision": false}},
+          "waivers": {"maxItems": 0},
+          "scope": {
+            "properties": {
+              "service_class": {"const": "APPEARANCE_CONCEPT"},
+              "trial": false,
+              "exclusions": {
+                "contains": {"const": "LITE prototype: geometry only; no material, fit, strength or manufacturing claims"}
+              }
+            }
+          },
+          "claims": {
+            "items": {"properties": {"facets": {"items": {"const": "CAD_VALID"}}, "outcome": {"const": "PASS"}}}
+          },
+          "planned": {"items": {"properties": {"role": {"not": {"enum": ["MANUFACTURE", "DRAWING", "BOM"]}}}}},
+          "inventory": {"items": {"properties": {"role": {"not": {"enum": ["MANUFACTURE", "DRAWING", "BOM"]}}}}}
         }
       }
     }

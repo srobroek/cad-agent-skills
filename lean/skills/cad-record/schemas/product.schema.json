@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills product record (hw/product.yaml)",
-  "description": "Project namespace, record version, identity, units and frame, rigor, regime, intake, service, risk, authority, release scope, storage and license. No workflow stage lives here: the stage chain derives from immutable stage verdicts and decisions. Missing information is an explicit UNKNOWN, never a default.",
+  "description": "Project namespace, record version, build mode, identity, units and frame, rigor, regime, intake, service, risk, authority, release scope, storage and license. No workflow stage lives here: the stage chain derives from immutable stage verdicts and decisions. Missing information is an explicit UNKNOWN, never a default. The full shape applies to a KNOWN FULL build and to a legacy record without build_mode; a KNOWN LITE build or an unanswered mode needs only the common fields (cad-record references/record.md#build-mode).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,8 +13,6 @@
     "units",
     "frame",
     "rigor",
-    "regime",
-    "general_tolerance",
     "intake",
     "service",
     "risk",
@@ -28,6 +26,10 @@
     "record_version": {"const": 1},
     "id": {"$ref": "common.schema.json#/$defs/product_id"},
     "title": {"$ref": "common.schema.json#/$defs/text"},
+    "build_mode": {
+      "description": "the owner's build-mode source fact; absent only in a legacy record, read as FULL",
+      "$ref": "common.schema.json#/$defs/build_mode_fact"
+    },
     "identity": {
       "type": "object",
       "additionalProperties": false,
@@ -98,11 +100,35 @@
     },
     "import": {"$ref": "#/$defs/import"}
   },
+  "allOf": [
+    {
+      "description": "full shape: a legacy record without build_mode or a KNOWN FULL build; the same required fields as before build modes",
+      "if": {
+        "anyOf": [
+          {"not": {"required": ["build_mode"]}},
+          {"required": ["build_mode"], "properties": {"build_mode": {"required": ["value"], "properties": {"value": {"const": "FULL"}}}}}
+        ]
+      },
+      "then": {
+        "required": ["regime", "general_tolerance"],
+        "properties": {
+          "intake": {"required": ["loads", "environment", "motion", "accuracy", "logistics", "capability"]},
+          "risk": {"required": ["severity", "standards", "supervision"]},
+          "authority": {"required": ["competent"]}
+        }
+      }
+    },
+    {
+      "description": "a KNOWN LITE build is an APPEARANCE_CONCEPT prototype; its service class cites the QUESTION decision of the mode answer",
+      "if": {"required": ["build_mode"], "properties": {"build_mode": {"required": ["value"], "properties": {"value": {"const": "LITE"}}}}},
+      "then": {"properties": {"service": {"properties": {"class": {"const": "APPEARANCE_CONCEPT"}}}}}
+    }
+  ],
   "$defs": {
     "intake": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "purpose", "users", "loads", "environment", "motion", "accuracy", "logistics", "capability"],
+      "required": ["status", "purpose", "users"],
       "properties": {
         "status": {"enum": ["UNKNOWN", "DRAFT", "CONFIRMED"]},
         "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
@@ -204,7 +230,7 @@
     "risk": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["failure_consequence", "severity", "forbidden_outcomes", "standards", "supervision"],
+      "required": ["failure_consequence", "forbidden_outcomes"],
       "properties": {
         "failure_consequence": {"$ref": "common.schema.json#/$defs/text_fact"},
         "severity": {
@@ -221,7 +247,7 @@
     "authority": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["approver", "competent"],
+      "required": ["approver"],
       "properties": {
         "approver": {
           "oneOf": [

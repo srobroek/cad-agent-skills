@@ -9,6 +9,7 @@
   "properties": {
     "probe": {"const": "cad-agent-skills.common"},
     "fact": {"type": "array", "items": {"$ref": "#/$defs/fact"}, "minItems": 1},
+    "build_mode_fact": {"type": "array", "items": {"$ref": "#/$defs/build_mode_fact"}, "minItems": 1},
     "source": {"type": "array", "items": {"$ref": "#/$defs/source"}, "minItems": 1},
     "quantity": {"type": "array", "items": {"$ref": "#/$defs/quantity"}, "minItems": 1},
     "criterion": {"type": "array", "items": {"$ref": "#/$defs/criterion"}, "minItems": 1},
@@ -203,6 +204,33 @@
         "PRODUCTION",
         "SAFETY_CRITICAL",
         "UNKNOWN"
+      ]
+    },
+    "build_mode": {
+      "description": "FULL: the complete engineering build; LITE: a geometry-only prototype (cad-record references/record.md#build-mode)",
+      "enum": ["FULL", "LITE"]
+    },
+    "build_mode_fact": {
+      "description": "the owner's answer to the build-mode question: KNOWN USER_DECLARED with a USER source, or a consequential UNKNOWN with owner and question; never NOT_APPLICABLE, inferred or defaulted",
+      "oneOf": [
+        {
+          "allOf": [
+            {"$ref": "#/$defs/fact_known"},
+            {
+              "properties": {
+                "value": {"$ref": "#/$defs/build_mode"},
+                "basis": {"const": "USER_DECLARED"},
+                "sources": {"contains": {"properties": {"kind": {"const": "USER"}}}}
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "#/$defs/fact_unknown"},
+            {"required": ["owner", "question", "consequential"], "properties": {"consequential": {"const": true}}}
+          ]
+        }
       ]
     },
     "primary_process": {

@@ -1,0 +1,84 @@
+# cad-agent-skills LITE build record template: no requirements, preferences or assumptions yet; one open question per
+# lite intake topic. Shared ids keep the FULL template's wording; Q-018 to Q-020 ask the geometry a lite model must show.
+requirements: []
+preferences: []
+assumptions: []
+questions:
+  - id: Q-000
+    question: 'Would you like a full or lite build?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-001
+    question: 'What is the product, what does it do and what is its purpose?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-002
+    question: 'Who owns the product and its approvals?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-003
+    question: 'Which documentation depth applies: maker, pro or regulated?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-005
+    question: 'Who uses, installs and services the product?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-013
+    question: 'What happens if it fails, how severe is that, what must never happen, and which standards and supervision apply?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-014
+    question: 'Who approves gates and releases, and is a competent authority required?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: true
+    status: OPEN
+  - id: Q-015
+    question: 'What is a release for, which operating limits does it state and what does it exclude?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: true
+    status: OPEN
+  - id: Q-016
+    question: 'Are generated results tracked in git, and how long is evidence retained?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-017
+    question: 'Which hardware and documentation licenses does the owner approve?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-018
+    question: 'Which overall form must the model have: its shape, its parts and their arrangement, and every feature it must show?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-019
+    question: 'Which dimensions and envelopes must the model meet, each with the criterion it is measured against?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-020
+    question: 'For anything that could move, which one static pose does the model show? A lite model makes no motion claim.'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
