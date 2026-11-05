@@ -89,7 +89,8 @@ and validator follow [preflight](preflight.md#probe-tools) and [uv commands](age
 Every byte the lead copies into `hw/` comes from `.cad-work/`, and every record file among them is validated there first: YAML loads
 with [cad-record's YAML loader](../../cad-record/references/validation.md#yaml-loader), then the file validates against its layout
 root with the [schema command](../../cad-record/references/validation.md#schema-validation) → exit 0. A file that fails is corrected in
-scratch and never published. A bad file an earlier attempt already published follows
+scratch and never published. A file an earlier attempt already published is never judged again: a sealed one gets only the
+[cad-record seal check](../../cad-record/references/validation.md#seal-check), any other follows
 [cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope).
 
 ## Lifecycle procedure IDs (owner cad-flow)
@@ -263,18 +264,20 @@ only to fix a defect, and the only program that writes a lead result. Before wri
    [Stop procedure](#stop-procedure) table, never two with the same code and subject: each FAIL or UNKNOWN outcome of an entry that is not
    `WAIVED`, with its obligation (`DUE_FAIL`, `DUE_UNKNOWN`); each REJECTED or STOPPED unit of the attempt, naming it (`DELIVERY_FAILED`);
    each [accept-results](#accept-results) failure.
-3. Before writing, check the composed verdict against the verdict items of
-   [cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope), counting apart from the composed
-   lists as the [Lead check program](#lead-check-program) step 2 does: the checks of step 2, counted from `hw/checks/vN/` and the carried
-   results, equal the `results` entries one for one, and each `expected` obligation lies in the scope of exactly one entry. A waiver that
-   fails its existence or expiry rule there covers nothing: its entries keep the check's result and `waivers` drops it. Any other failed
-   item is a defect of the composer, never a verdict: fix it in scratch and compose again; nothing reaches `hw/` before every item holds.
+3. Clearance, the lead's own check of its verdict before it is written or any gate is presented: with `result` set by step 4, validate
+   the composed file against the linked cad-record stage-verdict schema → exit 0 and apply the verdict items of
+   [cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope) to it, counting apart from the
+   composed lists as the [Lead check program](#lead-check-program) step 2 does: the checks of step 2, counted from `hw/checks/vN/` and the
+   carried results, equal the `results` entries one for one, and each `expected` obligation lies in the scope of exactly one entry. A
+   waiver that fails its existence or expiry rule there covers nothing: its entries keep the check's result and `waivers` drops it. Any
+   other failed item is a defect of the composer, never a verdict: fix it in scratch and compose again; nothing reaches `hw/` before
+   every item holds. No later attempt applies these items to this verdict again (step 5).
 4. `result`: PASS when complete, without blockers, every entry PASS, WAIVED or NOT_APPLICABLE and a required review PASS
    ([cad-review rubric](../../cad-review/references/rubric.md)). FAIL when a due obligation is evidenced FAIL or the required review is
    MINOR or MAJOR; BLOCKED otherwise.
-5. `test ! -e hw/versions/vN/stage-verdict.json`, validate the composed file against the linked cad-record stage-verdict schema, and copy
-   it there once → never rewritten; a later attempt only re-hashes it
-   ([cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope)).
+5. `test ! -e hw/versions/vN/stage-verdict.json`, then copy the cleared file there once → never rewritten. A later attempt never
+   re-judges it: a sealed verdict gets only the [cad-record seal check](../../cad-record/references/validation.md#seal-check), an
+   unsealed one is only re-hashed ([cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope)).
 6. A PASS verdict goes on now: its next ID (`present-gate`, or `advance` for a NONE or REVIEW gate) runs with each MINOR or INFO
    finding of its results listed as a limit. Never supersede a PASS attempt for MINOR findings alone; a finding the owner wants closed
    is a change the owner states at the gate ([change-impact Findings](change-impact.md#findings)).

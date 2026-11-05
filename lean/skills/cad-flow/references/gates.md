@@ -20,7 +20,8 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 
 ## present-gate
 
-1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
+1. Require a PASS verdict for this `vN`, cleared by [stages write-verdict](stages.md#write-verdict) step 3; any other verdict goes to the
+   [stop procedure](stages.md#stop-procedure).
 2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
    each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, MINOR finding, SAMPLED coverage and
    absent physical evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. RELEASE adds the proposal's REV and
