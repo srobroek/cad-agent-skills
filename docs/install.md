@@ -3,6 +3,9 @@
 Install exactly one variant into each product project. Do not install both `full/` and `lean/` into the same project: their skill and role
 names are identical.
 
+The Codex CLI and OMP installs below stay supported, but the latest smoke round did not verify them
+([smoke matrix](smoke.md#matrix)).
+
 ## Claude Code
 
 Add the public GitHub marketplace at the scope you install at. For a project install, run both commands from the project root:
@@ -167,6 +170,27 @@ Trust the workspace for project profiles. Kiro checks each worker tool call agai
 a call the parent policy does not allow prompts for approval, and a headless run denies it. Kiro chooses its rule parser from `SHELL`; the
 profiles' `env TMPDIR=…` command forms match under its bash and fish parsers alike, but only the fish parser sees output redirects
 ([limitations](limitations.md#observed-host-limitations)). Restart and verify skill and custom-agent discovery.
+
+## FreeCAD for lite builds
+
+A lite build checks that every delivered STEP opens in FreeCAD: the independent checker's `geometry.readback`
+imports each one in FreeCAD's console through a helper it writes in the product project. FreeCAD is an optional
+runtime prerequisite of the host. Neither plugin ships or installs it, the lead never installs it, and a full build
+does not need it.
+
+Install it on the host, outside the product project:
+
+- macOS: the FreeCAD app. Its console is `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd`.
+- Linux: the release AppImage for the host architecture, checked against the release's SHA256 file and unpacked with
+  `--appimage-extract`; then a `PATH` directory that holds only a `freecadcmd` symlink to
+  `squashfs-root/usr/bin/freecadcmd` ([smoke: Provide FreeCAD](smoke.md#provide-freecad)).
+
+Preflight resolves `freecadcmd` or `FreeCADCmd` on the lead's `PATH`, then the macOS app path above, and records the
+resolved path and the first line `--version` prints; it never uses the GUI binary
+([preflight](../full/skills/cad-flow/references/preflight.md#freecad)). When neither resolves, the run continues: the
+GROUND packet shows FreeCAD as unavailable, LAYOUT records `geometry.readback` as UNKNOWN `NOT_RUN` and stops BLOCKED,
+and no lite package is sealed. Once FreeCAD is available, the unchanged attempt reruns. A lite release claims that its
+STEP opens in the recorded FreeCAD version only, not in every version.
 
 ## Variant and provenance
 

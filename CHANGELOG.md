@@ -69,3 +69,40 @@
     owner's 210 g phone as a typed intake load and annotate the hours-long phone load without inventing a duration. Host documentation
     records the pinned cell shell, driver monitor linger, exact gate-statement bytes, required operator response to stops, and model-routing
     evidence without changing model defaults.
+
+- Lite build, in both variants: at the first intake the lead asks for a full or lite build (`Q-000`) and recommends lite for initial
+  prototyping. The answer is the sourced fact `product.build_mode`; a record without it stays a full record.
+  - A lite build runs GROUND, LAYOUT and RELEASE only, with owner approval at GROUND and RELEASE. Its intake asks no material, process,
+    printer, vendor, load or capability question, and skipped stages get no verdict, decision or result.
+  - LAYOUT models the requested finished form and exports part and assembly STEP (AP214), GLB and SVG. An independent checker builds,
+    reads back, identifies features, renders, inspects the form against the frozen intent and imports every STEP in the installed
+    FreeCAD console. Without FreeCAD, `geometry.readback` is UNKNOWN `NOT_RUN` and LAYOUT stops BLOCKED.
+  - RELEASE seals a reduced package with CAD_VALID claims only, and every packet and the build guide carry `LITE prototype: geometry
+    only; no material, fit, strength or manufacturing claims`. Promotion to full is an approved CHANGE that reopens GROUND and keeps every
+    lite byte.
+  - Records gain conditional lite shapes for product, part and release and a lite template, with no new schema root; lean carries the
+    same contract in its existing roots and prose tables.
+  - The authoring `expected-obligations` schema gains `build_mode`: FULL keeps the 13 ordered stages, and LITE requires exactly GROUND,
+    LAYOUT and RELEASE, the lite gates, no future obligation, `APPEARANCE_CONCEPT` and the exact disclosure line.
+    `examples/lite-phone-stand` adds a lite brief, its obligations and a GROUND reference record. The phone-stand and lamp-arm prompts
+    name the full build, and their obligations and reference records carry the full mode; their engineering obligations are unchanged.
+  - Docs cover the lite flow, the intake question, its claims, FreeCAD as an optional runtime prerequisite, promotion, and lite smoke
+    cells, negatives and unmeasured host time targets for Claude Code, OpenCode and Kiro CLI V3. CI checks that the disclosure line is
+    equal in `cad-flow`, the build-guide asset and the authoring schema of both variants.
+
+- Round-6 fix wave, in both variants:
+  - Intake records an owner's actual value and design bound as two typed entries, keeps an owned material separate from any machine
+    approval, and never asks a consumable's form, colour or lot at GROUND or INTENT.
+  - `delivery.integrity` rows name the unit and the `hw/` target with its sha256, never a scratch path, and results cite inputs by origin
+    path and sha256.
+  - A PASS attempt with only MINOR findings goes to its gate with those findings as limits. A producer delivery whose MINOR findings
+    change no recorded fact or citation is accepted with the finding recorded.
+  - Reading file contents outside the read set is a defect; a names-only listing is a recorded finding. Workers read and search with the
+    host's file tools, use one stated `mkdir -p` form and validate `delivery.json` with the stated form.
+  - Delegation states per host what bounds the lead's wait and what follows a returned batch, and the rule that independent checkers
+    dispatch in one batch is fixed at the cause of its round-6 miss. Preflight writes the claim with the lock and compares installed tool
+    versions with their pins; the publish order is one list; a lead-fixable FAIL is fixed in a new attempt without asking the owner; and
+    `delivery.integrity` applicability follows the dispatch plan.
+  - Smoke: OpenCode sends single-line messages as separate argv words and multi-line ones on stdin, so statement files hold the exact
+    bytes; round-6 OpenCode gate rows are judged PASS with a note. Kiro cells start a pane at least 160 rows tall, and an approval waiting
+    off screen is approved from the store's pending record. Codex CLI and OMP stay supported but are marked not verified in round 6.

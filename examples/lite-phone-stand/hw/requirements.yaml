@@ -1,0 +1,180 @@
+# Reference record for examples/lite-phone-stand: hw/requirements.yaml after GROUND stage work, before the GROUND gate.
+# A lite build writes genuine APPEARANCE requirements with CAD_VALID facets only, due LAYOUT; every number is the
+# owner's (A-12), and no other dimension, angle or thickness is a requirement. Questions follow the lite template.
+requirements:
+- id: REQ-001
+  title: Overall model bounding box
+  text: The model's overall bounding box measures 80 mm along X, 90 mm along Y and 100 mm along Z, each within 0.1 mm, measured on the exported STEP.
+  kind: APPEARANCE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: bbox_x
+    comparator: BETWEEN
+    value: [79.9, 80.1]
+    units: mm
+    source: &l12 {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    note: 80 mm within 0.1 mm
+  - property: bbox_y
+    comparator: BETWEEN
+    value: [89.9, 90.1]
+    units: mm
+    source: *l12
+    note: 90 mm within 0.1 mm
+  - property: bbox_z
+    comparator: BETWEEN
+    value: [99.9, 100.1]
+    units: mm
+    source: *l12
+    note: 100 mm within 0.1 mm
+  methods:
+  - ANALYSIS
+  facets:
+  - CAD_VALID
+  due: LAYOUT
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *l12
+  owner: SYNTHETIC lite-demo owner
+- id: REQ-002
+  title: One static solid
+  text: The model is one part made of one solid, with no hinge, joint or moving part, standing static on its base with +Z up.
+  kind: APPEARANCE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: solid_count
+    comparator: EQUALS
+    value: 1
+    units: count
+    source: &l11 {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  methods:
+  - ANALYSIS
+  facets:
+  - CAD_VALID
+  due: LAYOUT
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *l11
+  owner: SYNTHETIC lite-demo owner
+- id: REQ-003
+  title: Sloped back and front retaining lip
+  text: The model shows a sloped back and a front retaining lip as features of its final shape; their angle, height and thickness are design choices, not requirements.
+  kind: APPEARANCE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: sloped_back
+    comparator: EQUALS
+    value: true
+    source: *l11
+  - property: front_lip
+    comparator: EQUALS
+    value: true
+    source: *l11
+  methods:
+  - INSPECTION
+  facets:
+  - CAD_VALID
+  due: LAYOUT
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *l11
+  owner: SYNTHETIC lite-demo owner
+preferences: []
+assumptions: []
+questions:
+- id: Q-000
+  question: 'Would you like a full or lite build?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: 'lite build, an APPEARANCE_CONCEPT model that renders and opens in FreeCAD', source: {kind: USER, reference: brief.md answer A-01, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-001
+  question: 'What is the product, what does it do and what is its purpose?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: static one-piece appearance model of a desktop phone stand, source: {kind: USER, reference: brief.md answer A-02, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-002
+  question: 'Who owns the product and its approvals?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: the lite-demo owner owns it and approves every gate and release, source: {kind: USER, reference: brief.md answer A-03, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-003
+  question: 'Which documentation depth applies: maker, pro or regulated?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: maker, source: {kind: USER, reference: brief.md answer A-04, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-005
+  question: 'Who uses, installs and services the product?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: only the owner reviews the model; nobody makes or uses a part from it, source: {kind: USER, reference: brief.md answer A-05, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-013
+  question: 'What happens if it fails, how severe is that, what must never happen, and which standards and supervision apply?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: a wrong model only costs review time; it must never be presented as safe to make or to hold a phone, source: {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-014
+  question: 'Who approves gates and releases, and is a competent authority required?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: the owner approves; no competent authority for an appearance model, source: {kind: USER, reference: brief.md answer A-07, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-015
+  question: 'What is a release for, which operating limits does it state and what does it exclude?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: 'geometry only for viewing at the owner''s desk; no phone-fit, safe-holding, material, fit, strength, manufacturing or other physical claim', source: {kind: USER, reference: brief.md answer A-08, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-016
+  question: 'Are generated results tracked in git, and how long is evidence retained?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: tracked in git and kept for the life of the project, source: {kind: USER, reference: brief.md answer A-09, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-017
+  question: 'Which hardware and documentation licenses does the owner approve?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: CC0-1.0 for hardware and documentation, source: {kind: USER, reference: brief.md answer A-10, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-018
+  question: 'Which overall form must the model have: its shape, its parts and their arrangement, and every feature it must show?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: 'one part and one solid with a sloped back and a front retaining lip; no hinge, joint or moving part', source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-019
+  question: 'Which dimensions and envelopes must the model meet, each with the criterion it is measured against?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: 'overall bounding box 80 mm X, 90 mm Y and 100 mm Z, each within 0.1 mm on the exported STEP; no other dimension is required', source: {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+- id: Q-020
+  question: 'For anything that could move, which one static pose does the model show? A lite model makes no motion claim.'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: static on its base with +Z up; there is no other pose, source: {kind: USER, reference: brief.md answer A-13, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}

@@ -5,6 +5,7 @@
 # component, <PN>.<component>/<operation> every made operation, <case> every approved check-plan case of the named
 # type, <op> every assembly operation or service task, <IF> every interface stating a fit or tolerance class.
 # "(design dependent)" marks an obligation whose condition depends on the run's own frozen design.
+build_mode: FULL
 example: lamp-arm
 service_class: FUNCTIONAL_DEMO
 release_ceiling: no package without physical evidence for every safety requirement (full/skills/cad-release/references/release.md "Release ceiling")
@@ -69,6 +70,7 @@ stages:
   - the import inventory and dry-run mapping presented before any imported byte lands in hw/; the IMPORT decision from L-01
   - the original files kept byte-identical under hw/imports/DR-001/original with their sha256
   - service class FUNCTIONAL_DEMO from a QUESTION decision with a SYNTHETIC actor, separate from rigor pro
+  - Q-000 never asked, and product.yaml build_mode KNOWN FULL, basis USER_DECLARED, sourced from the prompt's "as a full build" (cad-select references/selection.md "Choose the build mode"); no imported file sets the mode
   - payload, reach, heat, duty, creep, cyclic life, electrical supply and risk asked before any material or route is named
   - the record matches examples/lamp-arm/hw in content; ids, wording and order may differ
   - the gate packet lists each consequential UNKNOWN as a limit with the stage where it blocks (cad-select references/selection.md "Scope of each unknown"); none blocks GROUND

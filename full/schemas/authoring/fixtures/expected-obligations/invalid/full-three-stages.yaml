@@ -1,0 +1,15 @@
+build_mode: FULL
+example: tiny-bracket
+service_class: FIT_ASSEMBLY
+release_ceiling: fit-check package only
+conditions:
+  optical.route: {applies: false, reason: no transparency requirement}
+design_dependent:
+  drawing.coverage: a part or assembly drawing is REQUIRED
+stages:
+- {stage: GROUND, expected: [intake.use_case@product], future: [], verdict: PASS, gate: 'APPROVED after `approve GROUND <vN>`', must_show: [build mode question asked]}
+- {stage: LAYOUT, expected: ['geometry.readback@<PN>'], future: [], verdict: PASS, gate: NOT_REQUIRED, must_show: [FreeCAD version]}
+- {stage: RELEASE, expected: [release.inventory@product], future: [], verdict: PASS, gate: 'APPROVED after `approve RELEASE <vN>`', must_show: [disclosure line]}
+acceptable_ends:
+- SEALED: REV A released within the ceiling
+open_at_end: []

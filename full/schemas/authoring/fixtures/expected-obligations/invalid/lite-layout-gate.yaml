@@ -1,0 +1,15 @@
+build_mode: LITE
+example: tiny-cube
+service_class: APPEARANCE_CONCEPT
+release_ceiling: 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
+conditions:
+  geometry.clearance: {applies: false, reason: no clearance requested}
+design_dependent:
+  delivery.integrity: the attempt dispatches at least one worker unit
+stages:
+- {stage: GROUND, expected: [intake.use_case@product], future: [], verdict: PASS, gate: 'APPROVED after `approve GROUND <vN>`', must_show: [build mode question asked]}
+- {stage: LAYOUT, expected: ['geometry.readback@<PN>'], future: [], verdict: PASS, gate: 'APPROVED after `approve LAYOUT <vN>`', must_show: [FreeCAD version]}
+- {stage: RELEASE, expected: [release.inventory@product], future: [], verdict: PASS, gate: 'APPROVED after `approve RELEASE <vN>`', must_show: [disclosure line]}
+acceptable_ends:
+- SEALED: REV A sealed within the lite disclosure
+open_at_end: []

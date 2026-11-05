@@ -24,6 +24,22 @@ and host agent definitions. It does not itself build or test a product.
   obligation coverage, approval authenticity, freshness, immutability or CAD
   method correctness.
 
+## Lite build limits
+
+- A lite package claims only what its checks observed: valid closed solids, the owner's CAD dimensions and
+  features, a produced and shown render, and STEP import in the recorded FreeCAD version. It states
+  `LITE prototype: geometry only; no material, fit, strength or manufacturing claims`. A lite model is no evidence
+  that a part can be made, fits, holds a load or is safe.
+- Static non-interference and requested clearances are CAD measurements at one named static pose, not a fit, motion
+  or tolerance qualification.
+- The package delivers AP214 STEP, not a native parametric FreeCAD document. Its FreeCAD evidence covers the
+  recorded version, not every FreeCAD version.
+- Without FreeCAD the readback is UNKNOWN `NOT_RUN` and nothing is sealed; another importer does not substitute.
+- Promotion to a full build is always available as a CHANGE that reopens GROUND, but it guarantees no qualification
+  without redesign. Lite geometry enters the full build as concept input only.
+- The lite host time targets are unmeasured goals ([smoke.md](smoke.md#lite-timing-targets)); no completed lite
+  cell has been timed.
+
 ## Host and tool limits
 
 Native agent permissions and prompts constrain accidental tool use, not
@@ -33,6 +49,8 @@ a narrower writable filesystem path. Kiro, OpenCode and Claude policy layers do
 not provide OS isolation. An OS read-only mount or sandbox can provide stronger
 confinement, but this repository installs none. Host discovery, permissions,
 model routing and resource loads remain unproved until live smoke runs per host.
+The latest smoke round covered Claude Code, OpenCode and Kiro CLI V3; the Codex CLI and OMP profiles stay in both
+plugins but are not verified in it ([smoke matrix](smoke.md#matrix)).
 
 ### Observed host limitations
 

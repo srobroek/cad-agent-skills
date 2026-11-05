@@ -1,0 +1,1 @@
+Lite build: an APPEARANCE_CONCEPT model that renders and opens in FreeCAD, with no material, fit, strength or manufacturing claim.

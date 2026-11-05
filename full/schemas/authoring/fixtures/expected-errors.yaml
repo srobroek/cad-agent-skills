@@ -25,10 +25,24 @@ codex-agent/invalid/model-override.toml: "$: Additional properties are not allow
 codex-agent/invalid/sandbox-override.toml: "$: Additional properties are not allowed ('sandbox_mode' was unexpected)"
 # expected obligations are <family>@<anchor>, placeholders allowed
 expected-obligations/invalid/bad-obligation.yaml: "$.stages[8].expected[0]: 'bom-derivation' does not match"
+# an explicit FULL example keeps the 13 stages in order
+expected-obligations/invalid/full-three-stages.yaml: "$.stages[1].stage: 'INTENT' was expected"
+# a LITE example's release ceiling is the exact lite disclosure line
+expected-obligations/invalid/lite-disclosure.yaml: "$.release_ceiling: 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims' was expected"
+# a LITE stage promises no future obligation
+expected-obligations/invalid/lite-future.yaml: "$.stages[0].future: ['material.properties@<PN>.<component>'] is expected to be empty"
+# LITE LAYOUT has no owner gate
+expected-obligations/invalid/lite-layout-gate.yaml: "$.stages[1].gate: 'NOT_REQUIRED' was expected"
+# a LITE example is APPEARANCE_CONCEPT
+expected-obligations/invalid/lite-service-class.yaml: "$.service_class: 'APPEARANCE_CONCEPT' was expected"
+# LITE lists exactly GROUND, LAYOUT and RELEASE
+expected-obligations/invalid/lite-thirteen-stages.yaml: "$.stages[1].stage: 'LAYOUT' was expected"
 # the family of an expected or future obligation is a registered check family
 expected-obligations/invalid/misspelled-family.yaml: "$.stages[1].expected[0]: 'selection.feasability@product' does not match"
 # stages lists exactly the 13 stages in order
 expected-obligations/invalid/twelve-stages.yaml: "$.stages[8].stage: 'BOM' was expected"
+# build_mode is FULL or LITE
+expected-obligations/invalid/unknown-build-mode.yaml: "$.build_mode: 'LEAN' is not one of ['FULL', 'LITE']"
 # condition keys are registered check families
 expected-obligations/invalid/unregistered-family.yaml: "$.conditions: 'optical.magic' is not one of ["
 # includeMcpJson is false

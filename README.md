@@ -21,11 +21,27 @@ validity, cost, time and determinism. Full is the baseline and wins a tie. A
 result covers only tested harnesses. Both variants ship in this repository, and
 the repository publishes no A/B result.
 
+## Lite or full build
+
+At the first intake the lead asks whether you want a full or lite build and recommends lite for initial
+prototyping. Both plugin variants offer both builds; "lite" is a build mode, not the `lean` record variant.
+
+| Build | Stages | Delivers | Claims |
+| --- | --- | --- | --- |
+| lite | GROUND, LAYOUT and RELEASE; owner approval at GROUND and RELEASE | an `APPEARANCE_CONCEPT` 3D model: part and assembly STEP, render and the evidence that the STEP opens in the recorded FreeCAD version | `LITE prototype: geometry only; no material, fit, strength or manufacturing claims` |
+| full | all 13 stages and their gates | material, sourcing, manufacturing and the validation its approved use requires | what its approved release scope and evidence support, within the release ceiling |
+
+Lite needs FreeCAD's console on the host; without it the build stops before RELEASE
+([install](docs/install.md#freecad-for-lite-builds)). A lite project can be promoted to a full build later
+through an approved change that reopens GROUND. See [architecture](docs/architecture.md#lite-build).
+
 ## Supported harnesses
 
 Both variants have native definitions for Claude Code, Codex CLI, OpenCode,
 Kiro CLI V3 and OMP. Claude Code and OMP use root marketplace catalogs. Codex,
-OpenCode and Kiro use native profiles. See the live checks in
+OpenCode and Kiro use native profiles. The latest live-smoke round covered
+Claude Code, OpenCode and Kiro CLI V3 only; the Codex CLI and OMP definitions
+stay supported but were not verified in it. See the live checks in
 [smoke.md](docs/smoke.md) for host discovery, permission enforcement and model
 behavior. Repository content alone does not establish runtime results.
 
@@ -43,8 +59,8 @@ material data and synthetic approvals are not physical validation.
 
 Each variant contains eight owner skills and five canonical OMP roles with
 native profiles. Full adds 28 record schemas and lean 11, each with fixtures.
-The repository also holds authoring schemas, regression cases, two declarative
-examples and static CI. Source documents describe model-run
+The repository also holds authoring schemas, regression cases, three declarative
+examples (two full builds and one lite build) and static CI. Source documents describe model-run
 semantic checks. This repository ships no semantic validator. Static CI and a
 live smoke do not prove design safety, manufacturability, certification or
 physical validation. See [limitations](docs/limitations.md) and

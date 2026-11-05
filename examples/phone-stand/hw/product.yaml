@@ -4,6 +4,12 @@ format: cad-agent-skills
 record_version: 1
 id: phone-stand
 title: Adjustable desktop phone stand
+build_mode:
+  status: KNOWN
+  value: FULL
+  basis: USER_DECLARED
+  sources:
+  - {kind: USER, reference: brief.md prompt, origin: SYNTHETIC demo owner, date: '2026-11-03'}
 identity:
   description:
     status: KNOWN

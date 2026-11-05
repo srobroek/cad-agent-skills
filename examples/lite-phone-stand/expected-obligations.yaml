@@ -1,0 +1,114 @@
+# Expected obligations for examples/lite-phone-stand: data for docs/demo.md and docs/smoke.md, not a record file.
+# No cad-record root covers it. Families, conditions, due stages and gates are those of the lite stages in
+# full/skills/cad-flow/assets/stages.yaml; anchors follow full/skills/cad-verify/references/families.md.
+# A placeholder in <> stands for every value the run allocates: <PN> every part number, <PN>.<component> every
+# component. Families this file names in no stage are excluded from the lite build, not false conditions.
+build_mode: LITE
+example: lite-phone-stand
+service_class: APPEARANCE_CONCEPT
+release_ceiling: 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
+
+# Conditions with a fixed truth value for this brief at every stage that lists the family.
+conditions:
+  geometry.interference: {applies: false, reason: 'the brief fixes one solid with one geometric occurrence; a run with more than one occurrence lists it at LAYOUT'}
+  geometry.clearance: {applies: false, reason: the owner requests no geometric clearance}
+# Conditions whose truth depends on the run's own frozen design. The run's obligations.yaml must list the family
+# exactly when the condition holds on its frozen inputs, and record the reason when it does not.
+design_dependent:
+  delivery.integrity: the attempt dispatches at least one worker unit, in its stage work or in run-checks (expected at every stage)
+
+stages:
+- stage: GROUND
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - intake.use_case@product
+  - requirements.completeness@product
+  - check_plan.completeness@product
+  future: []
+  verdict: PASS
+  gate: APPROVED after `approve GROUND <vN>`
+  must_show:
+  - Q-000 asked in the first intake batch, before any geometry, with the lite-for-initial-prototyping recommendation and the tradeoff line (cad-select references/selection.md "Choose the build mode")
+  - the first batch holds exactly the lite template questions Q-000, Q-001, Q-002, Q-003, Q-005 and Q-013 to Q-020 (cad-select references/selection.md "Lite intake")
+  - product.yaml build_mode KNOWN LITE, basis USER_DECLARED, with answer A-01 as its USER source; release_scope.exclusions opens with the disclosure line, with A-01 among its sources
+  - service class APPEARANCE_CONCEPT from a QUESTION decision whose statement is answer A-01, with a SYNTHETIC actor, separate from rigor maker
+  - the record matches examples/lite-phone-stand/hw in content; ids, wording and order may differ
+  - REQ-001 with the 80 mm X, 90 mm Y and 100 mm Z bounding-box sizes from A-12, each its own criterion within 0.1 mm; REQ-002 one solid and REQ-003 the sloped back and the front retaining lip from A-11; all APPEARANCE with CAD_VALID facets, due LAYOUT, waiver FORBIDDEN
+  - the check plan maps each criterion to its check on the assembly (cad-verify references/check-plan.md "Lite build"), with three bounding-box rows and the solid count under geometry.readback, the two features under geometry.identity, and no interference, clearance or case row
+  - the gate packet shows the proposed form, one part with one occurrence, every dimension with its measurement criterion, mode LITE, service class and scope, the planned checks, FreeCAD availability from preflight (the resolved console path and version, or unavailable), the disclosure line, and the full sha256 of the version manifest and the verdict
+  must_not:
+  - geometry, a model program or an export before the `approve GROUND <vN>` decision is recorded
+  - a question on material, process, printer, vendor, consumable, load, environment, motion, accuracy, logistics, capability, regime or tolerance, or any of Q-004 and Q-006 to Q-012
+  - the mode inferred from "appearance model" in the prompt, from the rigor or from the installed record variant; Q-000 asked again after A-01
+  - a verdict, decision or result for INTENT, SPECIFY, CONCEPT, VARIANT, PARTS, DETAIL, BOM, ANALYSIS, CRITIQUE or FREEZE
+  - a material, mass, load, FEA or process requirement or check-plan case, or an UNKNOWN placeholder for a full-only fact
+- stage: LAYOUT
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - intake.use_case@product (the checker's independent inspection of the frozen intent against the model and render)
+  - geometry.build@assembly
+  - geometry.build@<PN>
+  - geometry.readback@assembly
+  - geometry.readback@<PN>
+  - geometry.export@assembly
+  - geometry.export@<PN>
+  - geometry.identity@<PN>.<component>
+  - preview.render@assembly
+  - preview.render@<PN>
+  future: []
+  verdict: PASS only when every obligation is PASS; BLOCKED when FreeCAD is absent, with geometry.readback UNKNOWN NOT_RUN
+  gate: NOT_REQUIRED
+  must_show:
+  - the part designer's finished prototype form, not an envelope, built from the approved GROUND without a selection, variant or manufacturing prerequisite
+  - bounding box, feature, solid-count and unit measurements on the exported STEP files, each STEP's sha256 and its AP214 (AUTOMOTIVE_DESIGN) schema
+  - the FreeCAD readback from the checker's project-local helper, retained with its output in the check bundle, with the resolved executable, the FreeCAD, OCC and bundled-Python versions, each input STEP sha256, and per-solid validity, closure, volume and bounding box
+  - an intent finding on the sloped back and the front retaining lip; a bounding box alone does not prove the requested shape
+  must_not:
+  - a manufacturing, material, fit, strength or printability claim, or an STL, drawing or manufacturing export
+  - geometry.readback PASS without fresh complete FreeCAD output for the current input hashes, from an exit 0 or banner alone, from another importer, or by waiver
+  - an owner gate at LAYOUT, or RELEASE work before the PASS LAYOUT verdict
+  - a producer program or producer result used as checker evidence
+- stage: RELEASE
+  expected:
+  - record.schema@product
+  - record.semantic@product
+  - record.ownership@product
+  - record.inputs@product
+  - delivery.integrity@product
+  - verification.index@product
+  - release.inventory@product
+  future: []
+  post_approval:
+  - release.integrity@product (lead, inside publish-release; in no stage verdict)
+  verdict: PASS
+  gate: APPROVED after `approve RELEASE <vN>`
+  must_show:
+  - the verification index, the build guide and the release proposal published before the RELEASE checks are dispatched, the proposal without readiness, approval or integrity (cad-release references/release.md "Lite release")
+  - the packet shows the render in the host or an opened viewer, the STEP and source paths, the measured dimensions, solid count and volumes, the checked FreeCAD version and outcomes, the independent intent findings, the exclusions, the inventory, the REV and the full sha256 of the proposal, verdict and manifest
+  - the disclosure line in the packet and in docs/build-guide.md
+  - after approval, a sealed hw/releases/A/ whose FINAL release-manifest.json carries build_mode LITE, readiness, approval, inventory and integrity PASS, sealed last; its outer digest reported outside the package
+  - claims only the CAD_VALID outcomes of the verification index
+  must_not:
+  - a FREEZE, BOM, drawing, manufacturing state or STL in the package, or a part revision other than its X draft
+  - a material, fit, strength, manufacturing, safety or other physical claim, or a claim beyond the verification index
+  - a sealed package after a FAIL or UNKNOWN check, without the shown render or without a PASS FreeCAD readback
+  - successor work after the approval, or the session ended in the approval turn
+
+# Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
+acceptable_ends:
+- SEALED: hw/releases/A sealed as a lite package with every due lite check PASS, a PASS FreeCAD readback on the recorded version, both gates approved by their scripted replies and integrity PASS
+- STOPPED: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it, nothing advanced past it; without FreeCAD, LAYOUT BLOCKED on geometry.readback UNKNOWN NOT_RUN with the STEP and render shown as unverified blocked artifacts and the resume action. A STOPPED run is no completed lite run and gives no lite timing
+never:
+- a material, fit, strength, manufacturing, safety or other physical claim
+- a self-approval, an approval without its scripted reply, or a waiver of a due lite check
+- an UNKNOWN reported or upgraded as PASS
+- a program shipped in or copied from the plugin; the checker writes its FreeCAD helper in the product project
+open_at_end: []
