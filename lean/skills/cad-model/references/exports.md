@@ -217,11 +217,13 @@ FreeCAD. Nothing ships; every file below is the product project's.
    absolute paths of the STEP copies, the world witness points of each file and the output path. It imports only FreeCAD's own `FreeCAD`,
    `Part` and the standard library, so FreeCAD's bundled Python and OCCT never mix with a kernel environment. It makes no fix, sew, refine,
    scale or other healing call.
-3. Per input the helper writes the sha256 of the bytes it read, then `Part.read` the file and, for each of `shape.Solids` (assembly
-   instances once each, never a container compound), `isValid()`, `isClosed()`, `Volume` in mm³, `BoundBox` minimum and maximum in mm and
-   the witness ids it contains (`isInside(point, 1e-6, True)`). An import exception is recorded per file. It also writes `FreeCAD.Version()`,
-   `Part.OCC_VERSION`, `sys.version`, `FreeCAD.getHomePath()` and `sys.executable`, then `complete: true` last, into
-   `artifacts/freecad-readback.json` (DATA), which `check.py` deletes before the run.
+3. Per input the helper writes one entry keyed by the input's published `hw/` path (a literal beside its copy path), with the sha256 of the
+   bytes it read; the copy path appears only in the helper source, never in the output. It then `Part.read`s the file and, for each of
+   `shape.Solids` (assembly instances once each, never a container compound), writes `isValid()`, `isClosed()`, `Volume` in mm³, `BoundBox`
+   minimum and maximum in mm and the witness ids it contains (`isInside(point, 1e-6, True)`). An import exception is recorded per file. It
+   also writes the environment facts `FreeCAD.Version()`, `Part.OCC_VERSION`, `sys.version`, `FreeCAD.getHomePath()` and `sys.executable`
+   (where it ran, never an evidence path), then `complete: true` last, into `artifacts/freecad-readback.json` (DATA), which `check.py`
+   deletes before the run.
 4. Run: `check.py` creates `<tmp>/<check>/freecad-home`, then runs the `argv` plus the helper's absolute path. The run has stdin closed, cwd
    `<tmp>/<check>/`, an environment of only `HOME` and `FREECAD_USER_HOME` (both that home) and `TMPDIR`, and a timeout; FreeCAD 1.1.4
    exits 101 ("Unknown runtime error occurred while initializing FreeCAD") without `HOME`. stdout and stderr go to
