@@ -4,7 +4,7 @@ Owner: cad-verify. The SPECIFY and ANALYSIS stage-work procedures, the expected-
 [cad-flow `enumerate-obligations`](../../cad-flow/references/stages.md#enumerate-obligations) takes its anchors from, and the evidence each
 service class needs. Fields and paths are cad-record's ([requirements schema](../../cad-record/schemas/requirements.schema.json),
 [check-plan schema](../../cad-record/schemas/check-plan.schema.json), [layout](../../cad-record/layout.json)); the per-family method, anchor
-and fixed check id are in [families.md](families.md).
+and fixed check id are in [families.md](families.md). A lite build runs these procedures with the changes in [Lite build](#lite-build).
 
 ## specify-requirements
 
@@ -169,3 +169,55 @@ Runs at ANALYSIS, FREEZE and RELEASE after `run-checks` has published this attem
    preflight, `files` `verification.yaml` and `verification.csv` (role `DATA`), `complete: true` → it validates.
 7. Dispatch the `verification.index` check (references/families.md): an independent checker re-derives the rows and compares them; its
    result is published before `accept-results`.
+
+## Lite build
+
+A lite build ([cad-record record — Build mode](../../cad-record/references/record.md#build-mode)) changes only what this section names.
+Its stage families are in [families — Lite build](families.md#lite-build); it has no `confirm-cases`.
+
+### Lite requirements and plan
+
+At GROUND, after intake writes the requirements ([cad-select — Lite intake](../../cad-select/references/selection.md#lite-intake)):
+
+1. `specify-requirements` writes no byte of `hw/requirements.yaml`. It judges each requirement by its steps 1–7: kind APPEARANCE, facet
+   `CAD_VALID` only, `due: LAYOUT`, `safety: false`, `waiver_policy: FORBIDDEN`. A gap is fixed in GROUND stage work before `freeze-inputs`.
+2. `plan-checks` writes `hw/check-plan.yaml` from the requirements and the owner's part arrangement alone, with `cases: []`; LAYOUT adds
+   no entry. PNs do not exist before LAYOUT, so every check has subjects `[{kind: ASSEMBLY}]`, `components: []`, `operations: []`,
+   facet `CAD_VALID`, `due: LAYOUT`, `applicability: APPLICABLE`, `safety: false`, `waiver_policy: FORBIDDEN` and
+   `producer_role: cad-checker`:
+   - one entry per requirement criterion, with `requirements` naming it and its criterion unchanged. `family` is `geometry.readback` for
+     a dimension, envelope, bounding box, count or static pose on the exported STEP, measured in the assembly frame. It is
+     `geometry.identity` for a named feature: the criterion `property` is the feature's semantic id, with comparator `EQUALS` and value
+     `true`. It is `geometry.clearance` for a geometric clearance limit;
+   - one `geometry.interference` check when the arrangement has more than one geometric occurrence, its criterion the POLICY
+     criterion of [geometry.interference](geometry-motion.md#geometryinterference).
+3. An entry of a `fixed` family is a criterion mapping: the family's fixed check measures it, and the entry covers no obligation. Of the
+   `geometry.clearance` entries for one scope item, the first in file order is the covering check and the rest map onto it.
+
+`requirements.completeness@product` is PASS only when `build_mode` is KNOWN `LITE`, the service class is `APPEARANCE_CONCEPT` with its DR,
+and step 1 holds for every requirement, with at least one requirement. It is FAIL when a requirement is MANUFACTURING, has a facet other
+than `CAD_VALID`, or states a mass, load, material, process or finish criterion. A geometry-driving criterion that is UNKNOWN is UNKNOWN
+`REQUIRED_UNKNOWN`.
+
+`check_plan.completeness@product` is PASS only when every requirement criterion has exactly one entry due LAYOUT whose family measures
+that kind of criterion, `geometry.interference` has a check exactly when the arrangement has more than one geometric occurrence, and the
+plan has no case and no family outside the lite LAYOUT policy. A missing or extra entry or check is FAIL; an UNKNOWN criterion is UNKNOWN
+`REQUIRED_UNKNOWN`.
+
+### Lite expected scope
+
+Expected scope runs unchanged on lite records, which hold no route operation, purchased part, interface or case. Its scope items are
+therefore `assembly`, each PN, its components and each requirement. A criterion mapping never counts as a covering check in step 5.
+
+### Lite index
+
+At RELEASE `index-verification` runs before the release proposal, with these changes:
+
+1. Inputs: the RELEASE snapshot `requirements.yaml` and `check-plan.yaml`, plus the PASS LAYOUT verdict, its `obligations.yaml` and its
+   accepted results. No RELEASE result, future obligation or waiver is an input.
+2. A row's `obligations` are the LAYOUT obligations its criterion's entry resolves to: `<family>@assembly` for `geometry.readback` and
+   `geometry.clearance`, and every `geometry.identity@<PN>.<component>` for `geometry.identity`. The row outcome is the worst of those
+   outcomes and, for `geometry.readback` and `geometry.identity`, the entry's row in that result's `artifacts/criteria.json`, in the step 2
+   order. A criterion with no entry, or whose obligation is absent, is the step 2 `SCOPE_GAP` row.
+3. Steps 3–6 hold with `version` and the binding naming the RELEASE version. Step 7 is not run here: the `verification.index` check runs
+   in the RELEASE checks with `release.inventory`.

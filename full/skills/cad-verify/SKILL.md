@@ -23,7 +23,7 @@ TRIGGER
 2. Before any run, enumerate scope with check-plan.md "Expected scope" → every obligation `<family>@<anchor>`
    assigned to exactly one check, or UNKNOWN with a `SCOPE_GAP`.
 3. LOAD references/families.md (`skill://cad-verify/references/families.md`) → each obligation's anchor, producer
-   and method owner.
+   and method owner; in a lite build, from its "Lite build" section.
 4. LOAD only the method references your obligations name:
    - references/geometry-motion.md (`skill://cad-verify/references/geometry-motion.md`) for interference,
      clearance, motion and assembly operations;

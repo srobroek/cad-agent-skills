@@ -129,10 +129,20 @@ Manifest fields this build supplies (prose root `version-manifest`, cad-record r
 - Both kernels write STEP as AP214 (`AUTOMOTIVE_DESIGN`) with `SI_UNIT(.MILLI.,.METRE.)`; never claim AP242.
 - Names carry no spaces: build123d `import_step` replaces spaces in labels with `_`.
 
+## Lite build
+
+A lite build ([cad-record record — Build mode](../../cad-record/references/record.md#build-mode)) builds at LAYOUT only the parts
+references/model-contract.md "Lite model" describes. The Version build runs unchanged. Every lite PN is AUTHORED with no manufacturing
+state, so the exports are exactly `definition/parts/<PN>.step` per PN, `definition/assembly.step`, `definition/assembly.glb`,
+`previews/assembly.svg` and `previews/parts/<PN>.svg`. Every STEP is AP214 as Export formats state, the version has no `manufacturing/`
+file, and the manifest `manufacturing` is `[]`. Each check heading below has a Lite paragraph for the checker's VERSION check; a
+producer's UNIT checks keep the method above it. [FreeCAD readback](#freecad-readback) is a step of lite `geometry.readback`, never a
+family of its own.
+
 ## Readback
 
 A separate program in the build123d environment reads the exported files; it never imports the producing program or
-a model. Compare against the signature of a fresh rebuild:
+a model, except the lite `geometry.build` harness that shares its `check.py`. Compare against the signature of a fresh rebuild:
 
 - STEP: the header length unit is `SI_UNIT(.MILLI.,.METRE.)`; every solid is valid; the solid count equals the
   signature's; volume within 1e-6 relative; bbox within 1e-3 mm; instance labels equal the manifest `step_name`s; each
@@ -158,12 +168,84 @@ FAIL when a program exits non-zero; a shape is invalid or has no positive volume
 bound fails; a functional round fails; or a fresh signature differs from the published geometry beyond tolerance.
 UNKNOWN `MISSING_INPUT` when a program, lock or snapshot file is absent; `TIMEOUT` when a run exceeds its limit.
 
+Lite: the checker runs no version program and no producer `build.py`. In fresh scratch its own harness loads each snapshot
+`hw/versions/vN/record/parts/<PN>/model.py` per references/model-contract.md (`KERNEL` by parsing, then `build` and `features` on a copy
+of `PARAMS`). It places each occurrence from the snapshot `assembly.yaml` and writes the signature per Signatures and witnesses. The
+harness is `check.py` for build123d models. When the version has CadQuery models, the checker's own `.cad-work/<unit>/build.py` and lock
+in the CadQuery environment rebuild them first. That run is listed in `commands` with `artifacts/build-stdout.txt` and
+`artifacts/build-stderr.txt` (LOG), writes `artifacts/build-signature.json` (DATA) for `check.py`, and is retained as `source/build.py`.
+PASS only when every harness run exits 0 and finishes, and every expected solid is non-null, valid (`BRepCheck_Analyzer`), closed (every
+shell `BRep_Tool.IsClosed_s`) and of finite positive volume. Each component's witness and `multiplicity` must also bind, and the fresh
+signature must match the published STEP within the Readback tolerances: signatures match, never STEP bytes or header timestamps. FAIL and
+UNKNOWN as above; an open shell is FAIL.
+
 ## geometry.readback
 
 Apply Readback to every published STEP, STL, GLB, DXF and SVG of the subject against the fresh signature and
 witnesses. `@assembly` covers the assembly STEP and GLB; `@<PN>` the part's STEP, manufacturing files and witnesses.
 
 FAIL when any Readback rule fails. UNKNOWN `MISSING_INPUT` when a file the manifest lists is absent.
+
+Lite: Readback applies to the published part and assembly STEP and the GLB of the subject, against the lite `geometry.build`
+signature. Every measured value comes from the exported files, never from the harness's in-memory shapes, even inside one `check.py`.
+The lite method adds:
+
+1. Closure: every STEP solid is closed, as in lite `geometry.build`.
+2. Owner criteria, in `geometry.readback@assembly`: measure each `geometry.readback` criterion mapping
+   ([cad-verify check-plan — Lite build](../../cad-verify/references/check-plan.md#lite-build)) on the exported assembly STEP in the
+   assembly frame. Bounding box and envelope come from the solids, counts from the instances and solids, and a feature dimension from the
+   faces the feature's witnesses locate. Compare each with the criterion's comparator and value. Write one row per mapping to
+   `artifacts/criteria.json` (DATA): mapping id, requirement, criterion, measured value with units, outcome.
+3. [FreeCAD readback](#freecad-readback) of every part and assembly STEP of the subject.
+
+PASS only when Readback, every criteria row and FreeCAD readback pass. FAIL when any of them fails: a wrong scale, count, volume or bounding
+box is FAIL however well the signature and FreeCAD agree. UNKNOWN `REQUIRED_UNKNOWN` when a mapped criterion is UNKNOWN, and the FreeCAD
+readback codes for the whole obligation.
+
+## FreeCAD readback
+
+The required step of a lite checker's VERSION `geometry.readback`. The checker proves that each published part and assembly STEP of the
+subject opens in the installed FreeCAD, at the versions it records. A producer's UNIT readback omits this step and claims nothing about
+FreeCAD. Nothing ships; every file below is the product project's.
+
+1. Executable: the brief's `resources.tools` entry `freecad` (its `argv` from cad-flow preflight). When the entry is absent or its
+   executable cannot be started, the obligation is UNKNOWN `NOT_RUN` with reason
+   `FreeCAD executable unavailable; STEP compatibility not tested`, even when every other rule passed. It is never NOT_APPLICABLE, PASS, a
+   waiver or another importer.
+2. Helper: `check.py` writes `.cad-work/<unit>/tmp/<check>/freecad-readback.FCScript` and never edits it after the run. FreeCAD runs an
+   `.FCScript` as `__main__`, while it imports a `.py` argument as a module and skips its main guard. The helper holds as literals the
+   absolute paths of the STEP copies, the world witness points of each file and the output path. It imports only FreeCAD's own `FreeCAD`,
+   `Part` and the standard library, so FreeCAD's bundled Python and OCCT never mix with a kernel environment. It makes no fix, sew, refine,
+   scale or other healing call.
+3. Per input the helper writes the sha256 of the bytes it read, then `Part.read` the file and, for each of `shape.Solids` (assembly
+   instances once each, never a container compound), `isValid()`, `isClosed()`, `Volume` in mm³, `BoundBox` minimum and maximum in mm and
+   the witness ids it contains (`isInside(point, 1e-6, True)`). An import exception is recorded per file. It also writes `FreeCAD.Version()`,
+   `Part.OCC_VERSION`, `sys.version`, `FreeCAD.getHomePath()` and `sys.executable`, then `complete: true` last, into
+   `artifacts/freecad-readback.json` (DATA), which `check.py` deletes before the run.
+4. Run: `check.py` creates `<tmp>/<check>/freecad-home`, then runs the `argv` plus the helper's absolute path. The run has stdin closed, cwd
+   `<tmp>/<check>/`, an environment of only `TMPDIR` and `FREECAD_USER_HOME` (that home) and a timeout. stdout and stderr go to
+   `artifacts/freecad-stdout.txt` and `artifacts/freecad-stderr.txt` (LOG). The argv with the resolved absolute executable, cwd,
+   environment keys, timeout and exit code go to `artifacts/freecad-run.json` (DATA). The result's `source_files` lists
+   `source/freecad-readback.FCScript`, which cad-flow retains from `tmp/<check>/` at merge.
+5. Compare in `check.py`. The output is complete, the exit code is 0, each input's sha256 equals its brief inventory entry, and the home
+   path contains the executable. Each file's solid count equals the expected instance-solid count of the lite `geometry.build` signature.
+   Each solid matches one expected component by the witness it contains, or a `multiplicity` group by volume and bounding box, never by
+   index. Each matched solid is valid, closed and of positive volume, with volume within 1e-6 relative and bounding box within 1e-3 mm of
+   the signature.
+
+```python
+shape = Part.read(step_path)  # inside the FCScript; no fix, sew, refine or scale
+rows = [{"valid": s.isValid(), "closed": s.isClosed(), "volume_mm3": s.Volume,
+         "bbox_mm": [[s.BoundBox.XMin, s.BoundBox.YMin, s.BoundBox.ZMin],
+                     [s.BoundBox.XMax, s.BoundBox.YMax, s.BoundBox.ZMax]]} for s in shape.Solids]
+```
+
+PASS when step 5 holds for every file. FAIL when a file does not import, a count, validity, closure, volume or bounding box differs, or a
+solid matches no or several components. UNKNOWN `NOT_RUN` per step 1. UNKNOWN `INCOMPLETE` when the output is missing, has no
+`complete: true`, names other bytes or was not deleted before the run, or the exit code is non-zero. `TIMEOUT` at the limit. A banner or
+exit code 0 alone is never evidence. The PASS holds only for the recorded FreeCAD, OCCT and Python versions; it says nothing about other
+FreeCAD versions or physical use. After FreeCAD becomes available, unchanged inputs rerun as a new attempt; a changed input or method is a
+new version.
 
 ## geometry.export
 
@@ -172,6 +254,10 @@ FAIL when any Readback rule fails. UNKNOWN `MISSING_INPUT` when a file the manif
 
 FAIL when an expected file is missing, an unexpected file is present, a sha256 differs from the manifest, a STEP
 declares other units, an STL is ASCII or was meshed coarser than `export_tolerance`, or the GLB is not METRE_Y_UP.
+
+Lite: the expected files are those of [Lite build](#lite-build). FAIL also when any `manufacturing/` file exists, a STEP's `FILE_SCHEMA` is
+not `AUTOMOTIVE_DESIGN` (AP214), or a STEP does not re-import with build123d `import_step`. A delivered STEP is labelled AP214, never
+AP242.
 
 ## geometry.identity
 
@@ -185,6 +271,12 @@ For each component of the PN, in the definition and in the manufacturing state:
 
 FAIL when a solid is unbound, ambiguous or claimed twice, or a named feature has no witness or a witness is off its
 surface. UNKNOWN `MISSING_INPUT` when the part's components are not declared.
+
+Lite: step 2 also covers each feature a `geometry.identity` criterion mapping names by its criterion `property`
+([cad-verify check-plan — Lite build](../../cad-verify/references/check-plan.md#lite-build)). The feature belongs to the one PN whose fresh
+`features` carry a witness of that id, and that witness must pass Readback. Write one row per mapping to `artifacts/criteria.json` (DATA):
+mapping id, requirement, feature id, PN, witness found and on its surface, outcome. A mapped feature that no PN witnesses, or that two PNs
+witness, makes every `geometry.identity` outcome FAIL. Identity infers no material or mass.
 
 ## geometry.manufacture
 
@@ -208,6 +300,10 @@ APPROVED. Limitations: equal volume does not prove the same features or material
 
 FAIL when a preview is missing, unparseable or has an empty layer. Limitations: a preview is review material, never
 verification of fit, motion or manufacture.
+
+Lite: `@assembly` and `@<PN>` only. Each preview is also listed in the version manifest `files` with its sha256 and role `PREVIEW`. The
+lead shows it to the owner at RELEASE ([cad-release](../../cad-release/references/release.md#lite-release)), and a result never claims it
+was shown.
 
 ## For drawings
 

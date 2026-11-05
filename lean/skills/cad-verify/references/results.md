@@ -9,8 +9,8 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
 
 | Kind      | Who                                                                                                       | Contents                                                                                                                 |
 | --------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `COMMAND` | every family except `review.mechanical_dfm`; the lead's result of any family stopped at acceptance or of a lost or stalled unit ([families](families.md)) | `source_files` (the retained programs under `source/`), `commands` (argv, cwd, exit code, published `stdout` and `stderr`), pinned `packages`, `platform` |
-| `REVIEW`  | the `review.mechanical_dfm` reviewer, always                                                              | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts                  |
+| `COMMAND` | every family except `review.mechanical_dfm` and the lite LAYOUT `intake.use_case`; the lead's result of any family stopped at acceptance or of a lost or stalled unit ([families](families.md)) | `source_files` (the retained programs under `source/`), `commands` (argv, cwd, exit code, published `stdout` and `stderr`), pinned `packages`, `platform` |
+| `REVIEW`  | the `review.mechanical_dfm` reviewer, always; the checker for `intake.use_case` at LAYOUT of a lite build ([families — Lite intent inspection](families.md#lite-intent-inspection)) | `inspected`: every file read with its sha256 copied from the brief inventory; no commands, no artifacts |
 
 1. A COMMAND producer writes its own program as a PEP 723 script, a unit at `.cad-work/<unit>/check.py` and the lead at
    `.cad-work/lead/checks.py`, and locks and runs it with the
@@ -25,19 +25,23 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
    `stdout` and `stderr` name published logs, never a scratch path: in a check bundle `stdout.txt` and `stderr.txt` beside the
    result's target (layout `check.stdout`, `check.stderr`), as `source_files` name `source/<file>`; any other result names
    only a log its own bundle publishes. The lead copies the delivered logs there at merge
-   ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3).
+   ([cad-flow worker delivery — merge-deliveries](../../cad-flow/references/worker-delivery.md#merge-deliveries) step 3). Lite
+   `geometry.build` and `geometry.readback` add the programs, helpers and logs their methods name
+   ([cad-model exports — Lite build](../../cad-model/references/exports.md#lite-build)).
 2. A checker may start from the retained `source/check.py` and lock of the latest accepted result of the same family (one
    a stage verdict lists) for a re-attempt, a rework or a later stage, when its brief's input inventory lists both. The
    copy is its own program: it re-checks the copy against the current method and its brief, relocks and re-runs it, and
    the new result's `source_files` hash the program it ran.
 3. The checker never runs or imports a producer's `build.py` or `check.py` as its method; producer exports are inputs only
-   ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 18).
+   ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 18). A lite
+   `geometry.build` harness loads the snapshot `model.py` files through the model contract as inputs.
 4. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
    `MISSING_RESULT` at acceptance.
 5. A REVIEW result that lists commands, or a reviewer that wrote any file or ran anything other than read-only inspection commands (the lead
    compares its tree digest before dispatch and after return; per-host reading rule:
    [cad-flow agent roles — Roles](../../cad-flow/references/agent-roles.md#roles)), fails acceptance; the lead never edits the reviewer's
-   bytes.
+   bytes. A checker's REVIEW result has no commands, source files or artifacts, and its `inspected` names only `input_inventory.files`
+   entries, by their `hw/` path and sha256; a COMMAND result of the same unit is unaffected.
 
 ## Outcomes
 
@@ -63,6 +67,9 @@ A result never writes `WAIVED`: the producer records what it observed, and the s
 | the deadline ended the run                                     | `TIMEOUT`                    |
 | a criterion, property or condition it needs is UNKNOWN         | `REQUIRED_UNKNOWN`           |
 | only a physical test can establish it                          | `PHYSICAL_EVIDENCE_REQUIRED` |
+
+One exception: in a lite build, an unavailable FreeCAD executable leaves `geometry.readback` UNKNOWN `NOT_RUN`, never `UNSUPPORTED_METHOD`,
+NOT_APPLICABLE or PASS ([cad-model exports — FreeCAD readback](../../cad-model/references/exports.md#freecad-readback)).
 
 Result: FAIL when any outcome is FAIL; else UNKNOWN when any is UNKNOWN or `complete` is false; else NOT_APPLICABLE when all are; else PASS.
 `complete` is true only when every expected obligation has an outcome from a finished run.

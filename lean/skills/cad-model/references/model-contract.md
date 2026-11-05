@@ -157,3 +157,17 @@ It returns JSON values only, keyed by the semantic ids the records use:
 - Put the kinks of two intersected outlines at different stations. Give T-intersecting bores different radii; equal
   radii left an unorientable face in CadQuery 2.8.
 - Build axisymmetric form as one revolved profile, with fillets and chamfers drawn as profile arcs and lines.
+
+## Lite model
+
+A part of a lite build (part.yaml `build_mode: LITE`,
+[cad-record record — Build mode](../../cad-record/references/record.md#build-mode)) is the finished prototype form the approved GROUND
+requests, never an envelope ([cad-design parts — Fidelity by stage](../../cad-design/references/parts.md#fidelity-by-stage)):
+
+- Its model is AUTHORED in the part's `PART_LOCAL` frame. `build` makes every requested feature (an opening, wall, bore, round, slope or
+  lip) at the value its requirement states. Each such value is a `PARAMS` key whose comment names the requirement and criterion.
+- `features` witnesses each feature a `geometry.identity` criterion mapping names, using the mapping's criterion `property` as its id, and
+  every feature the part record names.
+- No `build_manufacture` or `manufacture_features`, and no proxy, placeholder or simplified solid in place of a requested feature or part.
+- A round a requirement names is functional (Robust geometry): when it fails, the build stops.
+- Every other rule of this contract holds unchanged.
