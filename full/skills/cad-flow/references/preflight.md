@@ -116,8 +116,10 @@ argv inside its unit directory ([agent-roles](agent-roles.md)); the lead runs on
 1. Resolve the console executable: `command -v freecadcmd FreeCADCmd`, else `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd`
    when that file exists; take its `realpath`. Never the GUI `FreeCAD` binary, and never install or download FreeCAD without the
    owner's approval.
-2. `env TMPDIR=<tmp> FREECAD_USER_HOME=<tmp> <freecad> --version` from `<tmp>`, under the shell tool's 60 s timeout → exit 0 and a first
-   line naming FreeCAD and its version (observed: `FreeCAD 1.1.4 Revision: 20260928 (Git shallow)`).
+2. `mkdir -p <tmp>/freecad-home`, then `env -i HOME=<tmp>/freecad-home FREECAD_USER_HOME=<tmp>/freecad-home TMPDIR=<tmp> <freecad> --version`
+   from `<tmp>` (the readback's own environment, [cad-model FreeCAD readback](../../cad-model/references/exports.md#freecad-readback)
+   step 4), under the shell tool's 60 s timeout → exit 0 and a first line naming FreeCAD and its version (observed:
+   `FreeCAD 1.1.4 Revision: 20260928 (Git shallow)`).
 3. Success → `tools[]` `{name: freecad, argv: [<realpath>], version: <that first line>}`; this version is a probe observation, never
    evidence. Any failure → `unavailable[]` `{name: freecad, observation}` with what was run and seen. Either way the session continues:
    the GROUND packet shows it ([gates Lite packets](gates.md#lite-packets)), and an absent FreeCAD makes LAYOUT's readback UNKNOWN

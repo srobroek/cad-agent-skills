@@ -20,6 +20,8 @@ skill ships none.
 - Accepted returns: CadQuery `Shape`, or `Workplane` (every stack object joins one compound); build123d `Part`, `Solid`,
   `Compound`, or the `.part` of a `BuildPart`.
 - Importing `model.py` runs no geometry; only the build program calls the functions.
+- A program that imports a `model.py` (a build program, a checker's rebuild or the lead's check program) sets
+  `sys.dont_write_bytecode = True` before the import, so no `__pycache__/` ever appears beside a frozen or published `model.py`.
 - A concept designer's coarse model uses the same names inside its `build.py`; it has no `model.py` target.
 
 ## PARAMS authority

@@ -223,7 +223,8 @@ FreeCAD. Nothing ships; every file below is the product project's.
    `Part.OCC_VERSION`, `sys.version`, `FreeCAD.getHomePath()` and `sys.executable`, then `complete: true` last, into
    `artifacts/freecad-readback.json` (DATA), which `check.py` deletes before the run.
 4. Run: `check.py` creates `<tmp>/<check>/freecad-home`, then runs the `argv` plus the helper's absolute path. The run has stdin closed, cwd
-   `<tmp>/<check>/`, an environment of only `TMPDIR` and `FREECAD_USER_HOME` (that home) and a timeout. stdout and stderr go to
+   `<tmp>/<check>/`, an environment of only `HOME` and `FREECAD_USER_HOME` (both that home) and `TMPDIR`, and a timeout; FreeCAD 1.1.4
+   exits 101 ("Unknown runtime error occurred while initializing FreeCAD") without `HOME`. stdout and stderr go to
    `artifacts/freecad-stdout.txt` and `artifacts/freecad-stderr.txt` (LOG). The argv with the resolved absolute executable, cwd,
    environment keys, timeout and exit code go to `artifacts/freecad-run.json` (DATA). The result's `source_files` lists
    `source/freecad-readback.FCScript`, which cad-flow retains from `tmp/<check>/` at merge.
