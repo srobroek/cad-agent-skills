@@ -373,10 +373,14 @@ version-manifest/invalid/pre-cad-no-reason.json: "$.geometry: 'reason' is a requ
 version-manifest/invalid/runtime-single-kernel.json: "$.runtime: Additional properties are not allowed ('kernel', 'packages', 'python' were unexpected)"
 # a checker's own-named artifact pattern takes at most 16 outputs per check
 worker-brief/invalid/artifact-pattern-over-max.yaml: "$.expected.outputs[2].max: 17 is greater than the maximum of 16"
+# only a LAYOUT checker brief (the lite geometry checker) lists the FreeCAD console tool; a GROUND checker never does
+worker-brief/invalid/checker-freecad-ground.yaml: "should not be valid under {'contains': {'properties': {'name': {'const': 'freecad'}}}}"
 # a checker's target pattern is a check bundle's artifacts/<name>, never a retained-source pattern
 worker-brief/invalid/checker-sources-pattern.yaml: "$.expected.outputs[2].target_pattern: 'hw/manufacturing/sources/<sha256>/<name>' does not match '^hw/checks/'"
 # a checker or reviewer brief lists the obligation IDs it covers, so a lost unit's obligations can be recorded UNKNOWN
 worker-brief/invalid/checker-without-obligations.yaml: "$.expected: 'obligations' is a required property"
+# a designer brief never lists the FreeCAD console tool: only the checker's check.py runs it
+worker-brief/invalid/designer-freecad.yaml: "should not be valid under {'contains': {'properties': {'name': {'const': 'freecad'}}}}"
 # installed skills are never hashed: installed_sha256 is not a field
 worker-brief/invalid/installed-hash.yaml: "$.resources: Additional properties are not allowed ('installed_sha256' was unexpected)"
 # a uv script lock is writable only as the unit's own scratch .cad-work/<unit>/build.py.lock or check.py.lock, never under hw/
@@ -425,6 +429,8 @@ worker-brief/invalid/sourcing-yaml-loader.yaml: "should not be valid under {'con
 worker-brief/invalid/template-invalid-fixture.yaml: "check-result/invalid/unknown-reported-pass.json' does not match '(/cad-flow/assets/worker-delivery"
 # a tool argv starts with the absolute path preflight installed, never a uvx resolution
 worker-brief/invalid/tool-argv-uvx.yaml: "$.resources.tools[0].argv[0]: 'uvx' does not match '^/"
+# the FreeCAD console tool is named freecad, whatever the executable's file name
+worker-brief/invalid/tool-name-freecadcmd.yaml: "$.resources.tools[2].name: 'freecadcmd' is not one of ['check-jsonschema', 'yaml-loader', 'freecad']"
 # roles are the five native roles
 worker-brief/invalid/unknown-role.yaml: "$.role: 'cad-analyst' is not one of ['cad-concept-designer', 'cad-part-designer', 'cad-checker', 'cad-mech-dfm-reviewer', 'cad-sourcing-researcher']"
 # a worker writes only under .cad-work/

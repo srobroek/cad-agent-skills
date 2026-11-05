@@ -386,9 +386,9 @@ Generated YAML: the self-contained assignment of one worker.
 - `resources.role_reference`: `{name text, path absolute_path}` required, optional `uri` (same pattern).
 - `resources.rubric`: `{name =rubric, path absolute_path}` required, `path` ending in `/cad-review/references/rubric.md`; optional
   `uri =skill://cad-review/references/rubric.md`.
-- `resources.tools`: `[{name, argv, version text}]` unique, all required; `name` is `check-jsonschema` or `yaml-loader`; `argv` is
-  `[text]≥1` whose first item is an `absolute_path`. Every role except `cad-mech-dfm-reviewer` lists `check-jsonschema`; only
-  `cad-checker` lists `yaml-loader`; `cad-mech-dfm-reviewer` lists none.
+- `resources.tools`: `[{name, argv, version text}]` unique, all required; `name` is `check-jsonschema`, `yaml-loader` or `freecad`;
+  `argv` is `[text]≥1` whose first item is an `absolute_path`. Every role except `cad-mech-dfm-reviewer` lists `check-jsonschema`; only
+  `cad-checker` lists `yaml-loader`; only a `cad-checker` brief whose `stage` is LAYOUT lists `freecad`; `cad-mech-dfm-reviewer` lists none.
 - `resources.templates`: `[{name text, path absolute_path}]≥1` unique, all required; `path` ends in
   `/cad-flow/assets/worker-delivery.yaml` or `/cad-record/assets/contract-fixtures/check-result/valid/<name>.json`.
 - `expected.outputs`: each item is `{target hw_path, kind text}` or a pattern `{target_pattern, kind text, max integer}`, every form

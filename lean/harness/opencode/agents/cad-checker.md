@@ -11,6 +11,9 @@ permission:
     .cad-work/**: allow
   bash:
     "*": deny
+    "env TMPDIR=/*/.cad-work/*/tmp uv lock --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --script /*/.cad-work/*/build.py": allow
+    "env TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/build.py": allow
+    "env TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/build.py *": allow
     "env TMPDIR=/*/.cad-work/*/tmp uv lock --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --script /*/.cad-work/*/check.py": allow
     "env TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py": allow
     "env TMPDIR=/*/.cad-work/*/tmp uv run --cache-dir /*/.cad-work/lead/.uv-cache --no-python-downloads --offline --locked --script /*/.cad-work/*/check.py *": allow
@@ -34,9 +37,7 @@ permission:
     "xargs -0 -r shasum -a 256": allow
     "xargs -0 -r sha256sum": allow
     "date -u +%Y-%m-%dT%H:%M:%SZ": allow
-    "date -u +%Y-%m-%dT%H:%M:%SZ > /*/.cad-work/*": allow
-    "ls": allow
-    "ls *": allow
+    "ls -la /*/.cad-work/*": allow
     "mkdir -p /*/.cad-work/*": allow
     "*--no-project*": deny
     "*../*": deny
