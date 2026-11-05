@@ -24,12 +24,14 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
 2. `unit` and `role` equal the brief; `brief_sha256` equals the sha256 of `brief.yaml`; `input_inventory_sha256` equals the brief's digest;
    the unit's `units.yaml` dispatch log has a `task_text` of only the role, brief path and role reference path and, on Codex,
    `fork_turns: none` ([delegation dispatch-units](delegation.md#dispatch-units) step 4).
-3. Producers (concept designer, part designer, sourcing researcher): `verdict: PASS` and `ready: true`; MINOR and MAJOR are rejected and
-   their findings shape the next unit's brief. A sourcing subject fact that no retained source states, or that a failed search tool left
-   unfound, is a typed UNKNOWN in `unknowns`, which is no defect ([agent-roles](agent-roles.md#roles)). Evidence roles (checker,
-   reviewer): the verdict grades the subject, so any verdict that follows from its results (step 6) passes this step, and a FAIL,
-   UNKNOWN or MAJOR result is published as delivered.
-4. `build.status` is SUCCEEDED with a matching log, or NOT_APPLICABLE with a reason. A unit that built geometry also delivers a passing
+3. Producers (concept designer, part designer, sourcing researcher): `verdict: PASS` and `ready: true`, or `verdict: MINOR` whose every
+   finding leaves each recorded fact, value and citation of the delivery as its evidence states it (an omitted optional note, a wording
+   or formatting slip, an advisory): accept it and log its findings in the unit's `reason`. A MINOR finding that a delivered fact, value
+   or citation is wrong or unsupported, and every MAJOR, rejects the delivery, and its findings shape the next unit's brief. A sourcing
+   subject fact that no retained source states, or that a failed search tool left unfound, is a typed UNKNOWN in `unknowns`, which is no
+   defect ([agent-roles](agent-roles.md#roles)). Evidence roles (checker, reviewer): the verdict grades the subject, so any verdict that
+   follows from its results (step 6) passes this step, and a FAIL, UNKNOWN or MAJOR result is published as delivered.
+4. `build.status` is SUCCEEDED with a matching log, or NOT_APPLICABLE with a reason. A producer that built geometry also delivers a passing
    `geometry.readback` result ([cad-model Readback](../../cad-model/references/exports.md#readback)); an exit code alone is no success.
 5. Every `expected.outputs` target is delivered exactly once and nothing else, except that a `target_pattern` entry takes 0 to `max`
    outputs, each target that pattern with `<sha256>` the output's `sha256` and `<name>` one file name. Each `source` lies under
@@ -38,8 +40,10 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
 6. Every `expected.checks` entry has a result file that hashes to its sha256, validates against the
    [cad-record check-result root](../../cad-record/schemas/check-result.schema.json), binds this unit's brief and input digests (or the
    brief's `version`) and has an `implementation` of the right kind: COMMAND whose `source_files` name `source/<file>` beside the result
-   target, each with the sha256 of the unit-root file of that name, or REVIEW (reviewer only) whose `inspected` entries match the brief
-   inventory. A program or lock whose bytes differ from the sha256 its results record was edited after its last run; the delivery is
+   target, each with the sha256 of the unit-root file of that name (for a lite checker's `freecad-readback.FCScript`, the file of that
+   name under `tmp/<check>/`), or REVIEW whose `inspected` entries match the brief inventory: the reviewer's result, or a lite LAYOUT
+   checker's intent inspection ([cad-verify families](../../cad-verify/references/families.md#lite-intent-inspection)). A program or
+   lock whose bytes differ from the sha256 its results record was edited after its last run; the delivery is
    rejected, never relabelled ([agent-roles](agent-roles.md#every-role) step 6). The delivery agrees with its results, else it is
    rejected, never accepted as a worker's slip:
    - each `checks[]` entry's `family` and `result` equal its result file's `family` and `result`;
@@ -53,7 +57,9 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    and, at its root, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `extract.py`, `extract.py.lock` and `__pycache__/**`
    ([agent-roles uv commands](agent-roles.md#uv-commands)); every other unit of the batch still matches its own delivery. A file or empty
    directory under `output/` or `tmp/` that no delivery entry names is scratch: no violation, never merged. The shared uv cache lies
-   outside every unit directory and every digest.
+   outside every unit directory and every digest. Reads: a delivery whose `limits` record a file's contents read outside the unit's
+   [read set](agent-roles.md#read-set) is rejected, whatever the role; a names-only listing recorded there is logged in the unit's
+   `reason` and rejects nothing.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared `hw/` file; proposals are never
    merged as outputs ([delegation Integrate](delegation.md#integrate)).
 
@@ -70,10 +76,11 @@ A rejected unit is never patched: send it again as a new unit, or its work stays
    with no transform, reformat or re-export; then the target's sha256 equals the delivered `sha256`; write the triple
    `{source, target, sha256}` into the unit's `merged` in `units.yaml` right after the copy.
 3. For each accepted COMMAND result, retain its programs ([cad-verify results](../../cad-verify/references/results.md#implementation-kind)):
-   `cp <root>/.cad-work/<unit>/<file> <root>/<source_files path>` for every `source_files` entry, `<file>` being that path's file name;
-   the copy's sha256 equals the entry; log the triple. For each command of the result, `cp` the delivered `logs[]` stdout and stderr of
-   that run to the command's `stdout` and `stderr` paths (`stdout.txt`, `stderr.txt` beside the result target); each copy's sha256 equals
-   its `logs[]` entry; log the triple.
+   `cp <root>/.cad-work/<unit>/<file> <root>/<source_files path>` for every `source_files` entry, `<file>` being that path's file name
+   (a lite checker's FreeCAD helper: `cp <root>/.cad-work/<unit>/tmp/<check>/freecad-readback.FCScript <root>/<source_files path>`, the
+   one source copied from `tmp/`); the copy's sha256 equals the entry; log the triple. For each command of the result whose `stdout` and
+   `stderr` are `stdout.txt` and `stderr.txt` beside the result target, `cp` the delivered `logs[]` stdout and stderr of that run to them;
+   each copy's sha256 equals its `logs[]` entry; log the triple. A command whose logs are `artifacts/` targets had them merged in step 2.
    For a drawing unit ([cad-release draft-drawings](../../cad-release/references/drawings.md#draft-drawings)), also
    `cp <root>/.cad-work/<unit>/build.py` and `build.py.lock` to the `drawing.source` path `<root>/hw/drawings/vN/<SUBJECT>/source/`;
    log each triple with the copy's sha256.

@@ -16,7 +16,8 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
   units), `brief_sha256`, `task_id` (native), `task_text` (the exact text sent), `fork_turns` (Codex only), `dispatched` (the time
   `date -u +%Y-%m-%dT%H:%M:%SZ` prints just before the dispatch call), `tree_before_sha256` and `tree_after_sha256` (its batch's tree
   digests: [dispatch-units](#dispatch-units) step 3, [Integrate](#integrate) step 1), `state`, `delivery_sha256` (ACCEPTED), `reason`
-  (REJECTED, STOPPED, or ACCEPTED with results the stop rule discarded) and `merged [{source, target, sha256}]`.
+  (REJECTED, STOPPED, or ACCEPTED with results the stop rule discarded, with a producer's MINOR findings or with a names-only listing
+  outside the read set: [worker-delivery Accept](worker-delivery.md#accept) steps 3 and 8) and `merged [{source, target, sha256}]`.
 - `state` is DISPATCHED at dispatch, DELIVERED once the unit returns with a `delivery.json`, and ACCEPTED or REJECTED once
   [Accept](worker-delivery.md#accept) decides; STOPPED marks a unit [dispatch-units](#dispatch-units) step 4 or
   [Lost and stalled units](#lost-and-stalled-units) stops, and a `delivery.json` a stalled unit left still moves it to ACCEPTED or
@@ -29,10 +30,14 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
    ([stages run-checks](stages.md#run-checks) step 1). Units of one stage only, and only after its predecessor's gate is satisfied. A batch
    starts only when `units.yaml` shows every earlier unit of the stage ACCEPTED, REJECTED or STOPPED, each ACCEPTED one with its `merged`
    triples, or `merged: []` and the stop-rule `reason` ([worker-delivery merge-deliveries](worker-delivery.md#merge-deliveries) step 1).
-2. Write and validate each brief and pass its self-check ([worker-brief Compose](worker-brief.md#compose)); log its sha256.
+   The batch is every listed unit that reads no pending unit's result, two or more included: steps 2–4 run once for the whole batch, never
+   once per unit, and no listed unit waits for a lead check or for a unit whose result it does not read.
+2. Write and validate every brief of the batch and pass each self-check ([worker-brief Compose](worker-brief.md#compose)); log each
+   sha256. No dispatch call goes out before the last brief of the batch passes.
 3. Take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) and log it as each batch
    unit's `tree_before_sha256`.
-4. Dispatch every independent unit in one batch through the host's native subagent call naming the role, with a fresh context. The task text
+4. Dispatch every unit of the batch in one model reply: one native subagent call per unit, all in that reply (one call that carries every
+   unit where the host's subagent tool takes several), naming the role, each with a fresh context. The task text
    is only the role, the absolute brief path and the absolute role reference path; never the lead transcript or a forked conversation.
    Where the call has a history switch, set it to none on every call, first dispatch and rework alike: Codex `spawn_agent` with
    `agent_type: <role>`, a new `task_name` per unit and an explicit `fork_turns: "none"` (the default `all` forks the lead's whole
@@ -52,8 +57,25 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
    | `KIRO`     | the subagent's sub-session id (`subSessionId`), else its tool call id    |
 
    An id the host does not show the lead is logged `UNAVAILABLE: <what the call returned>`.
-6. Write nothing outside `.cad-work/` while a unit of the batch runs: any other write changes the tree digest. Meanwhile the lead runs its
-   own families into `.cad-work/stage-vN/checks/` ([stages run-checks](stages.md#run-checks) step 1).
+6. Write nothing outside `.cad-work/` while a unit of the batch runs: any other write changes the tree digest. The lead runs its own
+   families into `.cad-work/stage-vN/checks/` ([stages run-checks](stages.md#run-checks) step 1) only after the batch's last dispatch
+   call, never between two of them: while the batch runs where the host returns control during it (OMP, Codex), else once it returns.
+
+### Lite batches
+
+A lite attempt (frozen `product.build_mode` LITE, [stages Build mode](stages.md#build-mode)) dispatches only `cad-part-designer` and
+`cad-checker` units, grouped by [stages Lite unit groups](stages.md#lite-unit-groups). Step 1 then gives four causal batches and, for
+one part group, six units:
+
+| Batch | Stage   | Units                                          | Ready after                                                    |
+| ----- | ------- | ---------------------------------------------- | -------------------------------------------------------------- |
+| 1     | GROUND  | the assurance checker                          | the frozen GROUND version                                      |
+| 2     | LAYOUT  | one part designer per part group               | the approved GROUND gate                                       |
+| 3     | LAYOUT  | the geometry checker and the semantic checker  | the published LAYOUT version built from batch 2's merged bytes |
+| 4     | RELEASE | the semantic checker and the package checker   | the published RELEASE version, index and lite proposal         |
+
+Each further part group adds one designer to batch 2, never a batch. No unit is split out per PN or per criterion, and no unit of a
+batch reads another unit's pending result.
 
 ## Integrate
 
@@ -76,15 +98,15 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 
 ## Lost and stalled units
 
-1. The lead never waits past a unit's limit. Each wait is bounded by the remaining wall of the earliest-due running unit: its
-   `dispatched` plus its brief's `limits.wall_seconds`, minus the time `date -u +%Y-%m-%dT%H:%M:%SZ` prints. The unit bounds its own
-   turns and wall from inside ([agent-roles Limits](agent-roles.md#limits)).
+1. The lead never waits past a unit's limit where its host can bound the wait: there each wait is bounded by the remaining wall of the
+   earliest-due running unit, its `dispatched` plus its brief's `limits.wall_seconds`, minus the time `date -u +%Y-%m-%dT%H:%M:%SZ`
+   prints. On every host the unit bounds its own turns and wall from inside ([agent-roles Limits](agent-roles.md#limits)).
 
-   | `harness`                    | bounded wait                                                                                                       |
-   | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-   | `OMP`                        | `wait` takes no timeout: it returns on the first finished unit or at its 30-minute cap, so call it only while every running unit has more than 30 minutes left; else run `sleep <seconds>` alone in one `bash` call, at most the remaining wall, then `read proc://<id>` for each running unit |
-   | `CODEX`                      | `wait_agent` with its timeout at most the remaining wall                                                           |
-   | `CLAUDE`, `OPENCODE`, `KIRO` | the foreground dispatch call returns only when its units end; the unit's own limits bound it                       |
+   | `harness`                    | what bounds the wait                                                                                               | after the wait returns                                                                                                             |
+   | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+   | `OMP`                        | `wait` takes no timeout: it returns on the first finished unit or at its 30-minute cap, so call it only while every running unit has more than 30 minutes left; else run `sleep <seconds>` alone in one `bash` call, at most the remaining wall, then `read proc://<id>` for each running unit | a unit still running at its due time is stalled (below); wait again for the rest |
+   | `CODEX`                      | `wait_agent` with its timeout at most the remaining wall                                                           | a unit still running at its due time is stalled (below); wait again for the rest                                                   |
+   | `CLAUDE`, `OPENCODE`, `KIRO` | nothing the lead sets: the foreground dispatch call takes no timeout and returns only when every unit of the batch has ended, so each unit's own limits bound it | no unit still runs, so none is stopped: go on to [Integrate](#integrate) step 1; a unit that reached a limit names it in its delivery's `limits`, and a unit without `delivery.json` is lost (step 2) |
 
    A unit still running at its due time is stalled: stop its native task with the host's stop or cancel call for that id (OMP
    `write proc://<id>/kill`) and log it `STOPPED` with reason `limits.wall_seconds`; a `delivery.json` it left is judged by

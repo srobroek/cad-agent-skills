@@ -166,14 +166,14 @@
           }
         },
         "tools": {
-          "description": "the preflight.json tools[] entries the unit runs, copied verbatim; argv[0] is the absolute path of an installed binary",
+          "description": "the preflight.json tools[] entries the unit runs, copied verbatim; argv[0] is the absolute path of an installed binary. freecad is the probed FreeCAD console executable, listed only on a LAYOUT cad-checker brief: a lite geometry checker's check.py runs it as a subprocess",
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
             "required": ["name", "argv", "version"],
             "properties": {
-              "name": {"enum": ["check-jsonschema", "yaml-loader"]},
+              "name": {"enum": ["check-jsonschema", "yaml-loader", "freecad"]},
               "argv": {
                 "type": "array",
                 "prefixItems": [{"$ref": "common.schema.json#/$defs/absolute_path"}],
@@ -383,6 +383,14 @@
     {
       "if": {"required": ["role"], "properties": {"role": {"enum": ["cad-checker", "cad-mech-dfm-reviewer"]}}},
       "then": {"properties": {"expected": {"required": ["obligations"]}}}
+    },
+    {
+      "if": {"required": ["role", "stage"], "properties": {"role": {"const": "cad-checker"}, "stage": {"const": "LAYOUT"}}},
+      "else": {
+        "properties": {
+          "resources": {"properties": {"tools": {"not": {"contains": {"properties": {"name": {"const": "freecad"}}}}}}}
+        }
+      }
     }
   ]
 }

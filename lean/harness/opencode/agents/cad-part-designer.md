@@ -33,9 +33,7 @@ permission:
     "xargs -0 -r shasum -a 256": allow
     "xargs -0 -r sha256sum": allow
     "date -u +%Y-%m-%dT%H:%M:%SZ": allow
-    "date -u +%Y-%m-%dT%H:%M:%SZ > /*/.cad-work/*": allow
-    "ls": allow
-    "ls *": allow
+    "ls -la /*/.cad-work/*": allow
     "mkdir -p /*/.cad-work/*": allow
     "*--no-project*": deny
     "*../*": deny
