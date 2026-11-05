@@ -162,6 +162,13 @@ assumptions:
   validation: weigh each phone before use
   status: OPEN
 questions:
+- id: Q-000
+  question: 'Would you like a full or lite build?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: full build, source: {kind: USER, reference: brief.md prompt, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
 - id: Q-001
   question: 'What is the product, what does it do and what is its purpose?'
   owner: user

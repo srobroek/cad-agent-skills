@@ -65,7 +65,56 @@ flowchart LR
 ```
 
 A verdict does not grant approval. A HUMAN stage waits for a decision over its
-named packet. A failure or change reopens its causal stage and dependents.
+named packet. A failure or change reopens its causal stage and dependents. A
+full build runs all 13 stages; a lite build runs three of them.
+
+## Lite build
+
+The build mode selects the stage policy. `cad-select` asks `Q-000`, full or lite,
+in the first intake batch and recommends lite for initial prototyping
+([choose the build mode](../full/skills/cad-select/references/selection.md#choose-the-build-mode)).
+The answer becomes the sourced fact `product.build_mode`. Each attempt reads the
+mode from its frozen snapshot, never from a session setting. An unanswered mode
+blocks GROUND. A record without the fact is a historical full record.
+
+The lite policy is the lite stage list in
+[`cad-flow/assets/stages.yaml`](../full/skills/cad-flow/assets/stages.yaml):
+
+```mermaid
+flowchart LR
+    GROUND[GROUND · HUMAN] --> LAYOUT[LAYOUT · NONE]
+    LAYOUT --> RELEASE[RELEASE · HUMAN]
+```
+
+- GROUND writes the sourced geometry requirements and their check plan, freezes
+  them and has them checked independently. The owner approves this brief before
+  any geometry exists. The lite intake never asks about material, process,
+  printer, vendor, load or capability
+  ([lite intake](../full/skills/cad-select/references/selection.md#lite-intake)).
+- LAYOUT models the requested finished prototype form, not an envelope, and
+  builds the part and assembly STEP, GLB and SVG. An independent checker
+  rebuilds, reads back, exports, identifies features, renders and compares the
+  model with the frozen intent. Its `geometry.readback` also imports every
+  STEP in the installed FreeCAD console through a helper the checker writes in
+  the product project. A complete technical PASS advances without an owner
+  gate. Without FreeCAD the readback is UNKNOWN `NOT_RUN` and LAYOUT is BLOCKED.
+- RELEASE publishes a small CAD_VALID verification index, the build guide and the
+  release proposal before its checks, then waits for the owner's approval of that
+  exact package and seals it last
+  ([lite release](../full/skills/cad-release/references/release.md#lite-release)).
+  Every packet and the guide carry the line `LITE prototype: geometry only; no
+  material, fit, strength or manufacturing claims`.
+
+Skipped stages get no verdict, decision or result. Normally only
+`cad-part-designer` and `cad-checker` units run. The lite build adds no skill,
+role, stage ID, check family or plugin. Both record variants carry its shapes;
+lean keeps them in its existing roots and prose tables.
+
+Promotion to full is an approved CHANGE that reopens GROUND
+([change impact](../full/skills/cad-flow/references/change-impact.md)). Every
+lite version, result and package stays immutable. The full build then runs all
+13 stages and their gates. Lite geometry carries over only as concept input,
+never as full evidence.
 
 ## Record and hash contract
 
@@ -113,3 +162,7 @@ roots. Install one variant per project because names match. Both variants ship
 in this repository. Parallel content is not an A/B result. The
 [A/B protocol](demo.md#ab-protocol-full-versus-lean) treats full as baseline,
 controls inputs and defaults a tie to full.
+
+The build mode is independent of the variant: full and lean each run full and
+lite builds with the same lite stages, checks and package. "Lite" names the
+build and "lean" the record contract, so neither implies the other.

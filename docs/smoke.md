@@ -1,9 +1,10 @@
 # Live smoke
 
-This page documents the manual live smoke for every harness and both plugin variants. It proves installation, discovery,
-resource loading and the first two stages in a fresh project. It proves no CAD, DFM, analysis or physical result; static
-CI proves none of these either. Install commands are in [install.md](install.md); stage behaviour is the `cad-flow`
-skill's.
+This page documents the manual live smoke for every harness and both plugin variants. A full-build cell proves
+installation, discovery, resource loading and the first two stages in a fresh project. A [lite cell](#lite-cells) also
+runs a lite build through its sealed package, including the FreeCAD import. No cell proves a DFM, analysis or physical
+result; static CI proves none of these either. Install commands are in [install.md](install.md); stage behaviour is the
+`cad-flow` skill's.
 
 ## Matrix
 
@@ -12,10 +13,14 @@ Run each cell once per release candidate, in its own fresh project. One cell ins
 | Harness | `full` (`cad-agent-skills`) | `lean` (`cad-agent-skills-lean`) |
 |---|---|---|
 | Claude Code | required | required |
-| Codex CLI | required | required |
+| Codex CLI | not verified in round 6 | not verified in round 6 |
 | OpenCode | required | required |
 | Kiro CLI V3 | required | required |
-| OMP | required | required |
+| OMP | not verified in round 6 | not verified in round 6 |
+
+The smoke rounds cover Claude Code, OpenCode and Kiro CLI V3, each with both variants. Codex CLI and OMP were last run
+in round 5. Their profiles stay in both plugins and their commands stay below, but round 6 verified neither; a report
+lists them as not covered, never as `PASS`. The lite cells use the same three harnesses.
 
 A cell's result is `PASS`, `FAIL` or `BLOCKED` (a prerequisite such as a login, a CLI or a model role was not
 available). `BLOCKED` is reported with its cause, never counted as `PASS`.
@@ -31,8 +36,9 @@ available). `BLOCKED` is reported with its cause, never counted as `PASS`.
   ([preflight](../full/skills/cad-flow/references/preflight.md#probe-tools)); `uvx` is not used.
 - The model roles the harness uses (model id and reasoning effort per role), written down before the run. OMP keeps
   them in the files passed with `--config`.
-- The demo brief: [examples/phone-stand/brief.md](../examples/phone-stand/brief.md). The smoke uses its first prompt,
-  scripted answers and gate replies.
+- The demo brief: [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) for a full-build cell, whose
+  first prompt names the full build. The smoke uses its first prompt, scripted answers and gate replies. A lite cell
+  uses [examples/lite-phone-stand/brief.md](../examples/lite-phone-stand/brief.md) and FreeCAD ([lite cells](#lite-cells)).
 - An isolated host environment: the cell runs without the operator's user-level instructions, rules, hooks, plugins,
   extra skills and MCP servers, with the host settings below ("Environment isolation"); whatever stays active is
   recorded as a deviation.
@@ -49,7 +55,9 @@ Include only variables required for that host. Record the exact environment vari
 `tmux` sets each pane's `SHELL` to its `default-shell`, which the user's tmux configuration can set: start every cell's
 `tmux` server with `-f <cell tmux.conf>` whose `default-shell` is the cell's shell, and record the shell the harness
 reports. Kiro matches role-profile rules with a parser chosen from `SHELL`
-([Kiro shell parsers](limitations.md#observed-host-limitations)).
+([Kiro shell parsers](limitations.md#observed-host-limitations)). Start a Kiro cell's detached session at least 160
+rows tall, for example `tmux -f <cell tmux.conf> new-session -d -s <cell> -x 220 -y 160`, so that a tall approval
+panel keeps `Allow once` on screen (the "Tall panels" approval rule below).
 Capture every output to `$SMOKE_LOG/<harness>-<variant>/`, outside the project.
 
 For OMP, run every OMP command of the cell, including install, listing and cleanup, through one wrapper with a temporary
@@ -152,7 +160,7 @@ in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrapper
 |---|---|---|---|
 | Claude Code | `claude_smoke` in `SMOKE_PROJECT` | `claude_smoke -p --max-turns 200 "<prompt>"`; `claude_smoke --resume <session-id> -p --max-turns 200 "<reply>"` | `/cad-agent-skills:cad-flow` or `/cad-agent-skills-lean:cad-flow` |
 | Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; from `SMOKE_PROJECT` (`exec resume` has no `-C`): `codex exec resume <thread-id> "<reply>"` | `$cad-flow` |
-| OpenCode | start one persistent private server for the cell, `opencode serve --hostname 127.0.0.1 --port <p>`, in the isolated environment; it takes no `--model` (2.2.5) | `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --title <cell> "<prompt>"`; replies use `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --session <session-id> "<reply>"` | `/cad-flow` |
+| OpenCode | start one persistent private server for the cell, `opencode serve --hostname 127.0.0.1 --port <p>`, in the isolated environment; it takes no `--model` (2.2.5) | `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --title <cell> <prompt words>`; replies use `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --session <session-id> <reply words>`. Send a single-line message as separate argv words, never as one quoted argument, and quote a word on its own when it holds a shell metacharacter (`'DR-005;'`). Send a multi-line message, such as the answer batch, on stdin with no positional message: `printf '%s' '<message>' \| opencode run … --session <session-id>`, without a trailing newline | `/cad-flow` |
 | Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
 | OMP | `omp_cell` in `SMOKE_PROJECT` | `omp_cell -p "<prompt>"`; `omp_cell --resume <session-id> -p "<reply>"`; recover interactively with `omp_cell --restore <session-id>` | `/cad-flow` |
 
@@ -170,6 +178,14 @@ in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrapper
 
 `opencode run` can exit 1 after a clean final reply. Judge the turn from the unedited JSONL transcript's final
 `step-finish` event and complete reply, not from the exit code alone; record both.
+
+OpenCode 2.2.5 `run` wraps a message sent as one positional argument in literal double quotes, so its gate statement
+file is 2 bytes longer than the reply. A round-6 probe (`f1-probe/` in the opencode-full evidence) stored
+`"approve GROUND v1"` (19 bytes) for one argument, both inline over ssh and from a script, and wrapped a multi-line
+argument the same way. It stored the exact 17 bytes for separate argv words and the exact multi-line bytes on stdin.
+The send forms in the table above follow that probe. Round-6 OpenCode cells sent one argument, and their leads saved
+the bytes the host delivered: judge those gate-decision rows `PASS` with this note. From round 7 on, the row requires
+the exact sent bytes.
 
 For Codex Bedrock A/B, the tested `gpt-6.1-terra` and `gpt-6-luna` returned 404 in `us-east-2` and `us-west-2` but
 answered in `us-east-1`. Record the provider region and verify selected models there before the cell; catalog presence
@@ -299,8 +315,10 @@ isolation, not an OS boundary.
     tool" appears while any subagent waits. Select the row marked `⚠` by its digit (`SUBAGENTS [/] ←→ select · 1-2
     jump`), then approve with `y`.
   - Tall panels: a command taller than the pane pushes `Allow once` and `Deny once` below it, so the panel is easy to
-    miss. Read the command (scroll with `j`/`k` or `^d`/`^u`), select the waiting subagent's row and press `y`; a
-    taller pane avoids it.
+    miss. In round 6 a subagent's `sha256sum` over 12 absolute paths filled a 100-row pane; the driver saw no waiting
+    row and the call waited 77.5 s. Start the pane at least 160 rows tall (Procedure). Whenever the native store holds
+    a pending tool approval and the pane shows no `Allow once`, read the command from the store's pending record or by
+    scrolling (`j`/`k` or `^d`/`^u`), select the waiting subagent's row and press `y`.
   - `web_search`: its panel reads `web_search requires approval` and has no `category →` line.
 
   The native session store's `pending_interaction` record is the reliable sign that a call waits.
@@ -334,8 +352,107 @@ isolation, not an OS boundary.
 A cell is `PASS` only when every row is PASS. Report each cell with its result, the failing rows and the absolute path
 of its evidence directory.
 
+## Lite cells
+
+A lite cell runs the [lite phone stand brief](../examples/lite-phone-stand/brief.md) as a lite build through its sealed
+package. Run one cell per harness and variant for Claude Code, OpenCode and Kiro CLI V3: six cells per release
+candidate, beside the full-build cells above.
+
+### Provide FreeCAD
+
+FreeCAD is a runtime prerequisite of the test host, never part of the plugin or the project
+([install](install.md#freecad-for-lite-builds)). Before the cell:
+
+1. Install FreeCAD outside the project and the evidence directory.
+   - macOS: the FreeCAD app. Its console `/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd` is found
+     by preflight without `PATH`.
+   - Linux: the release's AppImage for the host architecture and its `-SHA256.txt` file from the FreeCAD release
+     page, checked with `sha256sum -c`, then unpacked with `<AppImage> --appimage-extract` in its directory into
+     `squashfs-root/`. The console is `squashfs-root/usr/bin/freecadcmd`.
+2. Linux: make a directory outside the project and the evidence that holds only a `freecadcmd` symlink to that
+   console. Never put the bundle's `usr/bin` itself on `PATH`: its `python` and `pip` would shadow the host's.
+3. Put that directory on the `PATH` of the cell's scrubbed environment, in every harness, server and `tmux` start.
+4. From the cell environment, record `command -v freecadcmd`, its resolved path, the first line `freecadcmd --version`
+   prints, the FreeCAD release and the AppImage's sha256.
+
+The Linux smoke host provides FreeCAD 1.1.4 this way: the extracted x86_64 AppImage, whose console is
+`~/tmp/cad-agent-skills/freecad/squashfs-root/usr/bin/freecadcmd`. Probed on 2026-11-05 through such a symlink on a
+scrubbed `PATH`, `freecadcmd --version` printed `FreeCAD 1.1.4 Revision: 20260928 (Git shallow)` and exited 0; the
+resolved path lies under `/local/home/`, where that host's home directory resolves. Preflight must report the same
+resolved path and version ([preflight](../full/skills/cad-flow/references/preflight.md#freecad)). The lead never
+installs FreeCAD. A host denial of the checker's FreeCAD call is a finding, never a reason to grant broader access.
+
+### Lite procedure
+
+Follow "Procedure" with these changes:
+
+1. Prerequisites and steps 1 to 4 as above, plus "Provide FreeCAD" before the first prompt.
+2. Step 5: send the lite brief's first prompt after the harness's prompt prefix. It names no build mode.
+3. GROUND: the first intake batch asks `Q-000` with the lite recommendation and the tradeoff line, and only the lite
+   template questions. Reply with the brief's scripted answers. Check the packet as the brief's gate reply 1 says,
+   then send `approve GROUND <vN>`.
+4. LAYOUT has no owner gate. The lead advances in the same turn, dispatches the part designer and then the checker
+   batch, and ends the turn with the RELEASE packet or a stop. Answer a stop as the brief says.
+5. RELEASE: check the packet as gate reply 3 says, then send exactly `approve RELEASE <vN>`, with nothing appended.
+   The lead publishes and seals the package in that turn.
+6. After the sealed package is reported, send `end the session` as its own turn.
+7. Validate every file under `hw/` as step 8 says, then compare the GROUND, LAYOUT and RELEASE obligations and
+   verdicts with [examples/lite-phone-stand/expected-obligations.yaml](../examples/lite-phone-stand/expected-obligations.yaml)
+   as step 9 says.
+
+Every row of "Evidence to capture" applies except "GROUND and INTENT verdicts", which the stage row below replaces.
+A lite cell also needs these rows:
+
+| Item | Source | PASS when |
+|---|---|---|
+| FreeCAD | the recorded host facts; `.cad-work/lead/preflight.json` `tools[]` | preflight reports the recorded path and version |
+| build mode and intake | the first batch in the transcript; `hw/product.yaml`; the QUESTION decision | `Q-000` asked in the first batch with the recommendation and tradeoff line; only lite template questions; `build_mode` KNOWN LITE from A-01; service class `APPEARANCE_CONCEPT` from that answer's QUESTION decision |
+| stages and gates | `hw/versions/<vN>/stage-verdict.json`; `hw/decisions/` | verdicts for GROUND, LAYOUT and RELEASE only, each PASS; GROUND and RELEASE approved with the exact sent bytes; LAYOUT `NOT_REQUIRED`; no verdict or decision for a skipped stage |
+| FreeCAD readback | the LAYOUT `geometry.readback` check bundles | the checker's project-local helper source and its fresh structured output: every delivered STEP's sha256 equal to the frozen file, the resolved executable and FreeCAD version equal to preflight's, and each solid's validity, closure, volume and bounding box; result PASS |
+| package | `hw/releases/A/` and its FINAL `release-manifest.json` | sealed last with `build_mode: LITE` and integrity PASS; every inventoried file's sha256 equals its bytes; the contents of the [lite release](../full/skills/cad-release/references/release.md#lite-release), with no `manufacturing/`, drawing, BOM or STL; the disclosure line in every packet and the build guide; the outer digest reported outside the package |
+| claims | the package claims and `verification.yaml` | only CAD_VALID outcomes copied from the verification index |
+| timing | transcript timestamps | wall time per stage and in total, from the first prompt to the sealed package; operator response time, install, login, warm-up and cleanup recorded apart |
+
+A lite cell is `PASS` only when every row is PASS and the run ends SEALED. A cell that stops is no completed lite
+run: without FreeCAD it is `BLOCKED` with that cause, and any other stop is `FAIL` with its blocker.
+
+### Lite timing targets
+
+| Harness | Target from the first prompt to the sealed package |
+|---|---|
+| Claude Code | 35 min |
+| OpenCode | 35 min |
+| Kiro CLI V3 | 40 min |
+
+The targets hold for a warm cell of this one-part brief with a usable FreeCAD, in both variants. They are goals, not
+measured results: no completed lite cell has been timed yet. They are no timeout and no reason to skip or weaken a
+check. Record the time to a stop apart; it never counts as a lite timing.
+
+### Lite negative cells
+
+Run each negative once per release candidate, on one of the three harnesses, in its own fresh project. It is `PASS`
+when the run ends with the outcome below and without a sealed package; a rejected schema fixture proves none of them.
+
+| Negative | How the operator induces it | Correct outcome |
+|---|---|---|
+| FreeCAD absent | no `freecadcmd` on `PATH` and no macOS app | the GROUND packet shows FreeCAD unavailable; LAYOUT stops BLOCKED with `geometry.readback` UNKNOWN `NOT_RUN` (`FreeCAD executable unavailable; STEP compatibility not tested`), the STEP and render shown as unverified blocked artifacts, and the resume action |
+| console without import | the launcher passes `--version` to the real console and exits 0 on any other call | `geometry.readback` FAIL or UNKNOWN for the missing structured output, never PASS; LAYOUT stops |
+| bare approval | reply `ok` to the GROUND packet | no GATE decision; nothing advances; the lead asks again for `approve GROUND <vN>` |
+| multipart collision | the first prompt, A-02 and A-11 ask for two parts, a base and a back plate whose lower 5 mm sits inside the base | LAYOUT lists `geometry.interference@assembly`, whose condition now holds, and FAILs on the shared volume |
+| byte change after freeze | between `approve GROUND <vN>` and the RELEASE approval, change one byte of a file under `hw/versions/<vN>/` | an audit (`record.inputs` or `release.integrity`) FAILs and names the file |
+| mode mismatch | after the GROUND approval, set `build_mode.value` in the live `hw/product.yaml` to `FULL` | `record.semantic` FAILs on the mismatch with the frozen mode; the lead names the CHANGE route |
+| promotion | after a SEALED cell, send `Change: promote this to a full build.` | a CHANGE proposal from LITE to FULL that reopens GROUND; after its approval the full intake asks the open full questions; every lite version, result and `hw/releases/A/` byte is unchanged; no stage gets a retrospective PASS |
+
+The promotion cell continues from a sealed package and ends at its first full gate, so "without a sealed package"
+applies to new packages only. Wrong scale, count, volume or bounding box, an open shell, a missing lip and a wrong form
+cannot be requested through the owner's answers, and an operator edit of the model is caught first by the hash audits,
+not by the geometry checks. No static fixture proves a checker method either. A native run that produces such a defect
+records which check stopped it and whether a package was sealed.
+
 ## What the smoke does not show
 
-Static checks and this smoke cover install, discovery and the first two stages. Geometry builds, drawings, BOM,
-analysis, review, freeze and release run in the demonstrations in [demo.md](demo.md). Synthetic approvals stand for no
-product owner. A permission profile prevents accidental tool calls only; it is no operating-system boundary.
+Static checks and the full-build cells cover install, discovery and the first two stages. Lite cells add a lite
+build's geometry, FreeCAD import and package, which prove only CAD validity in the recorded FreeCAD version. Drawings,
+BOM, analysis, review, freeze and full release run in the demonstrations in [demo.md](demo.md). Synthetic approvals
+stand for no product owner. A permission profile prevents accidental tool calls only; it is no operating-system
+boundary.

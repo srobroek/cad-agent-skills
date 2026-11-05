@@ -4,6 +4,7 @@
 # A placeholder in <> stands for every value the run allocates: <PN> every part number, <PN>.<component> every
 # component, <PN>.<component>/<operation> every made operation, <case> every approved check-plan case of the named
 # type, <op> every assembly operation or service task, <IF> every interface with the named property.
+build_mode: FULL
 example: phone-stand
 service_class: APPEARANCE_CONCEPT
 release_ceiling: concept-definition package (full/skills/cad-release/references/release.md "Release ceiling")
@@ -66,6 +67,7 @@ stages:
   gate: APPROVED after `approve GROUND <vN>`
   must_show:
   - every template question Q-001 to Q-017 asked before any material or process is named
+  - Q-000 never asked, and product.yaml build_mode KNOWN FULL, basis USER_DECLARED, sourced from the prompt's "as a full build" (cad-select references/selection.md "Choose the build mode")
   - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker, taken from A-12 as stated
   - release_scope purpose form, CAD validity and printability review only (A-15), and exclusions naming fit with every functional, physical, safety and regulatory claim (cad-release references/release.md "Release ceiling")
   - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
@@ -82,7 +84,7 @@ stages:
   - open a new question on a release-scope exclusion (phone protection, cable, port or button clearance, fit)
   - "`requirements: []` at the GROUND verdict"
   - a question or UNKNOWN for an intake field an answer states or rules out (corrosion by A-07, motion speed by A-08, maintenance by A-10)
-  - an UNKNOWN or question on the spools' filament diameter or a print setting; `capability.route` step 2 checks it at PARTS (cad-select references/selection.md "Write criteria a stage can evidence")
+  - an UNKNOWN or question on the spools' filament diameter, colour or lot, or a print setting; `capability.route` step 2 checks the form at PARTS (cad-select references/selection.md "Write criteria a stage can evidence")
 - stage: INTENT
   expected:
   - record.schema@product
@@ -107,7 +109,7 @@ stages:
   - stop BLOCKED without a frozen attempt and its verdict
   - keep a printed candidate CONDITIONAL on the missing calibration (A-11); no INTENT criterion needs one, and a calibration-dependent allowance falls due at PARTS (cad-select references/selection.md "Eliminate on mandatory constraints first")
   - write or edit hw/requirements.yaml
-  - keep a printed candidate CONDITIONAL on, ask the owner for, or invite an answer in a gate packet on, the spools' filament diameter
+  - keep a printed candidate CONDITIONAL on, ask the owner for, or invite an answer in a gate packet on, the spools' filament diameter, colour or lot
 - stage: SPECIFY
   expected:
   - record.schema@product

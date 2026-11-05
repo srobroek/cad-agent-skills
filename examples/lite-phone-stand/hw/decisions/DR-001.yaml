@@ -1,0 +1,22 @@
+id: DR-001
+kind: QUESTION
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-001/service-class.yaml
+  sha256: 90f27ff8368abeb94b58bee6a9ff241a046185d4235a7f3f14f5bd9dc63eea6a
+title: Build mode and the service class it settles
+scope: Q-000, the build mode and the service class of the lite release scope
+rationale: The owner chose a lite build, an APPEARANCE_CONCEPT model that renders and opens in FreeCAD with no material, fit, strength or manufacturing claim.
+limits:
+- geometry only; material, fit, strength and manufacturing claims are excluded
+- a full build needs a CHANGE that reopens GROUND, never a reclassification at RELEASE
+actor:
+  kind: USER
+  name: SYNTHETIC lite-demo owner (scripted answer A-01)
+time: '2026-11-05T09:20:00Z'
+statement:
+  path: hw/decisions/statements/DR-001.txt
+  transcript_sha256: 0f68163457be90985fb69f530a86f4a9ebd7b0a79378f519dd5092e78996282c
+  quote: 'Lite build: an APPEARANCE_CONCEPT model that renders and opens in FreeCAD, with no material, fit, strength or manufacturing claim.'
+  time: '2026-11-05T09:20:00Z'

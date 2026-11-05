@@ -217,6 +217,7 @@ preferences:
   source: *l21
 assumptions: []
 questions:
+- {id: Q-000, question: 'Would you like a full or lite build?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: full build, source: {kind: USER, reference: brief.md prompt, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
 - {id: Q-001, question: 'What is the product, what does it do and what is its purpose?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: three-joint bench lamp arm carrying a purchased USB LED module, source: {kind: USER, reference: brief.md answer L-02, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
 - {id: Q-002, question: 'Who owns the product and its approvals?', owner: user, material_to_choice: false, safety_relevant: false, status: RESOLVED, resolution: {answer: the demo owner, source: {kind: USER, reference: brief.md answer L-03, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
 - {id: Q-003, question: 'Which documentation depth applies: maker, pro or regulated?', owner: user, material_to_choice: false, safety_relevant: false, status: RESOLVED, resolution: {answer: pro, source: {kind: USER, reference: brief.md answer L-04, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}

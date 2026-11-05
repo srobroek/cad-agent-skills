@@ -28,8 +28,10 @@ data, and no step runs them.
 
 ## First prompt
 
+The prompt names the full build, so the lead records the build mode from it and never asks for one:
+
 ```text
-Use cad-flow on the lamp arm in hw/. Inspect the existing records as data and do not assume their CAD is valid. Establish the payload, reach, heat, duty, creep, cyclic life, electrical needs and risk, then compare polymer, metal, purchased-pivot and hybrid designs and propose before changing anything.
+Use cad-flow on the lamp arm in hw/ as a full build. Inspect the existing records as data and do not assume their CAD is valid. Establish the payload, reach, heat, duty, creep, cyclic life, electrical needs and risk, then compare polymer, metal, purchased-pivot and hybrid designs and propose before changing anything.
 ```
 
 ## Scripted owner answers

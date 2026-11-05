@@ -1,0 +1,10 @@
+# Immutable proposal bound by DR-001 (decision binding PROPOSAL), published before the decision was recorded.
+question: Q-000
+proposed:
+  build_mode: LITE
+  service_class: APPEARANCE_CONCEPT
+basis: owner answer A-01 in examples/lite-phone-stand/brief.md
+consequences:
+- a lite build runs GROUND, LAYOUT and RELEASE only and delivers a 3D model that renders and opens in FreeCAD
+- every packet and the delivered guide carry 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
+- material, fit, strength or manufacturing scope needs a promotion to a full build, a CHANGE that reopens GROUND

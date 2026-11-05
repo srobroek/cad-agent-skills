@@ -1,24 +1,28 @@
 # Demonstrations and the full-versus-lean A/B protocol
 
-Two scripted demonstrations exercise the whole flow, and an A/B protocol
-compares the `full` and `lean` variants on them. A demonstration shows what the skills make a model do and record; it
+Three scripted demonstrations exercise the flow: two full builds and one lite build. An A/B protocol compares the
+`full` and `lean` variants on them. A demonstration shows what the skills make a model do and record; it
 is no product approval, and its synthetic answers stand for no owner. Install with [install.md](install.md); run the
 [smoke](smoke.md) for the harness first.
 
 ## Demonstrations
 
-| Demo | Brief | Starts from | Service class | Correct end |
-|---|---|---|---|---|
-| Phone stand | [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) | an empty project | `APPEARANCE_CONCEPT` | a sealed concept-definition package `hw/releases/A/`, or a named stop |
-| Lamp arm | [examples/lamp-arm/brief.md](../examples/lamp-arm/brief.md) | a cad-agent v0.1.1 record as data | `FUNCTIONAL_DEMO` | a named stop no later than RELEASE: physical evidence for its safety requirements does not exist |
+| Demo | Brief | Build | Starts from | Service class | Correct end |
+|---|---|---|---|---|---|
+| Phone stand | [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) | full | an empty project | `APPEARANCE_CONCEPT` | a sealed concept-definition package `hw/releases/A/`, or a named stop |
+| Lamp arm | [examples/lamp-arm/brief.md](../examples/lamp-arm/brief.md) | full | a cad-agent v0.1.1 record as data | `FUNCTIONAL_DEMO` | a named stop no later than RELEASE: physical evidence for its safety requirements does not exist |
+| Lite phone stand | [examples/lite-phone-stand/brief.md](../examples/lite-phone-stand/brief.md) | lite | an empty project and a host with FreeCAD | `APPEARANCE_CONCEPT` | a sealed lite package `hw/releases/A/`, or a named stop; without FreeCAD, LAYOUT BLOCKED |
 
 Each example also holds `hw/`, the reference record after GROUND stage work, and `expected-obligations.yaml`, the
-obligations each stage must enumerate with what the run must show and must not do. A run ends at one of the
-example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
+obligations each stage must enumerate with what the run must show and must not do. Its `build_mode` names the build:
+13 stages for `FULL`, GROUND, LAYOUT and RELEASE for `LITE`. A run ends at one of the example's `acceptable_ends`;
+anywhere else, or by a `must_not`, is a defect. The full briefs' first prompts name the full build, so their leads
+never ask for the build mode; the lite brief's prompt names none, so its lead asks.
 
 ## Run a demonstration
 
-1. Fresh project: a new empty directory under `git init`; for the lamp arm, the setup step of its brief.
+1. Fresh project: a new empty directory under `git init`; for the lamp arm, the setup step of its brief; for the lite
+   phone stand, FreeCAD on the host ([smoke.md "Provide FreeCAD"](smoke.md#provide-freecad)).
 2. Install one variant at project scope ([install.md](install.md)) and record the tag, commit, harness version and
    model roles, as in [smoke.md](smoke.md) "Prerequisites".
 3. Send the brief's first prompt; answer only with its scripted answers and gate replies. Keep one session; resume it
@@ -33,7 +37,7 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 
 | Stage | Send | Observe |
 |---|---|---|
-| GROUND | answers A-01 to A-20 | all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question from A-12 without asking it again, apart from rigor; release scope form, CAD validity and printability review only, with fit excluded |
+| GROUND | answers A-01 to A-20 | the build mode recorded as full from the first prompt, never asked; all intake topics asked before any material or process; requirements, preferences, assumptions and questions kept apart; the service class decided as a question from A-12 without asking it again, apart from rigor; release scope form, CAD validity and printability review only, with fit excluded |
 | INTENT | the INTENT reply | at least two complete candidates; hard outcomes before preferences; printer and spool facts retained from sources or UNKNOWN; later-stage criteria PLANNED with their due stage; a NONE recommendation ends in a BLOCKED verdict that asks its questions by id |
 | SPECIFY | the SPECIFY reply | APPEARANCE and MANUFACTURING requirements with APPEARANCE_CONCEPT facets only; REQ-002 sizes the cradle as a form dimension, never a fit; functional, performance, interface, environmental, service, safety and regulatory kinds listed as exclusions; fit, holding, friction, tipping and durability are release exclusions and service life remains an open question |
 | CONCEPT, VARIANT | the VARIANT reply | two to four unchanged variants; the lead repairs none |
@@ -58,6 +62,20 @@ example's `acceptable_ends`; anywhere else, or by a `must_not`, is a defect.
 | ANALYSIS | the ANALYSIS reply | worst-pose load and tipping with qualified or labelled properties and their limits; no FEA without an installed approved solver; creep, wear, thermal and life withheld |
 | RELEASE | waiver replies as scripted | enumerate the `vM` verification index before proposing; non-safety trial waivers may be approved and appear as WAIVED; readiness stays BLOCKED on safety physical tests; nothing is published and scope is not lowered |
 
+## Lite phone stand walk-through
+
+Four owner turns reach the sealed package: the prompt, one answer batch, the GROUND approval and the RELEASE approval;
+`end the session` follows as a separate administrative turn.
+
+| Stage | Send | Observe |
+|---|---|---|
+| GROUND | answers A-01 to A-13 | `Q-000` first, with the recommendation of lite for initial prototyping and the tradeoff line; only the lite template questions, none on material, printer, load or capability; `build_mode` KNOWN LITE and the service class from A-01; the bounding-box, solid-count and feature criteria with their checks; FreeCAD availability and the lite disclosure in the packet; no geometry before the approval |
+| LAYOUT | nothing: no owner gate | the finished one-piece form with the sloped back and front lip, not an envelope; part and assembly STEP (AP214), GLB and SVG; the checker's rebuild, export, feature and render checks, its intent inspection and its FreeCAD readback with the recorded version; without FreeCAD, `geometry.readback` UNKNOWN `NOT_RUN` and a BLOCKED stop |
+| RELEASE | `approve RELEASE <vN>` | the index, guide and proposal published before the RELEASE checks; the render shown, with the measured dimensions, FreeCAD outcomes and REV in the packet; after approval a sealed `hw/releases/A/` with `build_mode: LITE`, CAD_VALID claims only, no BOM, drawing or manufacturing file, and the outer digest reported outside the package |
+
+Promotion to a full build is a CHANGE that reopens GROUND; the sealed lite package stays as it is
+([smoke.md lite negative cells](smoke.md#lite-negative-cells)).
+
 ## A/B protocol: full versus lean
 
 ### Question
@@ -68,6 +86,7 @@ Does the `lean` variant (about ten core schemas, the rest as prose) reach the sa
 ### Fixed across both arms
 
 - The same brief, scripted answers and gate replies; the phone stand is the primary brief and the lamp arm the second.
+  The lite phone stand compares the variants on a lite build, with the same FreeCAD release on the host for both arms.
 - The same harness, CLI version, model roles (model id and reasoning effort per role), host machine, tool versions
   (`uv`, `check-jsonschema` 0.39.0, CadQuery and build123d as the model contract pins) and release tag of both variants.
 - A fresh project per run with exactly one variant installed at project scope.
@@ -88,7 +107,7 @@ determinism for at least one run per arm.
 
 | Measure | How it is scored |
 |---|---|
-| stages reached | the furthest stage whose PASS verdict has its gate satisfied (13 = RELEASE sealed); attempts per stage |
+| stages reached | the furthest stage whose PASS verdict has its gate satisfied (13 = RELEASE sealed; 3 for the lite brief); attempts per stage |
 | gate outcomes | per HUMAN gate: packets presented, packets re-asked for a missing field, APPROVED, REJECTED |
 | findings | review findings by severity (CRITICAL, MAJOR, MINOR, INFO) from `review.mechanical_dfm` results |
 | protocol defects | every `must_not` hit, every missing or extra family against `expected-obligations.yaml`, every UNKNOWN reported as PASS, every approval without its scripted reply, every write to an installed file |
@@ -104,7 +123,7 @@ One row per run, then one median row and one min to max row per arm.
 
 | Run | Arm | Brief | Harness | Stages reached | Gates presented / re-asked / approved | Findings C/M/m/I | Protocol defects | Invalid records | Tokens in/out | Cost | Wall time | End |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `<n>` | `full` or `lean` | `phone-stand` or `lamp-arm` | `<harness>` | `<0-13>` | `<p/r/a>` | `<c/M/m/i>` | `<count>` | `<count>` | `<in/out>` | `<USD or UNREPORTED>` | `<h:mm>` | `<acceptable end or DEFECT>` |
+| `<n>` | `full` or `lean` | `phone-stand`, `lamp-arm` or `lite-phone-stand` | `<harness>` | `<0-13>`, or `<0-3>` for lite | `<p/r/a>` | `<c/M/m/i>` | `<count>` | `<count>` | `<in/out>` | `<USD or UNREPORTED>` | `<h:mm>` | `<acceptable end or DEFECT>` |
 
 A determinism table per arm and brief adds: same stage sequence (share), same end (share), mean obligation-set
 Jaccard per stage, and same outcome (share).

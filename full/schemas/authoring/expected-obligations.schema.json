@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "cad-agent-skills example expected obligations (examples/<example>/expected-obligations.yaml)",
-  "description": "Closed demo and A/B protocol data for one example: fixed-truth conditions, design-dependent conditions, the 13 stages with the obligations each must enumerate, the outcomes a correct run may report and the correct end states. Not a record file. Families, stages and service classes are the cad-record common definitions.",
+  "description": "Closed demo and A/B protocol data for one example: its build mode (absent means a FULL example written before build modes existed), fixed-truth conditions, design-dependent conditions, the stages of that mode with the obligations each must enumerate, the outcomes a correct run may report and the correct end states. Not a record file. Build modes, families, stages and service classes are the cad-record common definitions.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,6 +15,7 @@
     "open_at_end"
   ],
   "properties": {
+    "build_mode": {"$ref": "../../skills/cad-record/schemas/common.schema.json#/$defs/build_mode"},
     "example": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
     "service_class": {"$ref": "../../skills/cad-record/schemas/common.schema.json#/$defs/service_class"},
     "release_ceiling": {"$ref": "#/definitions/text"},
@@ -59,25 +60,8 @@
       }
     },
     "stages": {
-      "description": "exactly the 13 stages, in order",
-      "type": "array",
-      "minItems": 13,
-      "maxItems": 13,
-      "items": [
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "GROUND"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "INTENT"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "SPECIFY"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "CONCEPT"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "VARIANT"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "LAYOUT"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "PARTS"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "DETAIL"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "BOM"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "ANALYSIS"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "CRITIQUE"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "FREEZE"}}}]},
-        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "RELEASE"}}}]}
-      ]
+      "description": "the stages of the build mode, in order: definitions/full_stages, or definitions/lite_stages for LITE",
+      "type": "array"
     },
     "acceptable_ends": {
       "type": "array",
@@ -99,7 +83,52 @@
     "never": {"$ref": "#/definitions/texts"},
     "open_at_end": {"type": "array", "items": {"$ref": "#/definitions/text"}}
   },
+  "if": {"required": ["build_mode"], "properties": {"build_mode": {"const": "LITE"}}},
+  "then": {
+    "properties": {
+      "service_class": {"const": "APPEARANCE_CONCEPT"},
+      "release_ceiling": {"$ref": "#/definitions/lite_disclosure"},
+      "stages": {"$ref": "#/definitions/lite_stages"}
+    }
+  },
+  "else": {"properties": {"stages": {"$ref": "#/definitions/full_stages"}}},
   "definitions": {
+    "full_stages": {
+      "description": "exactly the 13 stages, in order",
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "items": [
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "GROUND"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "INTENT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "SPECIFY"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "CONCEPT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "VARIANT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "LAYOUT"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "PARTS"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "DETAIL"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "BOM"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "ANALYSIS"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "CRITIQUE"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "FREEZE"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "RELEASE"}}}]}
+      ]
+    },
+    "lite_stages": {
+      "description": "exactly GROUND, LAYOUT and RELEASE, in order, with no future obligation: HUMAN gates at GROUND and RELEASE, none at LAYOUT",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "GROUND"}, "future": {"maxItems": 0}, "gate": {"const": "APPROVED after `approve GROUND <vN>`"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "LAYOUT"}, "future": {"maxItems": 0}, "gate": {"const": "NOT_REQUIRED"}}}]},
+        {"allOf": [{"$ref": "#/definitions/stage_entry"}, {"properties": {"stage": {"const": "RELEASE"}, "future": {"maxItems": 0}, "gate": {"const": "APPROVED after `approve RELEASE <vN>`"}}}]}
+      ]
+    },
+    "lite_disclosure": {
+      "description": "the exact LITE disclosure line owned by full/skills/cad-flow/SKILL.md; CI checks it is byte-equal there and in the cad-release build-guide asset of both variants",
+      "const": "LITE prototype: geometry only; no material, fit, strength or manufacturing claims"
+    },
     "text": {"type": "string", "minLength": 1},
     "texts": {"type": "array", "minItems": 1, "items": {"$ref": "#/definitions/text"}},
     "obligation": {

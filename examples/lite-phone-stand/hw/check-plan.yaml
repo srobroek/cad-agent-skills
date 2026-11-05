@@ -1,0 +1,151 @@
+# Reference record for examples/lite-phone-stand: hw/check-plan.yaml after GROUND stage work, before the GROUND gate.
+# The lite plan maps each requirement criterion to the check that measures it (cad-verify references/check-plan.md
+# "Lite build"); the rows name the assembly because part numbers are allocated at LAYOUT. One occurrence and no
+# requested clearance plan no interference or clearance row, and a static model has no case.
+checks:
+- id: req-001-bbox-x
+  family: geometry.readback
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-001
+  criterion:
+    id: bbox_x
+    property: bbox_x
+    comparator: BETWEEN
+    value: [79.9, 80.1]
+    units: mm
+    source: {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    note: 80 mm within 0.1 mm
+  method: cad-model exports — geometry.readback, Lite; measured in the assembly frame on the exported STEP
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: REQ-001 states this criterion
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-checker
+- id: req-001-bbox-y
+  family: geometry.readback
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-001
+  criterion:
+    id: bbox_y
+    property: bbox_y
+    comparator: BETWEEN
+    value: [89.9, 90.1]
+    units: mm
+    source: {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    note: 90 mm within 0.1 mm
+  method: cad-model exports — geometry.readback, Lite; measured in the assembly frame on the exported STEP
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: REQ-001 states this criterion
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-checker
+- id: req-001-bbox-z
+  family: geometry.readback
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-001
+  criterion:
+    id: bbox_z
+    property: bbox_z
+    comparator: BETWEEN
+    value: [99.9, 100.1]
+    units: mm
+    source: {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    note: 100 mm within 0.1 mm
+  method: cad-model exports — geometry.readback, Lite; measured in the assembly frame on the exported STEP
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: REQ-001 states this criterion
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-checker
+- id: req-002-solid-count
+  family: geometry.readback
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-002
+  criterion:
+    id: solid_count
+    property: solid_count
+    comparator: EQUALS
+    value: 1
+    units: count
+    source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  method: cad-model exports — geometry.readback, Lite; measured in the assembly frame on the exported STEP
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: REQ-002 states this criterion
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-checker
+- id: req-003-sloped-back
+  family: geometry.identity
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-003
+  criterion:
+    id: sloped_back
+    property: sloped_back
+    comparator: EQUALS
+    value: true
+    source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  method: cad-model exports — geometry.identity, Lite; exactly one part witnesses the feature on its final shape
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: REQ-003 states this criterion
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-checker
+- id: req-003-front-lip
+  family: geometry.identity
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  requirements:
+  - REQ-003
+  criterion:
+    id: front_lip
+    property: front_lip
+    comparator: EQUALS
+    value: true
+    source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  method: cad-model exports — geometry.identity, Lite; exactly one part witnesses the feature on its final shape
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: REQ-003 states this criterion
+  safety: false
+  waiver_policy: FORBIDDEN
+  producer_role: cad-checker
+cases: []

@@ -211,21 +211,22 @@ jobs:
             validate_fixtures "$schema" "$fixture_dir"
           done
 
-          phase 'Project templates through layout.json (full and lean)'
+          phase 'Project templates through layout.json (full and lean, full and lite builds)'
           # A lean template of a prose-only root validates against the full root.
           for variant in full lean; do
-            template_root="$variant/skills/cad-record/assets/project-template"
-            template_count=0
-            for template in "$template_root"/hw/**; do
-              [[ -f "$template" ]] || continue
-              schema="$(layout_schema "${template#"$template_root/"}")" || fail "Project template has no layout entry: $template"
-              [[ -n "$schema" ]] || fail "Project template maps to a layout entry without a schema: $template"
-              if [[ -f "$variant/skills/cad-record/schemas/$schema" ]]; then schema="$variant/skills/cad-record/schemas/$schema"; else schema="$full_schemas/$schema"; fi
-              group_instance "$schema" "$template"
-              template_count=$((template_count + 1))
+            for template_root in "$variant/skills/cad-record/assets/project-template" "$variant/skills/cad-record/assets/project-template-lite"; do
+              template_count=0
+              for template in "$template_root"/hw/**; do
+                [[ -f "$template" ]] || continue
+                schema="$(layout_schema "${template#"$template_root/"}")" || fail "Project template has no layout entry: $template"
+                [[ -n "$schema" ]] || fail "Project template maps to a layout entry without a schema: $template"
+                if [[ -f "$variant/skills/cad-record/schemas/$schema" ]]; then schema="$variant/skills/cad-record/schemas/$schema"; else schema="$full_schemas/$schema"; fi
+                group_instance "$schema" "$template"
+                template_count=$((template_count + 1))
+              done
+              ((template_count > 0)) || fail "No project templates in $template_root/hw"
+              validate_groups
             done
-            ((template_count > 0)) || fail "No project templates in $template_root/hw"
-            validate_groups
           done
 
           phase 'Layout, material profiles, capability templates and stage assets (full and lean against full schemas)'
@@ -304,6 +305,14 @@ jobs:
           for variant in full lean; do
             cmp -s LICENSE "$variant/LICENSE" || fail "$variant/LICENSE differs from root LICENSE"
             cmp -s NOTICE "$variant/NOTICE" || fail "$variant/NOTICE differs from root NOTICE"
+          done
+          phase 'Lite disclosure equality'
+          # cad-flow SKILL.md owns the line; the build-guide asset and the authoring schema carry it verbatim.
+          lite_disclosure="$(jq -er '.definitions.lite_disclosure.const' "$authoring/expected-obligations.schema.json")"
+          for variant in full lean; do
+            for file in "$variant/skills/cad-flow/SKILL.md" "$variant/skills/cad-release/assets/build-guide.md"; do
+              grep -Fq -- "$lite_disclosure" "$file" || fail "Lite disclosure line missing from $file: $lite_disclosure"
+            done
           done
 
           phase 'Regressions (full schemas)'

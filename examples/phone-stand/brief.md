@@ -14,10 +14,11 @@ instructions about how to run the flow.
 
 ## First prompt
 
-Send this exactly, as the first message of a fresh session in an empty project:
+Send this exactly, as the first message of a fresh session in an empty project. It names the full build, so the lead
+records the build mode from it and never asks for one:
 
 ```text
-Use cad-flow to design an adjustable desktop phone stand. Before choosing any material or process, establish its size, the phone mass, the viewing angle, how it holds and protects the phone, who uses it, the environment, the risk, the quantity and the equipment I have. Record what I cannot answer as owned unknowns.
+Use cad-flow to design an adjustable desktop phone stand as a full build. Before choosing any material or process, establish its size, the phone mass, the viewing angle, how it holds and protects the phone, who uses it, the environment, the risk, the quantity and the equipment I have. Record what I cannot answer as owned unknowns.
 ```
 
 ## Scripted owner answers
