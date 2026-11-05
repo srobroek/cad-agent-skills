@@ -60,8 +60,6 @@ boundary:
   locked:
   - hw/product.yaml
   - hw/requirements.yaml
-  read_only:
-  - .cad-work/stage-v1/obligations.yaml
 expected:
   outputs:
   - target: hw/checks/v1/record-semantic/a1/result.json
