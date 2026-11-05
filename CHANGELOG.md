@@ -40,9 +40,32 @@
   - Material identity settles at INTENT. Consumable form, such as filament diameter, is checked by `capability.route` at PARTS and
     never keeps a candidate CONDITIONAL. Capability approvals take an optional `diameter`. Material profiles carry qualitative ratings
     and quoted out-of-set units, and melt-flow units `g_10min` and `cm3_10min` are added. A MOTION case's joints resolve from LAYOUT on.
-  - OpenCode and Kiro role profiles allow the `TMPDIR`-prefixed, offline uv forms against the shared cache and the `TMPDIR`-prefixed
-    validator and YAML loader. The per-unit cache forms are removed.
+  - OpenCode and Kiro role profiles use `env TMPDIR=<unit-tmp>` for offline uv commands against the shared cache and for validator and
+    YAML-loader commands. The per-unit cache forms are removed.
   - Examples and regressions follow the new rules: per-subject questions in lamp-arm, new phone-stand obligations, the consumable-form
     limit on printed candidates, and `OTHER` among the phone-stand release-scope exclusions.
   - Smoke, limitation and installation docs cover the round-4 host findings and per-agent model override keys. Model defaults are
     unchanged.
+
+- Round-5 fix wave, in both variants:
+  - The lead derives check rows from authoritative attempt logs, asserts counts before writing results, and applies the stop rule to every
+    attempt result before publishing; only assigned worker roles produce their families. A lead-fixable BLOCKED that needs no owner,
+    authority or operator action advances to the next attempt in the same turn, while a stop asks only for the needed answer or action.
+    Finish writes a BLOCKED verdict for each frozen attempt without one; the claim-release line applies only while the claim is held.
+    Preflight uv commands use the shared cache, except `uv --version`.
+  - Gate statement files contain exactly the sent bytes, without added quotes or a newline. GROUND records owner-settled intake fields as
+    KNOWN or NOT_APPLICABLE and leaves only unanswered fields UNKNOWN; product-sizing quantities become criteria, GROUND alone writes
+    requirements, and consumable form and process settings are deferred to PARTS. Equipment requirements carry PROCESS_PLANNED and
+    GEOMETRICALLY_MANUFACTURABLE facets; an INTENT recommendation stays CONDITIONAL until its approved gate decision.
+  - Worker briefs inventory result artifacts and published logs, complete predecessor evidence chains, and hashes confirmable from
+    snapshots or the append-only attempts-log prefix. Seeds are required per sourced subject and stay on the vendor's origin; only
+    `extract.py` runs online, and missing or cancelled search leaves facts UNKNOWN. Tools are listed by role, units follow one ordered
+    `units` list, and delivery acceptance requires results and verdicts to agree and merges every cited artifact. Worker limits preserve
+    unfinished work as UNKNOWN, while the lead bounds waits and stops stalled units. `boundary.read_only` is removed from the worker-brief
+    contract; the read set is instruction-only and explicitly includes installed
+    files of listed skills while excluding live `hw/` and other `.cad-work/` directories.
+  - OpenCode and Kiro shell profiles use `env TMPDIR=<unit-tmp>` for uv and validator commands; Kiro profiles also deny file-tool reads of
+    live `hw/`, lead scratch and stage scratch, and checker-only two-argument `cp` supports retained check programs. Examples record the
+    owner's 210 g phone as a typed intake load and annotate the hours-long phone load without inventing a duration. Host documentation
+    records the pinned cell shell, driver monitor linger, exact gate-statement bytes, required operator response to stops, and model-routing
+    evidence without changing model defaults.

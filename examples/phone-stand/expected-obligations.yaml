@@ -69,10 +69,10 @@ stages:
   - service class APPEARANCE_CONCEPT from a QUESTION decision with a SYNTHETIC actor, separate from rigor maker, taken from A-12 as stated
   - release_scope purpose form, CAD validity and printability review only (A-15), and exclusions naming fit with every functional, physical, safety and regulatory claim (cad-release references/release.md "Release ceiling")
   - the record matches examples/phone-stand/hw in content; ids, wording and order may differ
-  - each fact a reply leaves open recorded as a typed UNKNOWN with owner and question (cad-select references/selection.md "Ask and finish intake" step 2) for screen-tap force, sun exposure, service life and wear, dimensional stability, the printer envelope and the material approvals; fit, holding, friction, tipping and durability are release_scope exclusions from A-15, not new questions
+  - each fact a reply leaves open recorded as a typed UNKNOWN with owner and question (cad-select references/selection.md "Ask and finish intake" step 2 and "Settle each intake field") for screen-tap force, sun exposure, service life and wear, dimensional stability, the printer envelope and the material approvals; fit, holding, friction, tipping and durability are release_scope exclusions from A-15, not new questions
   - the gate packet lists the printer envelope and the material approvals as limits due at INTENT, and the out-of-scope unknowns (consequential false) as owned open questions; none blocks GROUND (cad-select references/selection.md "Scope of each unknown")
-  - REQ-004 records the owner's equipment as route criteria (`make_capability_profile EQUALS prusa_mk4_home`, `make_material ONE_OF [fdm_petg_polylite, fdm_pla_polylite]`, nothing outsourced). REQ-005 records the visible-face finish as the planned condition `support_on_visible_faces EQUALS false` (PROCESS_PLANNED, due PARTS). Quantity, budget and lead time stay product.yaml intake facts, never requirements (cad-select references/selection.md "Write criteria a stage can evidence")
-  - REQ-001 to REQ-005, PRF-001 to PRF-003 and ASM-001 written in the first record batch, before the GROUND verdict, including the volunteered A-18 (REQ-003) and A-19 (the preferences); REQ-002 has each A-06 dimension (162, 77 and 9 mm) as its own criterion and ASM-001 the 250 g bound; the printer envelope (Q-023) and the material approvals (Q-024) are separate UNKNOWNs (cad-select references/selection.md "Ask and finish intake" step 2, "Write criteria a stage can evidence" and "Scope of each unknown")
+  - REQ-004 records the owner's equipment as route criteria (`make_capability_profile EQUALS prusa_mk4_home`, `make_material ONE_OF [fdm_petg_polylite, fdm_pla_polylite]`, nothing outsourced). Its facets are PROCESS_PLANNED and GEOMETRICALLY_MANUFACTURABLE, due PARTS. REQ-005 records the visible-face finish as the planned condition `support_on_visible_faces EQUALS false` (PROCESS_PLANNED, due PARTS). Quantity, budget and lead time stay product.yaml intake facts, never requirements (cad-select references/selection.md "Write criteria a stage can evidence")
+  - REQ-001 to REQ-005, PRF-001 to PRF-003 and ASM-001 written in the first record batch, before the GROUND verdict, including the volunteered A-18 (REQ-003) and A-19 (the preferences); REQ-002 has each A-06 dimension (162, 77 and 9 mm) as its own criterion and ASM-001 the 250 g bound; product.yaml records the owner's 210 g phone as its own typed intake load; the printer envelope (Q-023) and the material approvals (Q-024) are separate UNKNOWNs (cad-select references/selection.md "Ask and finish intake" step 2, "Settle each intake field" and "Write criteria a stage can evidence")
   must_not:
   - choose a material, process, printer setting, tolerance or clearance
   - turn an "I don't know" answer into a value or a default
@@ -82,6 +82,7 @@ stages:
   - open a new question on a release-scope exclusion (phone protection, cable, port or button clearance, fit)
   - "`requirements: []` at the GROUND verdict"
   - a question or UNKNOWN for an intake field an answer states or rules out (corrosion by A-07, motion speed by A-08, maintenance by A-10)
+  - an UNKNOWN or question on the spools' filament diameter or a print setting; `capability.route` step 2 checks it at PARTS (cad-select references/selection.md "Write criteria a stage can evidence")
 - stage: INTENT
   expected:
   - record.schema@product
@@ -96,7 +97,7 @@ stages:
   gate: APPROVED after `approve INTENT <vN> choose <option>`
   must_show:
   - at least two complete candidates, each with architecture, material profile and ordered route per part
-  - hard outcomes per criterion of each mandatory requirement before any preference ranking; REQ-005 PLANNED due PARTS on printed candidates; REQ-004 `make_material` PASS by identity only for the owned PolyLite spools, the spools' filament diameter a candidate limit due PARTS (cad-verify references/process-checks.md capability.route step 2); CONDITIONAL candidates never ranked; every UNKNOWN names its question id
+  - hard outcomes per criterion of each mandatory requirement before any preference ranking; REQ-005 PLANNED due PARTS on printed candidates; REQ-004 `make_material` PASS by identity only for the owned PolyLite spools, the spools' filament diameter a candidate limit due PARTS (cad-verify references/process-checks.md capability.route step 2); recommendation `status` CONDITIONAL with a FEASIBLE `primary`; FINAL needs the approved INTENT gate DR (validation item 3); CONDITIONAL candidates never ranked; every UNKNOWN names its question id
   - the printer envelope and material approvals retained from a source or still UNKNOWN (Q-023, Q-024)
   must_not:
   - use a supplier-typical value as an allowable or a strength claim
@@ -106,7 +107,7 @@ stages:
   - stop BLOCKED without a frozen attempt and its verdict
   - keep a printed candidate CONDITIONAL on the missing calibration (A-11); no INTENT criterion needs one, and a calibration-dependent allowance falls due at PARTS (cad-select references/selection.md "Eliminate on mandatory constraints first")
   - write or edit hw/requirements.yaml
-  - keep a printed candidate CONDITIONAL on, or ask the owner for, the spools' filament diameter
+  - keep a printed candidate CONDITIONAL on, ask the owner for, or invite an answer in a gate packet on, the spools' filament diameter
 - stage: SPECIFY
   expected:
   - record.schema@product

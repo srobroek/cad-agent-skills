@@ -49,9 +49,10 @@ model routing and resource loads remain unproved until live smoke runs per host.
 - Codex CLI 0.166.0 runs every command through the user's login shell (`/bin/zsh -lc`), so the user's zsh startup files
   apply despite a scrubbed environment, and zsh semantics apply to POSIX forms: a lead loop `while read -r expected path`
   overwrote zsh's `path` array and broke `PATH` (`command not found: sha256sum`).
-- Claude Code on Bedrock lists `WebFetch` but no `WebSearch` in the session's tools (2.1.318), so a Claude role that
-  names `WebSearch`, such as the sourcing researcher, has no search there and works from URLs it is given, such as a
-  brief's `seed_urls`. Round 3 ran no Claude sourcing unit, so this is the listed tool set, not an observed failure.
+- Claude Code on Bedrock lists `WebFetch` but no `WebSearch` in the session's tools (2.1.318), so a Claude role that names `WebSearch`,
+  such as the sourcing researcher, has no search there and works from URLs it is given, such as a brief's `seed_urls`. In round 5, a
+  Claude sourcing unit was run with empty seeds and rejected; the tool listing is not an observed search result. The brief now requires a
+  passing vendor-origin seed per subject; without one, facts stay typed UNKNOWN. See [live-smoke evidence](smoke.md#observed-smoke-findings).
 - OpenCode 2.2.5 `websearch` returned `Web search cancelled` for every lead and worker call in both round-4 cells;
   the evidence does not establish why it was cancelled. See [live-smoke evidence](smoke.md#observed-smoke-findings).
 - Codex CLI 0.166.0 on Bedrock: round-4 probes found `gpt-6.1-terra` and `gpt-6-luna` in `us-east-1`; probes in
