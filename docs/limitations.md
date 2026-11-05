@@ -44,6 +44,7 @@ Lite uv cache size varies by build and host. One round-7 full lite cell reported
 inodes without its cache (`smoke-logs-r7/lite-claude-full/REPORT.md`). The round-7 `/tmp` tmpfs had 1,048,576 inodes
 and ran out. Keep smoke projects and their caches on a disk-backed filesystem, never `/tmp`; see the
 [smoke procedure](smoke.md#procedure) and [install guidance](install.md#freecad-for-lite-builds).
+
 - The lite host time targets are unmeasured goals ([smoke.md](smoke.md#lite-timing-targets)); no completed lite cell has been timed.
 
 ## Host and tool limits

@@ -127,7 +127,8 @@
     inodes in round-7 cells. Accept the host-resolved FreeCAD console when preflight and checker agree on path and version; record both
     observations and the executable sha256 in external smoke evidence.
   - J8: Lite intake does not re-ask fields stated in the prompt, and records exclusions verbatim.
-  - J9: Lite packets report the render's actual owner presentation per [the host-specific rules](../full/skills/cad-flow/references/gates.md#lite-packets), including the SVG path and exactly one `Render:` status line.
+  - J9: Lite packets report how the render was actually presented, per the
+    [host-specific rules](../full/skills/cad-flow/references/gates.md#lite-packets): the SVG path and exactly one `Render:` status line.
   - J10: Version snapshots copy only manifest-listed files, one by one; an unlisted path fails its attempt. `accept-results` hashes
     `hw/versions/vN` against its manifest and reports `HASH_MISMATCH` for any unlisted path.
   - `e4f91fd`: FreeCAD readback keys inputs by their published `hw/` paths.
