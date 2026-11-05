@@ -49,6 +49,13 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    - `verdict` and `ready` follow from those results by the role's row of the
      [cad-review rubric](../../cad-review/references/rubric.md#per-role);
    - every `artifacts[]` entry of a result the delivery outputs is an `outputs` entry whose target is that path, with that sha256.
+
+   Then scan every [path field](../../cad-record/references/validation.md#path-fields) of each result file and of each JSON file its
+   `artifacts[]` lists, at every depth, item-table rows included. Each value is a published `hw/` path: an `input_inventory.files` path
+   of the brief, or a target of this delivery (an `outputs` target, or a `source/`, `stdout.txt` or `stderr.txt` path beside a result
+   target, which [merge-deliveries](#merge-deliveries) step 3 retains). Any other value (an `input/` copy, an `installed/…` or `lead/…`
+   snapshot, a `.cad-work/` or other absolute path) rejects the delivery; its `reason` names the file, the field's JSON path and the
+   value ([agent-roles Every role](agent-roles.md#every-role) step 3).
 7. Every log hashes to its sha256.
 8. The lead's tree digests before dispatch and after return
    ([cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest)) equal `boundary.before_sha256` and
@@ -85,7 +92,8 @@ A rejected unit is never patched: send it again as a new unit, or its work stays
    log each triple with the copy's sha256.
 4. Write each merged check bundle's `bundle-manifest.json` last, by
    [cad-record record — Bundle manifest](../../cad-record/references/record.md#bundle-manifest), in
-   `.cad-work/stage-vN/checks/<check>/<attempt>/`; validate it ([stages Lead scratch](stages.md#lead-scratch)), then copy it into the
+   `.cad-work/stage-vN/checks/<check>/<attempt>/`; validate it ([stages Lead scratch](stages.md#lead-scratch)) and scan its path fields
+   as [Accept](#accept) step 6 does, each value a brief `input_inventory.files` path or a file of this bundle; then copy it into the
    bundle.
 5. A retained source keeps its directory name equal to its sha256 (`hw/manufacturing/sources/<sha256>/<name>`).
 6. Defective geometry, annotations or records go back to the producing role as a new unit; a lead edit is a separate, disclosed

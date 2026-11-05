@@ -92,7 +92,7 @@ with [cad-record's YAML loader](../../cad-record/references/validation.md#yaml-l
 with the [schema command](../../cad-record/references/validation.md#schema-validation) → exit 0, and a file of a prose root conforms to
 its [prose-contract](../../cad-record/references/prose-contract.md) table → every field, type, pattern and rule holds. A file that fails
 is corrected in scratch and never published. A bad file an earlier attempt already published follows
-[cad-record validation — Earlier snapshots](../../cad-record/references/validation.md#earlier-snapshots).
+[cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope).
 
 ## Lifecycle procedure IDs (owner cad-flow)
 
@@ -120,7 +120,8 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 2. Allocate `vN`: the next integer above every `hw/versions/v*`, `hw/checks/v*` and `.cad-work/stage-v*`; `mkdir .cad-work/stage-vN` must
    succeed. Never reuse a number.
 3. Write `.cad-work/stage-vN/input-inventory.txt`: every record file, part model, check plan and case, retained source and accepted decision
-   the attempt reads, with its digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)).
+   the attempt reads, with its digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)). Its lines
+   are the exact file list of the record snapshot ([build-version](#build-version) step 3).
 4. From now until the verdict, a changed inventoried byte is `SOURCE_MUTATION`: stop.
 
 ### build-version
@@ -130,11 +131,14 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    ([cad-model's model contract](../../cad-model/references/model-contract.md) and [exports](../../cad-model/references/exports.md)) →
    geometry `PRESENT`. Otherwise record geometry `NOT_APPLICABLE` with the reason: GROUND to VARIANT "no assembly definition yet", CRITIQUE
    "reviews the predecessor version", RELEASE "payload is the FREEZE version".
-3. Stage the snapshot and geometry under `.cad-work/stage-vN/` and copy them following
-   [cad-model's Version build contract](../../cad-model/references/exports.md#version-build). Write the manifest last as
+3. Stage the snapshot and geometry under `.cad-work/stage-vN/` following
+   [cad-model's Version build contract](../../cad-model/references/exports.md#version-build). Write the manifest from the staged files as
    `.cad-work/stage-vN/manifest.json` (prose root [version-manifest](../../cad-record/references/prose-contract.md#version-manifest)) and
-   check it against that table → every field and rule holds; only then `test ! -e` and copy it to `hw/versions/vN/manifest.json`. A
-   manifest that fails is corrected in scratch and never published, the rule of run-checks step 3.
+   check it against that table → every field and rule holds; a manifest that fails is corrected in scratch and never published, the rule
+   of run-checks step 3. Then publish exactly the files it lists, one by one: per file `test ! -e` its target, then
+   `cp <staged file> <target>`, its sha256 equal to the manifest entry; never a recursive copy of a directory (`cp -R`, `rsync`,
+   `ditto`), so a staged file the manifest does not list (a `__pycache__/` entry, a build log) stays in scratch. Copy the manifest to
+   `hw/versions/vN/manifest.json` last, `test ! -e` first.
 4. An interrupted copy with unchanged inputs completes with identical bytes; changed inputs leave `vN` without a manifest, never resumed and
    never reused.
 
@@ -196,8 +200,10 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 3. Publish nothing unvalidated ([Lead scratch](#lead-scratch)): the lead writes its own results, and every check bundle manifest by
    [cad-record record — Bundle manifest](../../cad-record/references/record.md#bundle-manifest), in
    `.cad-work/stage-vN/checks/<check>/<attempt>/` first, and a worker's arrive through [worker-delivery](worker-delivery.md) acceptance.
-   A file that fails is never published (the lead corrects its own in scratch; a worker's delivery is rejected). Publication follows the
-   order of step 1.
+   The lead's own results, their JSON artifacts and every bundle manifest also pass the
+   [path-field](../../cad-record/references/validation.md#path-fields) scan of [worker-delivery Accept](worker-delivery.md#accept) step 6,
+   each value a published `hw/` path or a file of the result's own bundle. A file that fails is never published (the lead corrects its
+   own in scratch; a worker's delivery is rejected). Publication follows the order of step 1.
 4. Stop rule, applied at acceptance in `check_order` to every result of the attempt, the lead's as each unit's, before any of them is
    published: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every later family; any other FAIL or UNKNOWN
    stops the families that read its result, artifacts or geometry. A family without a valid result yet (its unit still running, or its
@@ -235,6 +241,12 @@ only to fix a defect, and the only program that writes a lead result. Before wri
 2. Every recorded sha256 of a published result, bundle manifest and derived bundle equals the bytes on disk; each file was validated
    against its schema root, or conformed to its prose root, before publication ([run-checks](#run-checks) step 3).
 3. Result scopes cover exactly `obligations.yaml`: nothing missing, nothing extra.
+4. `hw/versions/vN/` holds exactly what its manifest lists: every file under it except `manifest.json`, `obligations.yaml` and
+   `release-proposal.json` is a path of the manifest's `record`, `source_artifacts`, `build`, `geometry` or `manufacturing` entries,
+   and every listed file exists and hashes to its sha256. Each unlisted, missing or differing file is one `HASH_MISMATCH` blocker whose
+   `text` names its exact project-relative path (`hw/versions/vN/…`), so the attempt that wrote it fails
+   ([build-version](#build-version) step 3) and a later attempt can read the report
+   ([cad-record validation — Earlier snapshots](../../cad-record/references/validation.md#earlier-snapshots)).
 
 ### write-verdict
 
@@ -247,17 +259,26 @@ only to fix a defect, and the only program that writes a lead result. Before wri
    for a retry, `supersedes` `{version, verdict, reason}` of the attempt it replaces; `expected`, `future`, `results`, `bundles`,
    `waivers`, `blockers`; `review` with `required` true when the stage lists `review.mechanical_dfm` due now, plus its `verdict` and
    result file; `complete` true only when every expected obligation has an accepted outcome from a finished run; `time` in UTC.
-2. Each `results[]` entry carries the check's result, except a FAIL or UNKNOWN check whose every non-PASS outcome an approved
-   [cad-record waiver](../../cad-record/schemas/common.schema.json#/$defs/waiver) covers: its entry is `WAIVED` with that `waiver: WV-###`,
-   and `waivers` lists `{id, decision}` for each waiver used.
-3. Before writing, check the composed verdict against [cad-record validation](../../cad-record/references/validation.md#semantic-check)
-   items 7 (waiver expiry at its `time`) and 10. A waiver that fails either covers nothing: its entries keep the check's result and
-   `waivers` drops it.
+2. `results`: one entry per check, built by iterating the checks, never the obligations: for each check whose result covers an
+   `expected` obligation, its newest attempt published under `hw/checks/vN/<check>/` or carried forward; a result that covers several
+   obligations is still one entry. Each entry carries the check's result, except a FAIL or UNKNOWN check whose every non-PASS outcome an
+   approved [cad-record waiver](../../cad-record/schemas/common.schema.json#/$defs/waiver) covers: its entry is `WAIVED` with that
+   `waiver: WV-###`, and `waivers` lists `{id, decision}` for each waiver used. `blockers`: one entry per condition of the
+   [Stop procedure](#stop-procedure) table, never two with the same code and subject: each FAIL or UNKNOWN outcome of an entry that is not
+   `WAIVED`, with its obligation (`DUE_FAIL`, `DUE_UNKNOWN`); each REJECTED or STOPPED unit of the attempt, naming it (`DELIVERY_FAILED`);
+   each [accept-results](#accept-results) failure.
+3. Before writing, check the composed verdict against the verdict items of
+   [cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope), counting apart from the composed
+   lists as the [Lead check program](#lead-check-program) step 2 does: the checks of step 2, counted from `hw/checks/vN/` and the carried
+   results, equal the `results` entries one for one, and each `expected` obligation lies in the scope of exactly one entry. A waiver that
+   fails its existence or expiry rule there covers nothing: its entries keep the check's result and `waivers` drops it. Any other failed
+   item is a defect of the composer, never a verdict: fix it in scratch and compose again; nothing reaches `hw/` before every item holds.
 4. `result`: PASS when complete, without blockers, every entry PASS, WAIVED or NOT_APPLICABLE and a required review PASS
    ([cad-review rubric](../../cad-review/references/rubric.md)). FAIL when a due obligation is evidenced FAIL or the required review is
    MINOR or MAJOR; BLOCKED otherwise.
 5. `test ! -e hw/versions/vN/stage-verdict.json`, validate the composed file against the linked cad-record stage-verdict schema, and copy
-   it there once → never rewritten.
+   it there once → never rewritten; a later attempt only re-hashes it
+   ([cad-record validation — Attempt scope](../../cad-record/references/validation.md#attempt-scope)).
 6. A PASS verdict goes on now: its next ID (`present-gate`, or `advance` for a NONE or REVIEW gate) runs with each MINOR or INFO
    finding of its results listed as a limit. Never supersede a PASS attempt for MINOR findings alone; a finding the owner wants closed
    is a change the owner states at the gate ([change-impact Findings](change-impact.md#findings)).

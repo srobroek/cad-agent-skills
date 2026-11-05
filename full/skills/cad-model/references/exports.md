@@ -91,8 +91,9 @@ Run by the lead in cad-flow `build-version`. The stage tree mirrors the publishe
 
 5. The build123d program reads `assembly.step` back after writing it and reports its solid count, instance count
    and validity for manifest `geometry.readback`, with the import call as `method`.
-6. Copy every staged `record/`, `source/` and export file to the same path below `hw/versions/vN/` after
-   `test ! -e`, then rehash. cad-flow writes `manifest.json` last.
+6. Publishing is cad-flow's ([build-version](../../cad-flow/references/stages.md#build-version) step 3): exactly the files the
+   manifest lists, one by one, to the same path below `hw/versions/vN/`, and `manifest.json` last. A staged file the manifest does not
+   list, such as a `__pycache__/` entry, is never published.
 
 Manifest fields this build supplies (root `version-manifest`):
 

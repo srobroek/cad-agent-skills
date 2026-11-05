@@ -16,9 +16,10 @@ cad-review: [the rubric reference](../../cad-review/references/rubric.md).
    → every line OK, else stop. Read the `input_inventory` files and snapshots from their copies at `.cad-work/<unit>/input/<path>`; a
    needed file outside your [read set](#read-set) → stop. An earlier result's sha256 for `input/lead/attempts.txt` is confirmed against
    your copy cut after that result's attempt line ([worker brief Compose](worker-brief.md#compose) step 2). Every file you write cites
-   an input by its origin, the `input_inventory.files` path (`hw/…`) with the brief's sha256 for it, never by its `input/` copy; a
-   snapshot has no `hw/` origin and is never a path field, because the brief binds it through `brief_sha256`
-   ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 12).
+   an input by its origin, the `input_inventory.files` path (`hw/…`) with the brief's sha256 for it, never by its `input/` copy. A path
+   field is a published `hw/` path; an input snapshot or installed template is named only in a message and bound by the brief's hashes
+   ([cad-record validation — Path fields](../../cad-record/references/validation.md#path-fields); the lead rejects any other value:
+   [worker delivery Accept](worker-delivery.md#accept) step 6).
 4. Writers: take the tree digest with the command of
    [cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest), no other form, before your first write as
    `boundary.before_sha256`, and again after your last write as `boundary.after_sha256`.

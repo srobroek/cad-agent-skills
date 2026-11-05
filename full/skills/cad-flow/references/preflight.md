@@ -35,9 +35,14 @@ Runs before every other preflight command.
 1. `root` is `pwd -P` of the product project: the directory that holds, or will hold, `hw/`.
 2. `mkdir -p .cad-work/lead/sessions .cad-work/lead/tmp`.
 3. Take the lock and write the claim in one shell command, never the exclusive `mkdir` alone:
-   `mkdir .cad-work/lead/active && printf '%s\n' <one quoted argument per claim line> > .cad-work/lead/active/claim.yaml`, the claim
-   holding `root`, `host`, `harness`, `session`, `owner`, `started` (UTC, quoted), `resumes: []`, `state: ACTIVE`. Validate it as soon as
-   [Probe tools](#probe-tools) has the validator → exit 0; a claim that fails is corrected in place before any `hw/` write.
+   `mkdir .cad-work/lead/active && printf '%s\n' <one quoted argument per claim line> > .cad-work/lead/active/claim.yaml`, one line per
+   required field of the [lead-claim root](../../cad-record/schemas/lead-claim.schema.json): `format: cad-agent-skills.lead-claim`,
+   `schema_version: 1`, `root`, `host`, `harness`, `session`, `owner`, `started` (UTC, quoted), `resumes: []`, `state: ACTIVE`. Right
+   after writing it, read it back → those ten fields with the values written. Validate it against that root as the first command once
+   [Probe tools](#probe-tools) confirms the validator, and right after every later write of a claim (steps 4 and 5, [Finish](#finish)
+   step 3), each time with
+   `env TMPDIR=<tmp> <tools>/bin/check-jsonschema --schemafile <cad-record>/schemas/lead-claim.schema.json <claim path>` → exit 0.
+   A claim that fails is corrected in place before any `hw/` write.
 4. Failure → read `claim.yaml`:
    - same `session` → append `{session, time}` to `resumes` and continue;
    - another session, or the directory without `claim.yaml` → stop and show the user that claim; write nothing.
@@ -96,7 +101,8 @@ Copy both pins from [cad-record Schema validation](../../cad-record/references/v
 warm-up's `uv pip install` line. An installed version other than its pin fails the probe, and the warm-up below reinstalls the pins.
 
 Run the required probes as one shell command. Every uv command of preflight names `--cache-dir <cache>`, except `uv --version`, which
-reads no cache. When a `<tools>` probe fails, the warm-up below installs both tools; then probe again.
+reads no cache. When a `<tools>` probe fails, the warm-up below installs both tools; then probe again. Once both `<tools>` probes pass,
+the next command validates the claim ([Claim the project](#claim-the-project) step 3).
 
 Record in `tools[]` `check-jsonschema` with argv `[<tools>/bin/check-jsonschema]` and `yaml-loader` with argv `[<tools>/bin/python]`,
 each with the pin the version probe confirmed, `uv` and `curl` with argv `[<the path command -v printed>]`, and `python` with the path the

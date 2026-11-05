@@ -36,9 +36,11 @@ Runs before every other preflight command.
 1. `root` is `pwd -P` of the product project: the directory that holds, or will hold, `hw/`.
 2. `mkdir -p .cad-work/lead/sessions .cad-work/lead/tmp`.
 3. Take the lock and write the claim in one shell command, never the exclusive `mkdir` alone:
-   `mkdir .cad-work/lead/active && printf '%s\n' <one quoted argument per claim line> > .cad-work/lead/active/claim.yaml`, the claim
-   holding `root`, `host`, `harness`, `session`, `owner`, `started` (UTC, quoted), `resumes: []`, `state: ACTIVE`. Check it against the
-   `lead-claim` table → every field and rule holds; a claim that fails is corrected in place before any `hw/` write.
+   `mkdir .cad-work/lead/active && printf '%s\n' <one quoted argument per claim line> > .cad-work/lead/active/claim.yaml`, one line per
+   required field of the [lead-claim table](../../cad-record/references/prose-contract.md#lead-claim): `format: cad-agent-skills.lead-claim`,
+   `schema_version: 1`, `root`, `host`, `harness`, `session`, `owner`, `started` (UTC, quoted), `resumes: []`, `state: ACTIVE`. Right
+   after writing it, and right after every later write of a claim (steps 4 and 5, [Finish](#finish) step 3), read it back and check it
+   against that table → every field and rule holds. A claim that fails is corrected in place before any `hw/` write.
 4. Failure → read `claim.yaml`:
    - same `session` → append `{session, time}` to `resumes` and continue;
    - another session, or the directory without `claim.yaml` → stop and show the user that claim; write nothing.
