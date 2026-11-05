@@ -181,11 +181,14 @@ and a LITE geometry unknown ([Lite intake](#lite-intake)), GROUND records every 
 lists each consequential one as a limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate)). Each blocks
 only where it falls due:
 
-| The UNKNOWN is | Record | Blocks |
-| --- | --- | --- |
-| an owner's answer that a criterion, case or choice needs, for a requirement kind the service class admits ([cad-verify check-plan — Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class)) that `release_scope.exclusions` does not exclude, or for any SAFETY or REGULATORY requirement | `consequential: true`, owner, question | the first obligation that needs it: each INTENT hard outcome it feeds is UNKNOWN and keeps its candidate CONDITIONAL ([assess-selection](#assess-selection)); SPECIFY `requirements.completeness` is UNKNOWN `REQUIRED_UNKNOWN` while a criterion needs it; a check whose case needs it is UNKNOWN `REQUIRED_UNKNOWN`; else it stays a release limit |
-| an answer only an excluded requirement kind or a later scope needs | `consequential: false`, owner, question, the exclusion as `reason` | nothing: an owned open question |
-| a fact sourcing or a check establishes, not an owner's answer: a capability envelope, material profile or supplier fact ([select-candidates](#select-candidates)), or a product behaviour such as creep, temperature rise or wear rate | `consequential: true`, owner, question; `reason` names the stage that establishes it | only the first obligation that uses it as evidence: INTENT only through a criterion INTENT settles ([assess-selection](#assess-selection)), whose hard outcome stays UNKNOWN; a later criterion that needs it is PLANNED at INTENT, and its own stage's obligation stays UNKNOWN until a check establishes the fact; the owner is asked only after sourcing returns it UNKNOWN |
+| The UNKNOWN is | `consequential` | `material_to_choice` | `safety_relevant` | Also record | Blocks |
+| --- | --- | --- | --- | --- | --- |
+| an owner's answer that a criterion, case or choice needs, for a requirement kind the service class admits ([cad-verify check-plan — Evidence by service class](../../cad-verify/references/check-plan.md#evidence-by-service-class)) that `release_scope.exclusions` does not exclude, or for any SAFETY or REGULATORY requirement | true | true only when it feeds a material, process or capability criterion; otherwise false | true only for a SAFETY or REGULATORY requirement; otherwise false | owner, question | the first obligation that needs it: each INTENT hard outcome it feeds is UNKNOWN and keeps its candidate CONDITIONAL ([assess-selection](#assess-selection)); SPECIFY `requirements.completeness` is UNKNOWN `REQUIRED_UNKNOWN` while a criterion needs it; a check whose case needs it is UNKNOWN `REQUIRED_UNKNOWN`; else it stays a release limit |
+| an answer only an excluded requirement kind or a later scope needs | false | false | false | owner, question, the exclusion as `reason` | nothing: an owned open question |
+| a fact sourcing or a check establishes, not an owner's answer: a capability envelope, material profile or supplier fact ([select-candidates](#select-candidates)), or a product behaviour such as creep, temperature rise or wear rate | true | true only when it feeds a material, process or capability criterion; otherwise false | true only when it feeds a SAFETY or REGULATORY requirement; otherwise false | owner, question; `reason` names the stage that establishes it | only the first obligation that uses it as evidence: INTENT only through a criterion INTENT settles ([assess-selection](#assess-selection)), whose hard outcome stays UNKNOWN; a later criterion that needs it is PLANNED at INTENT, and its own stage's obligation stays UNKNOWN until a check establishes the fact; the owner is asked only after sourcing returns it UNKNOWN |
+
+Both flags can be true only when their stated conditions hold. Any true `material_to_choice` or `safety_relevant` requires `consequential: true`.
+`consequential` can also be true for an admitted criterion unrelated to either flag.
 
 An UNKNOWN takes the first row when the owner can answer it and the third when sourcing or a check establishes it, never both. INTENT is
 blocked only by an UNKNOWN hard outcome: a criterion whose value the owner has not given, or a criterion INTENT settles whose evidence is
@@ -199,8 +202,6 @@ has used, such as spools on hand, states what is on hand (`make_material`), neve
 stays this UNKNOWN until a source states the approval itself, a retained supplier specification or an owner statement that the machine is
 approved for that material. Consumable attributes and process settings are none of these subjects
 ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
-
-Set each question's `material_to_choice` and `safety_relevant` by the same table.
 
 ## select-candidates
 
