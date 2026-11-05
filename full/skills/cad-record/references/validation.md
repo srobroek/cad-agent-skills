@@ -202,7 +202,7 @@ the statement and proposal files it hashes; these items read more:
 |---|---|
 | 1, 2, 12 | every inventoried file; 1 and 2 skip an earlier snapshot ([Earlier snapshots](#earlier-snapshots)) |
 | 3 | the `requirements.yaml` and `manufacturing/selection.yaml` snapshots of the version an APPROVED INTENT `GATE` DR binds |
-| 7, 8, 10, 11, 12, 16, 17 | each result an inventoried verdict lists, CARRIED_FORWARD ones included: its `result.json`, `bundle-manifest.json` and `source/` files, and every file its `inspected` lists |
+| 7, 8, 10, 11, 12, 16, 17 | each result an inventoried verdict lists, CARRIED_FORWARD ones included: its `result.json`, `bundle-manifest.json`, `source/` files, each `artifacts[]` file, the published `stdout` and `stderr` logs named in `commands[]`, and every file its `inspected` lists (REVIEW results have no commands or artifacts; [cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1) |
 | 8, 9 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
 | 9 | `input/lead/attempts.txt`: one `v<M>` line per attempt number in use when the lead wrote the brief, ascending |
 | 13, 16 | `hw/bom/vN/**` and `hw/verification/vN/**` |

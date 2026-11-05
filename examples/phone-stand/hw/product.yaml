@@ -54,12 +54,29 @@ intake:
       sources:
       - &a06 {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}
       - {kind: CALCULATION, reference: 250 g design mass times 9.81 m/s2, reason: weight of the heaviest phone the owner designs for}
+    note: sits on the stand for hours (A-06); no duration figure stated
     direction:
       status: KNOWN
       value: -Z through the phone's centre of mass, resting on the cradle
       basis: USER_DECLARED
       sources:
       - *a06
+  - id: owner_phone_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value: {value: 2.06, units: N}
+      basis: CALCULATED
+      sources:
+      - *a06
+      - {kind: CALCULATION, reference: 210 g times 9.81 m/s2, reason: weight of the owner's own phone in its case}
+    direction:
+      status: KNOWN
+      value: '-Z through the phone''s centre of mass, resting on the cradle'
+      basis: USER_DECLARED
+      sources:
+      - *a06
+    note: the owner's phone, inside the 250 g design bound of phone_weight
   - id: screen_tap
     kind: CYCLIC
     magnitude:
@@ -107,12 +124,12 @@ intake:
       consequential: false
     corrosion:
       status: NOT_APPLICABLE
-      reason: 'ruled out by A-07: dry indoor air, no chemicals'
+      reason: 'Q-007, answer A-07: dry indoor air, no chemicals'
       reviewed_by: SYNTHETIC demo owner
   motion:
     speed:
       status: NOT_APPLICABLE
-      reason: 'ruled out by A-08: the angle is changed by hand a few times a day; no speed requirement'
+      reason: 'Q-008, answer A-08: the angle is changed by hand a few times a day; no speed requirement'
       reviewed_by: SYNTHETIC demo owner
     range:
       status: KNOWN
@@ -191,7 +208,7 @@ intake:
       - *a10
     maintenance:
       status: KNOWN
-      value: none planned
+      value: none planned beyond reprinting a broken part
       basis: USER_DECLARED
       sources:
       - *a10
