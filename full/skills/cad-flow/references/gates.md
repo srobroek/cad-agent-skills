@@ -23,7 +23,8 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
 2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
    each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, MINOR finding, SAMPLED coverage and
-   absent physical evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. A lite build adds
+   absent physical evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. RELEASE adds the proposal's REV and
+   its full sha256; the RELEASE decision binds that REV from the proposal, never from the reply. A lite build adds
    [Lite packets](#lite-packets).
 3. INTENT and VARIANT add the options the verdict assessed
    ([cad-select assess-selection](../../cad-select/references/selection.md#assess-selection) and

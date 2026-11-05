@@ -348,7 +348,7 @@ stages:
   post_approval:
   - release.integrity@product (lead, inside publish-release; in no stage verdict)
   verdict: PASS
-  gate: APPROVED after `approve RELEASE <vN> REV A`
+  gate: APPROVED after `approve RELEASE <vN>`
   must_show:
   - hw/versions/<vN>/release-proposal.json without readiness, approval or integrity
   - a sealed hw/releases/A/ whose final manifest carries readiness, approval, inventory and integrity PASS

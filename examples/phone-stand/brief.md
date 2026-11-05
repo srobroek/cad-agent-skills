@@ -61,7 +61,7 @@ written from these answers names an actor starting `SYNTHETIC`.
    An INTENT recommendation of NONE presents no gate: its attempt ends BLOCKED, and its report asks each blocking
    question by id; answer them as in "Scripted owner answers".
 3. A waiver proposal gets `reject <DR-###>; I decline this waiver.`
-4. RELEASE: reply `approve RELEASE <vN> REV <REV>` for the presented proposal.
+4. RELEASE: check also that the packet shows the proposal's REV, then reply exactly `approve RELEASE <vN>` for the presented proposal.
 5. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
    change or a selection): reply `approve <DR-###>` when it restates a scripted answer, the scripted change or the
    option rule 2 would choose; otherwise `reject <DR-###>; record it as an open question.`

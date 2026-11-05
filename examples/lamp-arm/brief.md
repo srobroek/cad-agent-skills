@@ -79,7 +79,7 @@ answers names an actor starting `SYNTHETIC`.
 4. Any other decision proposal outside a gate (a `DR-###` the lead asks you to approve, such as the service class, a
    change or a selection): `approve <DR-###>` when it restates a scripted answer or the option rule 2 would choose;
    otherwise `reject <DR-###>; record it as an open question.`
-5. RELEASE, only if a PASS readiness verdict is presented: `approve RELEASE <vN> REV <REV>`.
+5. RELEASE, only if a PASS readiness verdict is presented and the packet shows the proposal's REV: `approve RELEASE <vN>`.
 6. After the expected end, or after a stop the lead reports that asks nothing these rules answer, reply exactly
    `end the session`. This is the last scripted turn: the lead releases its claim on it.
 
