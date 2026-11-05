@@ -57,4 +57,4 @@ L1 `<STAGE> vN: PASS|FAIL|BLOCKED — WAITING_FOR_USER|APPROVED|REJECTED|NOT_REQ
    Limits — UNKNOWN, PLANNED, waivers, sampled coverage, absent physical evidence, synthetic approvals
    Files — one absolute path per line
    Gate — at `present-gate` only: the whole [gates packet](references/gates.md#present-gate), ending with the exact approval form
-CAP 200w clean · 400w with blockers; Gate block outside the cap; last line: `Reply "end the session" to release the lead claim.`
+CAP 200w clean · 400w with blockers · Gate uncapped; last line while the claim is held: `Reply "end the session" to release the lead claim.`

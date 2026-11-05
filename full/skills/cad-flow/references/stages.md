@@ -27,8 +27,8 @@ post-approval package check inside `publish-release`.
 The lead writes and stages scratch only at the `.cad-work` paths of [cad-record's layout](../../cad-record/layout.json), never at the
 `.cad-work/` root and never in a system temp directory such as `/tmp`: `.cad-work/lead/scratch/` for stage work before `freeze-inputs`
 allocates `vN` (candidate, input and assessment lists), `.cad-work/stage-vN/` from then on, `.cad-work/lead/tmp/` for temporary files,
-and its check program `.cad-work/lead/checks.py` with `checks.py.lock` ([run-checks](#run-checks) step 1). Its uv cache, `TMPDIR` and
-validator follow [preflight](preflight.md#probe-tools) and [uv commands](agent-roles.md#uv-commands). Nothing in scratch is evidence.
+and its check program `.cad-work/lead/checks.py` with `checks.py.lock` ([Lead check program](#lead-check-program)). Its uv cache, `TMPDIR`
+and validator follow [preflight](preflight.md#probe-tools) and [uv commands](agent-roles.md#uv-commands). Nothing in scratch is evidence.
 
 Every byte the lead copies into `hw/` comes from `.cad-work/`, and every record file among them is validated there first: YAML loads
 with [cad-record's YAML loader](../../cad-record/references/validation.md#yaml-loader), then the file validates against its layout
@@ -95,10 +95,12 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
 
 1. Split the obligations still to run by family. The lead runs `record.schema`
    ([cad-record validation](../../cad-record/references/validation.md)), `record.ownership`, `record.inputs` and `delivery.integrity`
-   (hash, schema and ownership audits) with `producer_role: lead`; a `cad-mech-dfm-reviewer` unit runs `review.mechanical_dfm`; one
-   `cad-checker` unit per group below runs every other family, a family no row names being a group of its own. Every unit whose families
-   read no result of another pending family goes out in one batch ([delegation](delegation.md)); the rest go in the next batch, once the
-   results they read are published.
+   (hash, schema and ownership audits) with its [check program](#lead-check-program); a `cad-mech-dfm-reviewer` unit runs
+   `review.mechanical_dfm`; one `cad-checker` unit per group below runs every other family, a family no row names being a group of its
+   own. The lead never produces a family this step assigns to a role, with any program and at any stage: its result for such a family
+   holds only the UNKNOWN outcomes of step 4 or [Lost and stalled units](delegation.md#lost-and-stalled-units) step 3. Every unit whose
+   families read no result of another pending family goes out in one batch ([delegation](delegation.md)); the rest go in the next batch,
+   once the results they read are published.
 
    | Group     | Families                                                                                             |
    | --------- | ---------------------------------------------------------------------------------------------------- |
@@ -111,11 +113,8 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    | loads     | `mass.properties`, `load.*`                                                                          |
    | documents | `drawing.*`, `preview.render`                                                                        |
 
-   While the batch runs, the lead runs its families on the frozen `vN` into `.cad-work/stage-vN/checks/<check>/<attempt>/` with one PEP 723
-   program, `.cad-work/lead/checks.py`, locked beside it ([uv commands](agent-roles.md#uv-commands)), written once and changed only to
-   fix a defect. Each lead result is COMMAND; its `source_files` are `source/checks.py` and `source/checks.py.lock`, copied into the bundle
-   at publication ([cad-verify implementation kind](../../cad-verify/references/results.md#implementation-kind)). `delivery.integrity`
-   runs with that program after the attempt's last merge-deliveries, over every triple logged in the attempt, and is published last.
+   While the batch runs, the lead runs its families on the frozen `vN` into `.cad-work/stage-vN/checks/<check>/<attempt>/`.
+   `delivery.integrity` runs after the attempt's last merge-deliveries and is published last.
 2. Every stage result binds `VERSION` (vN and manifest digest). A worker's UNIT result is never stage evidence; a checker may read scratch
    first, then emits its VERSION result on the identical inventoried input.
 3. Publish nothing unvalidated ([Lead scratch](#lead-scratch)): the lead writes its own results, and every check bundle manifest by
@@ -124,16 +123,35 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    A file that fails is never published (the lead corrects its own in scratch; a worker's delivery is rejected). When the batch has
    returned and every unit is ACCEPTED, REJECTED or STOPPED, apply step 4, then publish the surviving results in `check_order` to
    `hw/checks/vN/<check>/<attempt>/`, each before the batch of any family that reads it is dispatched.
-4. Stop rule, applied at acceptance in `check_order`: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every
-   later family; any other FAIL or UNKNOWN stops the families that read its result, artifacts or geometry. A stopped family's speculative
-   result, the lead's or a unit's, stays unpublished in scratch, and `checks.py` records each stopped obligation in a lead result of its
-   check: UNKNOWN `NOT_RUN` naming the blocking obligation. `delivery.integrity` runs after every family and stops none.
-5. A rerun with unchanged inputs (interruption, timeout) is the next attempt `aN` of the same check with `supersedes`; a changed input, case
-   or method is a new `vN`.
+4. Stop rule, applied at acceptance in `check_order` to every result of the attempt, the lead's as each unit's, before any of them is
+   published: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every later family; any other FAIL or UNKNOWN
+   stops the families that read its result, artifacts or geometry. A family without a valid result yet (its unit still running, or its
+   result failing validation) holds back every family a FAIL of it would stop, until it has one. A stopped family's speculative result,
+   the lead's or a unit's, stays unpublished in scratch, and `checks.py` records each stopped obligation in a lead result of its check:
+   UNKNOWN `NOT_RUN` naming the blocking obligation. `delivery.integrity` runs after every family and stops none.
+5. A rerun with unchanged inputs (interruption, timeout, a fixed [check program](#lead-check-program)) is the next attempt `aN` of the
+   same check with `supersedes`; a changed input, case or method is a new `vN`.
 6. A result is `CARRIED_FORWARD` only under [change-impact Carry-forward](change-impact.md#carry-forward).
 7. Fast or smoke runs stay in scratch as diagnostics and never enter a result.
 8. A family whose subject a later procedure ID produces runs in that step; a family that reads such a subject or its result runs after
    it, at the end of the last such step ([cad-verify index-verification](../../cad-verify/references/check-plan.md#index-verification)).
+
+#### Lead check program
+
+`.cad-work/lead/checks.py` is one PEP 723 program, locked beside it ([uv commands](agent-roles.md#uv-commands)), written once, changed
+only to fix a defect, and the only program that writes a lead result. Before writing it, LOAD the rows of the four lead families in
+[cad-verify families](../../cad-verify/references/families.md#record-intake-and-selection). Each lead result is COMMAND; its
+`source_files` are `source/checks.py` and `source/checks.py.lock`, copied into the bundle at publication
+([cad-verify implementation kind](../../cad-verify/references/results.md#implementation-kind)).
+
+1. Each family takes one row per item of the log its Method names, read from that log in the run: never from the lead's own list of
+   what it dispatched, merged or wrote.
+2. Before writing a result, the program counts the log's items within the Method's scope apart from its rows, and asserts that count
+   equals its row count: the lines of `input-inventory.txt`, the `merged` targets of the units the Method names, the files under `hw/`,
+   the files in validation scope.
+3. A failed assertion, or a FAIL or UNKNOWN row that the lead's own recomputation of that one row (`shasum -a 256` or `sha256sum` of its
+   files, the log entry it compares) does not reproduce, is a defect of the program, never an outcome: publish nothing from that run, fix
+   `checks.py` and rerun the family ([run-checks](#run-checks) step 5). Only a reproduced FAIL or UNKNOWN row enters a result.
 
 ### accept-results
 
@@ -238,9 +256,14 @@ carries `DUE_UNKNOWN` or `DELIVERY_FAILED` where they fall due.
 
 A missing human approval is no blocker: the PASS verdict waits `WAITING_FOR_USER`.
 
-1. Dispatch nothing new; stop this session's running units that depend on the failed work.
+1. Dispatch nothing new for the stopped attempt; stop this session's running units that depend on the failed work.
 2. Retain every failed result, log, delivery and scratch file; delete nothing.
 3. An attempt with a manifest gets its FAIL or BLOCKED verdict (`write-verdict`).
-4. Report with the SKILL.md OUTPUT shape: stage, vN, blocker code, obligation, absolute paths, and the decision or information that unblocks
-   it.
-5. Write nothing more until the user answers or the cause is resolved; then follow [change-impact](change-impact.md).
+4. When the fix of every blocker lies inside the open stage's own unapproved work and needs no answer, approval or action from the owner,
+   an authority or the operator (a defect in the lead's program, brief or record; a unit to send again), make the fixes and start the next
+   attempt in the same turn ([change-impact Procedure](change-impact.md#procedure) step 3); that turn's report names the blocked attempt
+   and its blockers. A cause that also blocked the previous attempt of the stage goes to step 5.
+5. Otherwise report with the SKILL.md OUTPUT shape: stage, vN, blocker code, obligation, absolute paths, and the decision or information
+   that unblocks it. The report asks only what the owner, an authority or the operator must answer, approve or do; it never asks leave to
+   continue.
+6. Write nothing more until that answer arrives; then follow [change-impact](change-impact.md).

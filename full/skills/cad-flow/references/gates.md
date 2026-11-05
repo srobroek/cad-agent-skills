@@ -36,9 +36,11 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 An approval is an explicit statement from the user, or from the authority `product.yaml` names for this scope, that names the stage and `vN`
 (and the option for INTENT or VARIANT).
 
-1. Allocate the next unused DR number and save the message bytes exactly as received at `hw/decisions/statements/DR-###.txt`, `test ! -e`
-   first (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)): no newline or whitespace added or trimmed, so write them with
-   the host's file-write tool or `printf '%s'`, never `echo` or a heredoc.
+1. Allocate the next unused DR number and save the message exactly as received at `hw/decisions/statements/DR-###.txt`, `test ! -e` first
+   (IMMUTABLE in [cad-record's layout](../../cad-record/layout.json)): the file holds the message's own bytes and nothing else, with no
+   quotation marks around it and no newline or whitespace added or trimmed. Write it with the host's file-write tool, the message alone as
+   the content, or with `printf '%s' '<message>' > <file>`, whose single quotes are shell syntax and inside which each `'` of the message
+   is written `'\''`; never `echo` or a heredoc. The reply `approve GROUND v1` is saved as those 17 bytes.
 2. Write `hw/decisions/DR-###.yaml` with that number, composed and validated in scratch ([stages Lead scratch](stages.md#lead-scratch)),
    `test ! -e` first: `kind: GATE`, `state: APPROVED` or `REJECTED`,
    `binding: {kind: STAGE, stage, version, verdict: {path, sha256}, verdict_result}` with `verdict_result` copied from that verdict's

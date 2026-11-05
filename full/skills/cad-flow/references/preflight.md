@@ -81,16 +81,17 @@ as an installation defect: report the path and the observation as an open questi
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | `command -v uv curl` prints one absolute path per tool                                                                                                                                   | yes      |
 | `uv --version`                                                                                                                                                                           | yes      |
-| `uv python find 3.12`                                                                                                                                                                    | yes      |
+| `uv python find --cache-dir <cache> --no-python-downloads 3.12`                                                                                                                         | yes      |
 | `<tools>/bin/check-jsonschema --version` prints the [pinned version](../../cad-record/references/validation.md#schema-validation)                                                         | yes      |
 | `<tools>/bin/python -c 'import yaml; print(yaml.__version__)'` prints the [pinned PyYAML](../../cad-record/references/validation.md#yaml-loader)                                          | yes      |
 | `curl --version` reports 7.83 or later (`--remove-on-error`; a mid-transfer `--max-filesize` abort needs 8.4)                                                                            | yes      |
 | each optional tool a [cad-verify](../../cad-verify/SKILL.md) or [cad-release](../../cad-release/SKILL.md) reference names for a check `hw/check-plan.yaml` already plans; none at GROUND | no       |
 
-Run the required probes as one shell command. When a `<tools>` probe fails, the warm-up below installs both tools; then probe again.
+Run the required probes as one shell command. Every uv command of preflight names `--cache-dir <cache>`, except `uv --version`, which
+reads no cache. When a `<tools>` probe fails, the warm-up below installs both tools; then probe again.
 
 Record in `tools[]` `check-jsonschema` with argv `[<tools>/bin/check-jsonschema]` and `yaml-loader` with argv `[<tools>/bin/python]`,
-`uv` and `curl` with argv `[<the path command -v printed>]`, and `python` with the path `uv python find 3.12` printed, each with its
+`uv` and `curl` with argv `[<the path command -v printed>]`, and `python` with the path the `uv python find` probe printed, each with its
 printed version; never a typed or remembered path. Every schema validation and YAML load of the session, the lead's and each unit's,
 runs exactly these argv; briefs copy them into `resources.tools`, and a unit only executes them.
 
@@ -108,10 +109,10 @@ expected. The venv lines run only when a `<tools>` probe failed; the lock and ru
 `<tmp>/warm-<set>.py` holding only that set's header:
 
 ```sh
-TMPDIR=<tmp> uv venv --cache-dir <cache> --no-python-downloads --clear --python 3.12 <tools>
-TMPDIR=<tmp> uv pip install --cache-dir <cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
-TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --script <tmp>/warm-<set>.py
-TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --script <tmp>/warm-<set>.py
+env TMPDIR=<tmp> uv venv --cache-dir <cache> --no-python-downloads --clear --python 3.12 <tools>
+env TMPDIR=<tmp> uv pip install --cache-dir <cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
+env TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --script <tmp>/warm-<set>.py
+env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --script <tmp>/warm-<set>.py
 ```
 
 A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched to warm its own environment.
@@ -130,7 +131,10 @@ otherwise states that the session ends. With an `UNAVAILABLE-*` session, also ru
 `WAITING_FOR_USER`, on a stop or with a report: a later turn cannot prove it is this session, so it claims anew.
 
 1. Stop this session's units that still run (`.cad-work/lead/units.yaml`); never another session's.
-2. Copy `claim.yaml` to `.cad-work/lead/sessions/<stamp>/claim.yaml` with `state: RELEASED` and `released` (UTC), and copy `preflight.json`
+2. Run [stages Stop procedure](stages.md#stop-procedure) step 3 for every attempt that has `hw/versions/vN/manifest.json` and no
+   `stage-verdict.json`: each expected obligation without a published result is a `MISSING_RESULT` blocker, and so is the attempt itself
+   while `obligations.yaml` is absent. Finish dispatches, runs and publishes nothing else.
+3. Copy `claim.yaml` to `.cad-work/lead/sessions/<stamp>/claim.yaml` with `state: RELEASED` and `released` (UTC), and copy `preflight.json`
    and `units.yaml` beside it.
-3. Only when the active claim names this session: `rm .cad-work/lead/active/claim.yaml && rmdir .cad-work/lead/active`.
-4. Keep every scratch directory, log and session record.
+4. Only when the active claim names this session: `rm .cad-work/lead/active/claim.yaml && rmdir .cad-work/lead/active`.
+5. Keep every scratch directory, log and session record.
