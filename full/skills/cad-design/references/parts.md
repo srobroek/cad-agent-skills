@@ -12,6 +12,7 @@ Fidelity describes the form a stage expects; it is review language, never a chec
 | Stage | Made part | Purchased part |
 |---|---|---|
 | LAYOUT | envelope solids at the `assembly.yaml` placement; joint origins and axes and every interface member feature witnessed | supplier model, or a PROXY with sourced bounds |
+| LAYOUT, LITE build | the finished prototype form the approved GROUND requests: every opening, wall, bore, round, lip and named feature at its requested dimension, at the `assembly.yaml` placement; never an envelope stand-in | none: a lite part is AUTHORED ([Lite layout](layout.md#lite-layout)) |
 | PARTS | real interfaces and route-appropriate form: bores, bosses, mating faces, walls, ribs and reliefs; every component and every feature the route needs | supplier model, or a PROXY with sourced dimensions |
 | DETAIL | fit, fastener, insert and retention features; chamfers, rounds, text and finish features | as bought: supplier model, or a PROXY whose `bounds` are sourced |
 
@@ -63,6 +64,7 @@ Output: detailed part records and models whose drawing intent states REQUIRED or
 Read only the brief inputs, from their copies under `.cad-work/<unit>/input/`. Write each delivered file at
 `.cad-work/<unit>/output/<its hw/ target path>`. Interfaces, assembly and other PNs are locked: a needed change is a
 proposal under `output/proposals/`.
+A lite part unit follows [Lite part](#lite-part).
 
 1. Identity: `PN`, `rev` from the brief; `title`; `sourcing` from the approved candidate.
 2. `model` (cad-model references/model-contract.md):
@@ -104,3 +106,19 @@ proposal under `output/proposals/`.
     - in an additive operation's `orientation`, no feature lies below the face its `setup.datums` names first.
 11. Write `model.py`, `build.py` and `check.py`, run them and deliver per cad-model; validate `part.yaml` against the
     `part` root → exit 0.
+
+## Lite part
+
+A lite part unit ([Lite layout](layout.md#lite-layout)) runs "Design one part" with the changes below; the part
+records no material, route, sourcing, drawing or manufacturing state. The model program follows
+[cad-model Lite model](../../cad-model/references/model-contract.md#lite-model).
+
+- Step 1: `PN`, draft `rev` and `title` from the brief, plus `build_mode: LITE`; no `sourcing`.
+- Step 2: `AUTHORED` only.
+- Step 4: each component without `material_profile`.
+- Step 5: `intent.functions` only, each function with the REQ ids it serves in `requirements`.
+- Steps 3, 6, 7, 8 and 10 do not apply: omit `transparency`, `manufacture`, `procurement`, `drawing` and
+  `mass_target`.
+- Form: the LAYOUT, LITE build row of [Fidelity by stage](#fidelity-by-stage). Model each feature the brief's
+  requirements name at its requested dimension, and witness it under its semantic id (step 9). A requested feature
+  that is left out or replaced by an envelope is a MAJOR finding (cad-review rubric), never a delivered approximation.

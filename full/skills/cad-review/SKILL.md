@@ -11,6 +11,7 @@ TRIGGER
 - "review my design" in a lead session → cad-flow, which dispatches a reviewer unit; the lead never reviews itself
 - measuring clearance, running a stack or a process check → cad-verify
 - choosing a material, process or supplier → cad-select
+- LITE design review → cad-verify [lite intent inspection](../cad-verify/references/families.md#lite-intent-inspection); no DFM review
 
 ## Workflow
 

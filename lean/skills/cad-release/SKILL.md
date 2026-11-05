@@ -29,9 +29,11 @@ ASK explicit approval of the exact release proposal and REV (`kind: RELEASE`) be
    root, and `bom.yaml` and the bundle manifest conform to the cad-record `bom` and `bundle-manifest` prose roots.
 4. `promote-revisions`, `propose-release`, `publish-release`, `release.inventory` or `release.integrity`:
    LOAD references/release.md (`skill://cad-release/references/release.md`) → a validating proposal, or after
-   approval one sealed `hw/releases/<REV>/` and its outer digest reported.
+   approval one sealed `hw/releases/<REV>/` and its outer digest reported. A LITE build (frozen product
+   `build_mode` LITE) runs its "Lite release" section.
 5. Fill a template only from the record: `assets/drawing-intent.yaml` (part `drawing` block),
-   `assets/build-guide.md` (package guide), `assets/release-manifest.json` (FINAL manifest shape)
+   `assets/build-guide.md` (package guide, its LITE build sections for a lite package), `assets/release-manifest.json`
+   (FINAL manifest shape; a lite one adds `build_mode: LITE` and omits `frozen.decision`)
    → no placeholder text left in the written file.
 
 ## Rules
@@ -42,7 +44,8 @@ MUST Take every drawn value from the version's STEP; the record supplies request
 MUST Record a REQUIRED characteristic the program cannot draw, or a required sheet format or view not
   produced, as UNKNOWN; the stage is then BLOCKED, never passed with a note.
 MUST Publish only within the release ceiling in references/release.md; without due physical or authority
-  evidence the package is a concept definition or an approved non-safety trial.
+  evidence the package is a concept definition or an approved non-safety trial. A LITE build seals only its lite
+  prototype package, after the RELEASE approval, every due RELEASE check and `release.integrity` PASS.
 MUST Copy claims from the verification index unchanged: UNKNOWN, PLANNED and WAIVED never become PASS.
 NOT Edit a frozen input, reuse a REV, overwrite or prune a sealed release, or write the outer digest into it.
 NOT Ship or run a helper from this skill; drawing, BOM and copy programs are runtime programs the model
