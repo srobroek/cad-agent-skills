@@ -111,10 +111,10 @@ expected. The venv lines run only when a `<tools>` probe failed; the lock and ru
 `<tmp>/warm-<set>.py` holding only that set's header:
 
 ```sh
-TMPDIR=<tmp> uv venv --cache-dir <cache> --no-python-downloads --clear --python 3.12 <tools>
-TMPDIR=<tmp> uv pip install --cache-dir <cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
-TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --script <tmp>/warm-<set>.py
-TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --script <tmp>/warm-<set>.py
+env TMPDIR=<tmp> uv venv --cache-dir <cache> --no-python-downloads --clear --python 3.12 <tools>
+env TMPDIR=<tmp> uv pip install --cache-dir <cache> --no-python-downloads --compile-bytecode --python <tools>/bin/python check-jsonschema==<pin> pyyaml==<pin>
+env TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --script <tmp>/warm-<set>.py
+env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --script <tmp>/warm-<set>.py
 ```
 
 A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched to warm its own environment.
