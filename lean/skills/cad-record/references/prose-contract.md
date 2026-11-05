@@ -366,10 +366,10 @@ Generated YAML: the self-contained assignment of one worker.
 | `version` | — | `version` |
 | `task` | yes | `text` |
 | `subjects` | yes | `subjects` |
-| `seed_urls` | iff `role` is `cad-sourcing-researcher` | `[url]` unique; empty only when the host gives the role a search tool |
+| `seed_urls` | iff `role` is `cad-sourcing-researcher` | `[url]≥1` unique |
 | `input_inventory` | yes | `{sha256 sha256, files}`: `sha256` is the set digest over `files`; `files [{path hw_path, sha256 sha256}]≥1` required, optional `bytes` integer ≥ 0; optional `snapshots [{path, sha256 sha256}]` unique, optional `bytes` integer ≥ 0, `path` `lead/attempts.txt` or `installed/<skill>/<path>` with `<skill>` one of the eight `cad-*` skills and `<path>` relative under the safe-path rules of `hw_path`, never absolute; a snapshot sha256 binds the copy as a check input, never an install audit |
 | `resources` | yes | `{plugin plugin, skills, rubric, schemas, tools, templates, role_reference}`, all required, optional `layout absolute_path` and `policy absolute_path` (the installed `layout.json` and stages policy, for a unit that runs `record.semantic`): literal resolved absolute paths from the lead preflight; installed bytes are never hashed |
-| `boundary` | yes | `{project_root absolute_path, scratch scratch_path, writable [scratch_path]≥1 unique, locked [hw_path] unique}` required, optional `read_only [project_path] unique`; a worker writes only under `.cad-work/` |
+| `boundary` | yes | `{project_root absolute_path, scratch scratch_path, writable [scratch_path]≥1 unique, locked [hw_path] unique}`, all required and no other field: every input reaches the unit as an `input/` copy; a worker writes only under `.cad-work/` |
 | `limits` | yes | `{wall_seconds integer ≥ 1, model_turns integer ≥ 1}`, both required |
 | `expected` | yes | `{outputs, checks [check_id] unique, stop texts, report text}` required, optional `obligations [obligation_id] unique`, required when `role` is `cad-checker` or `cad-mech-dfm-reviewer` |
 | `lead` | yes | `{session text}` required, optional `task_id text` |
@@ -382,12 +382,15 @@ Generated YAML: the self-contained assignment of one worker.
 - `resources.rubric`: `{name =rubric, path absolute_path}` required, `path` ending in `/cad-review/references/rubric.md`; optional
   `uri =skill://cad-review/references/rubric.md`.
 - `resources.tools`: `[{name, argv, version text}]` unique, all required; `name` is `check-jsonschema` or `yaml-loader`; `argv` is
-  `[text]≥1` whose first item is an `absolute_path`. Every role except `cad-mech-dfm-reviewer` lists `check-jsonschema`.
+  `[text]≥1` whose first item is an `absolute_path`. Every role except `cad-mech-dfm-reviewer` lists `check-jsonschema`; only
+  `cad-checker` lists `yaml-loader`; `cad-mech-dfm-reviewer` lists none.
 - `resources.templates`: `[{name text, path absolute_path}]≥1` unique, all required; `path` ends in
   `/cad-flow/assets/worker-delivery.yaml` or `/cad-record/assets/contract-fixtures/check-result/valid/<name>.json`.
-- `expected.outputs`: each item is either `{target hw_path, kind text}` or, only when `role` is `cad-sourcing-researcher`,
-  `{target_pattern, kind text, max integer 1–8}` with `target_pattern` `hw/manufacturing/sources/<sha256>/<name>` or
-  `hw/parts/<PN>/sources/<sha256>/<name>` (literal placeholders); both forms are closed and all their fields required.
+- `expected.outputs`: each item is `{target hw_path, kind text}` or a pattern `{target_pattern, kind text, max integer}`, every form
+  closed with all its fields required. A pattern belongs to two roles only: `cad-sourcing-researcher`, with
+  `hw/manufacturing/sources/<sha256>/<name>` or `hw/parts/<PN>/sources/<sha256>/<name>` and `max` 1–8; `cad-checker`, with
+  `hw/checks/<vN>/<check>/<attempt>/artifacts/<name>` and `max` 1–16. `<sha256>` and `<name>` stay literal placeholders; `<PN>`,
+  `<vN>`, `<check>` and `<attempt>` are real values.
 - `resources.plugin` is name and version from the cad-flow SKILL.md metadata; no manifest path, no hash.
 
 ## worker-delivery
@@ -414,7 +417,7 @@ copies accepted bytes verbatim and rechecks.
 | `ready` | yes | boolean |
 
 - `build.status` FAILED → `verdict` MAJOR and `ready` false.
-- Any `checks[].result` FAIL or UNKNOWN → `verdict` is not PASS and `ready` is false.
+- Any `checks[].result` FAIL or UNKNOWN → `verdict` is not PASS and `ready` is false; for `role` `cad-checker`, `verdict` MAJOR.
 - At least one `boundary.violations` entry → `verdict` MAJOR and `ready` false.
 - `ready` true → `verdict` PASS.
 

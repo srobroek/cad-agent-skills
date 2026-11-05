@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "cad-agent-skills worker delivery (.cad-work/<unit>/delivery.json)",
-  "description": "What one worker returns: unit, brief and input digests, role, verdict, source-to-target hashes, checks, logs, boundary proof, proposals and limits. A failed build or a FAIL or UNKNOWN check is never a ready PASS; the lead copies accepted bytes verbatim and rechecks.",
+  "description": "What one worker returns: unit, brief and input digests, role, verdict, source-to-target hashes, checks, logs, boundary proof, proposals and limits. A failed build or a FAIL or UNKNOWN check is never a ready PASS, and a checker with a FAIL or UNKNOWN check grades MAJOR (cad-review rubric, Per role); the lead compares each check entry with its result file, copies accepted bytes verbatim and rechecks.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -120,6 +120,22 @@
         }
       },
       "then": {"properties": {"verdict": {"not": {"const": "PASS"}}, "ready": {"const": false}}}
+    },
+    {
+      "if": {
+        "required": ["role", "checks"],
+        "properties": {
+          "role": {"const": "cad-checker"},
+          "checks": {
+            "contains": {
+              "type": "object",
+              "required": ["result"],
+              "properties": {"result": {"enum": ["FAIL", "UNKNOWN"]}}
+            }
+          }
+        }
+      },
+      "then": {"properties": {"verdict": {"const": "MAJOR"}}}
     },
     {
       "if": {"required": ["boundary"], "properties": {"boundary": {"properties": {"violations": {"minItems": 1}}}}},

@@ -67,19 +67,21 @@ boundary:
   writable:
   - .cad-work/ground-v1-checker
   - .cad-work/lead/.uv-cache
-  locked:
-  - hw/product.yaml
-  - hw/requirements.yaml
-  read_only:
-  - .cad-work/stage-v1/obligations.yaml
+  locked: []
 expected:
   outputs:
   - target: hw/checks/v1/record-semantic/a1/result.json
     kind: check result
   - target: hw/checks/v1/record-semantic/a1/artifacts/items.json
     kind: check artifact
+  - target_pattern: hw/checks/v1/record-semantic/a1/artifacts/<name>
+    kind: check artifact
+    max: 4
   - target: hw/checks/v1/intake-use-case/a1/result.json
     kind: check result
+  - target_pattern: hw/checks/v1/intake-use-case/a1/artifacts/<name>
+    kind: check artifact
+    max: 4
   checks:
   - record-semantic
   - intake-use-case

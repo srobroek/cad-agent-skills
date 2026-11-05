@@ -1,0 +1,68 @@
+format: cad-agent-skills.worker-brief
+schema_version: 1
+unit: intent-polylite-sourcing
+role: cad-sourcing-researcher
+stage: INTENT
+task: Retain the PolyLite PLA technical data sheet and propose its material profile
+subjects:
+- kind: PRODUCT
+seed_urls: []
+input_inventory:
+  sha256: '2222222222222222222222222222222222222222222222222222222222222222'
+  files:
+  - path: hw/manufacturing/materials.yaml
+    sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+resources:
+  plugin:
+    name: cad-agent-skills
+    version: 0.1.0
+  skills:
+  - name: cad-select
+    path: /Users/me/.agents/skills/cad-select/SKILL.md
+    uri: skill://cad-select
+  - name: cad-record
+    path: /Users/me/.agents/skills/cad-record/SKILL.md
+    uri: skill://cad-record
+  rubric:
+    name: rubric
+    path: /Users/me/.agents/skills/cad-review/references/rubric.md
+    uri: skill://cad-review/references/rubric.md
+  schemas:
+  - name: material-profile
+    path: /Users/me/.agents/skills/cad-record/schemas/material-profile.schema.json
+  - name: worker-delivery
+    path: /Users/me/.agents/skills/cad-record/schemas/worker-delivery.schema.json
+  tools:
+  - name: check-jsonschema
+    argv:
+    - /Users/me/projects/phone-stand/.cad-work/lead/validator/bin/check-jsonschema
+    version: check-jsonschema, version 0.39.0
+  templates:
+  - name: worker-delivery
+    path: /Users/me/.agents/skills/cad-flow/assets/worker-delivery.yaml
+  role_reference:
+    name: agent-roles
+    path: /Users/me/.agents/skills/cad-flow/references/agent-roles.md
+    uri: skill://cad-flow/references/agent-roles.md
+boundary:
+  project_root: /Users/me/projects/phone-stand
+  scratch: .cad-work/intent-polylite-sourcing
+  writable:
+  - .cad-work/intent-polylite-sourcing/output
+  - .cad-work/intent-polylite-sourcing/delivery.json
+  locked:
+  - hw/manufacturing/materials.yaml
+expected:
+  outputs:
+  - target_pattern: hw/manufacturing/sources/<sha256>/<name>
+    kind: retained source
+    max: 4
+  checks: []
+  stop:
+  - the fetch budget is spent
+  report: VERDICT line, delivery.json path, unknowns, proposals
+lead:
+  session: omp-2026-11-03-a
+limits:
+  wall_seconds: 2400
+  model_turns: 150

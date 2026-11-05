@@ -46,8 +46,6 @@ boundary:
   locked:
   - hw/interfaces.yaml
   - hw/assembly.yaml
-  read_only:
-  - hw/product.yaml
 expected:
   outputs:
   - target: hw/parts/STD-0001/part.yaml

@@ -10,9 +10,17 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
   [cad-record common unit ID](../../cad-record/schemas/common.schema.json#/$defs/unit_id); `lead` and `stage-*` are reserved).
 - An unchanged brief resumes the same unit. A changed brief is a new unit id; an id is never reused.
 - Never reset, move or delete any unit's scratch.
-- `.cad-work/lead/units.yaml` logs each unit: `unit`, `role`, `stage`, `version`, `brief_sha256`, `task_id` (native), `task_text` (the
-  exact text sent), `fork_turns` (Codex only), `dispatched` (UTC), `state` (`DISPATCHED|DELIVERED|ACCEPTED|REJECTED|STOPPED`),
-  `delivery_sha256`, `reason`, and `merged [{source, target, sha256}]`.
+- `.cad-work/lead/units.yaml` is one mapping with one key, `units`: a list with one entry per unit in dispatch order, every attempt,
+  stage and batch of the project in that one list, never a key per stage, attempt or batch. An entry is appended at dispatch and then
+  updated in place, with the fields `unit`, `role`, `stage`, `version` (a checker or reviewer unit's; absent for design and sourcing
+  units), `brief_sha256`, `task_id` (native), `task_text` (the exact text sent), `fork_turns` (Codex only), `dispatched` (the time
+  `date -u +%Y-%m-%dT%H:%M:%SZ` prints just before the dispatch call), `tree_before_sha256` and `tree_after_sha256` (its batch's tree
+  digests: [dispatch-units](#dispatch-units) step 3, [Integrate](#integrate) step 1), `state`, `delivery_sha256` (ACCEPTED), `reason`
+  (REJECTED, STOPPED, or ACCEPTED with results the stop rule discarded) and `merged [{source, target, sha256}]`.
+- `state` is DISPATCHED at dispatch, DELIVERED once the unit returns with a `delivery.json`, and ACCEPTED or REJECTED once
+  [Accept](worker-delivery.md#accept) decides; STOPPED marks a unit [dispatch-units](#dispatch-units) step 4 or
+  [Lost and stalled units](#lost-and-stalled-units) stops, and a `delivery.json` a stalled unit left still moves it to ACCEPTED or
+  REJECTED. ACCEPTED and REJECTED are final.
 
 ## dispatch-units
 
@@ -20,19 +28,20 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
    ([stages Stage-work procedure IDs](stages.md#stage-work-procedure-ids)) and the run-checks units
    ([stages run-checks](stages.md#run-checks) step 1). Units of one stage only, and only after its predecessor's gate is satisfied. A batch
    starts only when `units.yaml` shows every earlier unit of the stage ACCEPTED, REJECTED or STOPPED, each ACCEPTED one with its `merged`
-   triples ([worker-delivery](worker-delivery.md#accept)).
+   triples, or `merged: []` and the stop-rule `reason` ([worker-delivery merge-deliveries](worker-delivery.md#merge-deliveries) step 1).
 2. Write and validate each brief and pass its self-check ([worker-brief Compose](worker-brief.md#compose)); log its sha256.
-3. Take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) and log it for the batch.
+3. Take the tree digest ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)) and log it as each batch
+   unit's `tree_before_sha256`.
 4. Dispatch every independent unit in one batch through the host's native subagent call naming the role, with a fresh context. The task text
    is only the role, the absolute brief path and the absolute role reference path; never the lead transcript or a forked conversation.
    Where the call has a history switch, set it to none on every call, first dispatch and rework alike: Codex `spawn_agent` with
    `agent_type: <role>`, a new `task_name` per unit and an explicit `fork_turns: "none"` (the default `all` forks the lead's whole
    history). A unit spawned with any other value is STOPPED at once and goes out again as a new unit; its delivery is never accepted.
-5. Log each returned native task id with `task_text`, `fork_turns` and `dispatched`; wait on and steer only those ids. Wait for every unit
-   of the batch within the same turn, with the host's foreground or blocking wait where it offers one: OpenCode and Claude Code subagent
-   calls run in the foreground, never with `background: true` or `run_in_background: true`. Never end a turn or present a gate while a
-   dispatched unit still runs. A unit that ends without a delivery or outlives its brief's `limits` follows
-   [Lost and stalled units](#lost-and-stalled-units).
+5. Log each unit's `dispatched` before the call and its returned native task id, `task_text` and `fork_turns`; wait on and steer only
+   those ids. Wait for every unit of the batch within the same turn, each wait bounded per
+   [Lost and stalled units](#lost-and-stalled-units) step 1: OpenCode and Claude Code subagent calls run in the foreground, never with
+   `background: true` or `run_in_background: true`. Never end a turn or present a gate while a dispatched unit still runs. A unit that
+   ends without a delivery or outlives its brief's `limits` follows [Lost and stalled units](#lost-and-stalled-units).
 
    | `harness`  | native `task_id`                                                         |
    | ---------- | ------------------------------------------------------------------------ |
@@ -48,7 +57,8 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 
 ## Integrate
 
-1. After the whole batch returns, take the tree digest again, then accept or reject each delivery ([worker-delivery](worker-delivery.md)).
+1. After the whole batch returns, take the tree digest again and log it as each batch unit's `tree_after_sha256`, then accept or reject
+   each delivery ([worker-delivery](worker-delivery.md)).
 2. Merge accepted bytes verbatim ([merge-deliveries](worker-delivery.md#merge-deliveries)). A rejected delivery goes back to the same role
    as a new unit: a new unit id and `.cad-work/<unit>/`, a new brief that states the defect, and a new native subagent call with a fresh
    context per step 4. Never send the rework to a returned task (a follow-up, message, resume or steer of its id; on Codex
@@ -56,14 +66,28 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
    [Lost and stalled units](#lost-and-stalled-units) step 3.
 3. A worker proposal is applied only by the lead: inside the open stage's own controlled files the lead edits the record itself, discloses
    the edit and re-dispatches every unit whose inputs changed; touching approved scope is a [change](change-impact.md).
-4. A consequential unknown a delivery reports becomes a record question with owner in the next stage-work step.
+4. A consequential unknown a delivery reports is recorded with the OPEN record question its subject already has. A subject without one
+   gets a new question in GROUND stage work; after the GROUND gate it is a change ([change impact](change-impact.md)), because only
+   GROUND writes `hw/requirements.yaml` ([cad-select — Ask and finish intake](../../cad-select/references/selection.md#ask-and-finish-intake)).
 5. The stage's VERSION checks run on the integrated version ([stages run-checks](stages.md#run-checks)); a worker PASS is never an assembly
    or stage PASS.
+6. Integrate ends only when no unit of the batch is DISPATCHED or DELIVERED in `units.yaml`; the batch's results, the next batch and the
+   stage verdict wait for it.
 
 ## Lost and stalled units
 
-1. Wait on a unit at most its brief's `limits.wall_seconds` from `dispatched`. A unit still running then is stalled: stop its native task
-   with the host's stop or cancel call for that id and log it `STOPPED`; a `delivery.json` it left is judged by
+1. The lead never waits past a unit's limit. Each wait is bounded by the remaining wall of the earliest-due running unit: its
+   `dispatched` plus its brief's `limits.wall_seconds`, minus the time `date -u +%Y-%m-%dT%H:%M:%SZ` prints. The unit bounds its own
+   turns and wall from inside ([agent-roles Limits](agent-roles.md#limits)).
+
+   | `harness`                    | bounded wait                                                                                                       |
+   | ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+   | `OMP`                        | `wait` takes no timeout: it returns on the first finished unit or at its 30-minute cap, so call it only while every running unit has more than 30 minutes left; else run `sleep <seconds>` alone in one `bash` call, at most the remaining wall, then `read proc://<id>` for each running unit |
+   | `CODEX`                      | `wait_agent` with its timeout at most the remaining wall                                                           |
+   | `CLAUDE`, `OPENCODE`, `KIRO` | the foreground dispatch call returns only when its units end; the unit's own limits bound it                       |
+
+   A unit still running at its due time is stalled: stop its native task with the host's stop or cancel call for that id (OMP
+   `write proc://<id>/kill`) and log it `STOPPED` with reason `limits.wall_seconds`; a `delivery.json` it left is judged by
    [worker-delivery Accept](worker-delivery.md#accept), and without one the unit is lost.
 2. A unit is lost when it ends without `delivery.json`: a turn end, a host or provider error (an HTTP 429 rate limit included), a crash,
    or a stall. Log it `STOPPED` with that cause, then send it again once as a new unit per [Integrate](#integrate) step 2, within the same
@@ -78,7 +102,9 @@ Owner: cad-flow. How the lead splits stage work into worker units, dispatches th
 - Workers never delegate, approve, ask the user, or write `hw/`, installed files or another unit's scratch ([agent-roles](agent-roles.md)).
   A worker question returns to the lead, who answers from the record or asks the user, then re-dispatches.
 - A static native `.cad-work/**` write allowance is a union over all units, not per-unit isolation; the file-set audit in
-  [worker-delivery](worker-delivery.md) is the per-unit check.
+  [worker-delivery](worker-delivery.md) is the per-unit check. Reads have no per-unit check: a profile can deny `hw/**` and
+  `.cad-work/lead/**` but not tell one unit's directory from another's, so the [read set](agent-roles.md#read-set) binds a unit by
+  instruction only.
 - Native permission profiles prevent accidental tool calls; they are no operating-system boundary, and an allowed program can still write
   indirectly.
 - A host that denies a command this contract requires, to a worker or to the lead, is a host or plugin defect. Record the exact denied

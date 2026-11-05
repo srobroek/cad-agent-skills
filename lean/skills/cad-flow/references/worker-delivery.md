@@ -16,18 +16,19 @@ unchanged.
 
 ## Accept
 
-Run in order; the first failure rejects the delivery with that reason. Write each outcome into `.cad-work/lead/units.yaml` as soon as it
-is decided, before the next delivery is judged: `state: ACCEPTED` with `delivery_sha256`, or `state: REJECTED` with `reason`
-([delegation](delegation.md)).
+Run in order; the first failure rejects the delivery with that reason. Write each outcome into the unit's entry of
+`.cad-work/lead/units.yaml` as soon as it is decided, before the next delivery is judged: `state: ACCEPTED` with `delivery_sha256`, or
+`state: REJECTED` with `reason` ([delegation Units](delegation.md#units)).
 
 1. `delivery.json` exists and conforms to the `worker-delivery` table → every field and rule holds.
 2. `unit` and `role` equal the brief; `brief_sha256` equals the sha256 of `brief.yaml`; `input_inventory_sha256` equals the brief's digest;
    the unit's `units.yaml` dispatch log has a `task_text` of only the role, brief path and role reference path and, on Codex,
    `fork_turns: none` ([delegation dispatch-units](delegation.md#dispatch-units) step 4).
 3. Producers (concept designer, part designer, sourcing researcher): `verdict: PASS` and `ready: true`; MINOR and MAJOR are rejected and
-   their findings shape the next unit's brief. A sourcing subject fact that no retained source states is a typed UNKNOWN in `unknowns`,
-   which is no defect ([agent-roles](agent-roles.md#roles)). Evidence roles (checker, reviewer): the verdict grades the subject, so any
-   verdict passes this step and a FAIL, UNKNOWN or MAJOR result is published as delivered.
+   their findings shape the next unit's brief. A sourcing subject fact that no retained source states, or that a failed search tool left
+   unfound, is a typed UNKNOWN in `unknowns`, which is no defect ([agent-roles](agent-roles.md#roles)). Evidence roles (checker,
+   reviewer): the verdict grades the subject, so any verdict that follows from its results (step 6) passes this step, and a FAIL,
+   UNKNOWN or MAJOR result is published as delivered.
 4. `build.status` is SUCCEEDED with a matching log, or NOT_APPLICABLE with a reason. A unit that built geometry also delivers a passing
    `geometry.readback` result ([cad-model Readback](../../cad-model/references/exports.md#readback)); an exit code alone is no success.
 5. Every `expected.outputs` target is delivered exactly once and nothing else, except that a `target_pattern` entry takes 0 to `max`
@@ -36,10 +37,15 @@ is decided, before the next delivery is judged: `state: ACCEPTED` with `delivery
    root, validates against that schema root or conforms to that prose root. Programs and locks are never outputs (step 8).
 6. Every `expected.checks` entry has a result file that hashes to its sha256, validates against the
    [cad-record check-result root](../../cad-record/schemas/check-result.schema.json), binds this unit's brief and input digests (or the
-   brief's `version`), names the delivered `family` and `result`, and has an `implementation` of the right kind: COMMAND whose
-   `source_files` name `source/<file>` beside the result target, each with the sha256 of the unit-root file of that name, or REVIEW
-   (reviewer only) whose `inspected` entries match the brief inventory. A program or lock whose bytes differ from the sha256 its results
-   record was edited after its last run; the delivery is rejected, never relabelled ([agent-roles](agent-roles.md#every-role) step 6).
+   brief's `version`) and has an `implementation` of the right kind: COMMAND whose `source_files` name `source/<file>` beside the result
+   target, each with the sha256 of the unit-root file of that name, or REVIEW (reviewer only) whose `inspected` entries match the brief
+   inventory. A program or lock whose bytes differ from the sha256 its results record was edited after its last run; the delivery is
+   rejected, never relabelled ([agent-roles](agent-roles.md#every-role) step 6). The delivery agrees with its results, else it is
+   rejected, never accepted as a worker's slip:
+   - each `checks[]` entry's `family` and `result` equal its result file's `family` and `result`;
+   - `verdict` and `ready` follow from those results by the role's row of the
+     [cad-review rubric](../../cad-review/references/rubric.md#per-role);
+   - every `artifacts[]` entry of a result the delivery outputs is an `outputs` entry whose target is that path, with that sha256.
 7. Every log hashes to its sha256.
 8. The lead's tree digests before dispatch and after return
    ([cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest)) equal `boundary.before_sha256` and
@@ -58,10 +64,11 @@ A rejected unit is never patched: send it again as a new unit, or its work stays
 
 1. Start only after every unit of the batch is ACCEPTED, REJECTED or STOPPED, and copy only ACCEPTED units. No byte of a delivery
    reaches `hw/` before its Accept passes: a rejected unit leaves `hw/` untouched, and a published file is never deleted or overwritten. A
-   result the run-checks stop rule discards ([stages run-checks](stages.md#run-checks) step 4) is not merged; its unit stays ACCEPTED.
-2. For each accepted output, the result files of a checker or reviewer included: `cp <source> <root>/<target>` with no transform,
-   reformat or re-export; then the target's sha256 equals the delivered `sha256`; write the triple `{source, target, sha256}` into the
-   unit's `merged` in `units.yaml` right after the copy.
+   result the run-checks stop rule discards ([stages run-checks](stages.md#run-checks) step 4) is not merged; its unit stays ACCEPTED
+   with `merged: []` and a `reason` naming the blocking obligation.
+2. For each accepted output, a checker's or reviewer's result files and the artifacts they cite included: `cp <source> <root>/<target>`
+   with no transform, reformat or re-export; then the target's sha256 equals the delivered `sha256`; write the triple
+   `{source, target, sha256}` into the unit's `merged` in `units.yaml` right after the copy.
 3. For each accepted COMMAND result, retain its programs ([cad-verify results](../../cad-verify/references/results.md#implementation-kind)):
    `cp <root>/.cad-work/<unit>/<file> <root>/<source_files path>` for every `source_files` entry, `<file>` being that path's file name;
    the copy's sha256 equals the entry; log the triple. For each command of the result, `cp` the delivered `logs[]` stdout and stderr of

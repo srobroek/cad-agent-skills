@@ -325,6 +325,10 @@ version-manifest/invalid/includes-itself.json: '$.record[3].path: ''hw/versions/
 version-manifest/invalid/pre-cad-no-reason.json: "$.geometry: 'reason' is a required property"
 # runtime records environments[], never a top-level kernel, python or packages
 version-manifest/invalid/runtime-single-kernel.json: "$.runtime: Additional properties are not allowed ('kernel', 'packages', 'python' were unexpected)"
+# a checker's own-named artifact pattern takes at most 16 outputs per check
+worker-brief/invalid/artifact-pattern-over-max.yaml: "$.expected.outputs[2].max: 17 is greater than the maximum of 16"
+# a checker's target pattern is a check bundle's artifacts/<name>, never a retained-source pattern
+worker-brief/invalid/checker-sources-pattern.yaml: "$.expected.outputs[2].target_pattern: 'hw/manufacturing/sources/<sha256>/<name>' does not match '^hw/checks/'"
 # a checker or reviewer brief lists the obligation IDs it covers, so a lost unit's obligations can be recorded UNKNOWN
 worker-brief/invalid/checker-without-obligations.yaml: "$.expected: 'obligations' is a required property"
 # installed skills are never hashed: installed_sha256 is not a field
@@ -341,7 +345,7 @@ worker-brief/invalid/missing-rubric.yaml: "$.resources: 'rubric' is a required p
 worker-brief/invalid/missing-templates.yaml: "$.resources: 'templates' is a required property"
 # every role but the reviewer carries the preflight-resolved check-jsonschema argv
 worker-brief/invalid/missing-validator.yaml: "does not contain items matching the given schema"
-# a content-addressed target pattern belongs to a sourcing brief only
+# a target pattern belongs to a sourcing or checker brief only; a producer names literal targets
 worker-brief/invalid/pattern-outside-sourcing.yaml: "$.expected.outputs[2]: 'target' is a required property"
 # a target pattern is bounded to one sha256-named directory and file name
 worker-brief/invalid/pattern-unbounded.yaml: "$.expected.outputs[0].target_pattern: 'hw/manufacturing/sources/**' does not match"
@@ -349,10 +353,14 @@ worker-brief/invalid/pattern-unbounded.yaml: "$.expected.outputs[0].target_patte
 worker-brief/invalid/plugin-manifest-field.yaml: "$.resources.plugin: Additional properties are not allowed ('manifest' was unexpected)"
 # plugin version is a semver string
 worker-brief/invalid/plugin-version-not-semver.yaml: "$.resources.plugin.version: 'latest' does not match"
+# a brief names no paths to read: every input reaches the unit as an input/ copy (cad-flow agent-roles Read set)
+worker-brief/invalid/read-only-paths.yaml: "$.boundary: Additional properties are not allowed ('read_only' was unexpected)"
 # resource paths are literal absolute paths from preflight
 worker-brief/invalid/relative-skill-path.yaml: "$.resources.skills[0].path: 'skills/cad-model/SKILL.md' does not match '^/"
 # unit ids exclude lead and stage-*
 worker-brief/invalid/reserved-unit.yaml: "$.unit: 'lead' does not match '^(?!lead$)"
+# the reviewer runs no tool, so its brief lists none
+worker-brief/invalid/reviewer-with-tools.yaml: "is expected to be empty"
 # input inventory files are hw/ paths (set digest)
 worker-brief/invalid/scratch-input.yaml: "$.input_inventory.files[0].path: '.cad-work/base-part/input/part.yaml' does not match '^hw/"
 # resource entries carry name, absolute path and URI, never a sha256
@@ -361,8 +369,12 @@ worker-brief/invalid/skill-hash.yaml: "$.resources.skills[0]: Additional propert
 worker-brief/invalid/snapshot-absolute-installed.yaml: "$.input_inventory.snapshots[1].path: '/Users/me/.agents/skills/cad-record/assets/project-template/hw/product.yaml' does not match"
 # a snapshot path is lead/attempts.txt or installed/<skill-name>/<path>, with no dot segment
 worker-brief/invalid/snapshot-outside-lead.yaml: "$.input_inventory.snapshots[0].path: 'lead/../hw/product.yaml' does not match"
-# a sourcing brief carries its seed URLs (empty only with a host search tool)
+# a sourcing brief carries at least one seed URL per subject
+worker-brief/invalid/sourcing-empty-seed-urls.yaml: "$.seed_urls: [] should be non-empty"
+# a sourcing brief carries its seed URLs
 worker-brief/invalid/sourcing-without-seed-urls.yaml: "$: 'seed_urls' is a required property"
+# only a checker brief lists the YAML loader; the other role profiles deny it
+worker-brief/invalid/sourcing-yaml-loader.yaml: "should not be valid under {'contains': {'properties': {'name': {'const': 'yaml-loader'}}}}"
 # templates are the installed delivery template or a valid check-result fixture, never an invalid one
 worker-brief/invalid/template-invalid-fixture.yaml: "check-result/invalid/unknown-reported-pass.json' does not match '(/cad-flow/assets/worker-delivery"
 # a tool argv starts with the absolute path preflight installed, never a uvx resolution
@@ -373,6 +385,8 @@ worker-brief/invalid/unknown-role.yaml: "$.role: 'cad-analyst' is not one of ['c
 worker-brief/invalid/writable-hw.yaml: '$.boundary.writable[0]: ''hw/parts/STD-0001'' does not match ''^\\.cad-work/'
 # a boundary violation makes the delivery MAJOR
 worker-delivery/invalid/boundary-violation-pass.json: "$.verdict: 'MAJOR' was expected"
+# a checker with a FAIL or UNKNOWN result grades MAJOR (cad-review rubric, Per role)
+worker-delivery/invalid/checker-fail-minor.json: "$.verdict: 'MAJOR' was expected"
 # a failed build is never a ready PASS
 worker-delivery/invalid/failed-build-ready-pass.json: "$.verdict: 'MAJOR' was expected"
 # only PASS is ready

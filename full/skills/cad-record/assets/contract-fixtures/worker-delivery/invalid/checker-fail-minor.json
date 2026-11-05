@@ -1,0 +1,47 @@
+{
+  "format": "cad-agent-skills.worker-delivery",
+  "schema_version": 1,
+  "unit": "intake-ground-v1",
+  "role": "cad-checker",
+  "brief_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "input_inventory_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "verdict": "MINOR",
+  "build": {
+    "status": "NOT_APPLICABLE",
+    "reason": "checker builds no geometry"
+  },
+  "outputs": [
+    {
+      "source": "/Users/me/projects/phone-stand/.cad-work/intake-ground-v1/output/checks/intake-use-case/result.json",
+      "target": "hw/checks/v1/intake-use-case/a1/result.json",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "kind": "check result"
+    }
+  ],
+  "checks": [
+    {
+      "result_file": {
+        "path": ".cad-work/intake-ground-v1/output/checks/intake-use-case/result.json",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "result": "FAIL",
+      "family": "intake.use_case"
+    }
+  ],
+  "logs": [
+    {
+      "path": ".cad-work/intake-ground-v1/output/checks/intake-use-case/stdout.txt",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    }
+  ],
+  "boundary": {
+    "method": "tree digest before first and after last write",
+    "before_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "after_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "violations": []
+  },
+  "proposals": [],
+  "unknowns": [],
+  "limits": [],
+  "ready": false
+}

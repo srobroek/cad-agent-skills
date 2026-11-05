@@ -1,0 +1,59 @@
+{
+  "format": "cad-agent-skills.worker-delivery",
+  "schema_version": 1,
+  "unit": "intake-ground-v1",
+  "role": "cad-checker",
+  "brief_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "input_inventory_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+  "verdict": "MAJOR",
+  "build": {
+    "status": "NOT_APPLICABLE",
+    "reason": "checker builds no geometry"
+  },
+  "outputs": [
+    {
+      "source": "/Users/me/projects/phone-stand/.cad-work/intake-ground-v1/output/checks/intake-use-case/result.json",
+      "target": "hw/checks/v1/intake-use-case/a1/result.json",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "kind": "check result"
+    },
+    {
+      "source": "/Users/me/projects/phone-stand/.cad-work/intake-ground-v1/output/checks/intake-use-case/artifacts/intake-audit.json",
+      "target": "hw/checks/v1/intake-use-case/a1/artifacts/intake-audit.json",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "kind": "check artifact"
+    }
+  ],
+  "checks": [
+    {
+      "result_file": {
+        "path": ".cad-work/intake-ground-v1/output/checks/intake-use-case/result.json",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      "result": "UNKNOWN",
+      "family": "intake.use_case"
+    }
+  ],
+  "logs": [
+    {
+      "path": ".cad-work/intake-ground-v1/output/checks/intake-use-case/stdout.txt",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+    },
+    {
+      "path": ".cad-work/intake-ground-v1/output/checks/intake-use-case/stderr.txt",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+    }
+  ],
+  "boundary": {
+    "method": "tree digest before first and after last write",
+    "before_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "after_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "violations": []
+  },
+  "proposals": [],
+  "unknowns": [],
+  "limits": [
+    "limit reached: model_turns 135 of 150 at 2026-11-04T22:40:00Z; obligations not established are UNKNOWN TIMEOUT"
+  ],
+  "ready": false
+}
