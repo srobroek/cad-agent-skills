@@ -43,8 +43,9 @@ their UNKNOWN fields and guidance describe what to gather, not a capability. Pre
 populated from the real equipment/provider; never cite a template for route feasibility.
 
 For a real route, identify the specific local machine/operator or outsourced supplier, approved exact material and stock, equipment limits,
-setup/workholding, tools and all operations. The consumable form of a stock, such as a filament diameter or a sheet thickness, belongs to
-its approval and falls due at PARTS ([selection — Write criteria a stage can evidence](selection.md#write-criteria-a-stage-can-evidence)).
+setup/workholding, tools and all operations. A stock's consumable attributes, its form (such as a filament diameter or a sheet
+thickness), colour and lot, fall due at PARTS and are no part of a material-approvals question
+([selection — Write criteria a stage can evidence](selection.md#write-criteria-a-stage-can-evidence)).
 Record sourced parameters separately from demonstrated performance. Achieved dimensional capability, feature limits, finish and process
 behavior need current calibration or supplier evidence scoped to material, geometry/feature, orientation, setup, tool and method. Machine
 resolution and nominal envelope do not prove tolerance, finish or a process plan.

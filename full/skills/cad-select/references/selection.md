@@ -5,9 +5,39 @@ Owner: cad-select. Field and path authority belongs to cad-record. Read `cad-rec
 
 ## intake-use-case
 
+### Choose the build mode
+
+Every product has a build mode, `FULL` or `LITE`, before its first GROUND attempt freezes. cad-flow routes by the frozen mode and orders
+this question before the record bootstrap ([cad-flow stages — Build mode](../../cad-flow/references/stages.md#build-mode)).
+
+1. A first prompt or reply that names a full or a lite build is the owner's choice: record it and never ask the mode again. Never infer a
+   mode from the word "prototype", a service class, rigor, the size of the request or the installed plugin variant.
+2. Otherwise ask template question `Q-000` first in the first intake batch, in exactly these words:
+
+   > Would you like a **full or lite build**? I recommend **lite for initial prototyping**: an APPEARANCE_CONCEPT 3D model that renders
+   > and opens in FreeCAD. Full adds material, sourcing, manufacturing and the validation required for its approved use. You can promote
+   > lite to full later.
+   >
+   > **Lite gets you geometry sooner, but makes no material, fit, strength or manufacturing claims.**
+
+   The rest of that batch is every other question of the lite template ([Lite intake](#lite-intake)), read from the installed template
+   while `hw/` is absent, and no question only a full build asks. The answer selects the template
+   [cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap) copies.
+3. Record the answer as product `build_mode`: KNOWN `FULL` or `LITE`, `basis: USER_DECLARED`, with the answer, or the prompt sentence that
+   names the mode, as `USER` source ([cad-record Facts](../../cad-record/references/record.md#facts)); `Q-000` is RESOLVED. A reply that
+   names neither leaves the mode open: the one follow-up batch ([Ask and finish intake](#ask-and-finish-intake) step 3) asks `Q-000` alone,
+   and no template is copied while it stays open. No GROUND attempt passes while `build_mode` is the typed UNKNOWN.
+4. `LITE` settles the service class. `Q-000` offers APPEARANCE_CONCEPT, so the LITE answer is the statement of the service-class QUESTION
+   decision, and `service.class` APPEARANCE_CONCEPT cites that DR; no service-class question is asked. Rigor stays its own answer.
+5. `FULL` keeps every full template question and its completeness. After a first batch that asked the lite template's questions, a second
+   batch asks every full template question still open, the service class included. The questions the first batch asked stay RESOLVED under
+   their ids, and the one follow-up batch comes after the second batch.
+6. A record without `build_mode` asks `Q-000` before its GROUND attempt freezes. After an approved GROUND, the mode changes only through
+   [cad-flow change impact — Procedure](../../cad-flow/references/change-impact.md#procedure).
+
 ### Establish intended use
 
-Ask only questions that resolve this product's actual intended function and constraints. Cover:
+Ask only questions that resolve this product's actual intended function and constraints. A FULL build covers:
 
 - Product purpose; users; installation, operation, environment and service access.
 - Load direction and magnitude, impact, vibration, cyclic and sustained duration; motion, speed, duty, friction, wear and required life.
@@ -17,10 +47,39 @@ Ask only questions that resolve this product's actual intended function and cons
 - Whether appearance, fit, a limited supervised demonstration, a representative working prototype, production or safety-critical service is
   intended.
 
+### Lite intake
+
+A LITE build asks every open question of the lite template and nothing else: the product and its purpose, owner and approver, rigor,
+users, the form with its part count, arrangement and the features the model must show, each dimension and envelope with how it is
+measured, the static pose of anything that could move, the failure consequence and the claims it must never make, the release purpose and
+exclusions, storage and licences. It never asks about a material, vendor, machine or printer, process, load, environment, motion duty or
+life, quantity, budget, lead time, stress or physical test. Record each reply by [Ask and finish intake](#ask-and-finish-intake), with
+these differences:
+
+- Each part count, arrangement, feature, dimension, envelope, geometric clearance between modelled parts and static pose the owner states is
+  a criterion of an APPEARANCE requirement with the CAD_VALID facet, due LAYOUT, in the criterion form of
+  [cad-verify check-plan — Lite build](../../cad-verify/references/check-plan.md#lite-build); never only prose in `product.yaml`. The
+  record holds at least one such requirement, and no MANUFACTURING requirement, capability profile, material criterion or finish-process
+  criterion.
+- `release_scope.exclusions` opens with the exact LITE disclosure line of the [cad-flow skill](../../cad-flow/SKILL.md) OUTPUT, with the
+  LITE answer to `Q-000` among that fact's `USER` sources; the owner's own exclusions follow it unchanged.
+- A fact an answer volunteers on a topic lite never asks, such as an item's mass, is recorded typed where the lite record has a field for
+  it, as step 2 and [Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence) require, and adds no requirement. A fact
+  that needs a record lite never writes, such as a machine, material or supplier record, is not recorded. A field the lite record does not
+  require, or an entry of one such as a load of unstated force, stays absent when the reply leaves its value open: no UNKNOWN and no
+  question.
+- An answer that requires a material, fit, strength, finish or manufacturing property, or a purchased part, contradicts the lite scope.
+  The one follow-up batch asks whether to choose FULL for it or to record it as a `release_scope.exclusions` entry; it is never a lite
+  criterion and never dropped.
+- A dimension, envelope, feature, part count or pose that a requested criterion needs and the reply leaves open is a typed UNKNOWN with
+  `consequential: true`, owner and question. It blocks GROUND: `requirements.completeness` is UNKNOWN `REQUIRED_UNKNOWN` while a criterion
+  needs it. Every other lite UNKNOWN follows [Scope of each unknown](#scope-of-each-unknown).
+
 ### Ask and finish intake
 
-1. Ask every open template question in one message, grouped by domain; skip none. Each asked question carries exactly one question id, and
-   each id covers one template question. Ask focused questions, not a generic questionnaire dump.
+1. Ask every open question of the build mode's template ([Choose the build mode](#choose-the-build-mode)) in one message, grouped by
+   domain; skip none. Each asked question carries exactly one question id, and each id covers one template question. Ask focused
+   questions, not a generic questionnaire dump.
 2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
    ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4):
    - Every fact the reply states, including a fact no question asked, as KNOWN with a `USER` source
@@ -52,9 +111,10 @@ GROUND it blocks nothing ([Scope of each unknown](#scope-of-each-unknown)).
 
 Record the user-selected service class independently of rigor. Service class expresses use/maturity; rigor (`maker|pro|regulated`) expresses
 documentation depth and never reduces required evidence. A request for a “prototype” is a question about service class, not a selection of
-rigor. Do not infer either from CAD or example geometry. Record the class as a QUESTION decision whose statement is the owner's answer
-naming it ([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates)); `service.class` cites
-that DR in this attempt.
+rigor or build mode. Do not infer either from CAD or example geometry. Record the class as a QUESTION decision whose statement is the
+owner's answer naming it ([cad-flow gates — Decisions outside gates](../../cad-flow/references/gates.md#decisions-outside-gates));
+`service.class` cites that DR in this attempt. In LITE that statement is the LITE answer to `Q-000`
+([Choose the build mode](#choose-the-build-mode) step 4).
 
 #### Settle each intake field
 
@@ -67,7 +127,7 @@ its topic.
 | --- | --- |
 | the owner does not know or will not say, or names the field as present without its value, such as a load of unstated force | typed UNKNOWN ([Scope of each unknown](#scope-of-each-unknown)) |
 | it asks nothing of the product, in any words: "none", "not needed", "not applicable" or "no requirement"; the conditions it depends on are absent, as dry air without chemicals is for corrosion; a motion the user makes by hand when wanted, which has no speed requirement; the owner's own repair stated as the whole upkeep, which leaves no other maintenance | settled: KNOWN with the answer's words as value and the answer as `USER` source, or NOT_APPLICABLE with `reason` quoting the answer and its question id and `reviewed_by` the owner who gave it ([cad-record Facts](../../cad-record/references/record.md#facts)); a field that holds a quantity takes NOT_APPLICABLE |
-| its value in any words: a number, range, description or frequency | KNOWN with the answer as `USER` source. A quantity it states only in words, such as "for hours", stays in those words in a text field or the item's `note`, and an optional quantity field stays absent; never a question for a number |
+| its value in any words: a number, range, description or frequency | KNOWN with the answer as `USER` source, each quantity it states typed by [Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence). A quantity it states only in words, such as "for hours", stays in those words in a text field or the item's `note`, and an optional quantity field stays absent; never a question for a number |
 | nothing about the field | typed UNKNOWN ([Scope of each unknown](#scope-of-each-unknown)) |
 
 ### Write criteria a stage can evidence
@@ -84,17 +144,24 @@ each criterion a property such a facet evidences:
   `make_capability_profile EQUALS <profile id>` (`ONE_OF` for several machines or providers) names the capability profile GROUND writes in
   `hw/manufacturing/capabilities.yaml` from the owner's statement, each subject the owner leaves unstated a typed UNKNOWN
   ([Scope of each unknown](#scope-of-each-unknown)). `make_material ONE_OF [<material profile ids>]` names the owner's materials on hand
-  by identity. Its facets are PROCESS_PLANNED, which `capability.route` evidences, and GEOMETRICALLY_MANUFACTURABLE, which the process
+  by identity: what is on hand, never a material approval of the profile. Its facets are PROCESS_PLANNED, which `capability.route`
+  evidences, and GEOMETRICALLY_MANUFACTURABLE, which the process
   obligations of each part made on that profile evidence
   ([cad-verify process rules](../../cad-verify/references/process-checks.md#rules-for-every-process-family) step 4); `due` PARTS.
-- A material criterion settles at INTENT by identity: a candidate whose material profile is one `make_material` names passes it. Whether the
-  machine runs that material in the consumable form the owner holds, such as a filament diameter or a stock size, is
-  [cad-verify process-checks — capability.route](../../cad-verify/references/process-checks.md#capabilityroute) step 2 at PARTS. Until
-  then the consumable form, like a process setting such as supports or drying, is no intake field and no subject of its own: no UNKNOWN or
-  question records it at GROUND or INTENT, and it is never an INTENT outcome, a reason to keep a candidate CONDITIONAL or an answer a gate
-  packet invites. Each candidate states it as a limit due at PARTS.
+- A material criterion settles at INTENT by identity: a candidate whose material profile is one `make_material` names passes it. A stock's
+  consumable attributes are its form, such as a filament diameter, a sheet thickness or a stock size, its colour and its lot. Whether the
+  machine runs the material in the form the owner holds is
+  [cad-verify process-checks — capability.route](../../cad-verify/references/process-checks.md#capabilityroute) step 2 at PARTS, and every
+  consumable attribute falls due at PARTS. Until then a consumable attribute, like a process setting such as supports or drying, is no
+  intake field and no subject of its own: no UNKNOWN or question records it at GROUND or INTENT, no other question asks for it (a
+  material-approvals question names the materials only), and it is never an INTENT outcome, a reason to keep a candidate CONDITIONAL, an
+  input to a preference ranking or an answer a gate packet invites. A preference on one, such as a colour, ranks no candidate. Each
+  candidate states each consumable attribute it depends on as a limit due at PARTS.
 - Every quantity the owner states is recorded typed, never dropped: in the intake fact its template question fills, where one does
-  ([Settle each intake field](#settle-each-intake-field)). A quantity that sizes or bounds the product, such as a dimension of an item it
+  ([Settle each intake field](#settle-each-intake-field)). An answer that gives both the actual value of an item or condition and the
+  bound to design for, such as an item's own mass and the most it must be designed for, states two quantities: two typed intake entries,
+  such as two `loads` entries, each KNOWN with the answer as `USER` source; neither stays only in a `note`, and the bound also follows the
+  rules below. A quantity that sizes or bounds the product, such as a dimension of an item it
   must hold, receive, fit within or clear, a footprint or a travel, is also a criterion of the requirement it constrains, each stated
   dimension its own criterion, and never an assumption instead. Such a dimension on the model has the CAD_VALID facet in every class, so
   where `release_scope.exclusions` excludes fit it stays a form dimension whose `conditions` say that no fit is claimed. A quantity that
@@ -107,10 +174,12 @@ each criterion a property such a facet evidences:
 ### Scope of each unknown
 
 This table types each field [Settle each intake field](#settle-each-intake-field) leaves open and each fact sourcing or a check
-establishes; it never reopens a field an answer settles. Set `consequential` on each UNKNOWN intake fact once the service class and
-`release_scope` are recorded; until then every UNKNOWN is consequential. Apart from the service class itself, GROUND records every unknown
-and none of them blocks it; the GROUND gate packet lists each consequential one as a limit
-([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate)). Each blocks only where it falls due:
+establishes; it never reopens a field an answer settles and never types a consumable attribute or process setting
+([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)). Set `consequential` on each UNKNOWN intake fact once the
+service class and `release_scope` are recorded; until then every UNKNOWN is consequential. Apart from the build mode, the service class
+and a LITE geometry unknown ([Lite intake](#lite-intake)), GROUND records every unknown and none of them blocks it; the GROUND gate packet
+lists each consequential one as a limit ([cad-flow gates — present-gate](../../cad-flow/references/gates.md#present-gate)). Each blocks
+only where it falls due:
 
 | The UNKNOWN is | Record | Blocks |
 | --- | --- | --- |
@@ -125,8 +194,11 @@ there and falls due at the stage whose obligation uses it.
 
 Record each fact sourcing establishes (third row) as its own typed UNKNOWN with its own question, even when one source may settle several;
 never fold two such subjects into one UNKNOWN or question. A capability profile the owner names has four such subjects, each its own
-UNKNOWN when the owner leaves it unstated: machine identity, operator, envelope and material approvals. Its consumable form and process
-settings are none of them ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
+UNKNOWN when the owner leaves it unstated: machine identity, operator, envelope and material approvals. A material the owner has, holds or
+has used, such as spools on hand, states what is on hand (`make_material`), never that the machine is approved to run it: its approval
+stays this UNKNOWN until a source states the approval itself, a retained supplier specification or an owner statement that the machine is
+approved for that material. Consumable attributes and process settings are none of these subjects
+([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
 
 Set each question's `material_to_choice` and `safety_relevant` by the same table.
 
@@ -187,7 +259,7 @@ criterion only when INTENT holds its evidence:
 
 A route that needs a material, machine, tool or provider the owner neither has nor has approved acquiring is never FEASIBLE: its outcome on
 the owner's equipment requirement is FAIL where the owner's statements exclude it, else UNKNOWN with the owner's question. A material the
-owner names by its grade is one the owner has; its consumable form falls due at PARTS
+owner names by its grade is one the owner has, not one the machine is approved to run; its consumable attributes fall due at PARTS
 ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
 
 Classify the whole candidate using the selection schema: FEASIBLE has no FAIL or UNKNOWN outcome and may hold PLANNED ones; CONDITIONAL has
