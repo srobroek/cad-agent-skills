@@ -15,7 +15,7 @@
   },
   "input_files": [
     {
-      "path": ".cad-work/base-part/input/part.yaml",
+      "path": "hw/parts/STD-0001/part.yaml",
       "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
     }
   ],

@@ -6,6 +6,8 @@
 invalid/check-result/integrity-scratch-path-ground.json: "$.input_files[1].path: '.cad-work/ground-v1-semantic/output/result.json' does not match '^hw/"
 # a REVIEW implementation forbids commands; the transcribed critique reply is refused
 invalid/check-result/review-with-commands-critique.json: 'Additional properties are not allowed (''commands'' was unexpected)'
+# a current result names an input by its hw/ origin, never by the installed template snapshot
+invalid/check-result/sealed-path-slip-current.json: "$.input_files[3].path: 'installed/cad-record/assets/project-template/hw/product.yaml' does not match '^(hw|"
 # a waiver is bounded by expires or until_change; one with neither is refused
 invalid/decision/waiver-out-of-scope-unbounded.yaml: "'until_change' is a required property"
 # a LITE part names no material profile

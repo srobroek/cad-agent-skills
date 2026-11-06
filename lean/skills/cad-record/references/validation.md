@@ -97,12 +97,18 @@ its prose roots (item 17); those results' rows and findings and vK's verdict are
 never validates it again and never rewrites or repairs it ([record — Mutability](record.md#mutability)): a defect is fixed
 in the live file, which the next attempt snapshots and validates.
 
-- `record.schema` of vN re-hashes each earlier snapshot file against the sha256 that vK's `manifest.json` `record` lists
-  for its path: one item-table row with basis `RECORDED`, root and sha256, PASS when they are equal, FAIL when they differ
-  or the manifest does not list the path. A snapshot whose attempt wrote no manifest is bound by no hash and gets no row.
+- `record.schema` of vN checks each earlier snapshot file by the [seal check](#seal-check): one item-table row with basis
+  `RECORDED`, root and sha256, PASS when the file hashes to the sha256 that vK's `manifest.json` `record` lists for its path,
+  FAIL when they differ. A snapshot whose attempt wrote no manifest is bound by no hash and gets no row.
+- A path under vK's snapshot that vK's manifest does not list is no record file of vK. Its row has basis `REPORTED` and its
+  sha256, and is PASS only when vK's own verdict carries a `HASH_MISMATCH` blocker whose `text` names that exact path; the
+  row's message names that blocker. Any other unlisted path is FAIL: a change to published history that vK never reported.
+  vK's own check fails the attempt that made the file, so a later attempt does not inherit that failure.
 - A RECORDED row proves hash equality only, never shape: its message names vK's `record.schema` and `record.semantic`
-  results and their outcome for the file, or says vK has none. It never becomes an UNCHANGED row of a later baseline.
-- A semantic item reads an earlier snapshot only where [Inputs](#inputs) names one, and never judges its shape.
+  results and their outcome for the file, or says vK has none. Neither a RECORDED nor a REPORTED row is record evidence or
+  becomes an UNCHANGED row of a later baseline.
+- A semantic item reads an earlier snapshot only where [Inputs](#inputs) names one, and never judges its shape
+  ([Attempt scope](#attempt-scope)).
 
 ## Semantic check
 
@@ -112,10 +118,10 @@ writes its own program under `.cad-work/<unit>/`, or starts from a retained one
 explicit uv script lock, runs it against the inventoried input, and publishes a `record.semantic` check result; an
 independent checker reads that program before its result counts.
 
-The program reads only what the brief inventories and names ([Inputs](#inputs)). An item over a collection the record does
-not have yet (assembly occurrences and joints before LAYOUT, deliveries, versions, BOM, verification index, runtime) holds,
-its item-table row saying `no instance`. An input the brief lacks makes the items that need it UNKNOWN `MISSING_INPUT` and
-is reported as a brief defect.
+The program reads only what the brief inventories and names ([Inputs](#inputs)) and judges the attempt under check
+([Attempt scope](#attempt-scope)). An item over a collection the record does not have yet (assembly occurrences and joints
+before LAYOUT, deliveries, versions, BOM, verification index, runtime) holds, its item-table row saying `no instance`. An
+input the brief lacks makes the items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
 
 1. Finite numbers: reject NaN and ±infinity anywhere, including YAML `.nan`, `.inf` and `-.inf`, before any
    other use; serialize JSON with non-finite numbers refused.
@@ -145,14 +151,13 @@ is reported as a brief defect.
    continuous travel (a MOTION case, or the approach or insertion of `motion.access` or `assembly.operations`) with any sampled pose set
    has `scope.coverage_kind` SAMPLED (PARTIAL when a scope item is missing), whatever its sampling kind; FULL is valid only for a finite
    scope ([cad-verify results — Coverage](../../cad-verify/references/results.md#coverage)).
-9. Chain and authority: the predecessor verdict exists and binds and its `result` is PASS, and its gate DR exists and binds when
-   the predecessor's stage row (captured in its `obligations.yaml` for a LITE attempt) has gate HUMAN; every
-   `binding.verdict_result` equals the `result` of the verdict it hashes; a RELEASE DR binds a PASS RELEASE verdict of its
-   `version` whose `release.inventory` result inspected the bound `proposal`; vN is the last line of `input/lead/attempts.txt`;
-   approvals are USER or AUTHORITY statements whose `statement.path` file hashes to `transcript_sha256`; PRODUCTION and
-   SAFETY_CRITICAL scope names a competent authority.
-10. Waivers in a stage verdict, for every verdict in the inventory (the lead applies the same rules to its own verdict before
-    writing it: [cad-flow write-verdict](../../cad-flow/references/stages.md#write-verdict) step 3):
+9. Chain and authority: the predecessor verdict exists and binds ([Seal check](#seal-check)) and its `result` is PASS, and
+   its gate DR exists and binds when the predecessor's stage row (captured in its `obligations.yaml` for a LITE attempt) has
+   gate HUMAN; every `binding.verdict_result` equals the `result` of the verdict it hashes; a RELEASE DR binds a PASS RELEASE
+   verdict of its `version` whose `release.inventory` result inspected the bound `proposal`; vN is the last line of
+   `input/lead/attempts.txt`; approvals are USER or AUTHORITY statements whose `statement.path` file hashes to
+   `transcript_sha256`; PRODUCTION and SAFETY_CRITICAL scope names a competent authority.
+10. Waivers in a stage verdict, the verdict the lead composes ([Attempt scope](#attempt-scope)):
     - Existence: each `WAIVED` result's `WV-###` is the `waiver.id` of an APPROVED WAIVER DR that no later
       DR rejects or supersedes, and the verdict's `waivers` list equals the set of waivers its results cite.
     - Scope coverage: the waiver's obligation and subject cover every expected obligation of that check that
@@ -166,26 +171,25 @@ is reported as a brief defect.
     references/record.md#inventory-digest; `assessment.input_sha256` is the set digest over `assessment.inputs`, and an input
     whose current bytes differ makes the selection `STALE`; a REVIEW implementation's `inspected` hashes match the bytes read,
     and `inspected` never lists the review's own `result.json` or `bundle-manifest.json`.
-12. Immutability and layout: published DRs, verdicts, manifests and results match their recorded hashes; every inventoried
-    `hw/` file matches a layout entry (the whole tree is `record.ownership`'s:
-    [cad-verify families](../../cad-verify/references/families.md#record-intake-and-selection)); no path field of evidence
-    names a `.cad-work/` file. Every path a result, its bundle manifest and each artifact it cites record counts, item-table
-    rows and a command's `stdout` and `stderr` included
-    ([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1), and a
-    `delivery.integrity` row names its unit and `hw/` target, never the unit's scratch source. A command's `argv` and `cwd`
-    record where it ran and are no evidence path.
+12. Immutability and layout: published DRs, verdicts, manifests and results match their recorded hashes, an earlier
+    attempt's by the [seal check](#seal-check) and by nothing else ([Attempt scope](#attempt-scope)); every `hw/` file of the attempt
+    matches a layout entry (the whole tree is `record.ownership`'s:
+    [cad-verify families](../../cad-verify/references/families.md#record-intake-and-selection)); every
+    [path field](#path-fields) of the attempt's results is a published `hw/` path.
 13. Derived files: BOM rows sorted by path then component; verification rows by requirement, subject anchor
     ([contract index anchor grammar](contract-index.md)), facet, then criterion `id`, else `property`, an UNKNOWN criterion
     last; each CSV equals its YAML authority.
-14. Bootstrap: after GROUND, `product.yaml` `id` and `title` differ from those of the installed copy of the template its
-    build mode selects ([record — record-bootstrap](record.md#record-bootstrap)),
-    `input/installed/cad-record/assets/project-template/hw/product.yaml` or `project-template-lite/hw/product.yaml`.
+14. Bootstrap: after GROUND, `product.yaml` `id` and `title` differ from those of the installed template its build mode
+    selects ([record — record-bootstrap](record.md#record-bootstrap)), the brief snapshot
+    `installed/cad-record/assets/project-template/hw/product.yaml` or
+    `installed/cad-record/assets/project-template-lite/hw/product.yaml`. The item's row names that template and the
+    brief's sha256 for it in its message only, never in `files` ([Path fields](#path-fields)).
 15. Version runtime: each `runtime.environments[].lock` equals one `build.locks` entry (path and sha256), no
     two environments share a lock, and every built PN's `model.kernel` has the environment of that kernel.
 16. Self-referencing evidence: no verification row cites a `verification.index` result file, and no variant,
     integrity result or index carries the digest of a file that hashes it (references/record.md hash graph).
-17. Prose roots: each inventoried instance of a [prose root](prose-contract.md) outside an earlier snapshot
-    ([Earlier snapshots](#earlier-snapshots)) conforms to its table, one item-table row per file:
+17. Prose roots: each inventoried instance of a [prose root](prose-contract.md), except an earlier attempt's file
+    ([Attempt scope](#attempt-scope)), conforms to its table, one item-table row per file:
     - every required field is present and no unlisted field appears, at every level;
     - constants, enums, array minimums, uniqueness and every `when`, `iff` and `never` condition and listed rule hold;
     - each typed value validates in-process against its named `common.schema.json` or `part.schema.json` `$defs`
@@ -211,7 +215,7 @@ is reported as a brief defect.
       `policy.check_order` and `policy.chain` equal to the installed `lite_stages` method profile, the `lite_stages` row of
       its stage, the installed `check_order` filtered to that row's families in installed order, and the `lite_stages`
       IDs in order; `policy.producers` follows [cad-flow run-checks](../../cad-flow/references/stages.md#run-checks) step 1.
-      A FULL attempt's file has none of these keys. A verdict of an earlier attempt is judged against the profile its own
+      A FULL attempt's file has none of these keys. An earlier attempt's verdict is read against the profile its own
       `obligations.yaml` captured, never against today's rows.
     - Lite chain: a LITE attempt's predecessor is the PASS verdict of the `lite_stages` stage before its own (GROUND,
       LAYOUT, RELEASE), with a GATE DR only after GROUND (item 9).
@@ -220,22 +224,86 @@ is reported as a brief defect.
       `build_mode: LITE`; a lite result enters a FULL verdict only by carry-forward under item 7; and no release REV letter
       repeats.
 
+### Attempt scope
+
+The semantic check of vN judges the attempt under check. An earlier attempt's files are history that no later attempt judges
+or repairs ([record — Mutability](record.md#mutability)): a sealed attempt gets the [seal check](#seal-check) only, and an
+unsealed one (failed, superseded or not yet reached by an approval) is only re-hashed. A sealed attempt was cleared once, at
+its write-verdict and its gate, so a rule applied to it later would fail every later attempt on bytes nobody may change.
+
+- Earlier files: each inventoried file of an earlier attempt vK, a path under `hw/versions/vK/`, `hw/checks/vK/`,
+  `hw/bom/vK/`, `hw/verification/vK/` or `hw/drawings/vK/`: its record snapshot, manifest, obligations, verdict and release
+  proposal, and each result an earlier verdict lists, CARRIED_FORWARD ones included. A published release
+  `hw/releases/<REV>/**` is an earlier attempt's file too.
+- The attempt's files: every other inventoried file. These are vN's own files, among them each inventoried result bound
+  `VERSION` vN with its bundle, the live decision record (every `hw/decisions/DR-*.yaml` with the statement and proposal
+  files it hashes), the live producer programs and the brief's snapshots.
+- Each item judges the attempt's files. Item 12 checks each earlier file by the seal check, and no other item judges one.
+  vK's own checks are the evidence of a defect in its files: its `record.schema` and `record.semantic` for its version
+  ([Earlier snapshots](#earlier-snapshots)),
+  [cad-flow worker-delivery Accept](../../cad-flow/references/worker-delivery.md#accept) for a delivered result,
+  [cad-flow write-verdict](../../cad-flow/references/stages.md#write-verdict) for its verdict and
+  [cad-release publish-release](../../cad-release/references/release.md#publish-release) for a release.
+- Cross-version items read earlier files for the relation they state, never for their content: item 3 the snapshots an
+  APPROVED INTENT `GATE` DR binds, item 9 the chain, item 18 the sha256 of earlier producer and retained check programs and
+  item 19 the build-mode history.
+- Clearance: vN's verdict is written after vN's `record.semantic` ran. Before the owner's gate, the lead applies the verdict
+  items to the verdict it composes, to the results it lists and to each CARRIED_FORWARD result among them: items 2, 7, 8,
+  10, 16 and 18, and item 12's path fields ([cad-flow write-verdict](../../cad-flow/references/stages.md#write-verdict)
+  step 3). That check and the owner's review of the packet are the attempt's clearance; the approved decision then seals it.
+
+### Seal check
+
+An attempt is SEALED once an APPROVED decision binds its verdict: a `GATE` DR's `STAGE` binding, or a `RELEASE` DR's
+`RELEASE_INVENTORY` binding with its proposal ([cad-flow gates](../../cad-flow/references/gates.md#record-a-gate-decision)).
+The seal reaches every file the hash graph binds from that decision ([record — Acyclic hash graph](record.md#acyclic-hash-graph)):
+
+- the DR's statement and proposal files and the verdict its binding names, with the release proposal for RELEASE;
+- every `{path, sha256}` a reached verdict or version manifest records: the manifest, obligations, each result file and
+  bundle manifest, the predecessor verdict and its approval, a superseded verdict, and the manifest's record, source and
+  output files;
+- every entry of a reached bundle manifest's `files`, never its `input`, which cites inputs that may change later.
+
+The seal check walks that graph from each APPROVED `GATE` and `RELEASE` DR in `hw/decisions/`, over the files its check's
+inputs hold: each reached file exists and hashes to the sha256 its binder records. A missing file or a different sha256 is
+FAIL, its finding naming the file and its binder. A later DR that reopens or supersedes the stage never unseals what the
+approval bound. An unsealed earlier file is re-hashed the same way against the sha256 that its own attempt's verdict,
+manifest or bundle manifest records. Items 9 and 12 and the `record.schema` rows of [Earlier snapshots](#earlier-snapshots)
+use this one check.
+
+### Path fields
+
+A path field is a published `hw/` path; an input snapshot or installed template is named only in a message and bound by the
+brief's hashes.
+
+- Path field: every string, at any depth, of a result, its bundle manifest and each JSON artifact the result cites
+  (item-table rows included) that names a file: a string under a `path`, `file`, `files`, `source`, `target`, `stdout` or
+  `stderr` key, and every other whitespace-free string that starts with `/`, `hw/`, `.cad-work/`, `input/`, `installed/` or
+  `lead/`. A JSON path (`$…`) or a URL names no file.
+- A file read through a copy is named by its origin, the `input_inventory.files` path (`hw/…`), never by its
+  `.cad-work/<unit>/input/` copy. A `delivery.integrity` row names its unit and `hw/` target, never the unit's scratch
+  source. A command's `stdout` and `stderr` name the logs beside the result
+  ([cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1).
+- Not path fields: a command's `argv` and `cwd`, wherever recorded (`commands[]`, `freecad-run.json`), which say where it
+  ran; the executable and home paths a run reports about itself (`sys.executable` and `FreeCAD.getHomePath()` in
+  `freecad-readback.json`); and the installed stage policy path, in a bundle manifest's `policy.path` and in the
+  stage-policy row of the `record.schema` item table.
+
 ### Inputs
 
 The brief ([cad-flow worker brief](../../cad-flow/references/worker-brief.md#compose)) inventories every file below and names
 this skill's schemas, `layout.json` and the stage policy; the lead's own facts are copies under `input/`
-(`input_inventory.snapshots`). Every item reads the vN version `hw/versions/vN/**` and every `hw/decisions/DR-*.yaml` with
-the statement and proposal files it hashes; these items read more:
+(`input_inventory.snapshots`). Every item reads the attempt's files ([Attempt scope](#attempt-scope)); these items read more:
 
 | Items | Also read |
 |---|---|
-| 1, 2, 12, 17, 19 | every inventoried file; 1, 2 and 17 skip an earlier snapshot ([Earlier snapshots](#earlier-snapshots)) |
+| 12, 19 | every inventoried file; item 12 reads an earlier file only for the [seal check](#seal-check) |
 | 3 | the `requirements.yaml` and `manufacturing/selection.yaml` snapshots of the version an APPROVED INTENT `GATE` DR binds |
-| 7, 8, 10, 11, 12, 16, 18 | each result an inventoried verdict lists, CARRIED_FORWARD ones included: its `result.json`, `bundle-manifest.json`, `source/` files, each `artifacts[]` file, the published `stdout` and `stderr` logs named in `commands[]`, and every file its `inspected` lists (REVIEW results have no commands or artifacts; [cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1) |
-| 8, 9, 19 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
+| 9, 19 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
 | 9 | `input/lead/attempts.txt`: one `v<M>` line per attempt number in use when the lead wrote the brief, ascending |
+| 12 | for the seal check, each result an inventoried verdict lists, CARRIED_FORWARD ones included: its `result.json`, `bundle-manifest.json`, `source/` files, each `artifacts[]` file, the published `stdout` and `stderr` logs named in `commands[]`, and every file its `inspected` lists (REVIEW results have no commands or artifacts; [cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1) |
 | 13, 16 | `hw/bom/vN/**` and `hw/verification/vN/**` |
-| 14 | `input/installed/cad-record/assets/project-template/hw/product.yaml` or `project-template-lite/hw/product.yaml`, the template the build mode selects |
+| 14 | the brief snapshot `installed/cad-record/assets/project-template/hw/product.yaml` or `installed/cad-record/assets/project-template-lite/hw/product.yaml`, the template the build mode selects, read from its copy under `input/`; the row names it in its message only |
 | 18 | every producer program: `hw/versions/v*/source/**`, `hw/parts/<PN>/model.py`, `hw/drawings/v*/<SUBJECT>/source/build.py` |
 | 19 | every `hw/versions/v*/record/product.yaml` snapshot and `hw/releases/*/release-manifest.json` |
 
@@ -288,10 +356,10 @@ check result ([cad-verify results — Outcomes](../../cad-verify/references/resu
   aggregate's `value` is the tally as text (`42 of 42 files pass`, `19 of 19 items hold`).
   - `record.schema`: one row per universe file of its [scope](#scope), one per earlier snapshot file
     ([Earlier snapshots](#earlier-snapshots)) and one for the stage policy: file, root, sha256 (none for the stage policy,
-    which is never hashed), basis `VALIDATED`, `UNCHANGED` or `RECORDED`, outcome and messages. A VALIDATED file is PASS
-    when it loads (YAML) and, with a schema root, its root command lists it in `checked_paths` (exit 0) or `successes`;
-    FAIL when the loader rejects it or the report lists it in `errors` or `parse_errors`, with every message and JSON path;
-    UNKNOWN `NOT_RUN` when its command did not run or the report does not name it, never PASS.
+    which is never hashed), basis `VALIDATED`, `UNCHANGED`, `RECORDED` or `REPORTED`, outcome and messages. A VALIDATED
+    file is PASS when it loads (YAML) and, with a schema root, its root command lists it in `checked_paths` (exit 0) or
+    `successes`; FAIL when the loader rejects it or the report lists it in `errors` or `parse_errors`, with every message
+    and JSON path; UNKNOWN `NOT_RUN` when its command did not run or the report does not name it, never PASS.
   - `record.semantic`: one row per item (item number, outcome, files, message), item 17 one row per prose-root file.
 - Each non-PASS file row or item is one finding: `record.schema:product:<locus>` or
   `record.semantic:item-<n>:<locus>`. `<locus>` is the file path, or the offending ID for an item that spans files,
