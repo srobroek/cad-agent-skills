@@ -106,3 +106,31 @@
   - Smoke: OpenCode sends single-line messages as separate argv words and multi-line ones on stdin, so statement files hold the exact
     bytes; round-6 OpenCode gate rows are judged PASS with a note. Kiro cells start a pane at least 160 rows tall, and an approval waiting
     off screen is approved from the store's pending record. Codex CLI and OMP stay supported but are marked not verified in round 6.
+
+- Round-7 fixes:
+  - `56229d2`: FreeCAD preflight and readback run with an explicit `HOME`; imports of `model.py` disable bytecode so no
+    `__pycache__` is written beside a frozen or published model.
+  - `f3d25a2` and `2a66898`: RELEASE packets show the proposal revision, while the owner approves with the single form
+    `approve RELEASE <vN>`; authoring fixtures use that same reply form.
+- Round-8 fixes, in both variants:
+  - J1: Reject a delivery when any path-valued field of its result, bundle manifest or cited artifacts is not a
+    published `hw/` path; name the field and value.
+  - J2: Judge result paths only for results produced or carried forward by the attempt under check. Re-hash earlier
+    results against their recorded sha256 without re-judging paths.
+  - J2 extension: semantic items judge only the attempt under check. Items 10, 16 and 17 judge the predecessor verdict once;
+    an earlier unlisted path is PASS (REPORTED) only when its own verdict recorded `HASH_MISMATCH`.
+  - J3: List every required lead-claim field, including `format` and `schema_version`, and validate after writing it.
+  - J4: State `material_to_choice` and `safety_relevant` mappings explicitly per question row, consistent with `consequential`.
+  - J5: Compose each stage verdict with each check row exactly once.
+  - J6: Cite input files in check results by their origin paths and sha256, not `.cad-work/` snapshots.
+  - J7: Keep smoke projects on verified disk-backed storage, never tmpfs `/tmp`. Lite uv caches with CAD kernels used about 130,000
+    inodes in round-7 cells. Accept the host-resolved FreeCAD console when preflight and checker agree on path and version; record both
+    observations and the executable sha256 in external smoke evidence.
+  - J8: Lite intake does not re-ask fields stated in the prompt, and records exclusions verbatim.
+  - J9: Lite packets report how the render was actually presented, per the
+    [host-specific rules](../full/skills/cad-flow/references/gates.md#lite-packets): the SVG path and exactly one `Render:` status line.
+  - J10: Version snapshots copy only manifest-listed files, one by one; an unlisted path fails its attempt. `accept-results` hashes
+    `hw/versions/vN` against its manifest and reports `HASH_MISMATCH` for any unlisted path.
+  - `e4f91fd`: FreeCAD readback keys inputs by their published `hw/` paths.
+  - Smoke and examples reflect the `56229d2` FreeCAD `HOME` and no-bytecode fixes and the `f3d25a2`/`2a66898`
+    RELEASE reply-form and authoring-fixture changes.
