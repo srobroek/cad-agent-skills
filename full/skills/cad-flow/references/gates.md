@@ -20,7 +20,8 @@ or `NOT_PRESENTED` (FAIL or BLOCKED verdict; never put up for approval).
 
 ## present-gate
 
-1. Require a PASS verdict for this `vN`; any other verdict goes to the [stop procedure](stages.md#stop-procedure).
+1. Require a PASS verdict for this `vN`, cleared by [stages write-verdict](stages.md#write-verdict) step 3; any other verdict goes to the
+   [stop procedure](stages.md#stop-procedure).
 2. Present the packet: stage and `vN`; `gate_subject`; the verdict's absolute path, its full 64-hex sha256 and the manifest's full sha256,
    each on its own line; results per family; limits (each UNKNOWN, PLANNED future obligation, waiver, MINOR finding, SAMPLED coverage and
    absent physical evidence); each preview, GLB, drawing and BOM as an absolute path on its own line. RELEASE adds the proposal's REV and
@@ -42,11 +43,16 @@ the approval form, what that approval covers.
   dimension and measurement criterion; the service class, release scope and exclusions; each geometry-driving UNKNOWN; the checks
   `hw/check-plan.yaml` plans; FreeCAD availability from [preflight.json](preflight.md#freecad) (the executable and version line, or
   absent). Covers: `approve GROUND <vN>` approves exactly this brief, never geometry not yet built.
-- RELEASE: the render shown, not only named: the SVG preview displayed in the reply where the host renders images, else opened in the
-  system viewer (`open <path>` on macOS, `xdg-open <path>` on Linux) and that stated; the STEP and model-source paths; the measured
-  dimensions, solid count and volumes of the accepted geometry results; the FreeCAD version and outcomes `geometry.readback` recorded; the
-  independent intent findings of LAYOUT's `intake.use_case`; the exclusions; the proposal's full sha256 beside the verdict and manifest;
-  the inventory and REV. Covers: `approve RELEASE <vN>` approves that exact model and package, never fitness for use.
+- Render, in the RELEASE packet and in every lite report that presents one ([stages Stop procedure](stages.md#stop-procedure) step 5):
+  the SVG preview's absolute path on its own line and one line that says how it reached the owner, never a display that did not
+  happen (an image the lead rasterised or read into its own context is not shown to the owner); exactly one of:
+  - `Render: displayed inline`, only when the host renders images in the reply itself;
+  - `Render: opened in the system viewer`, only when `open <path>` (macOS) or `xdg-open <path>` (Linux) exited 0 in this turn;
+  - otherwise `Render: not displayed; open <absolute path> to view it`.
+- RELEASE: the render by the rule above; the STEP and model-source paths; the measured dimensions, solid count and volumes of the
+  accepted geometry results; the FreeCAD version and outcomes `geometry.readback` recorded; the independent intent findings of LAYOUT's
+  `intake.use_case`; the exclusions; the proposal's full sha256 beside the verdict and manifest; the inventory and REV. Covers:
+  `approve RELEASE <vN>` approves that exact model and package, never fitness for use.
 
 ## Record a gate decision
 

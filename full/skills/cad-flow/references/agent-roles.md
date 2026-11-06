@@ -1,24 +1,27 @@
 # Agent roles
 
 Owner: cad-flow. The one contract for the five worker roles: duties, inputs, write boundary, outputs and reply. Each native role file links
-here and repeats no rule except the install guard. A worker reads only its [read set](#read-set): this file, its brief and inputs, and
-the skills, rubric and resources its brief lists; never cad-flow SKILL.md or another lead reference. Grading uses the rubric owned by
+here and repeats no rule except the install guard. A worker reads only its [read set](#read-set): this file, its brief, inputs and
+resources, and any installed file of this plugin. It follows only this file, its brief and the skills its brief lists, never cad-flow
+SKILL.md or another lead reference. Grading uses the rubric owned by
 cad-review: [the rubric reference](../../cad-review/references/rubric.md).
 
 ## Every role
 
 1. Read the brief at the absolute path in your task, then, with a shell, run `date -u +%Y-%m-%dT%H:%M:%SZ`: your [limits](#limits) count
    from the time it prints. Every resource is the literal absolute path or `skill://` URI in `resources`; never search the product
-   directory or guess an install path.
+   tree outside the installed skills directory ([read set](#read-set)) or guess an install path.
 2. LOAD the SKILL.md of each `resources.skills` entry and no other skill, and read the cad-review rubric at `resources.rubric`; read the
-   other files of those skills as their SKILL.md and your methods direct.
+   other files of those skills as their SKILL.md and your methods direct. Another installed file you read is reference only: it adds no
+   method, rule or step to those this file, your brief and the loaded skills give.
 3. Except the reviewer, run `shasum -a 256 -c <root>/.cad-work/<unit>/input/SHA256SUMS` once (Linux: `sha256sum -c` of the same file)
    → every line OK, else stop. Read the `input_inventory` files and snapshots from their copies at `.cad-work/<unit>/input/<path>`; a
    needed file outside your [read set](#read-set) → stop. An earlier result's sha256 for `input/lead/attempts.txt` is confirmed against
    your copy cut after that result's attempt line ([worker brief Compose](worker-brief.md#compose) step 2). Every file you write cites
-   an input by its origin, the `input_inventory.files` path (`hw/…`) with the brief's sha256 for it, never by its `input/` copy; a
-   snapshot has no `hw/` origin and is never a path field, because the brief binds it through `brief_sha256`
-   ([cad-record validation — Semantic check](../../cad-record/references/validation.md#semantic-check) item 12).
+   an input by its origin, the `input_inventory.files` path (`hw/…`) with the brief's sha256 for it, never by its `input/` copy. A path
+   field is a published `hw/` path; an input snapshot or installed template is named only in a message and bound by the brief's hashes
+   ([cad-record validation — Path fields](../../cad-record/references/validation.md#path-fields); the lead rejects any other value:
+   [worker delivery Accept](worker-delivery.md#accept) step 6).
 4. Writers: take the tree digest with the command of
    [cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest), no other form, before your first write as
    `boundary.before_sha256`, and again after your last write as `boundary.after_sha256`.
@@ -83,14 +86,18 @@ that stays denied is a missing tool: stop as above.
 You read only:
 
 - your unit directory `<root>/.cad-work/<unit>/`: the brief, the `input/` copies and the files you write;
-- the installed files of each `resources.skills` skill (every file under the directory of its SKILL.md: references, schemas, assets)
-  and each other `resources` path: role reference, rubric, schemas, templates, `layout` and `policy`. A search (the host's grep or glob)
-  rooted at a listed skill's directory reads that skill; one rooted above it, at the skills directory or the project, does not;
+- every installed file of this plugin and each `resources` path: the eight skill directories `cad-flow`, `cad-record`, `cad-select`,
+  `cad-design`, `cad-model`, `cad-verify`, `cad-review` and `cad-release` (every file under each: references, schemas, assets) in the
+  installed skills directory that holds your `resources.skills` directories, and the role reference, rubric, schemas, templates,
+  `layout` and `policy`. List and search them with the host's file tools, rooted at a skill directory or at that installed skills
+  directory; a hit there outside the eight skill directories is no input, never read further. Reading or searching a skill your brief
+  does not list is never a boundary defect and never a finding; you LOAD only the `resources.skills` entries
+  ([Every role](#every-role) step 2);
 - the `resources.tools` binaries, which you execute and never list.
 
 Never another `.cad-work/` directory (`.cad-work/lead/` with its `preflight.json`, `units.yaml`, `checks.py` and `validator/`, a
-`stage-v*` directory, another unit's), a live `hw/` file, a `boundary.locked` one included (read its input copy), an installed skill the
-brief does not list, or the product tree by listing or search. The tree digest of step 4 hashes the tree without your reading its files,
+`stage-v*` directory, another unit's), a live `hw/` file, a `boundary.locked` one included (read its input copy), or the rest of the
+product tree by listing or search. The tree digest of step 4 hashes the tree without your reading its files,
 and uv alone uses the shared cache. Your templates are your only examples of a file's shape, never another unit's files; a path, version
 or header the brief does not give is in your skills ([uv commands](#uv-commands)), never a reason to look further.
 
