@@ -1,0 +1,143 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "record-semantic/a1",
+  "check": "record-semantic",
+  "attempt": "a1",
+  "family": "record.semantic",
+  "producer_role": "cad-checker",
+  "stage": "GROUND",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v1",
+    "version_manifest_sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v1/manifest.json",
+      "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+    },
+    {
+      "path": "hw/versions/v1/obligations.yaml",
+      "sha256": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1"
+    },
+    {
+      "path": "hw/versions/v1/record/product.yaml",
+      "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
+    },
+    {
+      "path": "hw/versions/v1/record/requirements.yaml",
+      "sha256": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v1/record-semantic/a1/source/check.py",
+        "sha256": "e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1"
+      },
+      {
+        "path": "hw/checks/v1/record-semantic/a1/source/check.py.lock",
+        "sha256": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/ground-v1-semantic/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0,
+        "stdout": "hw/checks/v1/record-semantic/a1/stdout.txt",
+        "stderr": "hw/checks/v1/record-semantic/a1/stderr.txt"
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "record.semantic@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "PASS",
+      "value": {
+        "text": "18 of 18 items hold"
+      },
+      "criterion": {
+        "property": "semantic_items_holding",
+        "comparator": "EQUALS",
+        "value": 18,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Semantic check and Reporting",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v1/record-semantic/a1/artifacts/items.json",
+          "sha256": "0101010101010101010101010101010101010101010101010101010101010101"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "artifacts": [
+    {
+      "path": "hw/checks/v1/record-semantic/a1/artifacts/items.json",
+      "sha256": "0101010101010101010101010101010101010101010101010101010101010101",
+      "role": "REPORT"
+    },
+    {
+      "path": "hw/checks/v1/record-semantic/a1/stdout.txt",
+      "sha256": "0202020202020202020202020202020202020202020202020202020202020202",
+      "role": "LOG"
+    },
+    {
+      "path": "hw/checks/v1/record-semantic/a1/stderr.txt",
+      "sha256": "0303030303030303030303030303030303030303030303030303030303030303",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "PASS",
+  "limitations": [
+    "semantic items of the v1 record only; no geometry, physical or manufacturing claim"
+  ]
+}

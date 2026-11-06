@@ -1,0 +1,25 @@
+id: DR-002
+kind: GATE
+state: APPROVED
+binding:
+  kind: STAGE
+  stage: GROUND
+  version: v1
+  verdict:
+    path: hw/versions/v1/stage-verdict.json
+    sha256: '9191919191919191919191919191919191919191919191919191919191919191'
+  verdict_result: PASS
+title: Approve GROUND v1
+scope: ground record and brief after the GROUND checks
+rationale: approved as presented
+limits:
+- every intake UNKNOWN stays open with its owner and question
+actor:
+  kind: USER
+  name: Product owner
+time: '2026-11-05T11:28:00Z'
+statement:
+  path: hw/decisions/statements/DR-002.txt
+  transcript_sha256: '7272727272727272727272727272727272727272727272727272727272727272'
+  quote: approve GROUND v1
+  time: '2026-11-05T11:28:00Z'

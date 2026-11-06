@@ -4,7 +4,8 @@ Owner: cad-record. This variant ships `common.schema.json` and ten schema roots:
 `assembly`, `decision`, `check-result`, `stage-verdict`, `material-profile`, `bom-row` and `release-manifest`. The 17
 roots below have no schema file. Each table here is the field authority for its root and has the same shape as the
 full variant's schema of that name, so a conforming file also validates there. `record.semantic` item 17
-(references/validation.md) checks every instance against its table; no schema command runs on a prose root.
+(references/validation.md) checks every instance against its table, except an earlier attempt's file, which is only
+re-hashed; no schema command runs on a prose root.
 
 | Prose root | Instances (layout id) |
 | --- | --- |

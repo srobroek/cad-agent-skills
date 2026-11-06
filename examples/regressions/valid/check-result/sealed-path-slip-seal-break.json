@@ -1,0 +1,205 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "record-semantic/a1",
+  "check": "record-semantic",
+  "attempt": "a1",
+  "family": "record.semantic",
+  "producer_role": "cad-checker",
+  "stage": "INTENT",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v2",
+    "version_manifest_sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v2/manifest.json",
+      "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+    },
+    {
+      "path": "hw/versions/v2/obligations.yaml",
+      "sha256": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+    },
+    {
+      "path": "hw/versions/v2/record/product.yaml",
+      "sha256": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2"
+    },
+    {
+      "path": "hw/versions/v1/manifest.json",
+      "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+    },
+    {
+      "path": "hw/versions/v1/stage-verdict.json",
+      "sha256": "9191919191919191919191919191919191919191919191919191919191919191"
+    },
+    {
+      "path": "hw/checks/v1/record-semantic/a1/result.json",
+      "sha256": "8181818181818181818181818181818181818181818181818181818181818181"
+    },
+    {
+      "path": "hw/checks/v1/record-semantic/a1/bundle-manifest.json",
+      "sha256": "8282828282828282828282828282828282828282828282828282828282828282"
+    },
+    {
+      "path": "hw/checks/v1/record-semantic/a1/artifacts/items.json",
+      "sha256": "0909090909090909090909090909090909090909090909090909090909090909"
+    },
+    {
+      "path": "hw/decisions/DR-002.yaml",
+      "sha256": "7171717171717171717171717171717171717171717171717171717171717171"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v2/record-semantic/a1/source/check.py",
+        "sha256": "e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2"
+      },
+      {
+        "path": "hw/checks/v2/record-semantic/a1/source/check.py.lock",
+        "sha256": "f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/intent-v2-semantic/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0,
+        "stdout": "hw/checks/v2/record-semantic/a1/stdout.txt",
+        "stderr": "hw/checks/v2/record-semantic/a1/stderr.txt"
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "record.semantic@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "text": "17 of 18 items hold"
+      },
+      "criterion": {
+        "property": "semantic_items_holding",
+        "comparator": "EQUALS",
+        "value": 18,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Semantic check, Attempt scope, Seal check and Reporting",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v2/record-semantic/a1/artifacts/items.json",
+          "sha256": "0404040404040404040404040404040404040404040404040404040404040404"
+        }
+      ],
+      "findings": [
+        "record.semantic:item-12:hw-checks-v1-record-semantic-a1-artifacts-items-json"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "record.semantic:item-12:hw-checks-v1-record-semantic-a1-artifacts-items-json",
+      "family": "record.semantic",
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "hw/checks/v1/record-semantic/a1/artifacts/items.json hashes to 0909…0909; its binder hw/checks/v1/record-semantic/a1/bundle-manifest.json, sealed by DR-002 through hw/versions/v1/stage-verdict.json, records 0101…0101"
+      },
+      "criterion": {
+        "property": "seal_mismatches",
+        "comparator": "EQUALS",
+        "value": 0,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Seal check",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "uncertainty": "none; a sha256 mismatch is exact",
+      "consequence": "the approved GROUND v1 evidence no longer matches what DR-002 approved",
+      "remedy": "restore the sealed bytes from the approved record; a defect in sealed evidence is fixed by a change that reopens GROUND, never in place",
+      "recheck": {
+        "families": [
+          "record.semantic"
+        ],
+        "earliest_stage": "GROUND"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v2/record-semantic/a1/artifacts/items.json",
+      "sha256": "0404040404040404040404040404040404040404040404040404040404040404",
+      "role": "REPORT"
+    },
+    {
+      "path": "hw/checks/v2/record-semantic/a1/stdout.txt",
+      "sha256": "0505050505050505050505050505050505050505050505050505050505050505",
+      "role": "LOG"
+    },
+    {
+      "path": "hw/checks/v2/record-semantic/a1/stderr.txt",
+      "sha256": "0606060606060606060606060606060606060606060606060606060606060606",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "seal check of the approved GROUND v1 chain; the edited item table is never re-judged, only found changed"
+  ]
+}
