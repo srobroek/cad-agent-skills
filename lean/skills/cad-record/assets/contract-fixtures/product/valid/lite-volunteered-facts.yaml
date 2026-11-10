@@ -1,0 +1,154 @@
+# A LITE product keeps a fact the owner volunteers with its full type: the phone's actual mass and its design bound
+# are two typed loads, although a LITE build requires neither and makes no load claim.
+format: cad-agent-skills
+record_version: 1
+id: lite-phone-stand
+title: Desktop phone stand appearance model
+build_mode:
+  status: KNOWN
+  value: LITE
+  basis: USER_DECLARED
+  sources:
+  - &owner
+    kind: USER
+    reference: 'answer to Q-000: lite build'
+    origin: SYNTHETIC lite-demo owner
+    date: '2026-11-05'
+identity:
+  description:
+    status: KNOWN
+    value: Static one-piece desktop phone stand with a sloped back and a front retaining lip
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  owner:
+    status: KNOWN
+    value: SYNTHETIC lite-demo owner
+    basis: USER_DECLARED
+    sources:
+    - *owner
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor: maker
+intake:
+  status: CONFIRMED
+  decision: DR-001
+  purpose:
+    status: KNOWN
+    value: A 3D model that renders and opens in FreeCAD
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  users:
+    status: KNOWN
+    value: the owner, viewing the model on a computer
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  loads:
+  - id: phone_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value:
+        value: 210
+        units: g
+      basis: USER_DECLARED
+      sources:
+      - *owner
+    direction:
+      status: KNOWN
+      value: -Z on the sloped back
+      basis: USER_DECLARED
+      sources:
+      - *owner
+  - id: phone_weight_bound
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value:
+        upper: 250
+        lower: 0
+        units: g
+      basis: USER_DECLARED
+      sources:
+      - *owner
+    direction:
+      status: KNOWN
+      value: -Z on the sloped back
+      basis: USER_DECLARED
+      sources:
+      - *owner
+service:
+  class: APPEARANCE_CONCEPT
+  decision: DR-001
+risk:
+  failure_consequence:
+    status: KNOWN
+    value: a wrong model shape; nothing physical is made
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  forbidden_outcomes:
+    status: KNOWN
+    value:
+    - any material, fit, strength or manufacturing claim
+    basis: USER_DECLARED
+    sources:
+    - *owner
+authority:
+  approver:
+    name: SYNTHETIC lite-demo owner
+    role: OWNER
+    basis: product owner
+    scope: GROUND and RELEASE gates
+release_scope:
+  purpose:
+    status: KNOWN
+    value: geometry-only appearance prototype
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  operating_limits:
+    status: KNOWN
+    value:
+    - viewing in a CAD viewer or FreeCAD only
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  exclusions:
+    status: KNOWN
+    value:
+    - 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
+    basis: USER_DECLARED
+    sources:
+    - *owner
+storage:
+  results_in_git:
+    status: KNOWN
+    value: true
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  retention:
+    status: KNOWN
+    value: kept in the project git history
+    basis: USER_DECLARED
+    sources:
+    - *owner
+license:
+  hardware:
+    status: KNOWN
+    value: CC0-1.0
+    basis: USER_DECLARED
+    sources:
+    - *owner
+  documentation:
+    status: KNOWN
+    value: CC0-1.0
+    basis: USER_DECLARED
+    sources:
+    - *owner

@@ -1,0 +1,21 @@
+# a part without build_mode keeps the FULL shape: sourcing, transparency and drawing stay required
+PN: STD-0001
+rev: X1
+title: Phone stand body
+model:
+  kind: AUTHORED
+  kernel: build123d
+  path: hw/parts/STD-0001/model.py
+  frame: PART_LOCAL
+components:
+- id: body
+  witness: [40.0, 45.0, 5.0]
+  multiplicity: 1
+intent:
+  functions:
+  - function: LOCATING
+    description: sloped back the phone leans on
+    requirements: [REQ-001, REQ-002]
+  - function: OTHER
+    description: front retaining lip
+    requirements: [REQ-003]

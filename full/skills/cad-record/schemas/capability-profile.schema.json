@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills capability profile",
+  "description": "What an actual machine, provider or operator can do, apart from design requirements: material approvals, tools, envelope, process parameters and calibrations with scope, results, date, expiry and source. Parameters never state achieved accuracy; only calibrations do. A plugin template carries template: true and holds no capability values.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "revision", "title", "process", "provider", "machine", "materials", "parameters", "calibrations"],
+  "properties": {
+    "id": {"$ref": "common.schema.json#/$defs/profile_id"},
+    "revision": {"type": "integer", "minimum": 1},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "process": {"$ref": "common.schema.json#/$defs/route_kind"},
+    "provider": {"enum": ["LOCAL", "OUTSOURCED"]},
+    "template": {"description": "present only on a plugin template; a template is never a capability", "const": true},
+    "guidance": {"$ref": "common.schema.json#/$defs/texts"},
+    "supplier": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "operator": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "machine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity"],
+      "properties": {
+        "identity": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "location": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "y": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "z": {"$ref": "common.schema.json#/$defs/quantity_fact"}
+      }
+    },
+    "materials": {
+      "oneOf": [
+        {"type": "array", "items": {"$ref": "#/$defs/material_approval"}, "minItems": 1},
+        {"$ref": "common.schema.json#/$defs/fact_open"}
+      ]
+    },
+    "parameters": {
+      "type": "object",
+      "propertyNames": {"$ref": "common.schema.json#/$defs/semantic_id"},
+      "additionalProperties": {"$ref": "common.schema.json#/$defs/fact"}
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "parameters"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "description": {"$ref": "common.schema.json#/$defs/text"},
+          "parameters": {
+            "type": "object",
+            "propertyNames": {"$ref": "common.schema.json#/$defs/semantic_id"},
+            "additionalProperties": {"$ref": "common.schema.json#/$defs/fact"}
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "workholding": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "constraints": {"$ref": "common.schema.json#/$defs/texts"},
+    "calibrations": {"type": "array", "items": {"$ref": "#/$defs/calibration"}},
+    "source": {"$ref": "common.schema.json#/$defs/source"}
+  },
+  "if": {"required": ["template"]},
+  "then": {
+    "required": ["guidance"],
+    "not": {"anyOf": [{"required": ["tools"]}, {"required": ["source"]}]},
+    "properties": {
+      "calibrations": {"maxItems": 0},
+      "materials": {"$ref": "common.schema.json#/$defs/fact_unknown"},
+      "parameters": {"additionalProperties": {"$ref": "common.schema.json#/$defs/fact_unknown"}},
+      "machine": {"properties": {"identity": {"$ref": "common.schema.json#/$defs/fact_unknown"}}},
+      "operator": {"$ref": "common.schema.json#/$defs/fact_unknown"},
+      "supplier": {"$ref": "common.schema.json#/$defs/fact_unknown"},
+      "envelope": {
+        "properties": {
+          "x": {"$ref": "common.schema.json#/$defs/fact_unknown"},
+          "y": {"$ref": "common.schema.json#/$defs/fact_unknown"},
+          "z": {"$ref": "common.schema.json#/$defs/fact_unknown"}
+        }
+      }
+    }
+  },
+  "else": {"not": {"required": ["guidance"]}},
+  "$defs": {
+    "material_approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["material", "status", "source"],
+      "properties": {
+        "material": {"$ref": "common.schema.json#/$defs/profile_id"},
+        "status": {"enum": ["APPROVED", "FORBIDDEN"]},
+        "thickness": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "diameter": {"description": "the approved consumable diameter: filament, wire, bar or tube", "$ref": "common.schema.json#/$defs/quantity_fact"},
+        "coating": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "extraction": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "operations": {
+          "type": "array",
+          "items": {"enum": ["CUT", "SCORE", "ENGRAVE", "MACHINE", "PRINT", "FORM", "JOIN", "OTHER"]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "reason": {"$ref": "common.schema.json#/$defs/text"},
+        "source": {"$ref": "common.schema.json#/$defs/source"}
+      },
+      "if": {"properties": {"status": {"const": "FORBIDDEN"}}},
+      "then": {"required": ["reason"]}
+    },
+    "calibration": {
+      "description": "one demonstrated capability: characteristic, exact scope, measured limits, uncertainty and evidence",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "characteristic", "scope", "result", "source", "date"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "characteristic": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["material"],
+          "properties": {
+            "material": {"$ref": "common.schema.json#/$defs/profile_id"},
+            "condition": {"$ref": "common.schema.json#/$defs/text"},
+            "feature": {"$ref": "common.schema.json#/$defs/text"},
+            "size": {"$ref": "common.schema.json#/$defs/quantity"},
+            "thickness": {"$ref": "common.schema.json#/$defs/quantity"},
+            "orientation": {"$ref": "common.schema.json#/$defs/text"},
+            "setup": {"$ref": "common.schema.json#/$defs/text"},
+            "tool": {"$ref": "common.schema.json#/$defs/semantic_id"},
+            "finish": {"$ref": "common.schema.json#/$defs/text"}
+          }
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["limits", "samples"],
+          "properties": {
+            "limits": {"$ref": "common.schema.json#/$defs/quantity"},
+            "distribution": {"$ref": "common.schema.json#/$defs/text"},
+            "uncertainty": {"$ref": "common.schema.json#/$defs/quantity"},
+            "samples": {"type": "integer", "minimum": 1}
+          }
+        },
+        "source": {"$ref": "common.schema.json#/$defs/source"},
+        "date": {"$ref": "common.schema.json#/$defs/date"},
+        "valid_until": {"$ref": "common.schema.json#/$defs/date"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      }
+    }
+  }
+}

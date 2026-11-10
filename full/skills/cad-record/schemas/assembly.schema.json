@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills assembly record (hw/assembly.yaml)",
+  "description": "Unique occurrence tree with PN revisions and placements in mm, joints, couplings, limits, and the one authority for assembly operations, access, retention and service. Tree uniqueness and acyclicity are semantic checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["occurrences", "joints", "couplings", "operations", "service"],
+  "properties": {
+    "root": {"$ref": "common.schema.json#/$defs/semantic_id"},
+    "occurrences": {"type": "array", "items": {"$ref": "#/$defs/occurrence"}},
+    "joints": {"type": "array", "items": {"$ref": "#/$defs/joint"}},
+    "couplings": {"type": "array", "items": {"$ref": "#/$defs/coupling"}},
+    "operations": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
+    "service": {"type": "array", "items": {"$ref": "#/$defs/service_task"}},
+    "drawing": {
+      "description": "optional assembly drawing intent, the same shape as a part's drawing intent; REQUIRED makes the assembly a drawing.coverage and drawing.preview subject",
+      "$ref": "part.schema.json#/$defs/drawing"
+    }
+  },
+  "$defs": {
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "PN", "rev", "placement"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "PN": {"$ref": "common.schema.json#/$defs/pn"},
+        "rev": {"$ref": "common.schema.json#/$defs/part_rev"},
+        "parent": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "placement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["translation", "rotation"],
+          "properties": {
+            "translation": {"$ref": "common.schema.json#/$defs/vector"},
+            "rotation": {"$ref": "common.schema.json#/$defs/quaternion"}
+          }
+        },
+        "note": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "joint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "parent", "child", "origin"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "kind": {"enum": ["FIXED", "REVOLUTE", "PRISMATIC", "CYLINDRICAL", "SPHERICAL", "PLANAR", "SCREW"]},
+        "parent": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "child": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "origin": {"$ref": "common.schema.json#/$defs/vector"},
+        "axis": {"$ref": "common.schema.json#/$defs/vector"},
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lower", "upper", "units"],
+          "properties": {"lower": {"type": "number"}, "upper": {"type": "number"}, "units": {"enum": ["mm", "deg"]}}
+        },
+        "zero": {"type": "number"},
+        "interface": {"$ref": "common.schema.json#/$defs/interface_id"},
+        "source": {"$ref": "common.schema.json#/$defs/source"}
+      },
+      "if": {"properties": {"kind": {"not": {"const": "FIXED"}}}},
+      "then": {"required": ["axis", "limits"]}
+    },
+    "coupling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "joints", "relation"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "kind": {"enum": ["GEAR", "LINKAGE", "CAM", "BELT", "SCREW", "OTHER"]},
+        "joints": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "ratio": {"type": "number"},
+        "relation": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "occurrences", "retention"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/slug"},
+        "kind": {
+          "enum": [
+            "INSERT",
+            "FASTEN",
+            "PRESS_FIT",
+            "HEAT_SET",
+            "RETAINING_RING",
+            "JOIN",
+            "CLOSE",
+            "ADJUST",
+            "INSPECT",
+            "DISASSEMBLE"
+          ]
+        },
+        "occurrences": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/semantic_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "into": {"$ref": "common.schema.json#/$defs/semantic_id"},
+        "direction": {"$ref": "common.schema.json#/$defs/vector"},
+        "predecessors": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/slug"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "tool_access": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tool", "approach", "reach", "envelope"],
+            "properties": {
+              "tool": {"$ref": "common.schema.json#/$defs/text"},
+              "capability": {"$ref": "common.schema.json#/$defs/profile_id"},
+              "approach": {"$ref": "common.schema.json#/$defs/vector"},
+              "reach": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+              "envelope": {"$ref": "common.schema.json#/$defs/text_fact"}
+            }
+          },
+          "minItems": 1
+        },
+        "engagement": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "torque": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "retention": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "service_access": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "acceptance": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/criterion"}, "minItems": 1},
+        "interfaces": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/interface_id"},
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "if": {"properties": {"kind": {"enum": ["INSERT", "PRESS_FIT", "HEAT_SET", "JOIN", "CLOSE", "DISASSEMBLE"]}}},
+      "then": {"required": ["into", "direction"]}
+    },
+    "service_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "operations", "access"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/slug"},
+        "description": {"$ref": "common.schema.json#/$defs/text"},
+        "operations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/slug"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "interval": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+        "access": {"$ref": "common.schema.json#/$defs/text_fact"}
+      }
+    }
+  }
+}

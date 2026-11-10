@@ -1,0 +1,22 @@
+id: DR-021
+kind: RELEASE
+state: APPROVED
+binding:
+  kind: RELEASE_INVENTORY
+  rev: A
+  version: v13
+  proposal:
+    path: hw/versions/v13/release-proposal.json
+    sha256: '9999999999999999999999999999999999999999999999999999999999999999'
+title: Release REV A from v13
+scope: release inventory and REV A
+rationale: readiness verdict PASS on the proposed inventory
+actor:
+  kind: USER
+  name: Sjors
+time: '2026-11-03T11:00:00Z'
+statement:
+  path: hw/decisions/statements/DR-021.txt
+  transcript_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+  quote: 'Approved: RELEASE v13 as REV A'
+  time: '2026-11-03T11:00:00Z'

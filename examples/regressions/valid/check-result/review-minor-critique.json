@@ -1,0 +1,359 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "review/a1",
+  "check": "review",
+  "attempt": "a1",
+  "family": "review.mechanical_dfm",
+  "producer_role": "cad-mech-dfm-reviewer",
+  "stage": "CRITIQUE",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v13",
+    "version_manifest_sha256": "199ebdedd6254ff49008f72771e6c58a8eb03a1868cca8474322b0c1342751a6"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v13/manifest.json",
+      "sha256": "199ebdedd6254ff49008f72771e6c58a8eb03a1868cca8474322b0c1342751a6"
+    },
+    {
+      "path": "hw/versions/v13/record/requirements.yaml",
+      "sha256": "aad6abf16b6093e609a167f9634d7885919257633f71c0077b48bb236f68ae21"
+    },
+    {
+      "path": "hw/versions/v13/record/check-plan.yaml",
+      "sha256": "ce9307a701fcdc3578018c76c0a830b777269de4de5cc63cd78056d8def905f9"
+    },
+    {
+      "path": "hw/versions/v13/record/assembly.yaml",
+      "sha256": "f888c1189d32fdd01f8771a8eb31033e02f5c15af374f0676bca4f129ade82d2"
+    },
+    {
+      "path": "hw/versions/v13/record/parts/STD-0001/part.yaml",
+      "sha256": "ba3371b028b803131592076bf4e5251bbebe1129d89a508e5b7ba356a4f442f3"
+    },
+    {
+      "path": "hw/versions/v13/record/parts/STD-0002/part.yaml",
+      "sha256": "a34388cff7688cd60df07601de14d7eb6eb0365c9b13f5ce74a46b13ed4db7d0"
+    },
+    {
+      "path": "hw/versions/v13/record/parts/STD-0003/part.yaml",
+      "sha256": "cbe4dab7df6f7be68debf3d22bd60302b244b3484e43f4a017f570040a9db4d5"
+    },
+    {
+      "path": "hw/checks/v11/sweep/a1/result.json",
+      "sha256": "d79a2122ed57a53482cf9931bb39986160b54a95306d1f46eb458d114364407b"
+    },
+    {
+      "path": "hw/checks/v11/sweep/a1/source/check.py",
+      "sha256": "5f9634443281334a46c5ade2b7e301f3cb13f1979b3503b00905ca79187728a0"
+    },
+    {
+      "path": "hw/checks/v11/stack/a1/result.json",
+      "sha256": "9e5e4116524ea71ba2d23deeb7fc012ea2dc185606d6b45192e4d1d75ccf8992"
+    },
+    {
+      "path": "hw/checks/v11/mass/a1/result.json",
+      "sha256": "f587030754b2350a68f378a66e05122314ad498fac9418f6b5c880505d17fb63"
+    },
+    {
+      "path": "hw/checks/v11/hand-load/a1/result.json",
+      "sha256": "116f2c75a64b79ee81897a955e88b929ccd3057219de4a81bdb650e488607953"
+    },
+    {
+      "path": "hw/checks/v9/fdm/a1/result.json",
+      "sha256": "9828866df51a44a85f1425d163b3e2328429c9fa49ed5993f3d4817cc4af5adc"
+    },
+    {
+      "path": "hw/checks/v9/capability/a1/result.json",
+      "sha256": "2adf2dc47dd2d825e7374216e0aeafbf891419b77b505e6e1816ec8840a96b18"
+    },
+    {
+      "path": "hw/drawings/v9/STD-0001/coverage.json",
+      "sha256": "fd162c6f44b4af3dd8199baa0103af51a2496f6bc561a6d27535dea5b510c16d"
+    },
+    {
+      "path": "hw/bom/v10/bom.yaml",
+      "sha256": "624067585c3f0c84ed22ad6f2e3586945c1d941813094e7b6844936862d38136"
+    },
+    {
+      "path": "hw/verification/v11/verification.yaml",
+      "sha256": "8f2aa42587fd9c3b1d10277e3b568ca898c700a18b651204577086306444fb38"
+    }
+  ],
+  "implementation": {
+    "kind": "REVIEW",
+    "inspected": [
+      {
+        "path": "hw/versions/v13/manifest.json",
+        "sha256": "199ebdedd6254ff49008f72771e6c58a8eb03a1868cca8474322b0c1342751a6"
+      },
+      {
+        "path": "hw/versions/v13/record/requirements.yaml",
+        "sha256": "aad6abf16b6093e609a167f9634d7885919257633f71c0077b48bb236f68ae21"
+      },
+      {
+        "path": "hw/versions/v13/record/check-plan.yaml",
+        "sha256": "ce9307a701fcdc3578018c76c0a830b777269de4de5cc63cd78056d8def905f9"
+      },
+      {
+        "path": "hw/versions/v13/record/assembly.yaml",
+        "sha256": "f888c1189d32fdd01f8771a8eb31033e02f5c15af374f0676bca4f129ade82d2"
+      },
+      {
+        "path": "hw/versions/v13/record/parts/STD-0001/part.yaml",
+        "sha256": "ba3371b028b803131592076bf4e5251bbebe1129d89a508e5b7ba356a4f442f3"
+      },
+      {
+        "path": "hw/versions/v13/record/parts/STD-0002/part.yaml",
+        "sha256": "a34388cff7688cd60df07601de14d7eb6eb0365c9b13f5ce74a46b13ed4db7d0"
+      },
+      {
+        "path": "hw/versions/v13/record/parts/STD-0003/part.yaml",
+        "sha256": "cbe4dab7df6f7be68debf3d22bd60302b244b3484e43f4a017f570040a9db4d5"
+      },
+      {
+        "path": "hw/checks/v11/sweep/a1/result.json",
+        "sha256": "d79a2122ed57a53482cf9931bb39986160b54a95306d1f46eb458d114364407b"
+      },
+      {
+        "path": "hw/checks/v11/sweep/a1/source/check.py",
+        "sha256": "5f9634443281334a46c5ade2b7e301f3cb13f1979b3503b00905ca79187728a0"
+      },
+      {
+        "path": "hw/checks/v11/stack/a1/result.json",
+        "sha256": "9e5e4116524ea71ba2d23deeb7fc012ea2dc185606d6b45192e4d1d75ccf8992"
+      },
+      {
+        "path": "hw/checks/v11/mass/a1/result.json",
+        "sha256": "f587030754b2350a68f378a66e05122314ad498fac9418f6b5c880505d17fb63"
+      },
+      {
+        "path": "hw/checks/v11/hand-load/a1/result.json",
+        "sha256": "116f2c75a64b79ee81897a955e88b929ccd3057219de4a81bdb650e488607953"
+      },
+      {
+        "path": "hw/checks/v9/fdm/a1/result.json",
+        "sha256": "9828866df51a44a85f1425d163b3e2328429c9fa49ed5993f3d4817cc4af5adc"
+      },
+      {
+        "path": "hw/checks/v9/capability/a1/result.json",
+        "sha256": "2adf2dc47dd2d825e7374216e0aeafbf891419b77b505e6e1816ec8840a96b18"
+      },
+      {
+        "path": "hw/drawings/v9/STD-0001/coverage.json",
+        "sha256": "fd162c6f44b4af3dd8199baa0103af51a2496f6bc561a6d27535dea5b510c16d"
+      },
+      {
+        "path": "hw/bom/v10/bom.yaml",
+        "sha256": "624067585c3f0c84ed22ad6f2e3586945c1d941813094e7b6844936862d38136"
+      },
+      {
+        "path": "hw/verification/v11/verification.yaml",
+        "sha256": "8f2aa42587fd9c3b1d10277e3b568ca898c700a18b651204577086306444fb38"
+      }
+    ]
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "ASSEMBLY"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "review.mechanical_dfm@assembly"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "review.mechanical_dfm@assembly",
+      "subject": {
+        "kind": "ASSEMBLY"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "text": "review verdict MINOR"
+      },
+      "criterion": {
+        "id": "review_pass",
+        "property": "review_verdict",
+        "comparator": "EQUALS",
+        "value": "PASS",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-review references/rubric.md",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-review references/rubric.md"
+        }
+      },
+      "method": {
+        "name": "cad-review references/review.md review.mechanical_dfm, graded by references/rubric.md"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v11/sweep/a1/result.json",
+          "sha256": "d79a2122ed57a53482cf9931bb39986160b54a95306d1f46eb458d114364407b"
+        },
+        {
+          "path": "hw/checks/v11/sweep/a1/source/check.py",
+          "sha256": "5f9634443281334a46c5ade2b7e301f3cb13f1979b3503b00905ca79187728a0"
+        },
+        {
+          "path": "hw/checks/v11/stack/a1/result.json",
+          "sha256": "9e5e4116524ea71ba2d23deeb7fc012ea2dc185606d6b45192e4d1d75ccf8992"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "process.fdm:STD-0002.body/print#phone_lip:edge_radius",
+      "family": "process.fdm",
+      "subject": {
+        "kind": "FEATURE",
+        "PN": "STD-0002",
+        "feature": "phone_lip",
+        "component": "body",
+        "operation": "print"
+      },
+      "severity": "MINOR",
+      "outcome": "FAIL",
+      "measured": {
+        "value": 0.3,
+        "units": "mm"
+      },
+      "criterion": {
+        "id": "lip_edge_comfort",
+        "property": "edge_radius",
+        "comparator": "GE",
+        "value": 0.5,
+        "units": "mm",
+        "state": "AS_MANUFACTURED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        },
+        "conditions": "preference PRF-002, handling comfort"
+      },
+      "method": {
+        "name": "read from hw/checks/v9/fdm/a1/result.json outcome and the STD-0002 model parameters"
+      },
+      "uncertainty": "model nominal; print rounding not included",
+      "consequence": "sharper lip edge than preferred; no load, fit or safety effect",
+      "remedy": "raise the lip fillet to 0.5 mm in a new DETAIL attempt",
+      "alternatives": [
+        {
+          "text": "keep 0.3 mm and drop PRF-002",
+          "tradeoff": "needs the owner to change the preference"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "process.fdm"
+        ],
+        "earliest_stage": "DETAIL"
+      }
+    }
+  ],
+  "artifacts": [],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "physical.test@REQ-002 is future (due RELEASE): PLANNED, no physical evidence",
+    "motion.sweep coverage SAMPLED with every interval bounded; no continuous proof beyond those bounds"
+  ],
+  "review": {
+    "verdict": "MINOR",
+    "mechanical": [
+      {
+        "obligation": "geometry.clearance@IF-001#hinge_bore",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "motion.sweep@case.hinge-travel",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "motion.play@case.hinge-travel",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "fit.stack@case.hinge-stack",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "mass.properties@case.mass-worst",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "load.hand@case.phone-load",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "verification.index@product",
+        "outcome": "PASS"
+      }
+    ],
+    "dfm": [
+      {
+        "obligation": "material.properties@STD-0001.body",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "material.properties@STD-0002.body",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "purchase.identity@STD-0003",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "capability.route@STD-0001.body/print",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "capability.route@STD-0002.body/print",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "process.fdm@STD-0001.body/print",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "process.fdm@STD-0001.body/print#front_face",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "process.fdm@STD-0001.body/print#hinge_bore",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "process.fdm@STD-0002.body/print",
+        "outcome": "FAIL",
+        "findings": [
+          "process.fdm:STD-0002.body/print#phone_lip:edge_radius"
+        ],
+        "reason": "lip edge below the PRF-002 radius"
+      },
+      {
+        "obligation": "process.fdm@STD-0002.body/print#pivot_boss",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "drawing.coverage@STD-0001",
+        "outcome": "PASS"
+      },
+      {
+        "obligation": "bom.derivation@product",
+        "outcome": "PASS"
+      }
+    ]
+  }
+}

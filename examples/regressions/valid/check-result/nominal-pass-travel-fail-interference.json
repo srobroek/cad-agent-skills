@@ -1,0 +1,134 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "interference/a1",
+  "check": "interference",
+  "attempt": "a1",
+  "family": "geometry.interference",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v7",
+    "version_manifest_sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v7/manifest.json",
+      "sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v7/interference/a1/source/check.py",
+        "sha256": "038b326f97a44e633c784561528202ee76452eada22ee06473a15003083285e3"
+      },
+      {
+        "path": "hw/checks/v7/interference/a1/source/check.py.lock",
+        "sha256": "5b95393eb537f6f557130aea86df949e312d13dd33a57fac64a89e4f6c0f030c"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-interference-v7/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "ASSEMBLY"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "geometry.interference@assembly"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "geometry.interference@assembly",
+      "subject": {
+        "kind": "ASSEMBLY"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "PASS",
+      "value": {
+        "value": 0.0,
+        "units": "mm3"
+      },
+      "criterion": {
+        "id": "no_interference",
+        "property": "shared_volume",
+        "comparator": "LE",
+        "value": 0.001,
+        "units": "mm3",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/geometry-motion.md Pair measurement",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/geometry-motion.md Pair measurement"
+        }
+      },
+      "method": {
+        "name": "OCCT BRepExtrema distance and non-destructive BRepAlgoAPI_Common on readback (cad-verify references/geometry-motion.md)",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v7/interference/a1/artifacts/pairs.json",
+          "sha256": "aa1a5d5a7735021fba916de5089f68e86a272e1c730393f5d6ace3a19ba2385f"
+        }
+      ],
+      "configuration": "nominal pose, 6 occurrence pairs",
+      "sampling": {
+        "kind": "FULL"
+      }
+    }
+  ],
+  "findings": [],
+  "artifacts": [
+    {
+      "path": "hw/checks/v7/interference/a1/artifacts/pairs.json",
+      "sha256": "aa1a5d5a7735021fba916de5089f68e86a272e1c730393f5d6ace3a19ba2385f",
+      "role": "DATA"
+    }
+  ],
+  "complete": true,
+  "result": "PASS",
+  "limitations": [
+    "nominal pose only; travel is motion.sweep evidence"
+  ]
+}

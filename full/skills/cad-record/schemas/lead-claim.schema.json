@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills lead claim (.cad-work/lead/active/claim.yaml)",
+  "description": "The one live lead for a project, written after an exclusive mkdir of .cad-work/lead/active. Age or PID alone never proves the old owner stopped; recovery names an explicit reference.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "root", "host", "harness", "session", "owner", "started", "resumes", "state"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.lead-claim"},
+    "schema_version": {"const": 1},
+    "root": {"$ref": "common.schema.json#/$defs/absolute_path"},
+    "host": {"$ref": "common.schema.json#/$defs/text"},
+    "harness": {"enum": ["OMP", "CLAUDE", "CODEX", "OPENCODE", "KIRO"]},
+    "session": {"$ref": "common.schema.json#/$defs/text"},
+    "owner": {"$ref": "common.schema.json#/$defs/text"},
+    "started": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "resumes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["session", "time"],
+        "properties": {
+          "session": {"$ref": "common.schema.json#/$defs/text"},
+          "time": {"$ref": "common.schema.json#/$defs/timestamp"}
+        }
+      }
+    },
+    "state": {"enum": ["ACTIVE", "RELEASED"]},
+    "released": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "operator", "previous_session", "time"],
+      "properties": {
+        "reference": {"$ref": "common.schema.json#/$defs/text"},
+        "operator": {"$ref": "common.schema.json#/$defs/text"},
+        "previous_session": {"$ref": "common.schema.json#/$defs/text"},
+        "time": {"$ref": "common.schema.json#/$defs/timestamp"}
+      }
+    }
+  },
+  "if": {"properties": {"state": {"const": "RELEASED"}}},
+  "then": {"required": ["released"]},
+  "else": {"not": {"required": ["released"]}}
+}

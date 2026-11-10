@@ -1,0 +1,302 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "ANALYSIS",
+  "version": "v11",
+  "predecessor": {
+    "stage": "BOM",
+    "version": "v10",
+    "verdict": {
+      "path": "hw/versions/v10/stage-verdict.json",
+      "sha256": "0341ae8ed86d13d3c61b78903933acca2dd27bb09c1c656c951479220a3f50f5"
+    }
+  },
+  "version_manifest": {
+    "path": "hw/versions/v11/manifest.json",
+    "sha256": "18be27ed5a50309b83dad637ff92855b758fcb30047b2a1765193564b42146a5"
+  },
+  "obligations": {
+    "path": "hw/versions/v11/obligations.yaml",
+    "sha256": "bfe19ca7573483d19049bda19c79e9da590340bc9405006070aa91584fbb134f"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "record.schema@product",
+    "record.semantic@product",
+    "record.ownership@product",
+    "record.inputs@product",
+    "delivery.integrity@product",
+    "geometry.build@assembly",
+    "geometry.build@STD-0001",
+    "geometry.build@STD-0002",
+    "geometry.build@STD-0003",
+    "geometry.readback@assembly",
+    "geometry.readback@STD-0001",
+    "geometry.readback@STD-0002",
+    "geometry.readback@STD-0003",
+    "geometry.identity@STD-0001.body",
+    "geometry.identity@STD-0002.body",
+    "geometry.identity@STD-0003.pin",
+    "motion.sweep@case.hinge-travel",
+    "motion.play@case.hinge-travel",
+    "motion.play@IF-001",
+    "motion.access@op.insert_pin",
+    "fit.stack@case.hinge-stack",
+    "mass.properties@case.mass-worst",
+    "load.hand@case.phone-load",
+    "verification.index@product"
+  ],
+  "results": [
+    {
+      "check": "record-schema",
+      "attempt": "a1",
+      "family": "record.schema",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/record-schema/a1/result.json",
+        "sha256": "a6f8e8f9524304fff9d2d5e299190d521ecdaf04b12cec03616d8ee927ebdeb9"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/record-schema/a1/bundle-manifest.json",
+        "sha256": "f66ca7bf60315f4319b10989b34dd924d27419e2a34b5d743b917a7521af0e80"
+      }
+    },
+    {
+      "check": "record-semantic",
+      "attempt": "a1",
+      "family": "record.semantic",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/record-semantic/a1/result.json",
+        "sha256": "ffc717a7de8774639f10ea63ee08d42d4509d3e48e0d38595814b8cf96f53f0b"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/record-semantic/a1/bundle-manifest.json",
+        "sha256": "be5daf02fb2ed98f040275c87228569f400e4893bec51805a30833d5cf2824e9"
+      }
+    },
+    {
+      "check": "record-ownership",
+      "attempt": "a1",
+      "family": "record.ownership",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/record-ownership/a1/result.json",
+        "sha256": "bd25423476e06a43b1e1c697d59d226f72db78aadfc43182f40d004240fa9e82"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/record-ownership/a1/bundle-manifest.json",
+        "sha256": "9b5becc61a77ff598592f7a6ef84af1d13d7e70ba99a1875ee7016faa3b8b66a"
+      }
+    },
+    {
+      "check": "record-inputs",
+      "attempt": "a1",
+      "family": "record.inputs",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/record-inputs/a1/result.json",
+        "sha256": "9e5c86bb24a89b702d49c5d37c5a3ded519584968639e80f8173783c2200a8f7"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/record-inputs/a1/bundle-manifest.json",
+        "sha256": "6477d3219ba96ca9afdccff00a8e356a70cbac56071182e8f9ac95085cfe4644"
+      }
+    },
+    {
+      "check": "delivery-integrity",
+      "attempt": "a1",
+      "family": "delivery.integrity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/delivery-integrity/a1/result.json",
+        "sha256": "dbfad8a43569263679fe87492e1a7f0ca1f380c2548d080743bd005f396b7849"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/delivery-integrity/a1/bundle-manifest.json",
+        "sha256": "5fa51717ca8014b8d45dbed09326495e3742b21a4faabc164f90edd72fc96313"
+      }
+    },
+    {
+      "check": "geometry-build",
+      "attempt": "a1",
+      "family": "geometry.build",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/geometry-build/a1/result.json",
+        "sha256": "2a15ede352a58973f6185034d74c64b9e719d30ff741086f5a987b670c30623e"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/geometry-build/a1/bundle-manifest.json",
+        "sha256": "39a70edaf225257e47b7af541044036f4b13792b48898814b2bd62b74c9f2c9b"
+      }
+    },
+    {
+      "check": "geometry-readback",
+      "attempt": "a1",
+      "family": "geometry.readback",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/geometry-readback/a1/result.json",
+        "sha256": "241024beba94f9280e8aa0381c3dcad8c2056f08413b685b7c5c6e5d4ee1b5eb"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/geometry-readback/a1/bundle-manifest.json",
+        "sha256": "a94ebb7486975db9a8f3c19dce5bdab9b30d0f95be88b212437c319df3b3ac11"
+      }
+    },
+    {
+      "check": "geometry-identity",
+      "attempt": "a1",
+      "family": "geometry.identity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/geometry-identity/a1/result.json",
+        "sha256": "bf3109ce3b30151f49198c0627adcb69df46672563570f7f2997fb214211ad4a"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/geometry-identity/a1/bundle-manifest.json",
+        "sha256": "5acc8a7105bd27ef67cf661e21128299979401c36747d681a3d7a7d40ad83976"
+      }
+    },
+    {
+      "check": "sweep",
+      "attempt": "a1",
+      "family": "motion.sweep",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/sweep/a1/result.json",
+        "sha256": "d79a2122ed57a53482cf9931bb39986160b54a95306d1f46eb458d114364407b"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/sweep/a1/bundle-manifest.json",
+        "sha256": "3701d16851ce75bb7df44adc6a25dab19f774ad56e017e14e4fdbaadd476e87c"
+      }
+    },
+    {
+      "check": "play",
+      "attempt": "a1",
+      "family": "motion.play",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/play/a1/result.json",
+        "sha256": "6a4635de86c7ac249f067ad91d0ab2acef9fedcd3652c3e036ce416e92ddeaf6"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/play/a1/bundle-manifest.json",
+        "sha256": "6f6e8c04d599d61ebe009736aaab2575ee33baa3fb5fcca7b37a17c52180ac1a"
+      }
+    },
+    {
+      "check": "access",
+      "attempt": "a1",
+      "family": "motion.access",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/access/a1/result.json",
+        "sha256": "d65a3986793debbd6d46ddcd5a6e47142ee418fb402a1b2d66ef2c115173ae10"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/access/a1/bundle-manifest.json",
+        "sha256": "9b44a59bed3e36ee352edf093db9fa5f5e41a9c90e2d9ea2010570b8c984d059"
+      }
+    },
+    {
+      "check": "stack",
+      "attempt": "a1",
+      "family": "fit.stack",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/stack/a1/result.json",
+        "sha256": "9e5e4116524ea71ba2d23deeb7fc012ea2dc185606d6b45192e4d1d75ccf8992"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/stack/a1/bundle-manifest.json",
+        "sha256": "cc634dea14e00bacc36c5561ab6e5abcdcf86a6218e8cd3391ea596e4b0c42d9"
+      }
+    },
+    {
+      "check": "mass",
+      "attempt": "a1",
+      "family": "mass.properties",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/mass/a1/result.json",
+        "sha256": "f587030754b2350a68f378a66e05122314ad498fac9418f6b5c880505d17fb63"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/mass/a1/bundle-manifest.json",
+        "sha256": "36baa0483c3b67a752688fc9176d3d35412d842714f3e344b98d674311d55cb0"
+      }
+    },
+    {
+      "check": "hand-load",
+      "attempt": "a1",
+      "family": "load.hand",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/hand-load/a1/result.json",
+        "sha256": "116f2c75a64b79ee81897a955e88b929ccd3057219de4a81bdb650e488607953"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/hand-load/a1/bundle-manifest.json",
+        "sha256": "b286f453e4b0dbdcd94d7f539e433ac9fe183f33e2905b8c8652f08bf18f4528"
+      }
+    },
+    {
+      "check": "verification-index",
+      "attempt": "a1",
+      "family": "verification.index",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v11/verification-index/a1/result.json",
+        "sha256": "3d8d34962180a747207fcc495470cc20b8cd1ef0a43d332e5eb83054bb0981c4"
+      },
+      "bundle": {
+        "path": "hw/checks/v11/verification-index/a1/bundle-manifest.json",
+        "sha256": "64fbf3c504ac5be9fe829fc1704b6a34e9a9f6546e137e7d3b2be23672386eb7"
+      }
+    }
+  ],
+  "bundles": [
+    {
+      "kind": "VERIFICATION",
+      "manifest": {
+        "path": "hw/verification/v11/bundle-manifest.json",
+        "sha256": "25fc1b704efcddda8c5253aff399e0f3c959a7574f8b515088991e7b43ee5402"
+      }
+    }
+  ],
+  "waivers": [],
+  "future": [
+    "physical.test@REQ-002"
+  ],
+  "blockers": [],
+  "review": {
+    "required": false
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T12:00:00Z"
+}

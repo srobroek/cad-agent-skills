@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills bundle manifest (bundle-manifest.json)",
+  "description": "Inventory of one result or output bundle: result, source, lock, artifact and log bytes, input identity, recipe, policy and completeness. It excludes itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "kind", "binding", "input", "recipe", "policy", "files", "complete"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.bundle-manifest"},
+    "schema_version": {"const": 1},
+    "kind": {"enum": ["CHECK", "DRAWING", "BOM", "VERIFICATION"]},
+    "binding": {"$ref": "common.schema.json#/$defs/binding"},
+    "input": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
+    "recipe": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "commands", "packages", "platform"],
+          "properties": {
+            "kind": {"const": "COMMAND"},
+            "commands": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/command"}, "minItems": 1},
+            "packages": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/package"}},
+            "platform": {"$ref": "common.schema.json#/$defs/platform"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "inspected"],
+          "properties": {
+            "kind": {"const": "REVIEW"},
+            "inspected": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1}
+          }
+        }
+      ]
+    },
+    "policy": {"$ref": "common.schema.json#/$defs/installed_policy"},
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "role"],
+        "properties": {
+          "path": {
+            "allOf": [
+              {"$ref": "common.schema.json#/$defs/hw_path"},
+              {"not": {"pattern": "(^|/)bundle-manifest\\.json$"}}
+            ]
+          },
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "bytes": {"type": "integer", "minimum": 0},
+          "role": {"enum": ["RESULT", "SOURCE", "LOCK", "ARTIFACT", "LOG", "DOCUMENT", "DATA", "IMAGE"]}
+        }
+      },
+      "minItems": 1
+    },
+    "complete": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["kind"], "properties": {"kind": {"const": "CHECK"}}},
+      "then": {
+        "properties": {
+          "files": {"contains": {"type": "object", "required": ["role"], "properties": {"role": {"const": "RESULT"}}}}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+example: tiny-bracket
+service_class: FIT_ASSEMBLY
+release_ceiling: fit-check package only
+conditions:
+  optical.route: {applies: false, reason: no transparency requirement}
+design_dependent:
+  drawing.coverage: a part or assembly drawing is REQUIRED
+stages:
+- {stage: GROUND, expected: [record.schema@product], future: [], verdict: PASS, gate: 'APPROVED after `approve GROUND <vN>`', must_show: [template questions asked]}
+- {stage: INTENT, expected: [selection.feasibility@product], future: [], verdict: 'PASS, or BLOCKED naming the unsourced fact', gate: 'APPROVED after `approve INTENT <vN> choose <option>`', must_show: [hard outcomes first]}
+- {stage: SPECIFY, expected: [requirements.completeness@product], future: [], verdict: PASS, gate: 'APPROVED after `approve SPECIFY <vN>`', must_show: [facets per requirement]}
+- {stage: CONCEPT, expected: [variant.integrity@product], future: [], verdict: PASS, gate: NOT_REQUIRED, must_show: [two concept units]}
+- {stage: VARIANT, expected: [variant.integrity@product], future: [], verdict: PASS, gate: 'APPROVED after `approve VARIANT <vN> choose <variant>`', must_show: [unchanged variants]}
+- {stage: LAYOUT, expected: ['motion.sweep@case.<MOTION case> (design dependent)'], future: [], verdict: PASS, gate: 'APPROVED after `approve LAYOUT <vN>`', must_show: [full travel sweep]}
+- {stage: PARTS, expected: ['geometry.build@<PN>'], future: [], verdict: PASS, gate: 'APPROVED after `approve PARTS <vN>`', must_show: [route per part], must_not: [smoke run as a result]}
+- {stage: DETAIL, expected: ['drawing.coverage@<PN> (design dependent)'], future: [], verdict: PASS, gate: 'APPROVED after `approve DETAIL <vN>`', must_show: [coverage rows]}
+- {stage: BOM, expected: [bom-derivation], future: [], verdict: PASS, gate: NOT_REQUIRED, must_show: [one row per occurrence]}
+- {stage: ANALYSIS, expected: [verification.index@product], future: [], verdict: PASS, gate: 'APPROVED after `approve ANALYSIS <vN>`', must_show: [mass source]}
+- {stage: CRITIQUE, expected: [review.mechanical_dfm@assembly], future: [], verdict: 'PASS when the review is PASS', gate: REVIEW, must_show: [separate outcomes]}
+- {stage: FREEZE, expected: [record.schema@product], future: [], verdict: PASS, gate: 'APPROVED after `approve FREEZE <vN>`', must_show: [frozen digest]}
+- {stage: RELEASE, expected: [release.inventory@product], future: [], verdict: PASS, gate: 'APPROVED after `approve RELEASE <vN>`', must_show: [release ceiling]}
+acceptable_ends:
+- SEALED: REV A released within the ceiling
+open_at_end: []

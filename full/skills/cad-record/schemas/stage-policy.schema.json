@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills stage policy (cad-flow/assets/stages.yaml)",
+  "description": "Ordered stages with predecessor, gate, owner, procedure ids, registered check families with applicability, due stage and reopen policy, and the fixed cost order of check families; lite_stages is the LITE build's three-stage chain over the same ids, procedures and families. Order and predecessor consistency are semantic checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "stages", "check_order"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.stage-policy"},
+    "schema_version": {"const": 1},
+    "stages": {"type": "array", "items": {"$ref": "#/$defs/stage"}, "minItems": 13, "maxItems": 13},
+    "check_order": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/check_family"},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "lite_stages": {
+      "description": "the LITE chain GROUND (HUMAN) -> LAYOUT (NONE) -> RELEASE (HUMAN) of method profile LITE_V1 (cad-record references/record.md#build-mode); check_order stays shared",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method_profile", "stages"],
+      "properties": {
+        "method_profile": {"const": "LITE_V1"},
+        "stages": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/lite_stage",
+              "properties": {
+                "id": {"const": "GROUND"},
+                "order": {"const": 1},
+                "predecessor": {"const": null},
+                "gate": {"const": "HUMAN"},
+                "checks": {"items": {"properties": {"due": {"const": "GROUND"}}}}
+              }
+            },
+            {
+              "$ref": "#/$defs/lite_stage",
+              "properties": {
+                "id": {"const": "LAYOUT"},
+                "order": {"const": 2},
+                "predecessor": {"const": "GROUND"},
+                "gate": {"const": "NONE"},
+                "checks": {"items": {"properties": {"due": {"const": "LAYOUT"}}}}
+              }
+            },
+            {
+              "$ref": "#/$defs/lite_stage",
+              "properties": {
+                "id": {"const": "RELEASE"},
+                "order": {"const": 3},
+                "predecessor": {"const": "LAYOUT"},
+                "gate": {"const": "HUMAN"},
+                "checks": {"items": {"properties": {"due": {"const": "RELEASE"}}}}
+              }
+            }
+          ],
+          "items": false,
+          "minItems": 3
+        }
+      }
+    }
+  },
+  "$defs": {
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "predecessor", "gate", "owner", "procedure", "checks", "reopen"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/stage"},
+        "order": {"type": "integer", "minimum": 1, "maximum": 13},
+        "predecessor": {"oneOf": [{"$ref": "common.schema.json#/$defs/stage"}, {"type": "null"}]},
+        "gate": {"enum": ["HUMAN", "NONE", "REVIEW"]},
+        "gate_subject": {"$ref": "common.schema.json#/$defs/text"},
+        "owner": {"$ref": "common.schema.json#/$defs/skill"},
+        "procedure": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["family", "applicability", "due"],
+            "properties": {
+              "family": {"$ref": "common.schema.json#/$defs/check_family"},
+              "applicability": {"enum": ["ALWAYS", "CONDITIONAL"]},
+              "condition": {"$ref": "common.schema.json#/$defs/text"},
+              "due": {"$ref": "common.schema.json#/$defs/stage"},
+              "required_by": {"$ref": "common.schema.json#/$defs/stage"},
+              "safety": {"type": "boolean"},
+              "waiver_policy": {"$ref": "common.schema.json#/$defs/waiver_policy"}
+            },
+            "if": {"properties": {"applicability": {"const": "CONDITIONAL"}}},
+            "then": {"required": ["condition"]}
+          },
+          "minItems": 0
+        },
+        "reopen": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/stage"},
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "if": {"properties": {"gate": {"enum": ["HUMAN", "REVIEW"]}}},
+      "then": {"required": ["gate_subject"]}
+    },
+    "lite_stage": {
+      "description": "a LITE chain row: a stage row whose every check is due at its own stage and FORBIDDEN to waive",
+      "$ref": "#/$defs/stage",
+      "properties": {
+        "checks": {"items": {"required": ["waiver_policy"], "properties": {"waiver_policy": {"const": "FORBIDDEN"}}}}
+      }
+    }
+  }
+}

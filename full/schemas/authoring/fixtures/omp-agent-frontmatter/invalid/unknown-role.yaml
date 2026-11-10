@@ -1,0 +1,15 @@
+name: cad-analyst
+description: Independent checker for one assigned check unit.
+model: '@task'
+thinkingLevel: high
+tools:
+- read
+- grep
+- glob
+- edit
+- write
+- bash
+spawns: []
+autoloadSkills:
+- cad-verify
+- cad-record

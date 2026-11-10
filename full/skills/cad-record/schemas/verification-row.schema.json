@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills verification row",
+  "description": "One derived requirement x subject x facet x criterion row, sorted by requirement, subject anchor, facet and criterion (references/validation.md item 13). Outcomes are copied from check results, never invented; PLANNED marks a facet due at a later stage; a row with no obligation is UNKNOWN INCOMPLETE, a scope gap.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["requirement", "subject", "method", "criterion", "facet", "due", "outcome", "obligations"],
+  "properties": {
+    "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
+    "subject": {"$ref": "common.schema.json#/$defs/subject"},
+    "method": {"$ref": "common.schema.json#/$defs/verification_method"},
+    "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+    "facet": {"$ref": "common.schema.json#/$defs/facet"},
+    "due": {"$ref": "common.schema.json#/$defs/stage"},
+    "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN", "NOT_APPLICABLE", "WAIVED", "PLANNED"]},
+    "obligations": {
+      "description": "never a verification.index obligation: that check reads this index, so a row cannot cite it or its result (result files are a semantic check)",
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "common.schema.json#/$defs/obligation_id"},
+          {"not": {"pattern": "^verification\\.index@"}}
+        ]
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "results": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
+    "waiver": {"$ref": "common.schema.json#/$defs/decision_id"},
+    "reason": {"$ref": "common.schema.json#/$defs/text"},
+    "unknown_code": {"$ref": "common.schema.json#/$defs/unknown_code"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["outcome"], "properties": {"outcome": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]}}},
+      "then": {"required": ["results"]}
+    },
+    {
+      "if": {"required": ["outcome"], "properties": {"outcome": {"const": "PASS"}}},
+      "then": {"properties": {"criterion": {"$ref": "common.schema.json#/$defs/criterion"}}}
+    },
+    {
+      "if": {"required": ["outcome"], "properties": {"outcome": {"const": "WAIVED"}}},
+      "then": {"required": ["waiver", "results"]}
+    },
+    {
+      "if": {"required": ["outcome"], "properties": {"outcome": {"const": "UNKNOWN"}}},
+      "then": {"required": ["reason", "unknown_code"]}
+    },
+    {
+      "if": {"required": ["outcome"], "properties": {"outcome": {"const": "PLANNED"}}},
+      "then": {"not": {"required": ["results"]}}
+    },
+    {
+      "if": {"required": ["obligations"], "properties": {"obligations": {"maxItems": 0}}},
+      "then": {"properties": {"outcome": {"const": "UNKNOWN"}, "unknown_code": {"const": "INCOMPLETE"}}}
+    }
+  ]
+}

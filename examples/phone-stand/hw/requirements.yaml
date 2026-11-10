@@ -1,0 +1,326 @@
+# Reference record for examples/phone-stand: hw/requirements.yaml after GROUND stage work, before the GROUND gate.
+# Requirements, preferences, assumptions and questions stay distinct. Kinds and facets follow the APPEARANCE_CONCEPT
+# row of cad-verify "Evidence by service class" (APPEARANCE and MANUFACTURING kinds; no fit or function claim): fit,
+# holding, tipping and durability stay out of scope (product.yaml release_scope.exclusions), and service life stays an
+# open question for a later scope. GROUND writes the requirements whole; SPECIFY checks them complete and plans cases
+# and checks.
+requirements:
+- id: REQ-001
+  title: Viewing angle range
+  text: The concept model presents the phone at every viewing angle from 55 to 75 degrees from the desk, set by hand.
+  kind: APPEARANCE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: viewing_angle
+    comparator: BETWEEN
+    value: [55, 75]
+    units: deg
+    source: &a08 {kind: USER, reference: brief.md answer A-08, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  methods:
+  - ANALYSIS
+  facets:
+  - CAD_VALID
+  due: LAYOUT
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *a08
+  owner: SYNTHETIC demo owner
+- id: REQ-002
+  title: Cradle size in the model
+  text: The concept model's cradle has a portrait pocket of at least 162 x 77 x 9 mm, the case envelope the owner states; it is a form dimension of the model, not a fit of a phone.
+  kind: APPEARANCE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: cradle_pocket_length
+    comparator: GE
+    value: 162
+    units: mm
+    source: &a06 {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  - property: cradle_pocket_width
+    comparator: GE
+    value: 77
+    units: mm
+    source: *a06
+  - property: cradle_pocket_depth
+    comparator: GE
+    value: 9
+    units: mm
+    source: *a06
+  conditions:
+    status: KNOWN
+    value: form dimensions of the cradle pocket on the model, taken from the stated envelope of the phone in its case; no fit of a phone, in CAD or physical, is claimed (product.yaml release_scope.exclusions)
+    basis: USER_DECLARED
+    sources:
+    - *a06
+  methods:
+  - ANALYSIS
+  facets:
+  - CAD_VALID
+  due: LAYOUT
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *a06
+  owner: SYNTHETIC demo owner
+- id: REQ-003
+  title: Desk footprint
+  text: The concept model's footprint stays inside a 120 x 120 mm square on the desk at every viewing angle.
+  kind: APPEARANCE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: footprint_x
+    comparator: LE
+    value: 120
+    units: mm
+    source: &a18 {kind: USER, reference: brief.md answer A-18, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  - property: footprint_y
+    comparator: LE
+    value: 120
+    units: mm
+    source: *a18
+  methods:
+  - ANALYSIS
+  facets:
+  - CAD_VALID
+  due: LAYOUT
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *a18
+  owner: SYNTHETIC demo owner
+- id: REQ-004
+  title: Made on the owner's printer
+  text: Every made part is planned for the owner's Prusa MK4 from a PolyLite PETG or PolyLite PLA spool; nothing is outsourced.
+  kind: MANUFACTURING
+  priority: MAJOR
+  subjects:
+  - kind: PRODUCT
+  criteria:
+  - property: make_capability_profile
+    comparator: EQUALS
+    value: prusa_mk4_home
+    source: &a11 {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  - property: make_material
+    comparator: ONE_OF
+    value: [fdm_petg_polylite, fdm_pla_polylite]
+    source: *a11
+  methods:
+  - ANALYSIS
+  facets:
+  - GEOMETRICALLY_MANUFACTURABLE
+  - PROCESS_PLANNED
+  due: PARTS
+  safety: false
+  waiver_policy: FORBIDDEN
+  source: *a11
+  owner: SYNTHETIC demo owner
+- id: REQ-005
+  title: Visible faces
+  text: Visible faces are planned smooth and matte, with no support contact.
+  kind: APPEARANCE
+  priority: MINOR
+  subjects:
+  - kind: PRODUCT
+  criteria:
+  - property: support_on_visible_faces
+    comparator: EQUALS
+    value: false
+    source: &a09 {kind: USER, reference: brief.md answer A-09, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  methods:
+  - ANALYSIS
+  facets:
+  - PROCESS_PLANNED
+  due: PARTS
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *a09
+  owner: SYNTHETIC demo owner
+preferences:
+- id: PRF-001
+  text: One material for every made part
+  weight: 2
+  source: &a19 {kind: USER, reference: brief.md answer A-19, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+- id: PRF-002
+  text: Matte black appearance
+  weight: 1
+  source: *a19
+- id: PRF-003
+  text: No metal hardware when a printed design can do without it
+  weight: 1
+  source: *a19
+assumptions:
+- id: ASM-001
+  text: Every phone used on the stand weighs at most 250 g with its case
+  bounds: phone mass <= 250 g
+  origin: brief.md answer A-06
+  reason: the owner designs for phones up to 250 g; the owner's own phone is 210 g
+  owner: SYNTHETIC demo owner
+  validation: weigh each phone before use
+  status: OPEN
+questions:
+- id: Q-000
+  question: 'Would you like a full or lite build?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: full build, source: {kind: USER, reference: brief.md prompt, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-001
+  question: 'What is the product, what does it do and what is its purpose?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: adjustable desktop stand holding one phone in portrait at a hand-set angle, source: {kind: USER, reference: brief.md answer A-01, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-002
+  question: 'Who owns the product and its approvals?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: the demo owner owns it and approves every gate and release, source: {kind: USER, reference: brief.md answer A-02, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-003
+  question: 'Which documentation depth applies: maker, pro or regulated?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: maker, source: {kind: USER, reference: brief.md answer A-03, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-004
+  question: 'Which tolerancing regime and general tolerance apply, on whose authority?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: "ISO with ISO 2768-1 class m, on the owner's authority", source: {kind: USER, reference: brief.md answer A-04, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-005
+  question: 'Who uses, installs and services the product?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: the owner alone at a home desk, source: {kind: USER, reference: brief.md answer A-05, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-006
+  question: 'Which loads act on it: directions, magnitudes, impact, vibration, cycles and sustained loads?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: a phone up to 250 g for hours and screen taps of unstated force (Q-018), source: {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-007
+  question: 'Which environment does it see: temperature, heat sources, moisture, chemicals, UV and corrosion?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: "indoors 18 to 30 deg C, dry, no chemicals or nearby heat; UV amount unknown (Q-019)", source: {kind: USER, reference: brief.md answer A-07, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-008
+  question: 'Which motion does it have: speed, range, duty cycle, service life, wear and friction?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: hand-set angle 55 to 75 deg a few times a day that must hold; life unknown (Q-020), source: {kind: USER, reference: brief.md answer A-08, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-009
+  question: 'Which accuracy, repeatability, finish and dimensional stability does it need?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: "angle repeats within 2 deg, matte visible faces without support marks; stability unknown (Q-021)", source: {kind: USER, reference: brief.md answer A-09, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-010
+  question: 'Which quantity, budget, lead time, maintenance and repair apply?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: "one unit, 15 EUR of material, two weeks, owner reprints broken parts", source: {kind: USER, reference: brief.md answer A-10, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-011
+  question: 'Which machines, operators and outsourcing are available?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: "one Prusa MK4 with PolyLite PETG and PLA, no calibration prints, no outsourcing; envelope unknown (Q-023)", source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-012
+  question: 'Which service class applies: APPEARANCE_CONCEPT, FIT_ASSEMBLY, FUNCTIONAL_DEMO, WORKING_PROTOTYPE, PRODUCTION or SAFETY_CRITICAL?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: APPEARANCE_CONCEPT, decision: DR-001}
+- id: Q-013
+  question: 'What happens if it fails, how severe is that, what must never happen, and which standards and supervision apply?'
+  owner: user
+  material_to_choice: true
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: the phone tips a few centimetres onto the desk; nothing may fall off the desk; no standards; supervised, source: {kind: USER, reference: brief.md answer A-13, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-014
+  question: 'Who approves gates and releases, and is a competent authority required?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: the owner approves; no competent authority for a concept model, source: {kind: USER, reference: brief.md answer A-14, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-015
+  question: 'What is a release for, which operating limits does it state and what does it exclude?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: true
+  status: RESOLVED
+  resolution: {answer: "concept-definition package for form, CAD validity and printability review, for display and handling; no fit, functional or physical claim", source: {kind: USER, reference: brief.md answer A-15, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-016
+  question: 'Are generated results tracked in git, and how long is evidence retained?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: "tracked in git, kept for the life of the project", source: {kind: USER, reference: brief.md answer A-16, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-017
+  question: 'Which hardware and documentation licenses does the owner approve?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: RESOLVED
+  resolution: {answer: CERN-OHL-P-2.0 hardware and CC-BY-4.0 documentation, source: {kind: USER, reference: brief.md answer A-17, origin: SYNTHETIC demo owner, date: '2026-11-03'}}
+- id: Q-018
+  question: 'What force does a screen tap apply, and must the stand stay upright under it?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: OPEN
+- id: Q-019
+  question: 'How much direct sun does the stand get on the desk?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: OPEN
+- id: Q-020
+  question: 'For a later daily-use scope, how many years and angle changes must the stand last?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: OPEN
+- id: Q-021
+  question: 'Which dimensional stability over time does the stand need?'
+  owner: user
+  material_to_choice: false
+  safety_relevant: false
+  status: OPEN
+- id: Q-023
+  question: 'What is the build envelope of the Prusa MK4, from a retained supplier specification?'
+  owner: lead (sourcing unit at INTENT)
+  material_to_choice: true
+  safety_relevant: false
+  status: OPEN
+- id: Q-024
+  question: 'Which materials does prusa_mk4_home run, from a retained supplier specification?'
+  owner: lead (at INTENT)
+  material_to_choice: true
+  safety_relevant: false
+  status: OPEN

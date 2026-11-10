@@ -1,0 +1,7 @@
+# cad-agent-skills LITE build record template: occurrences and nominal placements start at LAYOUT; joints, couplings,
+# operations and service stay empty for a static model.
+occurrences: []
+joints: []
+couplings: []
+operations: []
+service: []

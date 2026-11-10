@@ -1,0 +1,70 @@
+# Reference record for examples/lamp-arm: the capabilities the owner declared at GROUND. Envelopes, material
+# approvals, machines and calibrations stay UNKNOWN until a retained source or the provider states them.
+profiles:
+- id: bambu_p1s_home
+  revision: 1
+  title: Bambu Lab P1S, owner's printer
+  process: FDM
+  provider: LOCAL
+  machine:
+    identity:
+      status: KNOWN
+      value: Bambu Lab P1S
+      basis: USER_DECLARED
+      sources:
+      - &l13 {kind: USER, reference: brief.md answer L-13, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    location: owner's workshop
+  operator:
+    status: KNOWN
+    value: the owner
+    basis: USER_DECLARED
+    sources:
+    - *l13
+  envelope:
+    x: &p1s_envelope {status: UNKNOWN, reason: no supplier specification retained yet, owner: lead (sourcing unit at INTENT), question: Q-025, consequential: true}
+    y: *p1s_envelope
+    z: *p1s_envelope
+  materials:
+    status: UNKNOWN
+    reason: the owner prints PETG (L-13); the exact grade and its approval wait for a sourced profile in hw/manufacturing/materials.yaml
+    owner: lead (sourcing unit at INTENT)
+    question: Q-028
+    consequential: true
+  parameters: {}
+  calibrations: []
+- id: machine_shop_cnc
+  revision: 1
+  title: Local machine shop, aluminium milling
+  process: CNC
+  provider: OUTSOURCED
+  supplier:
+    status: KNOWN
+    value: a local machine shop named by the owner
+    basis: USER_DECLARED
+    sources:
+    - *l13
+  machine:
+    identity:
+      status: UNKNOWN
+      reason: the owner does not know the shop's machines
+      owner: lead (sourcing unit at INTENT)
+      question: Q-024
+      consequential: true
+  operator:
+    status: UNKNOWN
+    reason: the shop's operators are not known
+    owner: lead (sourcing unit at INTENT)
+    question: Q-029
+    consequential: false
+  envelope:
+    x: &shop_envelope {status: UNKNOWN, reason: machine envelope not known, owner: lead (sourcing unit at INTENT), question: Q-030, consequential: true}
+    y: *shop_envelope
+    z: *shop_envelope
+  materials:
+    status: UNKNOWN
+    reason: the owner says the shop mills aluminium 6061-T6 (L-13); stock identity and approval wait for a sourced profile and the shop's statement
+    owner: lead (sourcing unit at INTENT)
+    question: Q-031
+    consequential: true
+  parameters: {}
+  calibrations: []

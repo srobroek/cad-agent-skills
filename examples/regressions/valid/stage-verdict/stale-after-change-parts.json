@@ -1,0 +1,501 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "PARTS",
+  "version": "v9",
+  "predecessor": {
+    "stage": "LAYOUT",
+    "version": "v6",
+    "verdict": {
+      "path": "hw/versions/v6/stage-verdict.json",
+      "sha256": "17898b4c5a511a6c98f87f9224368dd32ced15745bf5e52aaf120ac2ae8fc51e"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-012.yaml",
+      "sha256": "ba5159a33369cf88fa06b80bb3a51ae268fb668bf9ca0f4531ec186d5789854f"
+    }
+  },
+  "supersedes": {
+    "version": "v7",
+    "verdict": {
+      "path": "hw/versions/v7/stage-verdict.json",
+      "sha256": "da6886ae925112389ac0091726f1986f5e657a2f9734fce1dea5141c886bfdbb"
+    },
+    "reason": "CHANGE DR-018 reopens PARTS"
+  },
+  "version_manifest": {
+    "path": "hw/versions/v9/manifest.json",
+    "sha256": "eaa3fb53c32acda3dc63385ce813b8a66e707acdf2f641e1ce28b31ba21fa3ce"
+  },
+  "obligations": {
+    "path": "hw/versions/v9/obligations.yaml",
+    "sha256": "65ec95b36fb8f0e68d37a472c6807e495ba30faf63b75e523f5538fd36774e60"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "record.schema@product",
+    "record.semantic@product",
+    "record.ownership@product",
+    "record.inputs@product",
+    "delivery.integrity@product",
+    "selection.sourcing@STD-0003",
+    "material.properties@STD-0001.body",
+    "material.properties@STD-0002.body",
+    "purchase.identity@STD-0003",
+    "geometry.build@assembly",
+    "geometry.build@STD-0001",
+    "geometry.build@STD-0002",
+    "geometry.build@STD-0003",
+    "geometry.readback@assembly",
+    "geometry.readback@STD-0001",
+    "geometry.readback@STD-0002",
+    "geometry.readback@STD-0003",
+    "geometry.export@STD-0001",
+    "geometry.export@STD-0002",
+    "geometry.export@STD-0003",
+    "geometry.export@assembly",
+    "geometry.identity@STD-0001.body",
+    "geometry.identity@STD-0002.body",
+    "geometry.identity@STD-0003.pin",
+    "geometry.manufacture@STD-0001",
+    "geometry.manufacture@STD-0002",
+    "geometry.interference@assembly",
+    "geometry.clearance@assembly",
+    "geometry.clearance@IF-001#hinge_bore",
+    "motion.sweep@case.hinge-travel",
+    "motion.play@case.hinge-travel",
+    "motion.play@IF-001",
+    "motion.access@op.insert_pin",
+    "assembly.operations@op.insert_pin",
+    "capability.route@STD-0001.body/print",
+    "capability.route@STD-0002.body/print",
+    "process.fdm@STD-0001.body/print",
+    "process.fdm@STD-0001.body/print#front_face",
+    "process.fdm@STD-0001.body/print#hinge_bore",
+    "process.fdm@STD-0002.body/print",
+    "process.fdm@STD-0002.body/print#pivot_boss",
+    "preview.render@assembly",
+    "preview.render@STD-0001",
+    "preview.render@STD-0002",
+    "preview.render@STD-0003",
+    "review.mechanical_dfm@assembly"
+  ],
+  "results": [
+    {
+      "check": "record-schema",
+      "attempt": "a1",
+      "family": "record.schema",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/record-schema/a1/result.json",
+        "sha256": "f2c7659d8a6c4c4eb7fbe7e5e21b1cd213439dba828250e8dd9dc43b16158387"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/record-schema/a1/bundle-manifest.json",
+        "sha256": "ed5872827955a320f64861eb15bc6422f799eb5f42b8e6c526871a4431f6ba08"
+      }
+    },
+    {
+      "check": "record-semantic",
+      "attempt": "a1",
+      "family": "record.semantic",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/record-semantic/a1/result.json",
+        "sha256": "a3fce7930e09753015cb51ea33128a0a507fcb5c341900dd924c9c19cd3cae45"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/record-semantic/a1/bundle-manifest.json",
+        "sha256": "6dfa3fc123bf1d9dd6482e51633a3ffde83410a57831da30d95384c86ca8eb64"
+      }
+    },
+    {
+      "check": "record-ownership",
+      "attempt": "a1",
+      "family": "record.ownership",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/record-ownership/a1/result.json",
+        "sha256": "e40d03d2b5ae5aa724965367e3739e1125640d09df4631322331981a13613170"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/record-ownership/a1/bundle-manifest.json",
+        "sha256": "8b27171d4e40d2bfe6213dd467a637303b606cf819254546801acdffd0072afc"
+      }
+    },
+    {
+      "check": "record-inputs",
+      "attempt": "a1",
+      "family": "record.inputs",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/record-inputs/a1/result.json",
+        "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/record-inputs/a1/bundle-manifest.json",
+        "sha256": "26b33e4c861272d37e29969893ad09510b7bfede4886d6280a46bfeb4f193ab5"
+      }
+    },
+    {
+      "check": "delivery-integrity",
+      "attempt": "a1",
+      "family": "delivery.integrity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/delivery-integrity/a1/result.json",
+        "sha256": "d26b2e30b8c9714f7c53909b1cb5326bb903175cb3a171833a7a1b9caea7c732"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/delivery-integrity/a1/bundle-manifest.json",
+        "sha256": "b3013e972d4ba97184d75e3a0c4ab9af51680f06a880ed9e96769d1f847170a9"
+      }
+    },
+    {
+      "check": "selection-sourcing",
+      "attempt": "a1",
+      "family": "selection.sourcing",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/selection-sourcing/a1/result.json",
+        "sha256": "b3f01c83f2bf85c1c42ad925668aaa4deea7a2dee069d3566d09d93acc7962ba"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/selection-sourcing/a1/bundle-manifest.json",
+        "sha256": "4052185507eae4a83f782b8577f6780a7b5eb860ee1794f2a14989d64561d9d9"
+      }
+    },
+    {
+      "check": "material-properties",
+      "attempt": "a1",
+      "family": "material.properties",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/material-properties/a1/result.json",
+        "sha256": "9fb3d4afd9b3477a8be7ff57658884b72e67d8484a8ea8793dafec2c3de3bd12"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/material-properties/a1/bundle-manifest.json",
+        "sha256": "9109ff8888afd26273bd79c0e7a6484eb76cf79eb69c28333c80a7e4e333885e"
+      }
+    },
+    {
+      "check": "purchase-identity",
+      "attempt": "a1",
+      "family": "purchase.identity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/purchase-identity/a1/result.json",
+        "sha256": "ac0f6e2d7314d97718576801f5a89f778282d381f232c8ae75752cc514f212c2"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/purchase-identity/a1/bundle-manifest.json",
+        "sha256": "6d5e1c1453ab6862a0fde2e7e897762f3e29addc3a5f4f422810b5abf76c1dca"
+      }
+    },
+    {
+      "check": "geometry-build",
+      "attempt": "a1",
+      "family": "geometry.build",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/geometry-build/a1/result.json",
+        "sha256": "fbc79b3d2f9c38ce1d30fa784740c4b25bac854f5c5a0115970722696bb3bd69"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/geometry-build/a1/bundle-manifest.json",
+        "sha256": "49ad8161bdecc7c040e34d2b5a903916ef3ebc7308c57a6bb4d7ca5122162995"
+      }
+    },
+    {
+      "check": "geometry-readback",
+      "attempt": "a1",
+      "family": "geometry.readback",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/geometry-readback/a1/result.json",
+        "sha256": "685f00ff6fcccf04a4f9c6275cdee9c8af30d31247fb128070ff1bdf14e18ec4"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/geometry-readback/a1/bundle-manifest.json",
+        "sha256": "9697fb5b8babb0b99856479d7ccf7235c84538b6c568ae383e1f5f4b6ce85ba2"
+      }
+    },
+    {
+      "check": "geometry-export",
+      "attempt": "a1",
+      "family": "geometry.export",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/geometry-export/a1/result.json",
+        "sha256": "97816fbac7eb35c687948e2eada6b9292763b4aaa93ce9e726b8d91e13ffea20"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/geometry-export/a1/bundle-manifest.json",
+        "sha256": "a6d5c34e13afccbdcc646da8b098a248e6b7854258223e3a56cf162aa6860382"
+      }
+    },
+    {
+      "check": "geometry-identity",
+      "attempt": "a1",
+      "family": "geometry.identity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/geometry-identity/a1/result.json",
+        "sha256": "594fe1e799f8ba39d93c29d5ddcdca369b4b3f64dfe6b968aba24f450255fdb9"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/geometry-identity/a1/bundle-manifest.json",
+        "sha256": "e2ef7197f67eab84a946dd6a1c7801cb8f88168a576c5b8cfed30975ae53be61"
+      }
+    },
+    {
+      "check": "geometry-manufacture",
+      "attempt": "a1",
+      "family": "geometry.manufacture",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/geometry-manufacture/a1/result.json",
+        "sha256": "673c25da51cab0b1d7ab3925fd546e088c9a4636ded0763296830edaffadf4b3"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/geometry-manufacture/a1/bundle-manifest.json",
+        "sha256": "8b914a34ad2a1bd01c9bac368ade3c9703dc43b5313abe745faae15413c5077b"
+      }
+    },
+    {
+      "check": "interference",
+      "attempt": "a1",
+      "family": "geometry.interference",
+      "result": "PASS",
+      "binding": "CARRIED_FORWARD",
+      "result_file": {
+        "path": "hw/checks/v7/interference/a1/result.json",
+        "sha256": "29c44f96e05c5ff558371abe1826cf1cff469ef5958433c8c461e074476a0c1a"
+      },
+      "bundle": {
+        "path": "hw/checks/v7/interference/a1/bundle-manifest.json",
+        "sha256": "971bcd7d55a5be64fbc18ab4508a01644db4d65dd71ea73f48625cd4806a041f"
+      },
+      "carried_from": {
+        "version": "v7",
+        "recheck": {
+          "path": "hw/checks/v9/record-inputs/a1/result.json",
+          "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+        },
+        "reason": "record-inputs/a1 of v9 shows every input file of this result byte-identical to v7; DR-018 changes no geometry, assembly or case input"
+      }
+    },
+    {
+      "check": "clearance",
+      "attempt": "a1",
+      "family": "geometry.clearance",
+      "result": "PASS",
+      "binding": "CARRIED_FORWARD",
+      "result_file": {
+        "path": "hw/checks/v7/clearance/a1/result.json",
+        "sha256": "adf69a74b02c4e8efb32a3596ee5cbf4e56ff383aaaff01ed9cdec1a3d447108"
+      },
+      "bundle": {
+        "path": "hw/checks/v7/clearance/a1/bundle-manifest.json",
+        "sha256": "845c16ad18cfa31b12c571614ea6ba5dc15d310387b28199d393eecc1f4f7c37"
+      },
+      "carried_from": {
+        "version": "v7",
+        "recheck": {
+          "path": "hw/checks/v9/record-inputs/a1/result.json",
+          "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+        },
+        "reason": "record-inputs/a1 of v9 shows every input file of this result byte-identical to v7; DR-018 changes no geometry, assembly or case input"
+      }
+    },
+    {
+      "check": "sweep",
+      "attempt": "a1",
+      "family": "motion.sweep",
+      "result": "PASS",
+      "binding": "CARRIED_FORWARD",
+      "result_file": {
+        "path": "hw/checks/v7/sweep/a1/result.json",
+        "sha256": "92086812b4ad5b1b6ce4f49130a78bf405d0d47d2ccb7406100505d7877a77a2"
+      },
+      "bundle": {
+        "path": "hw/checks/v7/sweep/a1/bundle-manifest.json",
+        "sha256": "cea52f5429b9afb1d073fcc00c495a6c47c66cbb2e62083cb668ff1f06e7d9cd"
+      },
+      "carried_from": {
+        "version": "v7",
+        "recheck": {
+          "path": "hw/checks/v9/record-inputs/a1/result.json",
+          "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+        },
+        "reason": "record-inputs/a1 of v9 shows every input file of this result byte-identical to v7; DR-018 changes no geometry, assembly or case input"
+      }
+    },
+    {
+      "check": "play",
+      "attempt": "a1",
+      "family": "motion.play",
+      "result": "PASS",
+      "binding": "CARRIED_FORWARD",
+      "result_file": {
+        "path": "hw/checks/v7/play/a1/result.json",
+        "sha256": "fe585306683b28731f9d5eb74dc8c1819b31a6ec4b61255b1f02da8235b6b949"
+      },
+      "bundle": {
+        "path": "hw/checks/v7/play/a1/bundle-manifest.json",
+        "sha256": "e82a5b280c2e5418dc8f8bd8e64c87bc5da3907cee383bf1ab28c6c638cbf8ed"
+      },
+      "carried_from": {
+        "version": "v7",
+        "recheck": {
+          "path": "hw/checks/v9/record-inputs/a1/result.json",
+          "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+        },
+        "reason": "record-inputs/a1 of v9 shows every input file of this result byte-identical to v7; DR-018 changes no geometry, assembly or case input"
+      }
+    },
+    {
+      "check": "access",
+      "attempt": "a1",
+      "family": "motion.access",
+      "result": "PASS",
+      "binding": "CARRIED_FORWARD",
+      "result_file": {
+        "path": "hw/checks/v7/access/a1/result.json",
+        "sha256": "ea8f5923563b9bb9a12ab8a6af5234ba3dc07f5e2fe196cebb56f6867045fd22"
+      },
+      "bundle": {
+        "path": "hw/checks/v7/access/a1/bundle-manifest.json",
+        "sha256": "dcabb245580c9b78eb7586deef58b29d6dfa803e48524eb9b337a4fdba7b1410"
+      },
+      "carried_from": {
+        "version": "v7",
+        "recheck": {
+          "path": "hw/checks/v9/record-inputs/a1/result.json",
+          "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+        },
+        "reason": "record-inputs/a1 of v9 shows every input file of this result byte-identical to v7; DR-018 changes no geometry, assembly or case input"
+      }
+    },
+    {
+      "check": "operations",
+      "attempt": "a1",
+      "family": "assembly.operations",
+      "result": "PASS",
+      "binding": "CARRIED_FORWARD",
+      "result_file": {
+        "path": "hw/checks/v7/operations/a1/result.json",
+        "sha256": "d51bbc375619af66da686d509a7bb5ec87fd09747d11bfece624f77530c6cf7e"
+      },
+      "bundle": {
+        "path": "hw/checks/v7/operations/a1/bundle-manifest.json",
+        "sha256": "573b8836b7da070bc8e983e22658d450981618c7a7989c12620fb5f3c63467ef"
+      },
+      "carried_from": {
+        "version": "v7",
+        "recheck": {
+          "path": "hw/checks/v9/record-inputs/a1/result.json",
+          "sha256": "cfa4f28b520dac5e8fbfd677e509eb6c099b6501f07ce688eee386c833461580"
+        },
+        "reason": "record-inputs/a1 of v9 shows every input file of this result byte-identical to v7; DR-018 changes no geometry, assembly or case input"
+      }
+    },
+    {
+      "check": "capability",
+      "attempt": "a1",
+      "family": "capability.route",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/capability/a1/result.json",
+        "sha256": "2adf2dc47dd2d825e7374216e0aeafbf891419b77b505e6e1816ec8840a96b18"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/capability/a1/bundle-manifest.json",
+        "sha256": "5d1dc3388936080248fab01ecf3da40ef489a08c0c8f053e6fbfa5ce9c34265a"
+      }
+    },
+    {
+      "check": "fdm",
+      "attempt": "a1",
+      "family": "process.fdm",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/fdm/a1/result.json",
+        "sha256": "9828866df51a44a85f1425d163b3e2328429c9fa49ed5993f3d4817cc4af5adc"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/fdm/a1/bundle-manifest.json",
+        "sha256": "c97875c20f4a3c819a005a30aab7a9ba97aece04304ca70437910aca4978d644"
+      }
+    },
+    {
+      "check": "preview-render",
+      "attempt": "a1",
+      "family": "preview.render",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/preview-render/a1/result.json",
+        "sha256": "fbb277d5599ef69da2b49f9322f0af8a3427aff20c49100e4b56ec4c4787d324"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/preview-render/a1/bundle-manifest.json",
+        "sha256": "f380fbf8ded8b8e8076e62524c8d69b22d60baab6a6daf4c15c602dc62d20d62"
+      }
+    },
+    {
+      "check": "review",
+      "attempt": "a1",
+      "family": "review.mechanical_dfm",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v9/review/a1/result.json",
+        "sha256": "435b94450e6756b654520cbea461075646859ec8d99ee4fd638b793a2acbc08d"
+      },
+      "bundle": {
+        "path": "hw/checks/v9/review/a1/bundle-manifest.json",
+        "sha256": "88ae8d34b26072ad696c3226814924c9469fbebba7ff1c6f03492adfaebc112e"
+      }
+    }
+  ],
+  "bundles": [],
+  "waivers": [],
+  "future": [
+    "physical.test@REQ-002"
+  ],
+  "blockers": [],
+  "review": {
+    "required": true,
+    "verdict": "PASS",
+    "result": {
+      "path": "hw/checks/v9/review/a1/result.json",
+      "sha256": "435b94450e6756b654520cbea461075646859ec8d99ee4fd638b793a2acbc08d"
+    }
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T12:00:00Z"
+}

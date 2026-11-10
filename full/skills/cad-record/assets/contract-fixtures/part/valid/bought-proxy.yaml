@@ -1,0 +1,77 @@
+PN: STD-0003
+rev: A
+title: Hinge pin
+sourcing: BUY
+model:
+  kind: PROXY
+  kernel: build123d
+  path: hw/parts/STD-0003/model.py
+  frame: PART_LOCAL
+  bounds: cylinder 5 x 30 mm
+  reason: supplier model not retained
+transparency: OPAQUE
+intent:
+  functions:
+  - function: ROTATING
+  material_profile: fastener_iso_3506_a2_70
+  service:
+    status: UNKNOWN
+    reason: pin load case pending
+  critical_surfaces:
+    status: NOT_APPLICABLE
+    reason: purchased part; interface surfaces are on the pin catalogue drawing
+    reviewed_by: product owner
+  route:
+  - id: buy
+    kind: PURCHASED
+    purchase:
+      identity:
+        status: KNOWN
+        value: ISO 2338 5 m6 x 30 A2
+        basis: STANDARD
+        sources:
+        - kind: STANDARD
+          reference: ISO 2338
+          url: https://www.iso.org/standard/7425.html
+          accessed: '2026-11-03'
+      specification:
+        status: KNOWN
+        value: ISO 2338 A2
+        basis: USER_DECLARED
+        sources:
+        - &id001
+          kind: USER
+          reference: owner interview
+          origin: product owner
+          date: '2026-11-03'
+      ratings:
+        status: UNKNOWN
+        reason: shear rating not retained
+procurement:
+  identity:
+    status: KNOWN
+    value: ISO 2338 5 m6 x 30 A2
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  specification:
+    status: KNOWN
+    value: ISO 2338
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  supplier:
+    status: UNKNOWN
+    reason: supplier not chosen
+  availability:
+    status: UNKNOWN
+    reason: not checked
+  price:
+    status: UNKNOWN
+    reason: not quoted
+  lead_time:
+    status: UNKNOWN
+    reason: not quoted
+drawing:
+  status: NOT_REQUIRED
+  reason: catalogue part

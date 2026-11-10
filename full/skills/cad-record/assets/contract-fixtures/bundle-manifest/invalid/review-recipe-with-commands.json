@@ -1,0 +1,56 @@
+{
+  "format": "cad-agent-skills.bundle-manifest",
+  "schema_version": 1,
+  "kind": "CHECK",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v9",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input": [
+    {
+      "path": "hw/versions/v9/manifest.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "recipe": {
+    "kind": "REVIEW",
+    "inspected": [
+      {
+        "path": "hw/versions/v6/manifest.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "path": "hw/parts/STD-0001/part.yaml",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/chk/check.py"
+        ],
+        "exit_code": 0
+      }
+    ]
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "files": [
+    {
+      "path": "hw/checks/v9/review/a1/result.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "role": "RESULT"
+    }
+  ],
+  "complete": true
+}

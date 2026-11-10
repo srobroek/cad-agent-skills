@@ -1,0 +1,53 @@
+# Immutable import proposal bound by DR-001 (decision binding PROPOSAL); cad-record references/import.md step 4.
+# Source: cad-agent v0.1.1 (tag v0.1.1, commit b8f7a2ecb410e68d62a38464ffd800396cdb06c5), examples/lamp-arm/hw/.
+# Every row is one source file with its sha256 and size as inventoried before the import. RETAINED_ONLY files move
+# byte-identical to hw/imports/DR-001/original/<path below hw/> as readable history: no gate credit, no CAD validity,
+# no approval and no evidence. The owner's answers at GROUND restate what is still wanted.
+source_format: cad-agent v0.1.1 record (no record_version)
+original_snapshot: hw/imports/DR-001/original
+rows:
+- {source: hw/product.yaml, sha256: b09ed1420c1802f95c9b3d89815890b8044fbf3ec5d55e96951b37d02926179c, bytes: 1008, target: hw/product.yaml}
+- {source: hw/requirements.yaml, sha256: 28a0c9da4186692ca2461922d9dd315065096438ac791049447cbf105fb31e3a, bytes: 2267, target: RETAINED_ONLY}
+- {source: hw/assembly.yaml, sha256: 5eb434f300346136de63aaa1bfc09b864404ed98f1857a9f999ba5e1ce0d72c2, bytes: 6745, target: RETAINED_ONLY}
+- {source: hw/interfaces.yaml, sha256: dead1c52262cf833c88d28b72b9955695f2bea66aaf92d6a527a6983851d157a, bytes: 4996, target: RETAINED_ONLY}
+- {source: hw/bom.csv, sha256: 753ddb7db35059a8bf42ee627bd3968936d97ccfced1ee703a44eefd9918dec5, bytes: 1807, target: RETAINED_ONLY}
+- {source: hw/verification.csv, sha256: 936ccb38458632d405dd1f909f9e805c9ecdb80055e46995c4056026fe95bd5d, bytes: 634, target: RETAINED_ONLY}
+- {source: hw/decisions/DR-001.md, sha256: 73a8cf1f53f57ee7b57d37258900fd40860adebc72bd57ad132f293d5d1df237, bytes: 847, target: RETAINED_ONLY}
+- {source: hw/decisions/DR-002.md, sha256: 2b1c136734255f116be283bb3a37131fc80eb41db558412e7bc873bf936e4ef3, bytes: 1110, target: RETAINED_ONLY}
+- {source: hw/decisions/DR-003.md, sha256: 797aa53f21b539844d967ed3024354f0ea40a1a66a9dc1b1572ca048209ab992, bytes: 2458, target: RETAINED_ONLY}
+- {source: hw/decisions/DR-004.md, sha256: c22fddf08dbf980020bc776655a6f41f43d71529675a5e711da244e350e55718, bytes: 19633, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0001/part.yaml, sha256: cd8e88a13c57a11cdd4413a674560cee2933d2bc347588fa035ad66eaa6956b9, bytes: 2754, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0001/model.py, sha256: f0dcfff2d08f36a2709d2b781e8476cda0a76a71df24148e97b46922c7829830, bytes: 9330, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0002/part.yaml, sha256: d80c13afad3efee951a0ac6f7179f626ebcc8a88f4f4b758f8a91c0d90ae8dd4, bytes: 2787, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0002/model.py, sha256: 54ca8d8d1d08e4cfe0b694796efd9503721c24b14b94497725989cd7c4b1db81, bytes: 12641, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0003/part.yaml, sha256: fdf8bd20c69c778e22e91ced918dacabd7386b4e8ce172c671af4fe0b0a08c2e, bytes: 3077, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0003/model.py, sha256: 9f5f63754f651715f951c1b1135a1205c1d8011bbdb5e733fb25e86209b9a203, bytes: 12964, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0004/part.yaml, sha256: a3e6c2f988ce9439af20650e899b647fbfcaebc526fddcc96aab8e51bad08d63, bytes: 3599, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0004/model.py, sha256: f6343d10e83e63a8938e7cd4aebc49bb53afa11284e8ed74c4487dd1e951719c, bytes: 14489, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0005/part.yaml, sha256: 8e4c973036083643c62d5e5618769e8801717987ceabb25656d30d3fc21cab7c, bytes: 2403, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0005/model.py, sha256: 227dedf5bede64d4904bd270b0f9da71a8f3e292a956e0ad24cac6f9252b1656, bytes: 6007, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0006/part.yaml, sha256: 1aec4f206bac37ae15cb7220ec544e2ed90b3754c41a2f9786353525239317bb, bytes: 2403, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0006/model.py, sha256: 311fedac22047753a855b01bfb6e4561ea606c67e944e54542fbf1121f1fddd7, bytes: 6016, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0007/part.yaml, sha256: 17e79836d3cbe5ac7a2836e42bf46b8230336bdb10b08bcbdc52d2c6cfb73aa6, bytes: 2369, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0007/model.py, sha256: 7bebfb6d84a1c013f023731cef6d5f34a153d2e02bdba80d2346588f01898db6, bytes: 6024, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0008/part.yaml, sha256: 35bf65b189c6a6238e19611d2bacf30ab854a7dcb4f0d3fcabc11fc09a99d44c, bytes: 1647, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0008/model.py, sha256: d08f50ac131a54f9fad0e90982b6e0673b2496cb5509793a99fd080babcda6fb, bytes: 5099, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0009/part.yaml, sha256: 2950c3f59ae4dc76bd0b9f4aa5ee29dbc2a073ceb332bbaa7bbd3a4d7f8ca22e, bytes: 2085, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0009/model.py, sha256: 71f4677475c28be9dbbb697922f68a4db3fd13e5baead59a9e358eab7d9aa068, bytes: 5518, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0010/part.yaml, sha256: 2355009e7b2c3b7a52219f933e01c06e5a509c69c119f58136a610c3c462da56, bytes: 1826, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0010/model.py, sha256: 51c0bc87a6180a0eb2040b664ed52d6f1a2a98729f90b3bbe6681f3159f181c6, bytes: 5222, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0011/part.yaml, sha256: fd4e29cdcd6494dafc7ae260c76ec55c1498fc1565df0309a25a9363ed3be188, bytes: 658, target: RETAINED_ONLY}
+- {source: hw/parts/LMP-0011/model.py, sha256: d47a101b8b2445635929e4ef333f08ac5d1c48a365fbc8281c3bd751585e730a, bytes: 2441, target: RETAINED_ONLY}
+fields:
+# hw/product.yaml: every other target field starts from the cad-record template and is filled at GROUND.
+- {from: id, to: id, value: lamp-arm}
+- {from: rigor, to: rigor, value: pro, note: confirmed by the owner at GROUND}
+- {from: regime, to: regime, value: ISO, note: lowercase iso translated to CAPS}
+- {from: general_tolerance, to: general_tolerance, value: ISO 2768-m, note: a fact citing this import}
+- {from: units, to: units, value: mm}
+- {from: flow.stage, to: NOT_IMPORTED, note: the stage chain restarts at GROUND}
+- {from: build_volume, to: NOT_IMPORTED, note: capability comes from capability profiles}
+- {from: drawing, to: NOT_IMPORTED, note: no product field; drawings follow cad-release; the standard list stays readable history}
+unknowns:
+- {field: hw/requirements.yaml requirements, question: Q-018, reason: v0.1.1 requirements lack facets, due stage, safety and waiver policy; the owner restates each one at GROUND}
+- {field: parts, assembly and interfaces, question: Q-019, reason: retained only; INTENT compares the old layout as one candidate and assumes none of its CAD valid}

@@ -1,0 +1,22 @@
+id: pla_family
+revision: 1
+title: PLA family guidance
+level: FAMILY
+family: FDM filament / PLA
+grade:
+  status: KNOWN
+  value: PLA 4043D
+  basis: USER_DECLARED
+  sources:
+  - kind: USER
+    reference: owner interview
+    origin: product owner
+    date: '2026-11-03'
+form: PRINTED
+process_state:
+  process: FDM
+  conditioning: UNKNOWN
+typical_not_allowable: true
+properties: []
+guidance:
+- family guidance only; never a grade allowable

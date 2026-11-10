@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills OpenCode agent frontmatter (harness/opencode/agents/<role>.md)",
+  "description": "Closed OpenCode subagent frontmatter with the permission object (last matching rule wins); model is omitted and the old permissions list dialect is refused.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["description", "mode", "permission"],
+  "properties": {
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024},
+    "mode": {"const": "subagent"},
+    "permission": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z_*]+$"},
+      "additionalProperties": {
+        "oneOf": [
+          {"enum": ["allow", "ask", "deny"]},
+          {"type": "object", "minProperties": 1, "additionalProperties": {"enum": ["allow", "ask", "deny"]}}
+        ]
+      },
+      "required": ["edit", "bash", "task"],
+      "properties": {"task": {"const": "deny"}}
+    }
+  }
+}

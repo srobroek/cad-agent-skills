@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills worker brief (.cad-work/<unit>/brief.yaml)",
+  "description": "Typed self-contained assignment for one worker: unit, role, stage, subjects, locked input inventory with lead-owned input snapshots, literal absolute resource map (SKILL.md, schemas, role reference, the role's preflight tools and templates) with plugin name and version, write boundary, own scratch files, wall-time and model-turn limits and the expected outputs, checks, stop conditions and report. A sourcing brief adds at least one seed URL and may name retained sources by a content-addressed pattern; a checker brief may name its own-named artifacts by a bundle pattern. Every input reaches the unit as a copy, so a brief names no other path to read.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "unit",
+    "role",
+    "stage",
+    "task",
+    "subjects",
+    "input_inventory",
+    "resources",
+    "boundary",
+    "limits",
+    "expected",
+    "lead"
+  ],
+  "properties": {
+    "format": {"const": "cad-agent-skills.worker-brief"},
+    "schema_version": {"const": 1},
+    "unit": {"$ref": "common.schema.json#/$defs/unit_id"},
+    "role": {"$ref": "common.schema.json#/$defs/role"},
+    "stage": {"$ref": "common.schema.json#/$defs/stage"},
+    "version": {"$ref": "common.schema.json#/$defs/version"},
+    "task": {"$ref": "common.schema.json#/$defs/text"},
+    "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+    "seed_urls": {
+      "description": "sourcing units only, at least one: the https URLs on the vendor's own origin that the record, an installed starter profile, the owner or the lead's own search names for the subjects",
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/url"},
+      "uniqueItems": true
+    },
+    "input_inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "files"],
+      "properties": {
+        "sha256": {
+          "description": "set digest over files (references/record.md#inventory-digest)",
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {"$ref": "common.schema.json#/$defs/hw_path"},
+              "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+              "bytes": {"type": "integer", "minimum": 0}
+            }
+          },
+          "minItems": 1
+        },
+        "snapshots": {
+          "description": "lead-owned facts copied to .cad-work/<unit>/input/<path> and listed in input/SHA256SUMS (cad-flow worker-brief.md#compose step 2): lead/attempts.txt, or installed/<skill-name>/<path-within-skill> for a byte copy of an installed file a check reads; a logical path, never an absolute one. The sha256 binds the copy as a check input through brief_sha256; it is no install audit",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^(lead/attempts\\.txt|installed/cad-(flow|record|select|design|model|verify|review|release)/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+)$"
+              },
+              "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+              "bytes": {"type": "integer", "minimum": 0}
+            }
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "limits": {
+      "description": "what the unit may spend before it stops and the lead stops it (cad-flow delegation.md#lost-and-stalled-units)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wall_seconds", "model_turns"],
+      "properties": {
+        "wall_seconds": {"type": "integer", "minimum": 1},
+        "model_turns": {"type": "integer", "minimum": 1}
+      }
+    },
+    "resources": {
+      "description": "literal resolved absolute paths from the lead preflight and the installed plugin name and version; installed bytes are not hashed",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plugin", "skills", "rubric", "schemas", "tools", "templates", "role_reference"],
+      "properties": {
+        "plugin": {"$ref": "common.schema.json#/$defs/plugin"},
+        "skills": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "path"],
+                "properties": {
+                  "name": {"$ref": "common.schema.json#/$defs/text"},
+                  "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
+                  "uri": {"type": "string", "pattern": "^skill://cad-[a-z]+(/[A-Za-z0-9._/-]+)?$"}
+                }
+              },
+              {"properties": {"name": {"$ref": "common.schema.json#/$defs/skill"}}}
+            ]
+          },
+          "minItems": 1
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "path"],
+                "properties": {
+                  "name": {"$ref": "common.schema.json#/$defs/text"},
+                  "path": {"$ref": "common.schema.json#/$defs/absolute_path"}
+                }
+              },
+              {
+                "properties": {
+                  "name": {
+                    "enum": [
+                      "common",
+                      "product",
+                      "requirements",
+                      "interfaces",
+                      "part",
+                      "assembly",
+                      "bom-row",
+                      "bom",
+                      "verification-row",
+                      "verification",
+                      "decision",
+                      "check-result",
+                      "stage-verdict",
+                      "stage-policy",
+                      "material-profile",
+                      "material-library",
+                      "capability-profile",
+                      "capability-library",
+                      "selection",
+                      "check-plan",
+                      "variant",
+                      "version-manifest",
+                      "bundle-manifest",
+                      "worker-brief",
+                      "worker-delivery",
+                      "lead-claim",
+                      "release-manifest",
+                      "layout"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "tools": {
+          "description": "the preflight.json tools[] entries the unit runs, copied verbatim; argv[0] is the absolute path of an installed binary. freecad is the probed FreeCAD console executable, listed only on a LAYOUT cad-checker brief: a lite geometry checker's check.py runs it as a subprocess",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "argv", "version"],
+            "properties": {
+              "name": {"enum": ["check-jsonschema", "yaml-loader", "freecad"]},
+              "argv": {
+                "type": "array",
+                "prefixItems": [{"$ref": "common.schema.json#/$defs/absolute_path"}],
+                "items": {"$ref": "common.schema.json#/$defs/text"},
+                "minItems": 1
+              },
+              "version": {"$ref": "common.schema.json#/$defs/text"}
+            }
+          },
+          "uniqueItems": true
+        },
+        "templates": {
+          "description": "the worker-delivery template and the valid check-result fixtures the unit starts its files from",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "path"],
+            "properties": {
+              "name": {"$ref": "common.schema.json#/$defs/text"},
+              "path": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/absolute_path"},
+                  {"pattern": "(/cad-flow/assets/worker-delivery\\.yaml|/cad-record/assets/contract-fixtures/check-result/valid/[a-z0-9-]+\\.json)$"}
+                ]
+              }
+            }
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "role_reference": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "path"],
+          "properties": {
+            "name": {"$ref": "common.schema.json#/$defs/text"},
+            "path": {"$ref": "common.schema.json#/$defs/absolute_path"},
+            "uri": {"type": "string", "pattern": "^skill://cad-[a-z]+(/[A-Za-z0-9._/-]+)?$"}
+          }
+        },
+        "rubric": {
+          "description": "the installed cad-review rubric reference every role grades with",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "path"],
+          "properties": {
+            "name": {"const": "rubric"},
+            "path": {
+              "allOf": [
+                {"$ref": "common.schema.json#/$defs/absolute_path"},
+                {"pattern": "/cad-review/references/rubric\\.md$"}
+              ]
+            },
+            "uri": {"const": "skill://cad-review/references/rubric.md"}
+          }
+        },
+        "layout": {
+          "description": "the installed cad-record layout.json, for a unit that runs record.semantic",
+          "$ref": "common.schema.json#/$defs/absolute_path"
+        },
+        "policy": {
+          "description": "the installed cad-flow assets/stages.yaml, for a unit that runs record.semantic",
+          "$ref": "common.schema.json#/$defs/absolute_path"
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_root", "scratch", "writable", "locked"],
+      "properties": {
+        "project_root": {"$ref": "common.schema.json#/$defs/absolute_path"},
+        "scratch": {"$ref": "common.schema.json#/$defs/scratch_path"},
+        "writable": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/scratch_path"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "locked": {
+          "description": "hw/ files a producer or sourcing unit may not change and proposes changes to; never read live: their bytes reach the unit as input copies",
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/hw_path"},
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outputs", "checks", "stop", "report"],
+      "properties": {
+        "outputs": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["target", "kind"],
+                "properties": {
+                  "target": {"$ref": "common.schema.json#/$defs/hw_path"},
+                  "kind": {"$ref": "common.schema.json#/$defs/text"}
+                }
+              },
+              {
+                "description": "content-addressed retained sources of a sourcing unit: 0 to max outputs, each directory equal to its bytes' sha256",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["target_pattern", "kind", "max"],
+                "properties": {
+                  "target_pattern": {
+                    "type": "string",
+                    "pattern": "^hw/(manufacturing|parts/[A-Z]{2,5}-[0-9]{4})/sources/<sha256>/<name>$"
+                  },
+                  "kind": {"$ref": "common.schema.json#/$defs/text"},
+                  "max": {"type": "integer", "minimum": 1, "maximum": 8}
+                }
+              },
+              {
+                "description": "a checker's own-named artifacts of one check bundle: 0 to max outputs under that bundle's artifacts/ directory",
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["target_pattern", "kind", "max"],
+                "properties": {
+                  "target_pattern": {
+                    "type": "string",
+                    "pattern": "^hw/checks/v[1-9][0-9]*/[a-z][a-z0-9_-]*/a[1-9][0-9]*/artifacts/<name>$"
+                  },
+                  "kind": {"$ref": "common.schema.json#/$defs/text"},
+                  "max": {"type": "integer", "minimum": 1, "maximum": 16}
+                }
+              }
+            ]
+          }
+        },
+        "checks": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/check_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "obligations": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/obligation_id"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "stop": {"$ref": "common.schema.json#/$defs/texts"},
+        "report": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    },
+    "lead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session"],
+      "properties": {
+        "session": {"$ref": "common.schema.json#/$defs/text"},
+        "task_id": {"$ref": "common.schema.json#/$defs/text"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["role"], "properties": {"role": {"const": "cad-sourcing-researcher"}}},
+      "then": {
+        "required": ["seed_urls"],
+        "properties": {
+          "seed_urls": {"minItems": 1},
+          "expected": {"properties": {"outputs": {"items": {"properties": {"target_pattern": {"pattern": "/sources/<sha256>/<name>$"}}}}}}
+        }
+      },
+      "else": {"not": {"required": ["seed_urls"]}}
+    },
+    {
+      "if": {"required": ["role"], "properties": {"role": {"const": "cad-checker"}}},
+      "then": {
+        "properties": {
+          "expected": {"properties": {"outputs": {"items": {"properties": {"target_pattern": {"pattern": "^hw/checks/"}}}}}}
+        }
+      },
+      "else": {
+        "properties": {
+          "resources": {"properties": {"tools": {"not": {"contains": {"properties": {"name": {"const": "yaml-loader"}}}}}}}
+        }
+      }
+    },
+    {
+      "if": {"required": ["role"], "properties": {"role": {"not": {"enum": ["cad-sourcing-researcher", "cad-checker"]}}}},
+      "then": {
+        "properties": {
+          "expected": {"properties": {"outputs": {"items": {"required": ["target"]}}}}
+        }
+      }
+    },
+    {
+      "if": {"required": ["role"], "properties": {"role": {"not": {"const": "cad-mech-dfm-reviewer"}}}},
+      "then": {
+        "properties": {
+          "resources": {"properties": {"tools": {"contains": {"properties": {"name": {"const": "check-jsonschema"}}}}}}
+        }
+      },
+      "else": {"properties": {"resources": {"properties": {"tools": {"maxItems": 0}}}}}
+    },
+    {
+      "if": {"required": ["role"], "properties": {"role": {"enum": ["cad-checker", "cad-mech-dfm-reviewer"]}}},
+      "then": {"properties": {"expected": {"required": ["obligations"]}}}
+    },
+    {
+      "if": {"required": ["role", "stage"], "properties": {"role": {"const": "cad-checker"}, "stage": {"const": "LAYOUT"}}},
+      "else": {
+        "properties": {
+          "resources": {"properties": {"tools": {"not": {"contains": {"properties": {"name": {"const": "freecad"}}}}}}}
+        }
+      }
+    }
+  ]
+}

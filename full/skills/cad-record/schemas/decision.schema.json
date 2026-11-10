@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills decision record (hw/decisions/DR-###.yaml)",
+  "description": "Immutable once published. Approve, reject and supersede are new DRs referring to the old one; no approval is rewritten. A gate approval binds an immutable PASS stage verdict; earlier selection, orientation, waiver and change decisions bind an immutable proposal or input inventory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "state", "binding", "title", "scope", "rationale", "actor", "time"],
+  "properties": {
+    "id": {"$ref": "common.schema.json#/$defs/decision_id"},
+    "kind": {
+      "enum": [
+        "GATE",
+        "SELECTION",
+        "VARIANT",
+        "ORIENTATION",
+        "SUPPORT",
+        "WAIVER",
+        "CHANGE",
+        "REQUIREMENT",
+        "INTERFACE",
+        "ASSUMPTION",
+        "QUESTION",
+        "RELEASE",
+        "IMPORT",
+        "OTHER"
+      ]
+    },
+    "state": {"enum": ["PROPOSED", "APPROVED", "REJECTED", "SUPERSEDED"]},
+    "refers": {"$ref": "common.schema.json#/$defs/decision_id"},
+    "binding": {"$ref": "#/$defs/binding"},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "scope": {"$ref": "common.schema.json#/$defs/text"},
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "text", "tradeoffs"],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/slug"},
+          "text": {"$ref": "common.schema.json#/$defs/text"},
+          "tradeoffs": {"$ref": "common.schema.json#/$defs/text"}
+        }
+      },
+      "minItems": 1
+    },
+    "choice": {"$ref": "common.schema.json#/$defs/slug"},
+    "rationale": {"$ref": "common.schema.json#/$defs/text"},
+    "limits": {"$ref": "common.schema.json#/$defs/texts"},
+    "actor": {"$ref": "common.schema.json#/$defs/actor"},
+    "time": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "statement": {
+      "description": "the user's or authority's message bytes, saved unchanged at path before the DR is written; transcript_sha256 hashes those bytes",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "transcript_sha256", "quote", "time"],
+      "properties": {
+        "path": {
+          "allOf": [
+            {"$ref": "common.schema.json#/$defs/hw_path"},
+            {"pattern": "^hw/decisions/statements/DR-[0-9]{3}\\.txt$"}
+          ]
+        },
+        "transcript_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "quote": {"$ref": "common.schema.json#/$defs/text"},
+        "time": {"$ref": "common.schema.json#/$defs/timestamp"}
+      }
+    },
+    "waiver": {"$ref": "common.schema.json#/$defs/waiver"},
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "affected", "reopen", "baseline"],
+      "properties": {
+        "reason": {"$ref": "common.schema.json#/$defs/text"},
+        "affected": {"$ref": "common.schema.json#/$defs/subjects"},
+        "reopen": {"$ref": "common.schema.json#/$defs/stage"},
+        "baseline": {"$ref": "common.schema.json#/$defs/version"},
+        "superseded_failure": {"$ref": "common.schema.json#/$defs/version"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["state"], "properties": {"state": {"enum": ["APPROVED", "REJECTED"]}}},
+      "then": {
+        "required": ["statement"],
+        "properties": {"actor": {"properties": {"kind": {"enum": ["USER", "AUTHORITY"]}}}}
+      }
+    },
+    {
+      "if": {"required": ["state"], "properties": {"state": {"const": "SUPERSEDED"}}},
+      "then": {"required": ["refers"]}
+    },
+    {
+      "if": {"required": ["kind"], "properties": {"kind": {"const": "GATE"}}},
+      "then": {"properties": {"binding": {"properties": {"kind": {"const": "STAGE"}}}}}
+    },
+    {
+      "if": {"required": ["kind"], "properties": {"kind": {"const": "RELEASE"}}},
+      "then": {"properties": {"binding": {"properties": {"kind": {"const": "RELEASE_INVENTORY"}}}}}
+    },
+    {
+      "if": {"required": ["kind"], "properties": {"kind": {"const": "WAIVER"}}},
+      "then": {"required": ["waiver"]}
+    },
+    {
+      "if": {"required": ["kind"], "properties": {"kind": {"const": "CHANGE"}}},
+      "then": {"required": ["change"]}
+    },
+    {
+      "if": {
+        "required": ["kind", "state"],
+        "properties": {"kind": {"const": "GATE"}, "state": {"const": "APPROVED"}}
+      },
+      "then": {"properties": {"binding": {"properties": {"verdict_result": {"const": "PASS"}}}}}
+    }
+  ],
+  "$defs": {
+    "binding": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "path", "sha256"],
+          "properties": {
+            "kind": {"const": "PROPOSAL"},
+            "path": {
+              "allOf": [
+                {"$ref": "common.schema.json#/$defs/hw_path"},
+                {"pattern": "^hw/decisions/proposals/DR-[0-9]{3}/"}
+              ]
+            },
+            "sha256": {"$ref": "common.schema.json#/$defs/sha256"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "stage", "version", "verdict", "verdict_result"],
+          "properties": {
+            "kind": {"const": "STAGE"},
+            "stage": {"$ref": "common.schema.json#/$defs/stage"},
+            "version": {"$ref": "common.schema.json#/$defs/version"},
+            "verdict": {"$ref": "common.schema.json#/$defs/file_hash"},
+            "verdict_result": {"enum": ["PASS", "FAIL", "BLOCKED"]}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "version", "version_manifest_sha256", "verdict"],
+          "properties": {
+            "kind": {"const": "FROZEN"},
+            "version": {"$ref": "common.schema.json#/$defs/version"},
+            "version_manifest_sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+            "verdict": {"$ref": "common.schema.json#/$defs/file_hash"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "rev", "version", "proposal", "verdict"],
+          "properties": {
+            "kind": {"const": "RELEASE_INVENTORY"},
+            "rev": {"$ref": "common.schema.json#/$defs/release_rev"},
+            "version": {"$ref": "common.schema.json#/$defs/version"},
+            "proposal": {"$ref": "common.schema.json#/$defs/file_hash"},
+            "verdict": {
+              "description": "the RELEASE readiness stage verdict, which hashes the proposal; the proposal never hashes it",
+              "$ref": "common.schema.json#/$defs/file_hash"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

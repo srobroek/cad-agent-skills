@@ -1,0 +1,1586 @@
+# Canonical cad-agent-skills stage policy. Owner: cad-flow (references/stages.md teaches execution).
+# Validates against <cad-record>/schemas/stage-policy.schema.json. Install rule: cad-flow SKILL.md Rules.
+format: cad-agent-skills.stage-policy
+schema_version: 1
+stages:
+- id: GROUND
+  order: 1
+  predecessor: null
+  gate: HUMAN
+  gate_subject: "use case, service class, rigor, authority, release scope and assumptions"
+  owner: cad-select
+  procedure:
+  - resume-state
+  - record-bootstrap
+  - intake-use-case
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: GROUND
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: GROUND
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: GROUND
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: GROUND
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: GROUND
+    waiver_policy: FORBIDDEN
+  - family: intake.use_case
+    applicability: ALWAYS
+    due: GROUND
+    waiver_policy: FORBIDDEN
+  reopen: []
+- id: INTENT
+  order: 2
+  predecessor: GROUND
+  gate: HUMAN
+  gate_subject: "material, process and architecture selection and tradeoff"
+  owner: cad-select
+  procedure:
+  - resume-state
+  - select-candidates
+  - dispatch-units
+  - merge-deliveries
+  - assess-selection
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  - family: selection.feasibility
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  - family: selection.sourcing
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: material.properties
+    applicability: ALWAYS
+    due: INTENT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: optical.route
+    applicability: CONDITIONAL
+    condition: a requirement or preference needs transparency or controlled light transmission
+    due: INTENT
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+- id: SPECIFY
+  order: 3
+  predecessor: INTENT
+  gate: HUMAN
+  gate_subject: "requirements, interfaces, acceptance criteria and check plan"
+  owner: cad-verify
+  procedure:
+  - resume-state
+  - specify-requirements
+  - specify-interfaces
+  - plan-checks
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: requirements.completeness
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: interfaces.completeness
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: check_plan.completeness
+    applicability: ALWAYS
+    due: SPECIFY
+    waiver_policy: FORBIDDEN
+  - family: physical.test
+    applicability: CONDITIONAL
+    condition: "the release scope's service class or a requirement needs PHYSICALLY_VALIDATED evidence"
+    due: RELEASE
+    waiver_policy: APPROVAL_REQUIRED
+  reopen:
+  - GROUND
+  - INTENT
+- id: CONCEPT
+  order: 4
+  predecessor: SPECIFY
+  gate: NONE
+  owner: cad-design
+  procedure:
+  - resume-state
+  - draft-variants
+  - dispatch-units
+  - merge-deliveries
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: variant.integrity
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: selection.feasibility
+    applicability: ALWAYS
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  - family: preview.render
+    applicability: CONDITIONAL
+    condition: a variant has coarse geometry
+    due: CONCEPT
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+- id: VARIANT
+  order: 5
+  predecessor: CONCEPT
+  gate: HUMAN
+  gate_subject: choice of one unchanged CONCEPT variant
+  owner: cad-design
+  procedure:
+  - resume-state
+  - compare-variants
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: VARIANT
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: VARIANT
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: VARIANT
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: VARIANT
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: VARIANT
+    waiver_policy: FORBIDDEN
+  - family: variant.integrity
+    applicability: ALWAYS
+    due: VARIANT
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+- id: LAYOUT
+  order: 6
+  predecessor: VARIANT
+  gate: HUMAN
+  gate_subject: assembly layout boundary after full checks
+  owner: cad-design
+  procedure:
+  - resume-state
+  - define-layout
+  - dispatch-units
+  - merge-deliveries
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: interfaces.completeness
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: geometry.build
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: geometry.readback
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: geometry.export
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: geometry.identity
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  - family: geometry.interference
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: geometry.clearance
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.sweep
+    applicability: CONDITIONAL
+    condition: the assembly has a joint that is not FIXED
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.play
+    applicability: CONDITIONAL
+    condition: "a joint, coupling or interface states play or backlash"
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.access
+    applicability: CONDITIONAL
+    condition: "an assembly, tool or service operation needs access"
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: assembly.operations
+    applicability: CONDITIONAL
+    condition: "the assembly states an install, tool or service operation"
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: fit.stack
+    applicability: CONDITIONAL
+    condition: a critical interface depends on a dimension chain
+    due: LAYOUT
+    waiver_policy: APPROVAL_REQUIRED
+  - family: preview.render
+    applicability: ALWAYS
+    due: LAYOUT
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+- id: PARTS
+  order: 7
+  predecessor: LAYOUT
+  gate: HUMAN
+  gate_subject: "part architecture, sourcing and manufacturing routes"
+  owner: cad-design
+  procedure:
+  - resume-state
+  - design-parts
+  - dispatch-units
+  - merge-deliveries
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: geometry.build
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: geometry.readback
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: geometry.export
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: geometry.identity
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: geometry.manufacture
+    applicability: CONDITIONAL
+    condition: a MAKE or MADE_TO_DRAWING part is built
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: geometry.interference
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: geometry.clearance
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.sweep
+    applicability: CONDITIONAL
+    condition: the assembly has a joint that is not FIXED
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.play
+    applicability: CONDITIONAL
+    condition: "a joint, coupling or interface states play or backlash"
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.access
+    applicability: CONDITIONAL
+    condition: "an assembly, tool or service operation needs access"
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: assembly.operations
+    applicability: CONDITIONAL
+    condition: "the assembly states an install, tool or service operation"
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: capability.route
+    applicability: CONDITIONAL
+    condition: a MAKE or MADE_TO_DRAWING part has a route
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: optical.route
+    applicability: CONDITIONAL
+    condition: a requirement or preference needs transparency or controlled light transmission
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: process.fdm
+    applicability: CONDITIONAL
+    condition: a part route includes a FDM operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.resin
+    applicability: CONDITIONAL
+    condition: a part route includes a RESIN operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.cnc
+    applicability: CONDITIONAL
+    condition: a part route includes a CNC operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.laser
+    applicability: CONDITIONAL
+    condition: a part route includes a LASER operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.waterjet
+    applicability: CONDITIONAL
+    condition: a part route includes a WATERJET operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.plasma
+    applicability: CONDITIONAL
+    condition: a part route includes a PLASMA operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.sheet_forming
+    applicability: CONDITIONAL
+    condition: a part route includes a SHEET_FORMING operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.joining
+    applicability: CONDITIONAL
+    condition: a part route includes a JOINING operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.casting
+    applicability: CONDITIONAL
+    condition: a part route includes a CASTING operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.moulding
+    applicability: CONDITIONAL
+    condition: a part route includes a MOULDING operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.extrusion
+    applicability: CONDITIONAL
+    condition: a part route includes a EXTRUSION operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.secondary
+    applicability: CONDITIONAL
+    condition: "a part route includes a DRILLING, REAMING, TAPPING, FINISHING, COATING or HEAT_TREATMENT operation"
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.other
+    applicability: CONDITIONAL
+    condition: a part route includes an OTHER operation
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: purchase.identity
+    applicability: CONDITIONAL
+    condition: a part is BUY or a component is purchased
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: selection.sourcing
+    applicability: CONDITIONAL
+    condition: "a part, component or BOM row cites a supplier, stock or purchased item"
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: material.properties
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: preview.render
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: review.mechanical_dfm
+    applicability: ALWAYS
+    due: PARTS
+    waiver_policy: FORBIDDEN
+  - family: physical.test
+    applicability: CONDITIONAL
+    condition: "the release scope's service class or a requirement needs PHYSICALLY_VALIDATED evidence"
+    due: RELEASE
+    waiver_policy: APPROVAL_REQUIRED
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+- id: DETAIL
+  order: 8
+  predecessor: PARTS
+  gate: HUMAN
+  gate_subject: "detail, fits, tolerances, drawing intent and process intent"
+  owner: cad-design
+  procedure:
+  - resume-state
+  - detail-parts
+  - dispatch-units
+  - merge-deliveries
+  - freeze-inputs
+  - build-version
+  - draft-drawings
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: geometry.build
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: geometry.readback
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: geometry.export
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: geometry.identity
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: geometry.manufacture
+    applicability: CONDITIONAL
+    condition: a MAKE or MADE_TO_DRAWING part is built
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: geometry.interference
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: geometry.clearance
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.sweep
+    applicability: CONDITIONAL
+    condition: the assembly has a joint that is not FIXED
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.play
+    applicability: CONDITIONAL
+    condition: "a joint, coupling or interface states play or backlash"
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.access
+    applicability: CONDITIONAL
+    condition: "an assembly, tool or service operation needs access"
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: assembly.operations
+    applicability: CONDITIONAL
+    condition: "the assembly states an install, tool or service operation"
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: capability.route
+    applicability: CONDITIONAL
+    condition: a MAKE or MADE_TO_DRAWING part has a route
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: optical.route
+    applicability: CONDITIONAL
+    condition: a requirement or preference needs transparency or controlled light transmission
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: process.fdm
+    applicability: CONDITIONAL
+    condition: a part route includes a FDM operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.resin
+    applicability: CONDITIONAL
+    condition: a part route includes a RESIN operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.cnc
+    applicability: CONDITIONAL
+    condition: a part route includes a CNC operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.laser
+    applicability: CONDITIONAL
+    condition: a part route includes a LASER operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.waterjet
+    applicability: CONDITIONAL
+    condition: a part route includes a WATERJET operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.plasma
+    applicability: CONDITIONAL
+    condition: a part route includes a PLASMA operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.sheet_forming
+    applicability: CONDITIONAL
+    condition: a part route includes a SHEET_FORMING operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.joining
+    applicability: CONDITIONAL
+    condition: a part route includes a JOINING operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.casting
+    applicability: CONDITIONAL
+    condition: a part route includes a CASTING operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.moulding
+    applicability: CONDITIONAL
+    condition: a part route includes a MOULDING operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.extrusion
+    applicability: CONDITIONAL
+    condition: a part route includes a EXTRUSION operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.secondary
+    applicability: CONDITIONAL
+    condition: "a part route includes a DRILLING, REAMING, TAPPING, FINISHING, COATING or HEAT_TREATMENT operation"
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.other
+    applicability: CONDITIONAL
+    condition: a part route includes an OTHER operation
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: purchase.identity
+    applicability: CONDITIONAL
+    condition: a part is BUY or a component is purchased
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: material.properties
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: fit.limits
+    applicability: CONDITIONAL
+    condition: an interface or feature states a fit or tolerance class
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: fit.stack
+    applicability: CONDITIONAL
+    condition: a critical interface depends on a dimension chain
+    due: DETAIL
+    waiver_policy: APPROVAL_REQUIRED
+  - family: drawing.coverage
+    applicability: CONDITIONAL
+    condition: a part or assembly drawing is REQUIRED
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: drawing.preview
+    applicability: CONDITIONAL
+    condition: a part or assembly drawing is REQUIRED
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  - family: preview.render
+    applicability: ALWAYS
+    due: DETAIL
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+  - PARTS
+- id: BOM
+  order: 9
+  predecessor: DETAIL
+  gate: NONE
+  owner: cad-release
+  procedure:
+  - resume-state
+  - freeze-inputs
+  - build-version
+  - derive-bom
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: geometry.build
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: geometry.readback
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: geometry.identity
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: purchase.identity
+    applicability: CONDITIONAL
+    condition: a part is BUY or a component is purchased
+    due: BOM
+    waiver_policy: FORBIDDEN
+  - family: selection.sourcing
+    applicability: CONDITIONAL
+    condition: "a part, component or BOM row cites a supplier, stock or purchased item"
+    due: BOM
+    waiver_policy: APPROVAL_REQUIRED
+  - family: bom.derivation
+    applicability: ALWAYS
+    due: BOM
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+  - PARTS
+  - DETAIL
+- id: ANALYSIS
+  order: 10
+  predecessor: BOM
+  gate: HUMAN
+  gate_subject: "analysis evidence, assumptions and limits"
+  owner: cad-verify
+  procedure:
+  - resume-state
+  - confirm-cases
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - index-verification
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: geometry.build
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: geometry.readback
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: geometry.identity
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: motion.sweep
+    applicability: CONDITIONAL
+    condition: the assembly has a joint that is not FIXED
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.play
+    applicability: CONDITIONAL
+    condition: "a joint, coupling or interface states play or backlash"
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.access
+    applicability: CONDITIONAL
+    condition: "an assembly, tool or service operation needs access"
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: fit.stack
+    applicability: CONDITIONAL
+    condition: a critical interface depends on a dimension chain
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: mass.properties
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: load.hand
+    applicability: CONDITIONAL
+    condition: a requirement or case states a load
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: load.fea
+    applicability: CONDITIONAL
+    condition: the check plan has an approved FEA case
+    due: ANALYSIS
+    waiver_policy: APPROVAL_REQUIRED
+  - family: verification.index
+    applicability: ALWAYS
+    due: ANALYSIS
+    waiver_policy: FORBIDDEN
+  - family: physical.test
+    applicability: CONDITIONAL
+    condition: "the release scope's service class or a requirement needs PHYSICALLY_VALIDATED evidence"
+    due: RELEASE
+    waiver_policy: APPROVAL_REQUIRED
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+  - PARTS
+  - DETAIL
+  - BOM
+- id: CRITIQUE
+  order: 11
+  predecessor: ANALYSIS
+  gate: REVIEW
+  gate_subject: independent mechanical and DFM review verdict PASS
+  owner: cad-review
+  procedure:
+  - resume-state
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - accept-results
+  - write-verdict
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: CRITIQUE
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: CRITIQUE
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: CRITIQUE
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: CRITIQUE
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: CRITIQUE
+    waiver_policy: FORBIDDEN
+  - family: review.mechanical_dfm
+    applicability: ALWAYS
+    due: CRITIQUE
+    waiver_policy: FORBIDDEN
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+  - PARTS
+  - DETAIL
+  - BOM
+  - ANALYSIS
+- id: FREEZE
+  order: 12
+  predecessor: CRITIQUE
+  gate: HUMAN
+  gate_subject: "frozen version manifest, verdict and readiness scope"
+  owner: cad-flow
+  procedure:
+  - resume-state
+  - promote-revisions
+  - freeze-inputs
+  - build-version
+  - draft-drawings
+  - enumerate-obligations
+  - run-checks
+  - derive-bom
+  - index-verification
+  - accept-results
+  - write-verdict
+  - present-gate
+  - advance
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: intake.use_case
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: requirements.completeness
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: interfaces.completeness
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: check_plan.completeness
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: selection.feasibility
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: selection.sourcing
+    applicability: CONDITIONAL
+    condition: "a part, component or BOM row cites a supplier, stock or purchased item"
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: material.properties
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: purchase.identity
+    applicability: CONDITIONAL
+    condition: a part is BUY or a component is purchased
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: geometry.build
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: geometry.readback
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: geometry.export
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: geometry.identity
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: geometry.manufacture
+    applicability: CONDITIONAL
+    condition: a MAKE or MADE_TO_DRAWING part is built
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: geometry.interference
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: geometry.clearance
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.sweep
+    applicability: CONDITIONAL
+    condition: the assembly has a joint that is not FIXED
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.play
+    applicability: CONDITIONAL
+    condition: "a joint, coupling or interface states play or backlash"
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: motion.access
+    applicability: CONDITIONAL
+    condition: "an assembly, tool or service operation needs access"
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: assembly.operations
+    applicability: CONDITIONAL
+    condition: "the assembly states an install, tool or service operation"
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: capability.route
+    applicability: CONDITIONAL
+    condition: a MAKE or MADE_TO_DRAWING part has a route
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: optical.route
+    applicability: CONDITIONAL
+    condition: a requirement or preference needs transparency or controlled light transmission
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: process.fdm
+    applicability: CONDITIONAL
+    condition: a part route includes a FDM operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.resin
+    applicability: CONDITIONAL
+    condition: a part route includes a RESIN operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.cnc
+    applicability: CONDITIONAL
+    condition: a part route includes a CNC operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.laser
+    applicability: CONDITIONAL
+    condition: a part route includes a LASER operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.waterjet
+    applicability: CONDITIONAL
+    condition: a part route includes a WATERJET operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.plasma
+    applicability: CONDITIONAL
+    condition: a part route includes a PLASMA operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.sheet_forming
+    applicability: CONDITIONAL
+    condition: a part route includes a SHEET_FORMING operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.joining
+    applicability: CONDITIONAL
+    condition: a part route includes a JOINING operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.casting
+    applicability: CONDITIONAL
+    condition: a part route includes a CASTING operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.moulding
+    applicability: CONDITIONAL
+    condition: a part route includes a MOULDING operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.extrusion
+    applicability: CONDITIONAL
+    condition: a part route includes a EXTRUSION operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.secondary
+    applicability: CONDITIONAL
+    condition: "a part route includes a DRILLING, REAMING, TAPPING, FINISHING, COATING or HEAT_TREATMENT operation"
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: process.other
+    applicability: CONDITIONAL
+    condition: a part route includes an OTHER operation
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: fit.limits
+    applicability: CONDITIONAL
+    condition: an interface or feature states a fit or tolerance class
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: fit.stack
+    applicability: CONDITIONAL
+    condition: a critical interface depends on a dimension chain
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: mass.properties
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: load.hand
+    applicability: CONDITIONAL
+    condition: a requirement or case states a load
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: load.fea
+    applicability: CONDITIONAL
+    condition: the check plan has an approved FEA case
+    due: FREEZE
+    waiver_policy: APPROVAL_REQUIRED
+  - family: drawing.coverage
+    applicability: CONDITIONAL
+    condition: a part or assembly drawing is REQUIRED
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: drawing.preview
+    applicability: CONDITIONAL
+    condition: a part or assembly drawing is REQUIRED
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: preview.render
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: bom.derivation
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: verification.index
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: review.mechanical_dfm
+    applicability: ALWAYS
+    due: FREEZE
+    waiver_policy: FORBIDDEN
+  - family: physical.test
+    applicability: CONDITIONAL
+    condition: "the release scope's service class or a requirement needs PHYSICALLY_VALIDATED evidence"
+    due: RELEASE
+    waiver_policy: APPROVAL_REQUIRED
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+  - PARTS
+  - DETAIL
+  - BOM
+  - ANALYSIS
+  - CRITIQUE
+- id: RELEASE
+  order: 13
+  predecessor: FREEZE
+  gate: HUMAN
+  gate_subject: release inventory and REV
+  owner: cad-release
+  procedure:
+  - resume-state
+  - freeze-inputs
+  - build-version
+  - enumerate-obligations
+  - run-checks
+  - index-verification
+  - propose-release
+  - accept-results
+  - write-verdict
+  - present-gate
+  - publish-release
+  checks:
+  - family: record.schema
+    applicability: ALWAYS
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: record.semantic
+    applicability: ALWAYS
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: record.ownership
+    applicability: ALWAYS
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: record.inputs
+    applicability: ALWAYS
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: delivery.integrity
+    applicability: CONDITIONAL
+    condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: verification.index
+    applicability: ALWAYS
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: release.inventory
+    applicability: ALWAYS
+    due: RELEASE
+    waiver_policy: FORBIDDEN
+  - family: physical.test
+    applicability: CONDITIONAL
+    condition: "the release scope's service class or a requirement needs PHYSICALLY_VALIDATED evidence"
+    due: RELEASE
+    waiver_policy: APPROVAL_REQUIRED
+  reopen:
+  - GROUND
+  - INTENT
+  - SPECIFY
+  - CONCEPT
+  - VARIANT
+  - LAYOUT
+  - PARTS
+  - DETAIL
+  - BOM
+  - ANALYSIS
+  - CRITIQUE
+  - FREEZE
+check_order:
+- record.schema
+- record.semantic
+- record.ownership
+- record.inputs
+- delivery.integrity
+- intake.use_case
+- requirements.completeness
+- interfaces.completeness
+- check_plan.completeness
+- selection.feasibility
+- selection.sourcing
+- material.properties
+- purchase.identity
+- variant.integrity
+- geometry.build
+- geometry.readback
+- geometry.export
+- geometry.identity
+- geometry.manufacture
+- geometry.interference
+- geometry.clearance
+- motion.sweep
+- motion.play
+- motion.access
+- assembly.operations
+- capability.route
+- optical.route
+- process.fdm
+- process.resin
+- process.cnc
+- process.laser
+- process.waterjet
+- process.plasma
+- process.sheet_forming
+- process.joining
+- process.casting
+- process.moulding
+- process.extrusion
+- process.secondary
+- process.other
+- fit.limits
+- fit.stack
+- mass.properties
+- load.hand
+- load.fea
+- drawing.coverage
+- drawing.preview
+- preview.render
+- bom.derivation
+- verification.index
+- review.mechanical_dfm
+- physical.test
+- release.inventory
+- release.integrity
+# Lite build (product build_mode LITE): three stages, every check due at its own stage and FORBIDDEN to waive.
+# stages[13] above stay the full build. The lite rows reuse the stage, procedure and family IDs and the shared check_order.
+lite_stages:
+  method_profile: LITE_V1
+  stages:
+  - id: GROUND
+    order: 1
+    predecessor: null
+    gate: HUMAN
+    gate_subject: "build mode, geometry intent, part count, dimensions, measurement criteria and check plan, before any geometry"
+    owner: cad-select
+    procedure:
+    - resume-state
+    - record-bootstrap
+    - intake-use-case
+    - specify-requirements
+    - plan-checks
+    - freeze-inputs
+    - build-version
+    - enumerate-obligations
+    - run-checks
+    - accept-results
+    - write-verdict
+    - present-gate
+    - advance
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: record.semantic
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: record.ownership
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: record.inputs
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: delivery.integrity
+      applicability: CONDITIONAL
+      condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: intake.use_case
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: requirements.completeness
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    - family: check_plan.completeness
+      applicability: ALWAYS
+      due: GROUND
+      waiver_policy: FORBIDDEN
+    reopen: []
+  - id: LAYOUT
+    order: 2
+    predecessor: GROUND
+    gate: NONE
+    owner: cad-design
+    procedure:
+    - resume-state
+    - define-layout
+    - dispatch-units
+    - merge-deliveries
+    - freeze-inputs
+    - build-version
+    - enumerate-obligations
+    - run-checks
+    - accept-results
+    - write-verdict
+    - advance
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: record.semantic
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: record.ownership
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: record.inputs
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: delivery.integrity
+      applicability: CONDITIONAL
+      condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: intake.use_case
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.build
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.readback
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.export
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.identity
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.interference
+      applicability: CONDITIONAL
+      condition: the assembly has more than one geometric occurrence
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: geometry.clearance
+      applicability: CONDITIONAL
+      condition: a requirement states a geometric clearance limit
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    - family: preview.render
+      applicability: ALWAYS
+      due: LAYOUT
+      waiver_policy: FORBIDDEN
+    reopen:
+    - GROUND
+  - id: RELEASE
+    order: 3
+    predecessor: LAYOUT
+    gate: HUMAN
+    gate_subject: "the checked lite prototype model, its package inventory and REV"
+    owner: cad-release
+    procedure:
+    - resume-state
+    - freeze-inputs
+    - build-version
+    - enumerate-obligations
+    - index-verification
+    - propose-release
+    - run-checks
+    - accept-results
+    - write-verdict
+    - present-gate
+    - publish-release
+    checks:
+    - family: record.schema
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: record.semantic
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: record.ownership
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: record.inputs
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: delivery.integrity
+      applicability: CONDITIONAL
+      condition: this attempt dispatches at least one worker unit, in its stage work or in run-checks
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: verification.index
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    - family: release.inventory
+      applicability: ALWAYS
+      due: RELEASE
+      waiver_policy: FORBIDDEN
+    reopen:
+    - GROUND
+    - LAYOUT

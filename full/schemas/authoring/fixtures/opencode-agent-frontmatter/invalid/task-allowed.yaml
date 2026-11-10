@@ -1,0 +1,11 @@
+description: Independent checker for one assigned check unit.
+mode: subagent
+permission:
+  edit:
+    '*': deny
+    .cad-work/**: allow
+  bash:
+    '*': deny
+    uv run --no-project *: allow
+  webfetch: deny
+  task: allow

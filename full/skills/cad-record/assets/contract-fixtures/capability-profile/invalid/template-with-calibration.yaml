@@ -1,0 +1,96 @@
+id: fdm_template
+revision: 1
+title: FDM printer (template)
+process: FDM
+provider: LOCAL
+template: true
+guidance:
+- Copy this profile into hw/manufacturing/capabilities.yaml, give it your own id, then remove template and guidance.
+- Record your actual machine, operator or supplier values with their sources; leave a value unknown, with its reason, until
+  you have one.
+- 'Parameters describe the machine and are never its achieved accuracy: record achievable dimensions, features and finish
+  only as calibrations from your own coupons, measurements or supplier evidence, each scoped to its material, feature, orientation,
+  setup and tool.'
+- Record nozzle, filament, layer height, hotend, bed and enclosure limits, filament drying and support materials.
+- Calibrate walls, small features, holes, bridges, overhangs, warping and layer strength per filament profile, orientation
+  and settings; a slicer preview or a print trial is evidence only for what it shows.
+machine:
+  identity:
+    status: UNKNOWN
+    reason: 'template: record the make, model and identity of your machine'
+operator:
+  status: UNKNOWN
+  reason: 'template: record who operates it and their constraints'
+envelope:
+  x:
+    status: UNKNOWN
+    reason: 'template: record the usable working envelope'
+  y:
+    status: UNKNOWN
+    reason: 'template: record the usable working envelope'
+  z:
+    status: UNKNOWN
+    reason: 'template: record the usable working envelope'
+materials:
+  status: UNKNOWN
+  reason: 'template: list the exact materials and stock it is approved or forbidden for'
+parameters:
+  nozzle_diameter:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  nozzle_material:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  filament_diameter:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  layer_height:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  line_width:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  hotend_max_temperature:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  bed_max_temperature:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  enclosure:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  chamber_temperature:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  filament_drying:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  support_materials:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+  max_speed:
+    status: UNKNOWN
+    reason: 'template: record your own value'
+calibrations:
+- id: hole_5mm
+  characteristic: hole_diameter_deviation
+  scope:
+    material: fdm_petg_polylite
+    feature: vertical hole 5 mm
+    orientation: Z
+    size:
+      value: 5
+      units: mm
+  result:
+    limits:
+      lower: -0.18
+      upper: -0.06
+      units: mm
+    samples: 6
+  source:
+    kind: CALIBRATION
+    reference: coupon set 2026-10
+    artifact: hw/manufacturing/sources/cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc/coupons.csv
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  date: '2026-10-20'
+  valid_until: '2027-04-20'

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills requirements record (hw/requirements.yaml)",
+  "description": "Distinct requirements, preferences, assumptions and questions. Zero requirements is schema-valid; SPECIFY semantic completeness rejects empty engineering acceptance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["requirements", "preferences", "assumptions", "questions"],
+  "properties": {
+    "requirements": {"type": "array", "items": {"$ref": "#/$defs/requirement"}},
+    "preferences": {"type": "array", "items": {"$ref": "#/$defs/preference"}},
+    "assumptions": {"type": "array", "items": {"$ref": "#/$defs/assumption"}},
+    "questions": {"type": "array", "items": {"$ref": "#/$defs/question"}}
+  },
+  "$defs": {
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "kind",
+        "priority",
+        "subjects",
+        "criteria",
+        "methods",
+        "facets",
+        "due",
+        "safety",
+        "waiver_policy",
+        "source",
+        "owner"
+      ],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/requirement_id"},
+        "title": {"$ref": "common.schema.json#/$defs/text"},
+        "text": {"$ref": "common.schema.json#/$defs/text"},
+        "kind": {
+          "enum": [
+            "FUNCTIONAL",
+            "PERFORMANCE",
+            "INTERFACE",
+            "ENVIRONMENTAL",
+            "SAFETY",
+            "REGULATORY",
+            "MANUFACTURING",
+            "SERVICE",
+            "APPEARANCE",
+            "OTHER"
+          ]
+        },
+        "priority": {"description": "severity of non-compliance", "enum": ["CRITICAL", "MAJOR", "MINOR"]},
+        "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+        "criteria": {
+          "oneOf": [
+            {"type": "array", "items": {"$ref": "common.schema.json#/$defs/criterion"}, "minItems": 1},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "conditions": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "methods": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/verification_method"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "facets": {
+          "type": "array",
+          "items": {"$ref": "common.schema.json#/$defs/facet"},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "due": {
+          "description": "earliest stage whose verdict needs this evidence; later facets stay PLANNED",
+          "$ref": "common.schema.json#/$defs/stage"
+        },
+        "safety": {"description": "safety or regulatory requirement; never waivable", "type": "boolean"},
+        "waiver_policy": {"$ref": "common.schema.json#/$defs/waiver_policy"},
+        "source": {"$ref": "common.schema.json#/$defs/source"},
+        "owner": {"$ref": "common.schema.json#/$defs/text"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      },
+      "if": {"properties": {"safety": {"const": true}}},
+      "then": {"properties": {"waiver_policy": {"const": "FORBIDDEN"}}}
+    },
+    "preference": {
+      "description": "ranks feasible options only; never overrides a hard requirement",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "weight", "source"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/preference_id"},
+        "text": {"$ref": "common.schema.json#/$defs/text"},
+        "weight": {"type": "number", "exclusiveMinimum": 0},
+        "criterion": {"$ref": "common.schema.json#/$defs/criterion"},
+        "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+        "source": {"$ref": "common.schema.json#/$defs/source"}
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "bounds", "origin", "reason", "owner", "validation", "status"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/assumption_id"},
+        "text": {"$ref": "common.schema.json#/$defs/text"},
+        "bounds": {"$ref": "common.schema.json#/$defs/text"},
+        "origin": {"$ref": "common.schema.json#/$defs/text"},
+        "reason": {"$ref": "common.schema.json#/$defs/text"},
+        "requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+        "owner": {"$ref": "common.schema.json#/$defs/text"},
+        "validation": {"$ref": "common.schema.json#/$defs/text"},
+        "status": {"enum": ["OPEN", "VALIDATED", "INVALIDATED"]},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      },
+      "if": {"properties": {"status": {"enum": ["VALIDATED", "INVALIDATED"]}}},
+      "then": {"required": ["decision"]}
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "question", "owner", "material_to_choice", "safety_relevant", "status"],
+      "properties": {
+        "id": {"$ref": "common.schema.json#/$defs/question_id"},
+        "question": {"$ref": "common.schema.json#/$defs/text"},
+        "subjects": {"$ref": "common.schema.json#/$defs/subjects"},
+        "owner": {"$ref": "common.schema.json#/$defs/text"},
+        "material_to_choice": {"type": "boolean"},
+        "safety_relevant": {"type": "boolean"},
+        "status": {"enum": ["OPEN", "RESOLVED"]},
+        "resolution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["answer"],
+          "properties": {
+            "answer": {"$ref": "common.schema.json#/$defs/text"},
+            "source": {"$ref": "common.schema.json#/$defs/source"},
+            "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+          },
+          "anyOf": [{"required": ["source"]}, {"required": ["decision"]}]
+        }
+      },
+      "if": {"properties": {"status": {"const": "RESOLVED"}}},
+      "then": {"required": ["resolution"]},
+      "else": {"not": {"required": ["resolution"]}}
+    }
+  }
+}

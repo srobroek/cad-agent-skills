@@ -1,0 +1,14 @@
+{
+  "name": "cad-agent-skills",
+  "description": "Skill- and agent-driven mechanical product architecture and modelling.",
+  "version": "latest",
+  "agents": [
+    "./harness/claude/agents/cad-concept-designer.md",
+    "./harness/claude/agents/cad-part-designer.md",
+    "./harness/claude/agents/cad-checker.md",
+    "./harness/claude/agents/cad-mech-dfm-reviewer.md",
+    "./harness/claude/agents/cad-sourcing-researcher.md"
+  ],
+  "skills": "./skills",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,334 @@
+# Reference record for examples/phone-stand: hw/product.yaml after GROUND stage work, before the GROUND gate.
+# Built from the cad-record template; every KNOWN fact cites the scripted owner answer in brief.md.
+format: cad-agent-skills
+record_version: 1
+id: phone-stand
+title: Adjustable desktop phone stand
+build_mode:
+  status: KNOWN
+  value: FULL
+  basis: USER_DECLARED
+  sources:
+  - {kind: USER, reference: brief.md prompt, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+identity:
+  description:
+    status: KNOWN
+    value: Adjustable desktop stand that holds one phone in portrait at a viewing angle changed by hand
+    basis: USER_DECLARED
+    sources:
+    - &a01 {kind: USER, reference: brief.md answer A-01, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  owner:
+    status: KNOWN
+    value: SYNTHETIC demo owner; owns the product and approves every gate and release
+    basis: USER_DECLARED
+    sources:
+    - &a02 {kind: USER, reference: brief.md answer A-02, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor: maker
+regime: ISO
+general_tolerance:
+  status: KNOWN
+  value: ISO 2768-1 class m on any drawing
+  basis: USER_DECLARED
+  sources:
+  - &a04 {kind: USER, reference: brief.md answer A-04, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+intake:
+  status: DRAFT
+  purpose:
+    status: KNOWN
+    value: Concept package to review the form, CAD validity and printability only; no fit or function claim
+    basis: USER_DECLARED
+    sources:
+    - &a12 {kind: USER, reference: brief.md answer A-12, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  users:
+    status: KNOWN
+    value: The owner alone, at a home desk; assembles and adjusts it by hand
+    basis: USER_DECLARED
+    sources:
+    - &a05 {kind: USER, reference: brief.md answer A-05, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  loads:
+  - id: phone_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value: {value: 2.45, units: N}
+      basis: CALCULATED
+      sources:
+      - &a06 {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+      - {kind: CALCULATION, reference: 250 g design mass times 9.81 m/s2, reason: weight of the heaviest phone the owner designs for}
+    note: sits on the stand for hours (A-06); no duration figure stated
+    direction:
+      status: KNOWN
+      value: -Z through the phone's centre of mass, resting on the cradle
+      basis: USER_DECLARED
+      sources:
+      - *a06
+  - id: owner_phone_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value: {value: 2.06, units: N}
+      basis: CALCULATED
+      sources:
+      - *a06
+      - {kind: CALCULATION, reference: 210 g times 9.81 m/s2, reason: weight of the owner's own phone in its case}
+    direction:
+      status: KNOWN
+      value: '-Z through the phone''s centre of mass, resting on the cradle'
+      basis: USER_DECLARED
+      sources:
+      - *a06
+    note: the owner's phone, inside the 250 g design bound of phone_weight
+  - id: screen_tap
+    kind: CYCLIC
+    magnitude:
+      status: UNKNOWN
+      reason: the owner taps the screen but no tap force is stated; holding a phone in use is outside this concept scope
+      owner: user
+      question: Q-018
+      consequential: false
+    direction:
+      status: KNOWN
+      value: into the screen, normal to the phone face
+      basis: USER_DECLARED
+      sources:
+      - *a06
+  environment:
+    temperature:
+      status: KNOWN
+      value: {lower: 18, upper: 30, units: deg_C}
+      basis: USER_DECLARED
+      sources:
+      - &a07 {kind: USER, reference: brief.md answer A-07, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    heat_sources:
+      status: KNOWN
+      value: none within one metre
+      basis: USER_DECLARED
+      sources:
+      - *a07
+    moisture:
+      status: KNOWN
+      value: dry indoor air
+      basis: USER_DECLARED
+      sources:
+      - *a07
+    chemicals:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *a07
+    uv:
+      status: UNKNOWN
+      reason: the desk gets some afternoon sun; the owner does not know how much
+      owner: user
+      question: Q-019
+      consequential: false
+    corrosion:
+      status: NOT_APPLICABLE
+      reason: 'Q-007, answer A-07: dry indoor air, no chemicals'
+      reviewed_by: SYNTHETIC demo owner
+  motion:
+    speed:
+      status: NOT_APPLICABLE
+      reason: 'Q-008, answer A-08: the angle is changed by hand a few times a day; no speed requirement'
+      reviewed_by: SYNTHETIC demo owner
+    range:
+      status: KNOWN
+      value: {lower: 55, upper: 75, units: deg}
+      basis: USER_DECLARED
+      sources:
+      - &a08 {kind: USER, reference: brief.md answer A-08, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    duty_cycle:
+      status: KNOWN
+      value: a few angle changes a day
+      basis: USER_DECLARED
+      sources:
+      - *a08
+    service_life:
+      status: UNKNOWN
+      reason: the owner does not know how many years it should last; durability is excluded from this release scope
+      owner: user
+      question: Q-020
+      consequential: false
+    wear:
+      status: UNKNOWN
+      reason: no wear limit stated; durability is excluded from this release scope
+      owner: user
+      question: Q-020
+      consequential: false
+    friction:
+      status: KNOWN
+      value: the stand must stay at the angle the user sets
+      basis: USER_DECLARED
+      sources:
+      - *a08
+  accuracy:
+    tolerance:
+      status: KNOWN
+      value: no precision fit known to the owner
+      basis: USER_DECLARED
+      sources:
+      - &a09 {kind: USER, reference: brief.md answer A-09, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    repeatability:
+      status: KNOWN
+      value: {value: 2, units: deg}
+      basis: USER_DECLARED
+      sources:
+      - *a09
+    surface_finish:
+      status: KNOWN
+      value: smooth matte visible faces without support marks
+      basis: USER_DECLARED
+      sources:
+      - *a09
+    dimensional_stability:
+      status: UNKNOWN
+      reason: not stated; only the 2 degree angle repeatability is known
+      owner: user
+      question: Q-021
+      consequential: false
+  logistics:
+    quantity:
+      status: KNOWN
+      value: {value: 1, units: count}
+      basis: USER_DECLARED
+      sources:
+      - &a10 {kind: USER, reference: brief.md answer A-10, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    budget:
+      status: KNOWN
+      value: {amount: 15, currency: EUR}
+      basis: USER_DECLARED
+      note: material cost only
+      sources:
+      - *a10
+    lead_time:
+      status: KNOWN
+      value: {value: 14, units: d}
+      basis: USER_DECLARED
+      sources:
+      - *a10
+    maintenance:
+      status: KNOWN
+      value: none planned beyond reprinting a broken part
+      basis: USER_DECLARED
+      sources:
+      - *a10
+    repair:
+      status: KNOWN
+      value: the owner reprints a broken part
+      basis: USER_DECLARED
+      sources:
+      - *a10
+  capability:
+    equipment:
+    - prusa_mk4_home
+    operator:
+      status: KNOWN
+      value: the owner, hobby FDM use, no calibration prints made
+      basis: USER_DECLARED
+      sources:
+      - &a11 {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    outsourcing:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *a11
+service:
+  class: APPEARANCE_CONCEPT
+  decision: DR-001
+risk:
+  failure_consequence:
+    status: KNOWN
+    value: the phone slides or tips a few centimetres onto the desk
+    basis: USER_DECLARED
+    sources:
+    - &a13 {kind: USER, reference: brief.md answer A-13, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  severity: MINOR
+  forbidden_outcomes:
+    status: KNOWN
+    value:
+    - the phone or the stand falls off the desk
+    basis: USER_DECLARED
+    sources:
+    - *a13
+  standards:
+    status: KNOWN
+    value:
+    - none claimed for this personal concept model
+    basis: USER_DECLARED
+    sources:
+    - *a13
+  supervision:
+    status: KNOWN
+    value: the owner is present when it is used
+    basis: USER_DECLARED
+    sources:
+    - *a13
+authority:
+  approver:
+    name: SYNTHETIC demo owner
+    role: OWNER
+    basis: product owner (brief.md answers A-02 and A-14)
+    scope: every gate, waiver, change and release of this product
+  competent:
+    status: NOT_APPLICABLE
+    reason: APPEARANCE_CONCEPT scope; no production or safety-critical release
+    reviewed_by: SYNTHETIC demo owner
+release_scope:
+  purpose:
+    status: KNOWN
+    value: concept-definition package for form, CAD validity and printability review only
+    basis: USER_DECLARED
+    sources:
+    - &a15 {kind: USER, reference: brief.md answer A-15, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  operating_limits:
+    status: KNOWN
+    value:
+    - display and handling at the owner's desk
+    - not for holding a phone in daily use
+    basis: USER_DECLARED
+    sources:
+    - *a15
+  exclusions:
+    status: KNOWN
+    value:
+    - FUNCTIONAL, PERFORMANCE, INTERFACE, ENVIRONMENTAL, SERVICE, SAFETY, REGULATORY and OTHER requirements are outside this APPEARANCE_CONCEPT scope
+    - no fit claim, in CAD or physical; the stated phone envelope sizes the cradle form (REQ-002), and no fit of a phone in the stand is evaluated
+    - no functional, holding-force, friction, tipping, durability or other physical claim
+    - no safety or regulatory claim; the harm the risk names (the phone slides or tips onto the desk, or the phone or the stand falls off the desk) is not evaluated in this scope
+    - drawings are reviewed model-generated engineering drawings, not producer-ready and not standards-conformant
+    basis: USER_DECLARED
+    sources:
+    - *a15
+storage:
+  results_in_git:
+    status: KNOWN
+    value: true
+    basis: USER_DECLARED
+    sources:
+    - &a16 {kind: USER, reference: brief.md answer A-16, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  retention:
+    status: KNOWN
+    value: for the life of the project
+    basis: USER_DECLARED
+    sources:
+    - *a16
+license:
+  hardware:
+    status: KNOWN
+    value: CERN-OHL-P-2.0
+    basis: USER_DECLARED
+    sources:
+    - &a17 {kind: USER, reference: brief.md answer A-17, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  documentation:
+    status: KNOWN
+    value: CC-BY-4.0
+    basis: USER_DECLARED
+    sources:
+    - *a17

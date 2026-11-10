@@ -1,0 +1,351 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "LAYOUT",
+  "version": "v6",
+  "predecessor": {
+    "stage": "VARIANT",
+    "version": "v5",
+    "verdict": {
+      "path": "hw/versions/v5/stage-verdict.json",
+      "sha256": "942ae47cbf89b39ec7553128cf1f5ecf45442dbf08f09160f4c7ffadedfd9069"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-006.yaml",
+      "sha256": "90ca87b1e8c86858606a4a00461cd6d52c7d08de3ec5e4a61e521d3f0256b53c"
+    }
+  },
+  "version_manifest": {
+    "path": "hw/versions/v6/manifest.json",
+    "sha256": "c9ce3e804c731feb6fb9b77b675295a915d1854e9c4f858b5b8b39b893a92812"
+  },
+  "obligations": {
+    "path": "hw/versions/v6/obligations.yaml",
+    "sha256": "ec8ccdfba25c3aaf5c76962bbbf838c8739254f54cd980f5aaeee7ed2c1bd51b"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "record.schema@product",
+    "record.semantic@product",
+    "record.ownership@product",
+    "record.inputs@product",
+    "delivery.integrity@product",
+    "interfaces.completeness@product",
+    "geometry.build@assembly",
+    "geometry.build@STD-0001",
+    "geometry.build@STD-0002",
+    "geometry.build@STD-0003",
+    "geometry.readback@assembly",
+    "geometry.readback@STD-0001",
+    "geometry.readback@STD-0002",
+    "geometry.readback@STD-0003",
+    "geometry.export@STD-0001",
+    "geometry.export@STD-0002",
+    "geometry.export@STD-0003",
+    "geometry.export@assembly",
+    "geometry.identity@STD-0001.body",
+    "geometry.identity@STD-0002.body",
+    "geometry.identity@STD-0003.pin",
+    "geometry.interference@assembly",
+    "geometry.clearance@assembly",
+    "geometry.clearance@IF-001#hinge_bore",
+    "motion.sweep@case.hinge-travel",
+    "motion.play@case.hinge-travel",
+    "motion.play@IF-001",
+    "motion.access@op.insert_pin",
+    "assembly.operations@op.insert_pin",
+    "fit.stack@case.hinge-stack",
+    "preview.render@assembly",
+    "preview.render@STD-0001",
+    "preview.render@STD-0002",
+    "preview.render@STD-0003"
+  ],
+  "results": [
+    {
+      "check": "record-schema",
+      "attempt": "a1",
+      "family": "record.schema",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/record-schema/a1/result.json",
+        "sha256": "8a02a23700f0eeb75a1203f02e6deb2b210c8f2f0a796f162f490a4acd775a5d"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/record-schema/a1/bundle-manifest.json",
+        "sha256": "7461d5e717c056acf091e12c489729eccb160c047c68f3ddf638efc000b86e76"
+      }
+    },
+    {
+      "check": "record-semantic",
+      "attempt": "a1",
+      "family": "record.semantic",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/record-semantic/a1/result.json",
+        "sha256": "1c76f1a4fdb8015ed0f6825380e0c4a368c41a88685df6a4ef90f196b2cefe76"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/record-semantic/a1/bundle-manifest.json",
+        "sha256": "b013e94ac145d167d3a5f718e7331cc10b9e97f4a712b89743a2d5487fe0732a"
+      }
+    },
+    {
+      "check": "record-ownership",
+      "attempt": "a1",
+      "family": "record.ownership",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/record-ownership/a1/result.json",
+        "sha256": "960ae3477135c0bcd4351229dd5f1f87684560fa5056a9d2a436c7118fc6717a"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/record-ownership/a1/bundle-manifest.json",
+        "sha256": "61ee893ff413e362e82c112b90d2f3bee319e0990e9714f25603c9e58b43e6e7"
+      }
+    },
+    {
+      "check": "record-inputs",
+      "attempt": "a1",
+      "family": "record.inputs",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/record-inputs/a1/result.json",
+        "sha256": "f2fd8eeb4bab64d72d539bd4f9428a7711ac2b1b0adb50d7aaae66723a8ee362"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/record-inputs/a1/bundle-manifest.json",
+        "sha256": "c9ba2468b624b83e93d3a3a58a57cb4253b275daeb1034e839b45cf6da1ffdf1"
+      }
+    },
+    {
+      "check": "delivery-integrity",
+      "attempt": "a1",
+      "family": "delivery.integrity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/delivery-integrity/a1/result.json",
+        "sha256": "9c3852870cf5c9da05fd44f91587be70ad07a28324df1216e5c7b84260311d74"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/delivery-integrity/a1/bundle-manifest.json",
+        "sha256": "1d4b4809e34bdcbe94f8159eb5ab24cf45e46357386f474a5a0e37a011b1e9dd"
+      }
+    },
+    {
+      "check": "interfaces-completeness",
+      "attempt": "a1",
+      "family": "interfaces.completeness",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/interfaces-completeness/a1/result.json",
+        "sha256": "eebbe47d658e4585e823b62fe082b54e33becec10cfdf91afbff7aca5c87f8fb"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/interfaces-completeness/a1/bundle-manifest.json",
+        "sha256": "0146f82bd141513fd41eeefc55693d13545556bbfc2a47e22aa23c68043dad10"
+      }
+    },
+    {
+      "check": "geometry-build",
+      "attempt": "a1",
+      "family": "geometry.build",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/geometry-build/a1/result.json",
+        "sha256": "33629e1299a50236d0e3488e3dc3b936fe1de73113fb766a73ae615241d4531f"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/geometry-build/a1/bundle-manifest.json",
+        "sha256": "94fe4ef585a13126576d230c3e24e1dd9a1942c0c8eeb1bfe4989644c6078690"
+      }
+    },
+    {
+      "check": "geometry-readback",
+      "attempt": "a1",
+      "family": "geometry.readback",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/geometry-readback/a1/result.json",
+        "sha256": "057291dc1d6572f08a9b41480eb331cbadbc99e759b203590253bd88518b023a"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/geometry-readback/a1/bundle-manifest.json",
+        "sha256": "07886c3bfa3023879b8f5084aaa64aae38a7c9c6f553a9ba8d49d9474a396a3e"
+      }
+    },
+    {
+      "check": "geometry-export",
+      "attempt": "a1",
+      "family": "geometry.export",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/geometry-export/a1/result.json",
+        "sha256": "9794eab3f08fb84dee0f8766f38ef6def2b1809f455ffe172fe77108e9c0620a"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/geometry-export/a1/bundle-manifest.json",
+        "sha256": "cb23eea44fb7ae5d9e6ea86c80a5ff0016bfc8669c81c4fb6a4cae1343e00cea"
+      }
+    },
+    {
+      "check": "geometry-identity",
+      "attempt": "a1",
+      "family": "geometry.identity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/geometry-identity/a1/result.json",
+        "sha256": "b35bdb2c69764652afedde78d3225df95ffc0f63d05805a0493c5d465947e499"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/geometry-identity/a1/bundle-manifest.json",
+        "sha256": "495b5028dd5306ebc2230c2b3c7a249e390328726eefb545c544f6425c2fbd3d"
+      }
+    },
+    {
+      "check": "interference",
+      "attempt": "a1",
+      "family": "geometry.interference",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/interference/a1/result.json",
+        "sha256": "ed9ff64a74ac63433351cd7d83ade138a1d5fa34dcbb2e71dd20c41bc04ee18e"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/interference/a1/bundle-manifest.json",
+        "sha256": "c809db59ff9c8cf92a6c734e1fe4af105925794e8327bd6945cf6c7c2ba4d089"
+      }
+    },
+    {
+      "check": "clearance",
+      "attempt": "a1",
+      "family": "geometry.clearance",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/clearance/a1/result.json",
+        "sha256": "d88056f9005b1725e56d4784328c6f78c7a190c73f3c386be7839f9bfeb8558c"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/clearance/a1/bundle-manifest.json",
+        "sha256": "764e038fc732a05bb84698993cc0f0ebd9c52ec8dafd14bb13760ad4f2730fd7"
+      }
+    },
+    {
+      "check": "sweep",
+      "attempt": "a1",
+      "family": "motion.sweep",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/sweep/a1/result.json",
+        "sha256": "19255d9ca0e8cfa49811272929a02f6daca3e186949f711d67e1cc428529b8f6"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/sweep/a1/bundle-manifest.json",
+        "sha256": "2d5f611e630eae41adc2ab957601a017eb581db2d58808ed671eb7ea6da16778"
+      }
+    },
+    {
+      "check": "play",
+      "attempt": "a1",
+      "family": "motion.play",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/play/a1/result.json",
+        "sha256": "5c3dadcde2eb7a215c728c306dd7587ee8f58490bf171b3a5416f00a3ce968c0"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/play/a1/bundle-manifest.json",
+        "sha256": "2831e9cd0587ae3a9416a2be64cbd7a2651c8c0b40086b01cb494a05909a04a3"
+      }
+    },
+    {
+      "check": "access",
+      "attempt": "a1",
+      "family": "motion.access",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/access/a1/result.json",
+        "sha256": "a85de281961eed665bd2fc30c04da904fe5d25c97c3d820574c26250cc94a65a"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/access/a1/bundle-manifest.json",
+        "sha256": "98b55e175ef680cfd05fa0adb33a9844750fa6710f81da7dcc7b5c0736d40b8d"
+      }
+    },
+    {
+      "check": "operations",
+      "attempt": "a1",
+      "family": "assembly.operations",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/operations/a1/result.json",
+        "sha256": "09486934988a3ff4a5411debf6d9c276db96005bfaa1d954c0bc08e9778dc566"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/operations/a1/bundle-manifest.json",
+        "sha256": "a55288b38fc6c24e580c0c9040672fadcf892fd87a4b0b3f8984b7152cfb8057"
+      }
+    },
+    {
+      "check": "stack",
+      "attempt": "a1",
+      "family": "fit.stack",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/stack/a1/result.json",
+        "sha256": "7dd996f2cec550f99848afb160ac9dc729b58c79c75472d40e69cb77f3e46dd0"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/stack/a1/bundle-manifest.json",
+        "sha256": "220563016f1900568d466f61e446dee0a262583cd6414ce54fc5c8d372f8c454"
+      }
+    },
+    {
+      "check": "preview-render",
+      "attempt": "a1",
+      "family": "preview.render",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v6/preview-render/a1/result.json",
+        "sha256": "1ae5862f0afe245c63c8064ede1adfc62beaff8b044972d49b1fecdf9c127954"
+      },
+      "bundle": {
+        "path": "hw/checks/v6/preview-render/a1/bundle-manifest.json",
+        "sha256": "67195a6bf0a139fbfc6af908b2a10ad5ea0549033f654d3f9d84e1660e313da5"
+      }
+    }
+  ],
+  "bundles": [],
+  "waivers": [],
+  "future": [],
+  "blockers": [],
+  "review": {
+    "required": false
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T12:00:00Z"
+}

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills layout (cad-record/layout.json)",
+  "description": "Canonical catalog of every runtime path: tokens, path template, root schema, owner skill, writer, mutability, first stage, condition and gate credit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schema_version", "tokens", "entries"],
+  "properties": {
+    "format": {"const": "cad-agent-skills.layout"},
+    "schema_version": {"const": 1},
+    "tokens": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[A-Z][A-Z_]*$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pattern", "example", "meaning"],
+        "properties": {
+          "pattern": {"$ref": "common.schema.json#/$defs/text"},
+          "example": {"$ref": "common.schema.json#/$defs/text"},
+          "meaning": {"$ref": "common.schema.json#/$defs/text"}
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "path",
+          "kind",
+          "schema",
+          "format",
+          "owner",
+          "writer",
+          "mutability",
+          "stage",
+          "condition",
+          "gate_credit",
+          "meaning"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"},
+          "path": {"type": "string", "pattern": "^(hw|\\.cad-work)/[A-Za-z0-9_./{}*<>-]+$"},
+          "kind": {"enum": ["RECORD", "GENERATED", "SCRATCH", "NOTES"]},
+          "schema": {
+            "oneOf": [
+              {
+                "enum": [
+                  "product.schema.json",
+                  "requirements.schema.json",
+                  "interfaces.schema.json",
+                  "part.schema.json",
+                  "assembly.schema.json",
+                  "bom-row.schema.json",
+                  "bom.schema.json",
+                  "verification-row.schema.json",
+                  "verification.schema.json",
+                  "decision.schema.json",
+                  "check-result.schema.json",
+                  "stage-verdict.schema.json",
+                  "stage-policy.schema.json",
+                  "material-profile.schema.json",
+                  "material-library.schema.json",
+                  "capability-profile.schema.json",
+                  "capability-library.schema.json",
+                  "selection.schema.json",
+                  "check-plan.schema.json",
+                  "variant.schema.json",
+                  "version-manifest.schema.json",
+                  "bundle-manifest.schema.json",
+                  "worker-brief.schema.json",
+                  "worker-delivery.schema.json",
+                  "lead-claim.schema.json",
+                  "release-manifest.schema.json",
+                  "layout.schema.json"
+                ]
+              },
+              {"type": "null"}
+            ]
+          },
+          "format": {
+            "enum": [
+              "YAML",
+              "JSON",
+              "CSV",
+              "STEP",
+              "STL",
+              "GLB",
+              "SVG",
+              "PDF",
+              "PNG",
+              "DXF",
+              "PY",
+              "MD",
+              "BYTES",
+              "DIRECTORY"
+            ]
+          },
+          "owner": {"$ref": "common.schema.json#/$defs/skill"},
+          "writer": {"$ref": "common.schema.json#/$defs/text"},
+          "mutability": {"enum": ["CONTROLLED", "IMMUTABLE", "APPEND_ONLY", "DERIVED", "SCRATCH", "NOTES"]},
+          "stage": {"oneOf": [{"$ref": "common.schema.json#/$defs/stage"}, {"const": "ANY"}]},
+          "condition": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind"],
+            "properties": {"kind": {"enum": ["ALWAYS", "CONDITIONAL"]}, "when": {"$ref": "common.schema.json#/$defs/text"}},
+            "if": {"properties": {"kind": {"const": "CONDITIONAL"}}},
+            "then": {"required": ["when"]}
+          },
+          "gate_credit": {"type": "boolean"},
+          "meaning": {"$ref": "common.schema.json#/$defs/text"}
+        },
+        "allOf": [
+          {
+            "if": {"required": ["kind"], "properties": {"kind": {"enum": ["SCRATCH", "NOTES"]}}},
+            "then": {"properties": {"gate_credit": {"const": false}}}
+          },
+          {
+            "if": {"required": ["schema"], "properties": {"schema": {"type": "string"}}},
+            "then": {"properties": {"format": {"enum": ["YAML", "JSON"]}}}
+          }
+        ]
+      },
+      "minItems": 1
+    }
+  }
+}

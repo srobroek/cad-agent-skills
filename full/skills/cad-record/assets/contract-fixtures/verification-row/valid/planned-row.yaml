@@ -1,0 +1,21 @@
+requirement: REQ-001
+subject:
+  kind: ASSEMBLY
+method: TEST
+criterion:
+  property: viewing_angle
+  comparator: BETWEEN
+  value:
+  - 55
+  - 75
+  units: deg
+  source:
+    kind: USER
+    reference: owner interview
+    origin: product owner
+    date: '2026-11-03'
+facet: PHYSICALLY_VALIDATED
+due: RELEASE
+outcome: PLANNED
+obligations:
+- physical.test@REQ-001

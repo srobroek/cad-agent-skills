@@ -1,0 +1,24 @@
+requirement: REQ-001
+subject:
+  kind: ASSEMBLY
+method: INSPECTION
+criterion:
+  property: viewing_angle
+  comparator: BETWEEN
+  value:
+  - 55
+  - 75
+  units: deg
+  source:
+    kind: USER
+    reference: owner interview
+    origin: product owner
+    date: '2026-11-03'
+facet: CAD_VALID
+due: LAYOUT
+outcome: PASS
+obligations:
+- geometry.clearance@assembly
+results:
+- path: hw/checks/v6/clearance/a1/result.json
+  sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb

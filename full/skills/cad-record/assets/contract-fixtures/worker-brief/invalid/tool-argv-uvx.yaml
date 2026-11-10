@@ -1,0 +1,74 @@
+format: cad-agent-skills.worker-brief
+schema_version: 1
+unit: base-part
+role: cad-part-designer
+stage: PARTS
+task: Detail STD-0001 base for FDM with a reamed hinge bore
+subjects:
+- kind: PART
+  PN: STD-0001
+input_inventory:
+  sha256: '2222222222222222222222222222222222222222222222222222222222222222'
+  files:
+  - path: hw/parts/STD-0001/part.yaml
+    sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+resources:
+  plugin:
+    name: cad-agent-skills
+    version: 0.1.0
+  skills:
+  - name: cad-model
+    path: /Users/me/.agents/skills/cad-model/SKILL.md
+    uri: skill://cad-model
+  - name: cad-design
+    path: /Users/me/.agents/skills/cad-design/SKILL.md
+  rubric:
+    name: rubric
+    path: /Users/me/.agents/skills/cad-review/references/rubric.md
+    uri: skill://cad-review/references/rubric.md
+  schemas:
+  - name: part
+    path: /Users/me/.agents/skills/cad-record/schemas/part.schema.json
+  tools:
+  - name: check-jsonschema
+    argv:
+    - uvx
+    - --from
+    - check-jsonschema==0.39.0
+    - check-jsonschema
+    version: check-jsonschema, version 0.39.0
+  templates:
+  - name: worker-delivery
+    path: /Users/me/.agents/skills/cad-flow/assets/worker-delivery.yaml
+  - name: check-result-unit
+    path: /Users/me/.agents/skills/cad-record/assets/contract-fixtures/check-result/valid/unit-prebuild.json
+  role_reference:
+    name: agent-roles
+    path: /Users/me/.agents/skills/cad-flow/references/agent-roles.md
+    uri: skill://cad-flow/references/agent-roles.md
+boundary:
+  project_root: /Users/me/projects/phone-stand
+  scratch: .cad-work/base-part
+  writable:
+  - .cad-work/base-part
+  locked:
+  - hw/interfaces.yaml
+  - hw/assembly.yaml
+expected:
+  outputs:
+  - target: hw/parts/STD-0001/part.yaml
+    kind: part record
+  - target: hw/parts/STD-0001/model.py
+    kind: model program
+  checks:
+  - clearance
+  stop:
+  - locked interface needs change
+  - required capability UNKNOWN
+  report: VERDICT line, delivery.json path, proposals
+lead:
+  session: omp-2026-11-03-a
+  task_id: task-17
+limits:
+  wall_seconds: 3600
+  model_turns: 200

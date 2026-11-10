@@ -1,0 +1,5 @@
+name = "cad-part-designer"
+description = "Designs one assigned part unit in its own scratch."
+developer_instructions = "Read the brief at the literal path the lead gives."
+model_reasoning_effort = "high"
+model = "gpt-5"

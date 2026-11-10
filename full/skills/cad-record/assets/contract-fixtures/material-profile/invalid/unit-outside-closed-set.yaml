@@ -1,0 +1,43 @@
+id: fdm_petg_polylite
+revision: 2
+title: PolyLite PETG
+level: GRADE
+family: FDM filament / PETG
+grade:
+  status: KNOWN
+  value: PolyLite PETG
+  basis: SUPPLIER_TYPICAL
+  sources:
+  - &tds
+    kind: DATASHEET
+    reference: PolyLite PETG Technical Data Sheet, V5.4
+    url: https://cdn.shopify.com/s/files/1/0548/7299/7945/files/PolyLite_PETG_TDS_EN_V5.4.pdf?v=1731954068
+    accessed: '2026-11-02'
+form: PRINTED
+process_state:
+  process: FDM
+  conditioning: UNKNOWN
+typical_not_allowable: true
+properties:
+- name: melt_mass_flow_rate
+  value:
+    status: KNOWN
+    value: {value: 10.8, units: g/10min}
+    basis: SUPPLIER_TYPICAL
+    sources:
+    - *tds
+  conditions:
+    test_standard:
+      status: UNKNOWN
+      reason: the source row names no test standard
+    temperature:
+      status: KNOWN
+      value: {value: 240, units: deg_C}
+      basis: SUPPLIER_TYPICAL
+      sources:
+      - *tds
+    conditioning: UNKNOWN
+    orientation:
+      status: NOT_APPLICABLE
+      reason: a melt-flow test of the filament, not of a printed specimen
+      reviewed_by: cad-sourcing-researcher

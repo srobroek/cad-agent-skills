@@ -1,0 +1,5 @@
+# CI checks relative links and their fragments without network requests.
+offline = true
+include_fragments = "full"
+exclude = ["^skill://"]
+exclude_path = ["(^|/)node_modules/"]

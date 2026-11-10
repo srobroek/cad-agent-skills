@@ -1,0 +1,186 @@
+status: ASSESSED
+assessment:
+  inputs:
+  - path: hw/product.yaml
+    sha256: '5555555555555555555555555555555555555555555555555555555555555555'
+  - path: hw/requirements.yaml
+    sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+  input_sha256: '4444444444444444444444444444444444444444444444444444444444444444'
+  method: hard outcomes then preferences
+  date: '2026-11-03'
+candidates:
+- id: petg-print
+  title: All printed PETG
+  architecture: printed base and arm, bought pin
+  parts:
+  - PN: STD-0001
+    sourcing: MAKE
+    material_profile: fdm_petg_polylite
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  - PN: STD-0003
+    sourcing: BUY
+    material_profile: fastener_iso_3506_a2_70
+    route:
+    - kind: PURCHASED
+      purchase:
+        identity:
+          status: KNOWN
+          value: ISO 2338 5 m6 x 30 A2
+          basis: STANDARD
+          sources:
+          - kind: STANDARD
+            reference: ISO 2338
+            url: https://www.iso.org/standard/7425.html
+            accessed: '2026-11-03'
+        specification:
+          status: KNOWN
+          value: ISO 2338 A2
+          basis: USER_DECLARED
+          sources:
+          - &id001
+            kind: USER
+            reference: owner interview
+            origin: product owner
+            date: '2026-11-03'
+        ratings:
+          status: UNKNOWN
+          reason: shear rating not retained
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: PASS
+    criterion: &id002
+      property: viewing_angle
+      comparator: BETWEEN
+      value:
+      - 55
+      - 75
+      units: deg
+      source: *id001
+    method: geometry by construction
+    source: *id001
+  feasibility: FEASIBLE
+  preference_scores:
+  - preference: PRF-001
+    score: 1
+    reason: one printed material
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 1
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    cost:
+      status: UNKNOWN
+      reason: filament cost not sourced
+    lead_time:
+      status: KNOWN
+      value:
+        value: 1
+        units: d
+      basis: USER_DECLARED
+      sources:
+      - *id001
+    maintenance:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *id001
+  limits:
+  - PETG creep under sustained load not qualified
+  reversal: reprint in another filament
+- id: alu-arm
+  title: Aluminium arm
+  architecture: printed base and arm, bought pin
+  parts:
+  - PN: STD-0001
+    sourcing: MAKE
+    material_profile: fdm_petg_polylite
+    route:
+    - kind: FDM
+      capability: bambu_x1c
+      provider: LOCAL
+  - PN: STD-0003
+    sourcing: BUY
+    material_profile: fastener_iso_3506_a2_70
+    route:
+    - kind: PURCHASED
+      purchase:
+        identity:
+          status: KNOWN
+          value: ISO 2338 5 m6 x 30 A2
+          basis: STANDARD
+          sources:
+          - kind: STANDARD
+            reference: ISO 2338
+            url: https://www.iso.org/standard/7425.html
+            accessed: '2026-11-03'
+        specification:
+          status: KNOWN
+          value: ISO 2338 A2
+          basis: USER_DECLARED
+          sources:
+          - &id003
+            kind: USER
+            reference: owner interview
+            origin: product owner
+            date: '2026-11-03'
+        ratings:
+          status: UNKNOWN
+          reason: shear rating not retained
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: UNKNOWN
+    criterion: *id002
+    method: no CNC capability profile
+    reason: no machining provider
+    question: Q-022
+  feasibility: CONDITIONAL
+  economics:
+    quantity:
+      status: KNOWN
+      value:
+        value: 1
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - *id003
+    cost:
+      status: UNKNOWN
+      reason: filament cost not sourced
+    lead_time:
+      status: KNOWN
+      value:
+        value: 1
+        units: d
+      basis: USER_DECLARED
+      sources:
+      - *id003
+    maintenance:
+      status: KNOWN
+      value: none
+      basis: USER_DECLARED
+      sources:
+      - *id003
+  limits:
+  - PETG creep under sustained load not qualified
+  reversal: reprint in another filament
+recommendation:
+  status: FINAL
+  primary: petg-print
+  fallback: alu-arm
+  governing_requirements:
+  - REQ-001
+  reasons:
+  - only feasible candidate
+  limits:
+  - creep unknown
+  reversal: switch to alu-arm when a CNC provider is found
+  what_would_change:
+  - CNC provider capability

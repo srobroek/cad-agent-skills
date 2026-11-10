@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills Claude plugin manifest (<variant>/.claude-plugin/plugin.json)",
+  "description": "Closed Claude plugin manifest with explicit agent and skill paths; hooks, mcpServers and permission settings are refused.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description", "version", "agents", "skills"],
+  "properties": {
+    "name": {"enum": ["cad-agent-skills", "cad-agent-skills-lean"]},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"},
+    "agents": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "./harness/claude/agents/cad-concept-designer.md",
+          "./harness/claude/agents/cad-part-designer.md",
+          "./harness/claude/agents/cad-checker.md",
+          "./harness/claude/agents/cad-mech-dfm-reviewer.md",
+          "./harness/claude/agents/cad-sourcing-researcher.md"
+        ]
+      }
+    },
+    "skills": {
+      "oneOf": [
+        {"const": "./skills"},
+        {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "./skills/cad-flow",
+              "./skills/cad-record",
+              "./skills/cad-select",
+              "./skills/cad-design",
+              "./skills/cad-model",
+              "./skills/cad-verify",
+              "./skills/cad-review",
+              "./skills/cad-release"
+            ]
+          }
+        }
+      ]
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "email": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "minLength": 1}
+      }
+    },
+    "homepage": {"type": "string", "pattern": "^https://"},
+    "repository": {"type": "string", "pattern": "^https://"},
+    "license": {"type": "string", "minLength": 1},
+    "keywords": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

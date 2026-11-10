@@ -1,0 +1,116 @@
+{
+  "format": "cad-agent-skills.release-manifest",
+  "schema_version": 1,
+  "phase": "FINAL",
+  "rev": "A",
+  "frozen": {
+    "version": "v1",
+    "version_manifest": {
+      "path": "hw/versions/v1/manifest.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "verdict": {
+      "path": "hw/versions/v1/stage-verdict.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "decision": "DR-001"
+  },
+  "readiness": {
+    "path": "hw/versions/v2/stage-verdict.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "decisions": [
+    {
+      "path": "hw/decisions/DR-001.yaml",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "planned": [
+    {
+      "path": "definition/assembly.step",
+      "source": "hw/versions/v1/definition/assembly.step",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "role": "DEFINITION"
+    },
+    {
+      "path": "docs/build-guide.md",
+      "source": "hw/docs/release-A/build-guide.md",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "role": "DOCUMENT"
+    }
+  ],
+  "scope": {
+    "service_class": "APPEARANCE_CONCEPT",
+    "purpose": "REPLACE with release_scope.purpose from hw/product.yaml",
+    "operating_limits": [
+      "REPLACE with each release_scope.operating_limits entry from hw/product.yaml"
+    ],
+    "exclusions": [
+      "REPLACE with each release_scope.exclusions entry from hw/product.yaml"
+    ]
+  },
+  "claims": [
+    {
+      "requirement": "REQ-001",
+      "facets": [
+        "CAD_VALID"
+      ],
+      "outcome": "PASS"
+    }
+  ],
+  "waivers": [],
+  "licenses": {
+    "hardware": "REPLACE with the owner-approved hardware license from hw/product.yaml",
+    "documentation": "REPLACE with the owner-approved documentation license from hw/product.yaml",
+    "third_party": []
+  },
+  "exclusions": [
+    {
+      "item": "REPLACE with each cited source that is not packaged",
+      "reason": "REPLACE with why, such as redistribution not granted; cited by URL and sha256"
+    }
+  ],
+  "approval": {
+    "decision": "DR-002",
+    "file": {
+      "path": "hw/decisions/DR-002.yaml",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "inventory": [
+    {
+      "path": "definition/assembly.step",
+      "source": "hw/versions/v1/definition/assembly.step",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "role": "DEFINITION"
+    },
+    {
+      "path": "docs/build-guide.md",
+      "source": "hw/docs/release-A/build-guide.md",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "role": "DOCUMENT"
+    },
+    {
+      "path": "record/decisions/DR-002.yaml",
+      "source": "hw/decisions/DR-002.yaml",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "role": "RECORD"
+    },
+    {
+      "path": "acceptance/package-integrity.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "bytes": 0,
+      "role": "ACCEPTANCE"
+    }
+  ],
+  "integrity": {
+    "path": "acceptance/package-integrity.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "result": "PASS"
+  }
+}

@@ -1,0 +1,51 @@
+# Worker delivery template (root worker-delivery). Owner: cad-flow. The worker writes this shape as
+# .cad-work/<unit>/delivery.json per references/agent-roles.md "Delivery fields"; the lead accepts it per
+# references/worker-delivery.md. Every value below is a placeholder.
+format: cad-agent-skills.worker-delivery
+schema_version: 1
+unit: example-part
+role: cad-part-designer
+brief_sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+input_inventory_sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+verdict: PASS
+build:
+  status: SUCCEEDED
+  log:
+    path: .cad-work/example-part/output/build.log
+    sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+outputs:
+- source: /RESOLVED/BY/PREFLIGHT/project/.cad-work/example-part/output/part.yaml
+  target: hw/parts/ABC-0001/part.yaml
+  sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  kind: part record
+- source: /RESOLVED/BY/PREFLIGHT/project/.cad-work/example-part/output/model.py
+  target: hw/parts/ABC-0001/model.py
+  sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  kind: part model program
+checks:
+- result_file:
+    path: .cad-work/example-part/output/checks/abc-0001-readback/result.json
+    sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  result: PASS
+  family: geometry.readback
+logs:
+- path: .cad-work/example-part/output/build.log
+  sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+- path: .cad-work/example-part/output/checks/abc-0001-readback/stdout.txt
+  sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+boundary:
+  method: tree digest before first and after last write
+  # Tree digest per [cad-record Inventory digest](../../cad-record/references/record.md#inventory-digest); the two must be equal.
+  before_sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  after_sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  violations: []
+proposals:
+- target: hw/interfaces.yaml
+  path: .cad-work/example-part/output/proposals/interfaces.yaml
+  sha256: '0000000000000000000000000000000000000000000000000000000000000000'
+  change: one sentence naming the field and the proposed value
+  reason: one sentence naming the evidence
+unknowns: []
+limits:
+- UNIT evidence only; integrated VERSION checks rerun
+ready: true

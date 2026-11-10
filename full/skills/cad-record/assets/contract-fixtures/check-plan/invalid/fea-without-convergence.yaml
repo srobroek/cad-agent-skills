@@ -1,0 +1,220 @@
+checks:
+- id: clearance
+  family: geometry.clearance
+  subjects:
+  - kind: INTERFACE
+    interface: IF-001
+  components: []
+  operations: []
+  requirements:
+  - REQ-001
+  criterion: &id001
+    id: hinge_clearance
+    property: clearance
+    comparator: GE
+    value: 0.2
+    units: mm
+    state: ASSEMBLED
+    source: &id002
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  method: OCCT distance on readback, complete sorted pairs
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: rotating interface
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  producer_role: cad-checker
+- id: sweep
+  family: motion.sweep
+  subjects:
+  - kind: ASSEMBLY
+  components: []
+  operations: []
+  criterion: *id001
+  method: full grid over hinge travel
+  facet: CAD_VALID
+  due: LAYOUT
+  applicability:
+    status: APPLICABLE
+    reason: hinge joint
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  cases:
+  - hinge-travel
+  producer_role: cad-checker
+- id: tipping
+  family: mass.properties
+  subjects:
+  - kind: PRODUCT
+  components: []
+  operations: []
+  requirements:
+  - REQ-002
+  criterion:
+    status: UNKNOWN
+    reason: tipping criterion not yet sourced
+    owner: user
+    question: Q-001
+    consequential: true
+  method: CoM within support polygon at worst arm angle
+  facet: SIMULATION_SUPPORTED
+  due: ANALYSIS
+  applicability:
+    status: APPLICABLE
+    reason: free-standing
+  safety: true
+  waiver_policy: FORBIDDEN
+  cases:
+  - mass-worst
+  producer_role: cad-checker
+cases:
+- id: hinge-travel
+  kind: MOTION
+  subjects:
+  - kind: ASSEMBLY
+  state: assembled, nominal
+  joints:
+  - hinge
+  sampling:
+    kind: GRID
+    count: 34
+  steps:
+  - joint: hinge
+    step:
+      value: 2
+      units: deg
+  pairs: ALL
+  play_extremes: true
+  criterion: *id001
+- id: hinge-stack
+  kind: STACK
+  subjects:
+  - kind: INTERFACE
+    interface: IF-001
+  state: assembled
+  interface: IF-001
+  method: WORST_CASE
+  contributors:
+  - id: bore
+    subject:
+      kind: FEATURE
+      PN: STD-0001
+      feature: hinge_bore
+    sign: 1
+    nominal:
+      value: 5.0
+      units: mm
+    tolerance:
+      lower: 0
+      upper: 0.075
+      units: mm
+    state: AFTER_FINISH
+    source: *id002
+  - id: pin
+    subject:
+      kind: FEATURE
+      PN: STD-0003
+      feature: pin_shank
+    sign: -1
+    nominal:
+      value: 5.0
+      units: mm
+    tolerance:
+      lower: 0.004
+      upper: 0.012
+      units: mm
+    state: AS_MANUFACTURED
+    source: *id002
+  criterion: *id001
+- id: mass-worst
+  kind: MASS
+  subjects:
+  - kind: PRODUCT
+  densities:
+  - subject:
+      kind: PART
+      PN: STD-0001
+    density:
+      status: KNOWN
+      value:
+        value: 1.25
+        units: g_cm3
+      basis: SUPPLIER_TYPICAL
+      sources:
+      - kind: DATASHEET
+        reference: Supplier datasheet
+        revision: V5.4
+        url: https://example.com/ds.pdf
+        accessed: '2026-11-02'
+        conditions: ISO 527, 23 °C
+  outputs:
+  - MASS
+  - CENTRE_OF_MASS
+- id: arm-fea
+  kind: FEA
+  subjects:
+  - kind: PART
+    PN: STD-0002
+  state: assembled
+  criterion:
+    id: hinge_clearance
+    property: clearance
+    comparator: GE
+    value: 0.2
+    units: mm
+    state: ASSEMBLED
+    source: &id003
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  solver:
+    name: CalculiX
+    version: '2.22'
+    documentation: https://www.dhondt.de/ccx_2.22.pdf
+  loads:
+  - id: phone_weight
+    kind: SUSTAINED
+    magnitude:
+      status: KNOWN
+      value:
+        value: 2.5
+        units: N
+      basis: USER_DECLARED
+      sources:
+      - *id003
+    direction:
+      status: KNOWN
+      value: -Z at the cradle lip
+      basis: USER_DECLARED
+      sources:
+      - *id003
+  boundary_conditions:
+  - id: root
+    kind: FIXED
+    subject:
+      kind: FEATURE
+      PN: STD-0002
+      feature: hinge_eye
+    description: pinned at hinge
+  material:
+    profile: fdm_petg_polylite
+    properties:
+    - youngs_modulus
+    basis_required: ALLOWABLE
+  mesh:
+    element: C3D10
+    seed:
+      value: 1
+      units: mm
+    threads: 1
+    refinement:
+    - global
+  units: mm-N-MPa
+  limits:
+  - linear static

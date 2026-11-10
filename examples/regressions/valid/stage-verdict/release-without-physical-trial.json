@@ -1,0 +1,173 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "RELEASE",
+  "version": "v16",
+  "predecessor": {
+    "stage": "FREEZE",
+    "version": "v14",
+    "verdict": {
+      "path": "hw/versions/v14/stage-verdict.json",
+      "sha256": "ba2020fd3ad138872b8a0be13f20b0fcb82971356031166c443eed05b69e2870"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-028.yaml",
+      "sha256": "fb316fcd684ddeaa20893921a7588474784d061561b6adcac07fe8fde0dca548"
+    }
+  },
+  "supersedes": {
+    "version": "v15",
+    "verdict": {
+      "path": "hw/versions/v15/stage-verdict.json",
+      "sha256": "efb8d21de0c5edf072309cd318bd0c240b925060df37b5158e675e676dff506c"
+    },
+    "reason": "WAIVER DR-030 approved after the v15 BLOCKED verdict"
+  },
+  "version_manifest": {
+    "path": "hw/versions/v16/manifest.json",
+    "sha256": "70ca1499e7bc003f8f04782058d27c9b2701dd1f201067236d20afbf9f3a6ab1"
+  },
+  "obligations": {
+    "path": "hw/versions/v16/obligations.yaml",
+    "sha256": "d603a3cc09fda0240b33b443cc7412e17afe5d13807dd3386bb9380ed51e4a47"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "record.schema@product",
+    "record.semantic@product",
+    "record.ownership@product",
+    "record.inputs@product",
+    "delivery.integrity@product",
+    "physical.test@REQ-002",
+    "release.inventory@product"
+  ],
+  "results": [
+    {
+      "check": "record-schema",
+      "attempt": "a1",
+      "family": "record.schema",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/record-schema/a1/result.json",
+        "sha256": "1cb02f0ddb4132f3c40c459abf5fc5ca7d1a7a2643e45873810446535affdcdd"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/record-schema/a1/bundle-manifest.json",
+        "sha256": "e35476243634d24875b218d8003729788f54dd7a427de40f5bebf26c8084111b"
+      }
+    },
+    {
+      "check": "record-semantic",
+      "attempt": "a1",
+      "family": "record.semantic",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/record-semantic/a1/result.json",
+        "sha256": "ca62bd6f2e40f19cb256509b91598661c535b024d2bdfaf5cf5b39ce32ad21a6"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/record-semantic/a1/bundle-manifest.json",
+        "sha256": "9c26106ac7ad8141128cfa65adc8ed190748e32ae5ed159c39e4d113fc10306c"
+      }
+    },
+    {
+      "check": "record-ownership",
+      "attempt": "a1",
+      "family": "record.ownership",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/record-ownership/a1/result.json",
+        "sha256": "03ec5f78af0f2a6f214ef40ac6beab97ff539c63f303ce6d95cad0128ad49fd7"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/record-ownership/a1/bundle-manifest.json",
+        "sha256": "9b849b8ad8bd9c5bced4f778e992c38b1c8139e223a4dd23199b56d52eacaba3"
+      }
+    },
+    {
+      "check": "record-inputs",
+      "attempt": "a1",
+      "family": "record.inputs",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/record-inputs/a1/result.json",
+        "sha256": "a93c60f95ab83f9463d0475ea320ce54bc8decaa01bc2c6862d6fb146e40f4d6"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/record-inputs/a1/bundle-manifest.json",
+        "sha256": "f7ed0987ee9d160beec5a838bbb3a1ff898624708eae58f9f3491265e0053947"
+      }
+    },
+    {
+      "check": "delivery-integrity",
+      "attempt": "a1",
+      "family": "delivery.integrity",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/delivery-integrity/a1/result.json",
+        "sha256": "c30da79a400057ec6b8446f2dc847f4e587367b808b01a1d833d82631e47104a"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/delivery-integrity/a1/bundle-manifest.json",
+        "sha256": "a608a9ca8a074fb4be7890a3ea5f9d1571d26c2dd8f691b3007458c5197499f2"
+      }
+    },
+    {
+      "check": "angle-hold",
+      "attempt": "a1",
+      "family": "physical.test",
+      "result": "WAIVED",
+      "waiver": "WV-003",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/angle-hold/a1/result.json",
+        "sha256": "9155c963f060dee5f7e3abd0901fbbf5577b7126a5b78a5ba5c322f81d4100d4"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/angle-hold/a1/bundle-manifest.json",
+        "sha256": "4160653a17d24e17a7b09e3efee0a26f2346d39bb2afc408466370a7c1a5a01d"
+      }
+    },
+    {
+      "check": "release-inventory",
+      "attempt": "a1",
+      "family": "release.inventory",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v16/release-inventory/a1/result.json",
+        "sha256": "987375d23bf0aa0e0185ee1ceeb4b2bb4323c2ff7edc6260cdc207e174dd378c"
+      },
+      "bundle": {
+        "path": "hw/checks/v16/release-inventory/a1/bundle-manifest.json",
+        "sha256": "603d025e9efbe9f5152c6242f0d7a8147338e76b55875a960bd831e80b90e23e"
+      }
+    }
+  ],
+  "bundles": [],
+  "waivers": [
+    {
+      "id": "WV-003",
+      "decision": "DR-030"
+    }
+  ],
+  "future": [],
+  "blockers": [],
+  "review": {
+    "required": false
+  },
+  "complete": true,
+  "result": "PASS",
+  "time": "2026-11-03T12:00:00Z"
+}

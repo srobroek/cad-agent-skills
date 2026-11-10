@@ -1,0 +1,251 @@
+# Reference record for examples/lamp-arm: hw/requirements.yaml after the approved import (DR-001) and GROUND stage
+# work, before the GROUND gate. The v0.1.1 requirements are readable history only (hw/imports/DR-001/original); the
+# requirements below are the owner's restatement (L-19), with facets from the FUNCTIONAL_DEMO row of cad-verify
+# "Evidence by service class". GROUND writes the requirements whole; SPECIFY checks them complete and plans cases and
+# checks.
+requirements:
+- id: REQ-001
+  title: Head pivot travel
+  text: The head pivots at least 45 degrees each way from nominal relative to the upper link.
+  kind: FUNCTIONAL
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: head_pivot_lower_limit
+    comparator: LE
+    value: -45
+    units: deg
+    source: &l09 {kind: USER, reference: brief.md answer L-09, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  - property: head_pivot_upper_limit
+    comparator: GE
+    value: 45
+    units: deg
+    source: *l09
+  methods: [ANALYSIS, TEST]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: LAYOUT
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *l09
+  owner: SYNTHETIC demo owner
+- id: REQ-002
+  title: Elbow travel
+  text: The elbow folds to 0 degrees and extends to at least -120 degrees.
+  kind: FUNCTIONAL
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: elbow_fold_limit
+    comparator: GE
+    value: 0
+    units: deg
+    source: *l09
+  - property: elbow_extension_limit
+    comparator: LE
+    value: -120
+    units: deg
+    source: *l09
+  methods: [ANALYSIS, TEST]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: LAYOUT
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *l09
+  owner: SYNTHETIC demo owner
+- id: REQ-003
+  title: Base pivot travel
+  text: The base pivot turns from -10 to 80 degrees.
+  kind: FUNCTIONAL
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: base_pivot_range
+    comparator: BETWEEN
+    value: [-10, 80]
+    units: deg
+    source: *l09
+  methods: [ANALYSIS, TEST]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: LAYOUT
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *l09
+  owner: SYNTHETIC demo owner
+- id: REQ-004
+  title: Pose holding at full reach
+  text: With a 0.8 kg head at full horizontal reach, the head drifts at most 5 mm in 10 minutes after the user lets go.
+  kind: PERFORMANCE
+  priority: CRITICAL
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: head_drift
+    comparator: LE
+    value: 5
+    units: mm
+    source: &l10 {kind: USER, reference: brief.md answer L-10, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    conditions: 0.8 kg head, 450 mm horizontal reach, 10 minutes, 15 to 30 deg C, LED module on
+  conditions:
+    status: KNOWN
+    value: 0.8 kg head at 450 mm horizontal reach, 15 to 30 deg C, LED module on
+    basis: USER_DECLARED
+    sources:
+    - &l07 {kind: USER, reference: brief.md answer L-07, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  methods: [ANALYSIS, TEST]
+  facets: [SIMULATION_SUPPORTED, PHYSICALLY_VALIDATED]
+  due: ANALYSIS
+  safety: true
+  waiver_policy: FORBIDDEN
+  source: *l10
+  owner: SYNTHETIC demo owner
+- id: REQ-005
+  title: Bench mounting
+  text: The base fixes to the work surface with two M6 fasteners.
+  kind: INTERFACE
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: mounting_fastener_count
+    comparator: EQUALS
+    value: 2
+    units: count
+    source: &l19 {kind: USER, reference: brief.md answer L-19, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+  - property: mounting_fastener_size
+    comparator: EQUALS
+    value: M6
+    source: {kind: POLICY, reference: 'L-19 answer and imported cad-agent v0.1.1 REQ-005', decision: DR-001, origin: approved import mapping}
+  methods: [INSPECTION, DEMONSTRATION]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: LAYOUT
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *l19
+  owner: SYNTHETIC demo owner
+- id: REQ-006
+  title: No sharp burrs
+  text: User-accessible edges have no sharp burrs.
+  kind: SAFETY
+  priority: MAJOR
+  subjects:
+  - kind: PRODUCT
+  criteria:
+  - property: sharp_user_accessible_edges
+    comparator: EQUALS
+    value: 0
+    units: count
+    source: *l10
+  methods: [INSPECTION]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: DETAIL
+  safety: true
+  waiver_policy: FORBIDDEN
+  source: *l10
+  owner: SYNTHETIC demo owner
+- id: REQ-007
+  title: Hand-tool service
+  text: Every assembly and service operation needs only standard metric hex keys.
+  kind: SERVICE
+  priority: MINOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: service_tools
+    comparator: ONE_OF
+    value: [metric hex key]
+    source: *l19
+  methods: [ANALYSIS, DEMONSTRATION]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: LAYOUT
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *l19
+  owner: SYNTHETIC demo owner
+- id: REQ-008
+  title: Head housing temperature
+  text: The outside of the head housing stays below 50 degrees C during a two-hour session at 30 degrees C.
+  kind: ENVIRONMENTAL
+  priority: MAJOR
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: housing_surface_temperature
+    comparator: LT
+    value: 50
+    units: deg_C
+    source: &l20 {kind: USER, reference: brief.md answer L-20, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    conditions: two-hour session, 30 deg C ambient, LED module at its listed 5 V and 1 A
+  methods: [TEST]
+  facets: [PHYSICALLY_VALIDATED]
+  due: RELEASE
+  safety: false
+  waiver_policy: APPROVAL_REQUIRED
+  source: *l20
+  owner: SYNTHETIC demo owner
+- id: REQ-009
+  title: Cable never crushed
+  text: The LED cable passes every joint without a pinch point at any pose inside the joint limits.
+  kind: SAFETY
+  priority: CRITICAL
+  subjects:
+  - kind: ASSEMBLY
+  criteria:
+  - property: cable_pinch_points
+    comparator: EQUALS
+    value: 0
+    units: count
+    source: &l14 {kind: USER, reference: brief.md answer L-14, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+    conditions: cable diameter from the LED module's retained source (Q-027)
+  methods: [ANALYSIS, INSPECTION]
+  facets: [CAD_VALID, PHYSICALLY_VALIDATED]
+  due: LAYOUT
+  safety: true
+  waiver_policy: FORBIDDEN
+  source: *l14
+  owner: SYNTHETIC demo owner
+preferences:
+- id: PRF-001
+  text: Fewer purchased parts
+  weight: 1
+  source: &l21 {kind: USER, reference: brief.md answer L-21, origin: SYNTHETIC demo owner, date: '2026-11-03'}
+- id: PRF-002
+  text: Low-cost route among feasible candidates; never a joint that creeps
+  weight: 2
+  source: *l21
+assumptions: []
+questions:
+- {id: Q-000, question: 'Would you like a full or lite build?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: full build, source: {kind: USER, reference: brief.md prompt, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-001, question: 'What is the product, what does it do and what is its purpose?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: three-joint bench lamp arm carrying a purchased USB LED module, source: {kind: USER, reference: brief.md answer L-02, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-002, question: 'Who owns the product and its approvals?', owner: user, material_to_choice: false, safety_relevant: false, status: RESOLVED, resolution: {answer: the demo owner, source: {kind: USER, reference: brief.md answer L-03, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-003, question: 'Which documentation depth applies: maker, pro or regulated?', owner: user, material_to_choice: false, safety_relevant: false, status: RESOLVED, resolution: {answer: pro, source: {kind: USER, reference: brief.md answer L-04, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-004, question: 'Which tolerancing regime and general tolerance apply, on whose authority?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: ISO with ISO 2768-m on the owner's authority, source: {kind: USER, reference: brief.md answer L-05, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-005, question: 'Who uses, installs and services the product?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: the owner alone on a workbench, source: {kind: USER, reference: brief.md answer L-06, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-006, question: 'Which loads act on it: directions, magnitudes, impact, vibration, cycles and sustained loads?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: "a 0.8 kg head at 450 mm reach; the hand push force is unknown (Q-020)", source: {kind: USER, reference: brief.md answer L-07, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-007, question: 'Which environment does it see: temperature, heat sources, moisture, chemicals, UV and corrosion?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: "indoor bench at 15 to 30 deg C, dry; the LED module is the only heat source and its housing temperature is unknown (Q-023)", source: {kind: USER, reference: brief.md answer L-08, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-008, question: 'Which motion does it have: speed, range, duty cycle, service life, wear and friction?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: "three hand-set joints that hold their pose, about 20 moves a session for three months; acceptable wear unknown (Q-021)", source: {kind: USER, reference: brief.md answer L-09, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-009, question: 'Which accuracy, repeatability, finish and dimensional stability does it need?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: "drift at most 5 mm in 10 minutes at full reach; no sharp burrs; creep unknown (Q-026)", source: {kind: USER, reference: brief.md answer L-10, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-010, question: 'Which quantity, budget, lead time, maintenance and repair apply?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: "one unit, 120 EUR, six weeks, monthly retightening", source: {kind: USER, reference: brief.md answer L-11, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-011, question: 'Which machines, operators and outsourcing are available?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: "a Bambu Lab P1S with PETG, a machine shop for 6061-T6 of unknown capability (Q-024, Q-029 to Q-031), standard purchased parts", source: {kind: USER, reference: brief.md answer L-13, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-012, question: 'Which service class applies: APPEARANCE_CONCEPT, FIT_ASSEMBLY, FUNCTIONAL_DEMO, WORKING_PROTOTYPE, PRODUCTION or SAFETY_CRITICAL?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: FUNCTIONAL_DEMO, decision: DR-002}}
+- {id: Q-013, question: 'What happens if it fails, how severe is that, what must never happen, and which standards and supervision apply?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: "the head may drop onto the bench or a hand; it must never fall on a person nor crush the cable; standards unknown (Q-022); always supervised", source: {kind: USER, reference: brief.md answer L-14, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-014, question: 'Who approves gates and releases, and is a competent authority required?', owner: user, material_to_choice: false, safety_relevant: true, status: RESOLVED, resolution: {answer: the owner; no competent authority for a supervised bench demonstration, source: {kind: USER, reference: brief.md answer L-15, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-015, question: 'What is a release for, which operating limits does it state and what does it exclude?', owner: user, material_to_choice: false, safety_relevant: true, status: RESOLVED, resolution: {answer: one unit for a supervised two-hour bench demonstration over three months; no unsupervised or untested claims, source: {kind: USER, reference: brief.md answer L-16, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-016, question: 'Are generated results tracked in git, and how long is evidence retained?', owner: user, material_to_choice: false, safety_relevant: false, status: RESOLVED, resolution: {answer: "tracked in git, kept for the life of the project", source: {kind: USER, reference: brief.md answer L-17, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-017, question: 'Which hardware and documentation licenses does the owner approve?', owner: user, material_to_choice: false, safety_relevant: false, status: RESOLVED, resolution: {answer: CERN-OHL-S-2.0 and CC-BY-SA-4.0, source: {kind: USER, reference: brief.md answer L-18, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-018, question: 'Which imported v0.1.1 requirements still apply, and with which criteria?', owner: user, material_to_choice: true, safety_relevant: true, status: RESOLVED, resolution: {answer: "travel, mounting, burr and hand-tool requirements with the owner's numbers; the support requirement replaced by the drift limit", source: {kind: USER, reference: brief.md answer L-19, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-019, question: 'How are the imported parts, assembly and models used?', owner: user, material_to_choice: true, safety_relevant: false, status: RESOLVED, resolution: {answer: readable history only; no CAD validity assumed, source: {kind: USER, reference: brief.md answer L-19, origin: SYNTHETIC demo owner, date: '2026-11-03'}}}
+- {id: Q-020, question: 'What force does a hand apply to the head when repositioning it?', owner: user, material_to_choice: true, safety_relevant: true, status: OPEN}
+- {id: Q-021, question: 'Which joint wear or loss of holding is acceptable over three months?', owner: user, material_to_choice: true, safety_relevant: true, status: OPEN}
+- {id: Q-022, question: 'Which standards or regulations apply to this bench lamp arm?', owner: user, material_to_choice: false, safety_relevant: true, status: OPEN}
+- {id: Q-023, question: 'What is the LED module''s identity, mass, cable and heat output, from a retained supplier source?', owner: lead (sourcing unit at INTENT), material_to_choice: true, safety_relevant: true, status: OPEN}
+- {id: Q-024, question: 'Which machines does the machine shop run, from the shop''s statement or a retained source?', owner: lead (sourcing unit at INTENT), material_to_choice: true, safety_relevant: false, status: OPEN}
+- {id: Q-025, question: 'What is the Bambu Lab P1S build envelope, from a retained supplier specification?', owner: lead (sourcing unit at INTENT), material_to_choice: true, safety_relevant: false, status: OPEN}
+- {id: Q-026, question: 'Which creep data exist for each candidate joint and link material under the head load and module heat?', owner: lead (at INTENT), material_to_choice: true, safety_relevant: true, status: OPEN}
+- {id: Q-027, question: 'What is the LED cable diameter and minimum bend radius?', owner: lead (sourcing unit at INTENT), material_to_choice: false, safety_relevant: true, status: OPEN}
+- {id: Q-028, question: 'Which materials does bambu_p1s_home run, from a retained supplier specification?', owner: lead (sourcing unit at INTENT), material_to_choice: true, safety_relevant: false, status: OPEN}
+- {id: Q-029, question: 'Who operates the machine shop''s machines for this part?', owner: lead (sourcing unit at INTENT), material_to_choice: false, safety_relevant: false, status: OPEN}
+- {id: Q-030, question: 'What is the working envelope of the machine shop''s machines, from the shop''s statement or a retained source?', owner: lead (sourcing unit at INTENT), material_to_choice: true, safety_relevant: false, status: OPEN}
+- {id: Q-031, question: 'Which 6061-T6 stock forms and sizes does the machine shop approve, from the shop''s statement or a retained source?', owner: lead (sourcing unit at INTENT), material_to_choice: true, safety_relevant: false, status: OPEN}

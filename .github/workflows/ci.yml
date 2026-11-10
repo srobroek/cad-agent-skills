@@ -1,0 +1,374 @@
+name: Static checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# The step bodies below are shared verbatim with .gitlab-ci.yml; change both together.
+jobs:
+  static:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.21.1"
+
+      - name: Install pinned uv
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            https://github.com/astral-sh/uv/releases/download/0.13.7/uv-aarch64-unknown-linux-gnu.tar.gz \
+            --output /tmp/uv.tar.gz
+          echo "71279f8d3c67241e807b9d8db872d1bf541579fb9f08b7d1eb1682196d1e57dc  /tmp/uv.tar.gz" | sha256sum --check
+          mkdir /tmp/uv
+          tar -xzf /tmp/uv.tar.gz --strip-components=1 -C /tmp/uv uv-aarch64-unknown-linux-gnu/uv
+          sudo install -m 0755 /tmp/uv/uv /usr/local/bin/uv
+
+      - name: Install pinned lychee
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-aarch64-unknown-linux-gnu.tar.gz \
+            --output /tmp/lychee.tar.gz
+          echo "91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c  /tmp/lychee.tar.gz" | sha256sum --check
+          mkdir /tmp/lychee
+          tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp/lychee lychee-aarch64-unknown-linux-gnu/lychee
+          sudo install -m 0755 /tmp/lychee/lychee /usr/local/bin/lychee
+
+      - name: Install pinned JSON Schema validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          UV_TOOL_BIN_DIR="$HOME/.local/bin" uv tool install check-jsonschema==0.39.0
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Check tracked repository inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden='(^|/)(scripts|tools|hooks)(/|$)|\.(py|js|ts|mjs|cjs|sh|bash|zsh|ps1|rb|ipynb|FCMacro|scad)$'
+          files="$(git ls-files)"
+          violations="$(grep -Ei "$forbidden" <<<"$files" || true)"
+          executables="$(git ls-files -s | awk '$1 == "100755" { print $4 }')"
+          violations+="${executables:+$'\n'$executables}"
+          if [[ -n "$violations" ]]; then
+            printf '%s\n' 'Tracked executable source, scripts/, tools/, and hooks/ are not permitted.' "$violations" >&2
+            exit 1
+          fi
+
+      - name: Validate schemas, fixtures, templates, examples, regressions and host profiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob globstar extglob
+
+          full_schemas=full/skills/cad-record/schemas
+          lean_schemas=lean/skills/cad-record/schemas
+          authoring=full/schemas/authoring
+          # Decision 1 defines the lean record contract: ten record roots plus their shared definitions.
+          lean_roots=(common product requirements part assembly decision check-result stage-verdict material-profile bom-row release-manifest)
+
+          fail() {
+            printf '%s\n' "$@" >&2
+            exit 1
+          }
+
+          phase_name=""
+          phase_start=0
+          phase() {
+            if [[ -n "$phase_name" ]]; then printf '%s: passed in %ds\n' "$phase_name" "$((SECONDS - phase_start))"; fi
+            phase_name="${1-}"
+            phase_start=$SECONDS
+            if [[ -n "$phase_name" ]]; then printf '== %s\n' "$phase_name"; fi
+          }
+
+          validate_many() {
+            local schema="$1"
+            shift
+            (($# > 0)) || fail "No instances supplied for $schema"
+            check-jsonschema --schemafile "$schema" "$@"
+          }
+
+          # All valid fixtures of a root validate together; invalid fixtures must report their indexed error.
+          # Prints the validator-output substring indexed under key $2 in $1; only a line that starts with "$2:" matches,
+          # so the "# intent" comment above each entry is ignored.
+          expected_error() {
+            local index_file="$1" key="$2"
+            awk -v key="$key" '
+              substr($0, 1, length(key) + 1) == key ":" {
+                value = substr($0, length(key) + 2)
+                sub(/^[[:space:]]+/, "", value)
+                quote = substr(value, 1, 1)
+                if (quote == "\047" || quote == "\042") { value = substr(value, 2, length(value) - 2) }
+                if (quote == "\047") { gsub(/\047\047/, "\047", value) }
+                print value
+                found = 1
+                exit
+              }
+              END { if (!found) exit 1 }
+            ' "$index_file"
+          }
+
+          assert_invalid() {
+            local schema="$1" instance="$2" index_file="$3" key="$4" expected actual
+            expected="$(expected_error "$index_file" "$key")" || fail "Missing intended error in $index_file: $key"
+            if actual="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then fail "Invalid fixture unexpectedly validated: $instance"; fi
+            if ! grep -Fq -- "$expected" <<<"$actual"; then
+              printf 'Validation error mismatch: %s\nExpected substring: %s\nValidator output:\n%s\n\n' "$instance" "$expected" "$actual" >&2
+              fail "Invalid fixture reported an unexpected error: $instance"
+            fi
+          }
+
+          validate_fixtures() {
+            local schema="$1" fixture_dir="$2" instance key index_file
+            index_file="${fixture_dir%/*}/expected-errors.yaml"
+            local -a valid=("$fixture_dir"/valid/*) invalid=("$fixture_dir"/invalid/*)
+            ((${#valid[@]} > 0 && ${#invalid[@]} > 0)) || fail "Missing valid or invalid fixtures in $fixture_dir"
+            validate_many "$schema" "${valid[@]}"
+            for instance in "${invalid[@]}"; do
+              key="${fixture_dir##*/}/invalid/${instance##*/}"
+              assert_invalid "$schema" "$instance" "$index_file" "$key"
+            done
+          }
+
+          # Record paths map to schemas through full/skills/cad-record/layout.json; the first matching entry wins.
+          # A {TOKEN} matches one path segment and ** matches any depth.
+          layout_patterns=()
+          layout_schemas=()
+          while IFS=$'\t' read -r pattern schema; do
+            layout_patterns+=("$pattern")
+            layout_schemas+=("$schema")
+          done < <(jq -r '.entries[] | [(.path | gsub("\\{[^}]+\\}"; "+([!/])")), (.schema // "")] | @tsv' full/skills/cad-record/layout.json)
+          ((${#layout_patterns[@]} > 0)) || fail 'full/skills/cad-record/layout.json has no entries'
+
+          # Prints the schema file name of the layout entry for record path $1 (empty when the entry has no schema).
+          layout_schema() {
+            local index
+            for index in "${!layout_patterns[@]}"; do
+              # The unquoted right-hand side is the glob pattern.
+              # shellcheck disable=SC2053
+              if [[ "$1" == ${layout_patterns[index]} ]]; then
+                printf '%s\n' "${layout_schemas[index]}"
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          # Batches instances per schema so each schema costs one validator call.
+          declare -A schema_groups=()
+          group_instance() {
+            schema_groups["$1"]+="$2"$'\n'
+          }
+          validate_groups() {
+            local schema
+            local -a schemas instances
+            mapfile -t schemas < <(printf '%s\n' "${!schema_groups[@]}" | sort)
+            for schema in "${schemas[@]}"; do
+              [[ -n "$schema" ]] || continue
+              mapfile -t instances < <(printf '%s' "${schema_groups[$schema]}")
+              validate_many "$schema" "${instances[@]}"
+            done
+            schema_groups=()
+          }
+
+          phase 'Metaschemas (full and lean)'
+          check-jsonschema --check-metaschema "$full_schemas"/*.schema.json "$authoring"/*.schema.json
+          lean_files=("$lean_schemas"/*.schema.json)
+          for root in "${lean_roots[@]}"; do
+            [[ -f "$lean_schemas/$root.schema.json" ]] || fail "Missing decision-defined lean schema root: $root"
+          done
+          ((${#lean_files[@]} == ${#lean_roots[@]})) || fail "Lean schema inventory differs from the decision-defined roots:" "${lean_files[@]}"
+          check-jsonschema --check-metaschema "${lean_files[@]}"
+
+          phase 'Contract and authoring fixtures (full and lean)'
+          for variant in full lean; do
+            for schema in "$variant"/skills/cad-record/schemas/*.schema.json; do
+              root="${schema##*/}"
+              validate_fixtures "$schema" "$variant/skills/cad-record/assets/contract-fixtures/${root%.schema.json}"
+            done
+          done
+          for fixture_dir in "$authoring"/fixtures/*/; do
+            fixture_dir="${fixture_dir%/}"
+            schema="$authoring/${fixture_dir##*/}.schema.json"
+            [[ -f "$schema" ]] || fail "Missing authoring schema for fixtures: $fixture_dir"
+            validate_fixtures "$schema" "$fixture_dir"
+          done
+
+          phase 'Project templates through layout.json (full and lean, full and lite builds)'
+          # A lean template of a prose-only root validates against the full root.
+          for variant in full lean; do
+            for template_root in "$variant/skills/cad-record/assets/project-template" "$variant/skills/cad-record/assets/project-template-lite"; do
+              template_count=0
+              for template in "$template_root"/hw/**; do
+                [[ -f "$template" ]] || continue
+                schema="$(layout_schema "${template#"$template_root/"}")" || fail "Project template has no layout entry: $template"
+                [[ -n "$schema" ]] || fail "Project template maps to a layout entry without a schema: $template"
+                if [[ -f "$variant/skills/cad-record/schemas/$schema" ]]; then schema="$variant/skills/cad-record/schemas/$schema"; else schema="$full_schemas/$schema"; fi
+                group_instance "$schema" "$template"
+                template_count=$((template_count + 1))
+              done
+              ((template_count > 0)) || fail "No project templates in $template_root/hw"
+              validate_groups
+            done
+          done
+
+          phase 'Layout, material profiles, capability templates and stage assets (full and lean against full schemas)'
+          for variant in full lean; do
+            record="$variant/skills/cad-record"
+            flow_assets="$variant/skills/cad-flow/assets"
+            validate_many "$full_schemas/layout.schema.json" "$record/layout.json"
+            validate_many "$full_schemas/material-library.schema.json" "$record"/assets/manufacturing/material-profiles/*.yaml
+            validate_many "$full_schemas/capability-library.schema.json" "$record/assets/manufacturing/capability-templates.yaml"
+            validate_many "$full_schemas/stage-policy.schema.json" "$flow_assets/stages.yaml"
+            validate_many "$full_schemas/worker-brief.schema.json" "$flow_assets/worker-brief.yaml"
+            validate_many "$full_schemas/worker-delivery.schema.json" "$flow_assets/worker-delivery.yaml"
+          done
+
+          phase 'Host profiles: Codex and Kiro agents, plugin manifests and marketplaces'
+          for variant in full lean; do
+            validate_many "$authoring/codex-agent.schema.json" "$variant"/harness/codex/agents/*.toml
+            validate_many "$authoring/kiro-agent.schema.json" "$variant"/harness/kiro/*/agents/*.json
+          done
+          validate_many "$authoring/claude-plugin.schema.json" full/.claude-plugin/plugin.json lean/.claude-plugin/plugin.json
+          validate_many "$authoring/omp-plugin.schema.json" full/.omp-plugin/plugin.json lean/.omp-plugin/plugin.json
+          validate_many "$authoring/claude-marketplace.schema.json" .claude-plugin/marketplace.json
+          validate_many "$authoring/omp-marketplace.schema.json" .omp-plugin/marketplace.json
+
+          phase 'Examples: hw records through layout.json (full schemas)'
+          example_count=0
+          for example_file in examples/*/hw/**; do
+            [[ -f "$example_file" ]] || continue
+            schema="$(layout_schema "${example_file#examples/*/}")" || fail "Example file has no layout entry: $example_file"
+            [[ -z "$schema" ]] || group_instance "$full_schemas/$schema" "$example_file"
+            example_count=$((example_count + 1))
+          done
+          ((example_count > 0)) || fail 'No example hw files found'
+          validate_groups
+
+          phase 'Expected obligations'
+          validate_many "$authoring/expected-obligations.schema.json" examples/*/expected-obligations.yaml
+
+          phase 'Version and provenance equality'
+          skill_metadata() {
+            local file="$1" field="$2"
+            awk -v field="$field" '
+              NR == 1 && $0 != "---" { exit 2 }
+              NR > 40 { exit 2 }
+              NR == 1 { next }
+              $0 == "---" { exit }
+              /^metadata:[[:space:]]*$/ { in_metadata = 1; next }
+              in_metadata && /^[^[:space:]]/ { in_metadata = 0 }
+              in_metadata && $0 ~ ("^  " field ":[[:space:]]*") { sub("^  " field ":[[:space:]]*", ""); gsub(/\042/, ""); print; found = 1; exit }
+              END { if (!found) exit 1 }
+            ' "$file"
+          }
+          expected_version=""
+          for variant in full lean; do
+            claude_manifest="$variant/.claude-plugin/plugin.json"
+            omp_manifest="$variant/.omp-plugin/plugin.json"
+            claude_name="$(jq -er '.name' "$claude_manifest")"
+            omp_name="$(jq -er '.name' "$omp_manifest")"
+            claude_version="$(jq -er '.version' "$claude_manifest")"
+            omp_version="$(jq -er '.version' "$omp_manifest")"
+            [[ "$claude_name" == "$omp_name" && "$claude_version" == "$omp_version" ]] || fail "Variant manifest mismatch: $variant"
+            [[ -z "$expected_version" || "$claude_version" == "$expected_version" ]] || fail "Variants must share one release version: $variant has $claude_version, expected $expected_version"
+            expected_version="$claude_version"
+            for catalog in .claude-plugin/marketplace.json .omp-plugin/marketplace.json; do
+              [[ "$(jq -er '.metadata.version' "$catalog")" == "$claude_version" ]] || fail "Marketplace version mismatch: $catalog $variant"
+              entry="$(jq -cer --arg source "./$variant" '[.plugins[] | select(.source == $source)] | if length == 1 then .[0] else error("expected exactly one plugin entry for " + $source) end' "$catalog")"
+              [[ "$(jq -er '.name' <<<"$entry")" == "$claude_name" && "$(jq -er '.version' <<<"$entry")" == "$claude_version" ]] || fail "Marketplace entry mismatch: $catalog $variant"
+            done
+            skill="$variant/skills/cad-flow/SKILL.md"
+            [[ -f "$skill" ]] || fail "Missing cad-flow skill for the $variant variant"
+            plugin="$(skill_metadata "$skill" plugin)" || fail "Missing metadata.plugin in $skill"
+            version="$(skill_metadata "$skill" version)" || fail "Missing metadata.version in $skill"
+            [[ "$plugin" == "$claude_name" && "$version" == "$claude_version" ]] || fail "cad-flow provenance mismatch: $skill"
+          done
+          phase 'Plugin-root license and notice equality'
+          for variant in full lean; do
+            cmp -s LICENSE "$variant/LICENSE" || fail "$variant/LICENSE differs from root LICENSE"
+            cmp -s NOTICE "$variant/NOTICE" || fail "$variant/NOTICE differs from root NOTICE"
+          done
+          phase 'Lite disclosure equality'
+          # cad-flow SKILL.md owns the line; the build-guide asset and the authoring schema carry it verbatim.
+          lite_disclosure="$(jq -er '.definitions.lite_disclosure.const' "$authoring/expected-obligations.schema.json")"
+          for variant in full lean; do
+            for file in "$variant/skills/cad-flow/SKILL.md" "$variant/skills/cad-release/assets/build-guide.md"; do
+              grep -Fq -- "$lite_disclosure" "$file" || fail "Lite disclosure line missing from $file: $lite_disclosure"
+            done
+          done
+
+          phase 'Regressions (full schemas)'
+          regressions=examples/regressions
+          expected_errors="$regressions/expected-errors.yaml"
+          mapfile -t expected_keys < <(awk '/^invalid\// { sub(/:.*/, ""); print }' "$expected_errors")
+          invalid_cases=("$regressions"/invalid/*/*)
+          ((${#invalid_cases[@]} > 0)) || fail "No invalid regressions in $regressions/invalid"
+          ((${#expected_keys[@]} == ${#invalid_cases[@]})) || fail "$expected_errors lists ${#expected_keys[@]} cases; $regressions/invalid holds ${#invalid_cases[@]}"
+          valid_roots=("$regressions"/valid/*/)
+          ((${#valid_roots[@]} > 0)) || fail "No valid regressions in $regressions/valid"
+          for root_dir in "${valid_roots[@]}"; do
+            root_dir="${root_dir%/}"
+            schema="$full_schemas/${root_dir##*/}.schema.json"
+            [[ -f "$schema" ]] || fail "Missing full schema for regression root: $root_dir"
+            validate_many "$schema" "$root_dir"/*
+          done
+          # Each invalid case runs alone; its intended error must appear among all reported errors (--verbose).
+          mismatches=0
+          for instance in "${invalid_cases[@]}"; do
+            relative="${instance#"$regressions/"}"
+            root="${relative#invalid/}"
+            schema="$full_schemas/${root%%/*}.schema.json"
+            [[ -f "$schema" ]] || fail "Missing full schema for regression: $instance"
+            expected="$(expected_error "$expected_errors" "$relative")" || fail "Missing intended error in $expected_errors: $relative"
+            if actual="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then fail "Invalid regression unexpectedly validated: $instance"; fi
+            if ! grep -Fq -- "$expected" <<<"$actual"; then
+              printf 'Regression error mismatch: %s\nExpected substring: %s\nValidator output:\n%s\n\n' "$instance" "$expected" "$actual" >&2
+              mismatches=$((mismatches + 1))
+            fi
+          done
+          ((mismatches == 0)) || fail "$mismatches invalid regression(s) did not report their intended error"
+          phase ''
+
+      - name: Lint Markdown
+        shell: bash
+        run: npm exec --yes --package=markdownlint-cli2@0.24.0 -- markdownlint-cli2 '**/*.md'
+
+      - name: Validate Markdown frontmatter
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          markdown_files=()
+          for variant in full lean; do
+            for file in "$variant"/skills/*/SKILL.md "$variant"/agents/*.md "$variant"/harness/claude/agents/*.md "$variant"/harness/opencode/agents/*.md; do
+              IFS= read -r first_line < "$file"
+              [[ "$first_line" == '---' ]] || { printf 'Missing YAML frontmatter: %s\n' "$file" >&2; exit 1; }
+              markdown_files+=("$file")
+            done
+          done
+          ((${#markdown_files[@]} > 0)) || { printf 'No Markdown frontmatter files found\n' >&2; exit 1; }
+          # .remarkrc.yaml at the repository root resolves these plugins from ./node_modules.
+          npm install --no-save --ignore-scripts --no-package-lock --no-audit --no-fund remark-cli@12.0.1 remark@15.0.1 remark-frontmatter@5.0.0 remark-lint-frontmatter-schema@3.15.4
+          ./node_modules/.bin/remark --frail --quiet --no-stdout "${markdown_files[@]}"
+
+      - name: Check local Markdown links
+        shell: bash
+        run: lychee --config lychee.toml '**/*.md'

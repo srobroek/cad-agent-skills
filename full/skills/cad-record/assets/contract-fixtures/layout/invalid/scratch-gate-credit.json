@@ -1,0 +1,62 @@
+{
+  "format": "cad-agent-skills.layout",
+  "schema_version": 1,
+  "tokens": {
+    "PN": {
+      "pattern": "[A-Z]{2,5}-[0-9]{4}",
+      "example": "STD-0001",
+      "meaning": "part number"
+    }
+  },
+  "entries": [
+    {
+      "id": "record.product",
+      "path": "hw/product.yaml",
+      "kind": "RECORD",
+      "schema": "product.schema.json",
+      "format": "YAML",
+      "owner": "cad-record",
+      "writer": "lead",
+      "mutability": "CONTROLLED",
+      "stage": "GROUND",
+      "condition": {
+        "kind": "ALWAYS"
+      },
+      "gate_credit": true,
+      "meaning": "product identity, rigor, regime, intake, service, risk, authority, release scope, storage and license; no workflow stage"
+    },
+    {
+      "id": "record.part",
+      "path": "hw/parts/{PN}/part.yaml",
+      "kind": "RECORD",
+      "schema": "part.schema.json",
+      "format": "YAML",
+      "owner": "cad-design",
+      "writer": "lead, accepting a part delivery",
+      "mutability": "CONTROLLED",
+      "stage": "LAYOUT",
+      "condition": {
+        "kind": "CONDITIONAL",
+        "when": "one per PN in the assembly"
+      },
+      "gate_credit": true,
+      "meaning": "one part record"
+    },
+    {
+      "id": "scratch.stage",
+      "path": ".cad-work/stage-{V}/**",
+      "kind": "SCRATCH",
+      "schema": null,
+      "format": "BYTES",
+      "owner": "cad-flow",
+      "writer": "lead",
+      "mutability": "SCRATCH",
+      "stage": "ANY",
+      "condition": {
+        "kind": "ALWAYS"
+      },
+      "gate_credit": true,
+      "meaning": "stage build, check and release staging; nothing counts until published"
+    }
+  ]
+}

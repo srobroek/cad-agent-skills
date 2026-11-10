@@ -1,0 +1,113 @@
+# cad-agent-skills record template: no requirements, preferences or assumptions yet; one open question per intake topic.
+requirements: []
+preferences: []
+assumptions: []
+questions:
+  - id: Q-000
+    question: 'Would you like a full or lite build?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-001
+    question: 'What is the product, what does it do and what is its purpose?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-002
+    question: 'Who owns the product and its approvals?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-003
+    question: 'Which documentation depth applies: maker, pro or regulated?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-004
+    question: 'Which tolerancing regime and general tolerance apply, on whose authority?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-005
+    question: 'Who uses, installs and services the product?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-006
+    question: 'Which loads act on it: directions, magnitudes, impact, vibration, cycles and sustained loads?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-007
+    question: 'Which environment does it see: temperature, heat sources, moisture, chemicals, UV and corrosion?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-008
+    question: 'Which motion does it have: speed, range, duty cycle, service life, wear and friction?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-009
+    question: 'Which accuracy, repeatability, finish and dimensional stability does it need?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-010
+    question: 'Which quantity, budget, lead time, maintenance and repair apply?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-011
+    question: 'Which machines, operators and outsourcing are available?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: false
+    status: OPEN
+  - id: Q-012
+    question: 'Which service class applies: APPEARANCE_CONCEPT, FIT_ASSEMBLY, FUNCTIONAL_DEMO, WORKING_PROTOTYPE, PRODUCTION or SAFETY_CRITICAL?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-013
+    question: 'What happens if it fails, how severe is that, what must never happen, and which standards and supervision apply?'
+    owner: user
+    material_to_choice: true
+    safety_relevant: true
+    status: OPEN
+  - id: Q-014
+    question: 'Who approves gates and releases, and is a competent authority required?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: true
+    status: OPEN
+  - id: Q-015
+    question: 'What is a release for, which operating limits does it state and what does it exclude?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: true
+    status: OPEN
+  - id: Q-016
+    question: 'Are generated results tracked in git, and how long is evidence retained?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN
+  - id: Q-017
+    question: 'Which hardware and documentation licenses does the owner approve?'
+    owner: user
+    material_to_choice: false
+    safety_relevant: false
+    status: OPEN

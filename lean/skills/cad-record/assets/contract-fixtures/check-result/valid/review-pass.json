@@ -1,0 +1,127 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "review/a1",
+  "check": "review",
+  "attempt": "a1",
+  "family": "review.mechanical_dfm",
+  "producer_role": "cad-mech-dfm-reviewer",
+  "stage": "CRITIQUE",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v6",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v6/manifest.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "implementation": {
+    "kind": "REVIEW",
+    "inspected": [
+      {
+        "path": "hw/versions/v6/manifest.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "path": "hw/parts/STD-0001/part.yaml",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      {
+        "path": "hw/checks/v6/clearance/a1/result.json",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      {
+        "path": "hw/checks/v6/clearance/a1/bundle-manifest.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    ]
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "INTERFACE",
+        "interface": "IF-001"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "review.mechanical_dfm@assembly"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "review.mechanical_dfm@assembly",
+      "requirement": "REQ-001",
+      "subject": {
+        "kind": "ASSEMBLY"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "PASS",
+      "value": {
+        "text": "no unresolved findings"
+      },
+      "criterion": {
+        "id": "hinge_clearance",
+        "property": "clearance",
+        "comparator": "GE",
+        "value": 0.2,
+        "units": "mm",
+        "state": "ASSEMBLED",
+        "source": {
+          "kind": "USER",
+          "reference": "owner interview",
+          "origin": "product owner",
+          "date": "2026-11-03"
+        }
+      },
+      "method": {
+        "name": "OCCT BRepExtrema distance on readback",
+        "tool": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v6/clearance/a1/artifacts/pairs.json",
+          "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      ],
+      "uncertainty": "numerical tolerance 1e-6 mm",
+      "sampling": {
+        "kind": "FULL"
+      }
+    }
+  ],
+  "findings": [],
+  "artifacts": [
+    {
+      "path": "hw/checks/v6/clearance/a1/artifacts/pairs.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "role": "DATA"
+    }
+  ],
+  "complete": true,
+  "result": "PASS",
+  "limitations": [
+    "nominal geometry only; play extremes in motion.play"
+  ],
+  "review": {
+    "verdict": "PASS",
+    "mechanical": [
+      {
+        "obligation": "geometry.clearance@IF-001#hinge_bore",
+        "outcome": "PASS"
+      }
+    ],
+    "dfm": [
+      {
+        "obligation": "process.fdm@STD-0001",
+        "outcome": "PASS"
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cad-agent-skills OMP agent frontmatter (agents/<role>.md)",
+  "description": "Closed OMP native role frontmatter: role name, description, model role selector, explicit tools, empty spawns and the role domain skills to autoload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description", "model", "tools", "spawns", "autoloadSkills"],
+  "properties": {
+    "name": {
+      "enum": [
+        "cad-concept-designer",
+        "cad-part-designer",
+        "cad-checker",
+        "cad-mech-dfm-reviewer",
+        "cad-sourcing-researcher"
+      ]
+    },
+    "description": {"type": "string", "minLength": 1, "maxLength": 1024},
+    "model": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      ]
+    },
+    "thinkingLevel": {
+      "description": "OMP v18.13.2 parseAgentFields reads thinkingLevel; values are the canonical selectors parseConfiguredThinkingLevel accepts",
+      "enum": ["auto", "inherit", "off", "minimal", "low", "medium", "high", "xhigh", "max"]
+    },
+    "tools": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "spawns": {"description": "empty: roles never delegate", "type": "array", "maxItems": 0},
+    "autoloadSkills": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "cad-flow",
+          "cad-record",
+          "cad-select",
+          "cad-design",
+          "cad-model",
+          "cad-verify",
+          "cad-review",
+          "cad-release"
+        ]
+      }
+    }
+  }
+}

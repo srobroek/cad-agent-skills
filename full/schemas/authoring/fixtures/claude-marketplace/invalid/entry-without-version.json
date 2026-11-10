@@ -1,0 +1,22 @@
+{
+  "name": "cad-agent-skills",
+  "owner": {
+    "name": "srobroek"
+  },
+  "metadata": {
+    "description": "cad-agent-skills marketplace"
+  },
+  "plugins": [
+    {
+      "name": "cad-agent-skills",
+      "source": "./full",
+      "description": "Full variant."
+    },
+    {
+      "name": "cad-agent-skills-lean",
+      "source": "./lean",
+      "description": "Lean variant.",
+      "version": "0.1.0"
+    }
+  ]
+}

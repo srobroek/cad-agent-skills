@@ -1,0 +1,37 @@
+path: base/pin
+occurrence: pin
+PN: STD-0003
+rev: A
+title: Hinge pin
+quantity: 1
+unit: EA
+sourcing: BUY
+material_profile: fastener_iso_3506_a2_70
+route:
+- PURCHASED
+purchase:
+  identity:
+    status: KNOWN
+    value: ISO 2338 5 m6 x 30 A2
+    basis: USER_DECLARED
+    sources:
+    - &id001
+      kind: USER
+      reference: owner interview
+      origin: product owner
+      date: '2026-11-03'
+  specification:
+    status: KNOWN
+    value: ISO 2338
+    basis: USER_DECLARED
+    sources:
+    - *id001
+  supplier:
+    status: UNKNOWN
+    reason: supplier not chosen
+availability:
+  status: UNKNOWN
+  reason: not checked
+mass:
+  status: UNKNOWN
+  reason: not weighed; not zero

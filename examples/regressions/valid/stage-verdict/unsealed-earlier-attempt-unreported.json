@@ -1,0 +1,148 @@
+{
+  "format": "cad-agent-skills.stage-verdict",
+  "schema_version": 1,
+  "stage": "LAYOUT",
+  "version": "v3",
+  "predecessor": {
+    "stage": "GROUND",
+    "version": "v1",
+    "verdict": {
+      "path": "hw/versions/v1/stage-verdict.json",
+      "sha256": "9191919191919191919191919191919191919191919191919191919191919191"
+    },
+    "approval": {
+      "path": "hw/decisions/DR-002.yaml",
+      "sha256": "7171717171717171717171717171717171717171717171717171717171717171"
+    }
+  },
+  "version_manifest": {
+    "path": "hw/versions/v3/manifest.json",
+    "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3"
+  },
+  "obligations": {
+    "path": "hw/versions/v3/obligations.yaml",
+    "sha256": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3"
+  },
+  "policy": {
+    "path": "/Users/me/.agents/skills/cad-flow/assets/stages.yaml",
+    "plugin": {
+      "name": "cad-agent-skills",
+      "version": "0.1.0"
+    }
+  },
+  "expected": [
+    "geometry.build@STD-0001",
+    "geometry.readback@assembly",
+    "geometry.readback@STD-0001",
+    "preview.render@assembly",
+    "preview.render@STD-0001"
+  ],
+  "results": [
+    {
+      "check": "geometry-build",
+      "attempt": "a1",
+      "family": "geometry.build",
+      "result": "PASS",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v3/geometry-build/a1/result.json",
+        "sha256": "2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a"
+      },
+      "bundle": {
+        "path": "hw/checks/v3/geometry-build/a1/bundle-manifest.json",
+        "sha256": "2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b"
+      }
+    },
+    {
+      "check": "geometry-readback",
+      "attempt": "a1",
+      "family": "geometry.readback",
+      "result": "UNKNOWN",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v3/geometry-readback/a1/result.json",
+        "sha256": "3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a"
+      },
+      "bundle": {
+        "path": "hw/checks/v3/geometry-readback/a1/bundle-manifest.json",
+        "sha256": "3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b"
+      }
+    },
+    {
+      "check": "geometry-readback",
+      "attempt": "a1",
+      "family": "geometry.readback",
+      "result": "UNKNOWN",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v3/geometry-readback/a1/result.json",
+        "sha256": "3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a"
+      },
+      "bundle": {
+        "path": "hw/checks/v3/geometry-readback/a1/bundle-manifest.json",
+        "sha256": "3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b"
+      }
+    },
+    {
+      "check": "preview-render",
+      "attempt": "a1",
+      "family": "preview.render",
+      "result": "UNKNOWN",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v3/preview-render/a1/result.json",
+        "sha256": "4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a"
+      },
+      "bundle": {
+        "path": "hw/checks/v3/preview-render/a1/bundle-manifest.json",
+        "sha256": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+      }
+    },
+    {
+      "check": "preview-render",
+      "attempt": "a1",
+      "family": "preview.render",
+      "result": "UNKNOWN",
+      "binding": "VERSION",
+      "result_file": {
+        "path": "hw/checks/v3/preview-render/a1/result.json",
+        "sha256": "4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a"
+      },
+      "bundle": {
+        "path": "hw/checks/v3/preview-render/a1/bundle-manifest.json",
+        "sha256": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+      }
+    }
+  ],
+  "bundles": [],
+  "waivers": [],
+  "future": [],
+  "blockers": [
+    {
+      "code": "DUE_UNKNOWN",
+      "text": "geometry.readback NOT_RUN: FreeCAD executable unavailable",
+      "obligation": "geometry.readback@STD-0001"
+    },
+    {
+      "code": "DUE_UNKNOWN",
+      "text": "geometry.readback NOT_RUN: FreeCAD executable unavailable",
+      "obligation": "geometry.readback@STD-0001"
+    },
+    {
+      "code": "DUE_UNKNOWN",
+      "text": "preview.render NOT_RUN: stopped by geometry.readback",
+      "obligation": "preview.render@STD-0001"
+    },
+    {
+      "code": "DUE_UNKNOWN",
+      "text": "preview.render NOT_RUN: stopped by geometry.readback",
+      "obligation": "preview.render@STD-0001"
+    }
+  ],
+  "review": {
+    "required": false
+  },
+  "complete": false,
+  "result": "BLOCKED",
+  "time": "2026-11-05T12:20:00Z"
+}

@@ -1,0 +1,381 @@
+status: ASSESSED
+assessment:
+  inputs:
+  - path: hw/manufacturing/capabilities.yaml
+    sha256: 17c9c44149bf70a351e9f524ac3d8e652dbdc0d7953928430de082f138ec80a9
+  - path: hw/manufacturing/materials.yaml
+    sha256: ce56d595077b625247960a956dc31b0b23cd862747f4d2a4831fc675bcfba3a9
+  - path: hw/product.yaml
+    sha256: d4fae133cb4b2b5b8c3b52646435b8706d120cbefe82b8399fc2f1d60deead81
+  - path: hw/requirements.yaml
+    sha256: 3df71edf8d136c8015cbb928b1deff4a275709b2b49be4fcd31d65e2b2f94217
+  input_sha256: 7b359ac5f944b21b5cb56a2178fd9730fd0687be0999a734fd22fe514b2fd697
+  method: one hard outcome per criterion of each mandatory requirement, then preferences over FEASIBLE candidates only
+  date: '2026-11-03'
+candidates:
+- id: petg-print
+  title: Printed PolyLite PETG base and cradle
+  architecture: printed base and cradle joined by a printed friction hinge
+  parts:
+  - PN: PHS-0001
+    sourcing: MAKE
+    material_profile: fdm_petg_polylite
+    route:
+    - kind: FDM
+      capability: prusa_mk4_home
+      provider: LOCAL
+  - PN: PHS-0002
+    sourcing: MAKE
+    material_profile: fdm_petg_polylite
+    route:
+    - kind: FDM
+      capability: prusa_mk4_home
+      provider: LOCAL
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: PLANNED
+    criterion: &angle
+      property: viewing_angle
+      comparator: BETWEEN
+      value:
+      - 55
+      - 75
+      units: deg
+      source:
+        kind: USER
+        reference: brief.md answer A-08
+        origin: SYNTHETIC demo owner
+        date: '2026-11-03'
+    method: hinge stops on the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: &pocket_length
+      property: cradle_pocket_length
+      comparator: GE
+      value: 162
+      units: mm
+      source: &a06
+        kind: USER
+        reference: brief.md answer A-06
+        origin: SYNTHETIC demo owner
+        date: '2026-11-03'
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: &pocket_width
+      property: cradle_pocket_width
+      comparator: GE
+      value: 77
+      units: mm
+      source: *a06
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: &pocket_depth
+      property: cradle_pocket_depth
+      comparator: GE
+      value: 9
+      units: mm
+      source: *a06
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-003
+    outcome: PLANNED
+    criterion: &footprint_x
+      property: footprint_x
+      comparator: LE
+      value: 120
+      units: mm
+      source: &a18
+        kind: USER
+        reference: brief.md answer A-18
+        origin: SYNTHETIC demo owner
+        date: '2026-11-03'
+    method: footprint of the LAYOUT assembly at every viewing angle
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-003
+    outcome: PLANNED
+    criterion: &footprint_y
+      property: footprint_y
+      comparator: LE
+      value: 120
+      units: mm
+      source: *a18
+    method: footprint of the LAYOUT assembly at every viewing angle
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-004
+    outcome: PASS
+    criterion: &make_capability
+      property: make_capability_profile
+      comparator: EQUALS
+      value: prusa_mk4_home
+      source: &a11
+        kind: USER
+        reference: brief.md answer A-11
+        origin: SYNTHETIC demo owner
+        date: '2026-11-03'
+    method: every made part's FDM step names prusa_mk4_home, provider LOCAL; nothing is outsourced
+    source: *a11
+  - requirement: REQ-004
+    outcome: PASS
+    criterion: &make_material
+      property: make_material
+      comparator: ONE_OF
+      value:
+      - fdm_petg_polylite
+      - fdm_pla_polylite
+      source: *a11
+    method: every made part is fdm_petg_polylite, a spool the owner holds
+    source: *a11
+  - requirement: REQ-005
+    outcome: PLANNED
+    criterion: &no_visible_support
+      property: support_on_visible_faces
+      comparator: EQUALS
+      value: false
+      source:
+        kind: USER
+        reference: brief.md answer A-09
+        origin: SYNTHETIC demo owner
+        date: '2026-11-03'
+    method: PARTS process plan orients each part with no support contact on a visible face (PROCESS_PLANNED)
+    reason: the support plan is a process-plan property; no part geometry or orientation exists at INTENT
+    due: INTENT
+  feasibility: FEASIBLE
+  preference_scores:
+  - preference: PRF-001
+    score: 1
+    reason: one material for both made parts
+  - preference: PRF-003
+    score: 1
+    reason: no metal hardware
+  economics:
+    quantity: &quantity
+      status: KNOWN
+      value:
+        value: 1
+        units: count
+      basis: USER_DECLARED
+      sources:
+      - &a10
+        kind: USER
+        reference: brief.md answer A-10
+        origin: SYNTHETIC demo owner
+        date: '2026-11-03'
+    cost: &cost
+      status: UNKNOWN
+      reason: filament mass is set by slicing at PARTS; the 15 EUR material budget in product.yaml is checked then
+    lead_time: &lead_time
+      status: UNKNOWN
+      reason: print time is set by slicing at PARTS; the 14 d lead time in product.yaml is checked then
+    maintenance: &maintenance
+      status: KNOWN
+      value: the owner reprints a broken part
+      basis: USER_DECLARED
+      sources:
+      - *a10
+  limits:
+  - REQ-005 no support contact on visible faces is PLANNED, due PARTS; no surface quality is claimed
+  - REQ-001 to REQ-003 are PLANNED, due LAYOUT
+  - material cost and print time are UNKNOWN until PARTS slices the parts
+  - the consumable form of the owner's spool against prusa_mk4_home falls due at PARTS (cad-verify capability.route step 2)
+  reversal: re-assess on a changed requirement, spool or printer
+- id: pla-print
+  title: Printed PolyLite PLA base and cradle
+  architecture: printed base and cradle joined by a printed friction hinge
+  parts:
+  - PN: PHS-0001
+    sourcing: MAKE
+    material_profile: fdm_pla_polylite
+    route:
+    - kind: FDM
+      capability: prusa_mk4_home
+      provider: LOCAL
+  - PN: PHS-0002
+    sourcing: MAKE
+    material_profile: fdm_pla_polylite
+    route:
+    - kind: FDM
+      capability: prusa_mk4_home
+      provider: LOCAL
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: PLANNED
+    criterion: *angle
+    method: hinge stops on the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: *pocket_length
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: *pocket_width
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: *pocket_depth
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-003
+    outcome: PLANNED
+    criterion: *footprint_x
+    method: footprint of the LAYOUT assembly at every viewing angle
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-003
+    outcome: PLANNED
+    criterion: *footprint_y
+    method: footprint of the LAYOUT assembly at every viewing angle
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-004
+    outcome: PASS
+    criterion: *make_capability
+    method: every made part's FDM step names prusa_mk4_home, provider LOCAL; nothing is outsourced
+    source: *a11
+  - requirement: REQ-004
+    outcome: PASS
+    criterion: *make_material
+    method: every made part is fdm_pla_polylite, a spool the owner holds
+    source: *a11
+  - requirement: REQ-005
+    outcome: PLANNED
+    criterion: *no_visible_support
+    method: PARTS process plan orients each part with no support contact on a visible face (PROCESS_PLANNED)
+    reason: the support plan is a process-plan property; no part geometry or orientation exists at INTENT
+    due: PARTS
+  feasibility: FEASIBLE
+  preference_scores:
+  - preference: PRF-001
+    score: 1
+    reason: one material for both made parts
+  - preference: PRF-003
+    score: 1
+    reason: no metal hardware
+  economics:
+    quantity: *quantity
+    cost: *cost
+    lead_time: *lead_time
+    maintenance: *maintenance
+  limits:
+  - REQ-005 no support contact on visible faces is PLANNED, due PARTS; no surface quality is claimed
+  - REQ-001 to REQ-003 are PLANNED, due LAYOUT
+  - material cost and print time are UNKNOWN until PARTS slices the parts
+  - the consumable form of the owner's spool against prusa_mk4_home falls due at PARTS (cad-verify capability.route step 2)
+  reversal: re-assess on a changed requirement, spool or printer
+- id: asa-print
+  title: Printed PolyLite ASA base and cradle
+  architecture: printed base and cradle joined by a printed friction hinge
+  parts:
+  - PN: PHS-0001
+    sourcing: MAKE
+    material_profile: fdm_asa_polylite
+    route:
+    - kind: FDM
+      capability: prusa_mk4_home
+      provider: LOCAL
+  - PN: PHS-0002
+    sourcing: MAKE
+    material_profile: fdm_asa_polylite
+    route:
+    - kind: FDM
+      capability: prusa_mk4_home
+      provider: LOCAL
+  hard_outcomes:
+  - requirement: REQ-001
+    outcome: PLANNED
+    criterion: *angle
+    method: hinge stops on the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: *pocket_length
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: *pocket_width
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-002
+    outcome: PLANNED
+    criterion: *pocket_depth
+    method: cradle pocket of the LAYOUT assembly
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-003
+    outcome: PLANNED
+    criterion: *footprint_x
+    method: footprint of the LAYOUT assembly at every viewing angle
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-003
+    outcome: PLANNED
+    criterion: *footprint_y
+    method: footprint of the LAYOUT assembly at every viewing angle
+    reason: no geometry exists at INTENT
+    due: LAYOUT
+  - requirement: REQ-004
+    outcome: PASS
+    criterion: *make_capability
+    method: every made part's FDM step names prusa_mk4_home, provider LOCAL; nothing is outsourced
+    source: *a11
+  - requirement: REQ-004
+    outcome: FAIL
+    criterion: *make_material
+    method: fdm_asa_polylite is not one of the owner's PolyLite PETG and PLA spools, and the owner approved no other
+    source: *a11
+  - requirement: REQ-005
+    outcome: PLANNED
+    criterion: *no_visible_support
+    method: PARTS process plan orients each part with no support contact on a visible face (PROCESS_PLANNED)
+    reason: the support plan is a process-plan property; no part geometry or orientation exists at INTENT
+    due: PARTS
+  feasibility: EXCLUDED
+  economics:
+    quantity: *quantity
+    cost: *cost
+    lead_time: *lead_time
+    maintenance: *maintenance
+  limits:
+  - the owner holds no PolyLite ASA spool
+  reversal: re-assess if the owner approves acquiring an ASA spool
+recommendation:
+  status: CONDITIONAL
+  primary: petg-print
+  fallback: pla-print
+  governing_requirements:
+  - REQ-004
+  - REQ-005
+  reasons:
+  - petg-print and pla-print are FEASIBLE with REQ-004 PASS on the owner's printer and spools and every other criterion PLANNED
+  - asa-print is EXCLUDED by REQ-004 make_material
+  - petg-print and pla-print tie on PRF-001 and PRF-003; petg-print is primary in candidate order and the owner chooses at the INTENT gate
+  limits:
+  - REQ-005 support_on_visible_faces EQUALS false is PLANNED, due PARTS, on both printed candidates; no surface quality is claimed
+  - REQ-001 to REQ-003 are PLANNED, due LAYOUT
+  - material cost against the 15 EUR budget and print time against the 14 d lead time are UNKNOWN until PARTS
+  - final only after the INTENT gate approval
+  reversal: switch to pla-print if no PETG process plan keeps support off the visible faces
+  what_would_change:
+  - a PARTS process plan that needs support on a visible face
+  - a changed spool or printer

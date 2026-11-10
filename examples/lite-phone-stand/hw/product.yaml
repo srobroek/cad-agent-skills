@@ -1,0 +1,121 @@
+# Reference record for examples/lite-phone-stand: hw/product.yaml after GROUND stage work, before the GROUND gate.
+# Built from the cad-record lite template; every KNOWN fact cites the scripted owner answer in brief.md.
+format: cad-agent-skills
+record_version: 1
+id: lite-phone-stand
+title: Desktop phone stand appearance model
+build_mode:
+  status: KNOWN
+  value: LITE
+  basis: USER_DECLARED
+  sources:
+  - &l01 {kind: USER, reference: brief.md answer A-01, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+identity:
+  description:
+    status: KNOWN
+    value: Static one-piece appearance model of a desktop phone stand, one solid with a sloped back and a front retaining lip, no hinge or moving parts
+    basis: USER_DECLARED
+    sources:
+    - &l02 {kind: USER, reference: brief.md answer A-02, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  owner:
+    status: KNOWN
+    value: SYNTHETIC lite-demo owner; owns the product and approves every gate and release
+    basis: USER_DECLARED
+    sources:
+    - {kind: USER, reference: brief.md answer A-03, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+units: mm
+frame:
+  handedness: RIGHT_HANDED
+  up: +Z
+  new_geometry: PART_LOCAL
+rigor: maker
+intake:
+  status: DRAFT
+  purpose:
+    status: KNOWN
+    value: A 3D model of the stand's form that renders and opens in FreeCAD; no material, fit, strength or manufacturing claim
+    basis: USER_DECLARED
+    sources:
+    - *l01
+    - *l02
+  users:
+    status: KNOWN
+    value: The owner alone reviews the model on screen and in FreeCAD; nobody makes, assembles or uses a part from it
+    basis: USER_DECLARED
+    sources:
+    - &l05 {kind: USER, reference: brief.md answer A-05, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+service:
+  class: APPEARANCE_CONCEPT
+  decision: DR-001
+risk:
+  failure_consequence:
+    status: KNOWN
+    value: nothing is made or used from the model, so a wrong model only costs review time
+    basis: USER_DECLARED
+    sources:
+    - &l06 {kind: USER, reference: brief.md answer A-06, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  forbidden_outcomes:
+    status: KNOWN
+    value:
+    - the model presented as safe to make or to hold a phone
+    basis: USER_DECLARED
+    sources:
+    - *l06
+authority:
+  approver:
+    name: SYNTHETIC lite-demo owner
+    role: OWNER
+    basis: product owner (brief.md answers A-03 and A-07)
+    scope: every gate, waiver, change and release of this product
+release_scope:
+  purpose:
+    status: KNOWN
+    value: the geometry only, a model that renders and opens in FreeCAD, for viewing at the owner's desk
+    basis: USER_DECLARED
+    sources:
+    - &l08 {kind: USER, reference: brief.md answer A-08, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  operating_limits:
+    status: KNOWN
+    value:
+    - viewing the model on screen and in FreeCAD at the owner's desk
+    - no part is made, assembled or used from it
+    basis: USER_DECLARED
+    sources:
+    - *l05
+    - *l08
+  exclusions:
+    status: KNOWN
+    value:
+    - 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
+    - no phone-fit or safe-holding claim
+    - no material, fit, strength, manufacturing or other physical claim
+    basis: USER_DECLARED
+    sources:
+    - *l01
+    - *l08
+storage:
+  results_in_git:
+    status: KNOWN
+    value: true
+    basis: USER_DECLARED
+    sources:
+    - &l09 {kind: USER, reference: brief.md answer A-09, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  retention:
+    status: KNOWN
+    value: for the life of the project
+    basis: USER_DECLARED
+    sources:
+    - *l09
+license:
+  hardware:
+    status: KNOWN
+    value: CC0-1.0
+    basis: USER_DECLARED
+    sources:
+    - &l10 {kind: USER, reference: brief.md answer A-10, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+  documentation:
+    status: KNOWN
+    value: CC0-1.0
+    basis: USER_DECLARED
+    sources:
+    - *l10

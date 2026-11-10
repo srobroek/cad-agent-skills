@@ -1,0 +1,159 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "record-semantic/a1",
+  "check": "record-semantic",
+  "attempt": "a1",
+  "family": "record.semantic",
+  "producer_role": "cad-checker",
+  "stage": "GROUND",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v1",
+    "version_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v1/manifest.json",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v1/record-semantic/a1/source/check.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/p/.cad-work/ground-v1-checker/check.py"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "record.semantic@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "FAIL",
+      "value": {
+        "text": "17 of 18 items hold"
+      },
+      "criterion": {
+        "property": "semantic_items_holding",
+        "comparator": "EQUALS",
+        "value": 18,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Semantic check and Reporting",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v1/record-semantic/a1/artifacts/items.json",
+          "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+        }
+      ],
+      "findings": [
+        "record.semantic:product:q-025"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "record.semantic:product:q-025",
+      "family": "record.semantic",
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "hw/product.yaml intake.environment.uv.question cites Q-025, absent from hw/requirements.yaml questions"
+      },
+      "criterion": {
+        "property": "unresolved_references",
+        "comparator": "EQUALS",
+        "value": 0,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Semantic check item 3",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "uncertainty": "none; a missing ID is exact",
+      "consequence": "the open question that owns the sun-exposure unknown does not exist",
+      "remedy": "add Q-025 to hw/requirements.yaml questions or cite the existing sun-exposure question",
+      "recheck": {
+        "families": [
+          "record.semantic"
+        ],
+        "earliest_stage": "GROUND"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v1/record-semantic/a1/artifacts/items.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "role": "REPORT"
+    },
+    {
+      "path": "hw/checks/v1/record-semantic/a1/stdout.txt",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": []
+}

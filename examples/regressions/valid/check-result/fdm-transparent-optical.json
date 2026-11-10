@@ -1,0 +1,202 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "optical/a1",
+  "check": "optical",
+  "attempt": "a1",
+  "family": "optical.route",
+  "producer_role": "cad-checker",
+  "stage": "PARTS",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v7",
+    "version_manifest_sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v7/manifest.json",
+      "sha256": "37fb0a5f13ae6adbffc61f6cbeda14c6ca94252d03ef96e5f65984ef9bd8297c"
+    },
+    {
+      "path": "hw/versions/v7/record/parts/STD-0004/part.yaml",
+      "sha256": "4230f09808b4e9b3dcd802aad6ec886f412c9350ec24ee1b08728015134c1d68"
+    },
+    {
+      "path": "hw/versions/v7/record/requirements.yaml",
+      "sha256": "08e6c5a33129b45d4264c06f6beecb9ae3e3ca91e1a3588672a126e718cd20a2"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v7/optical/a1/source/check.py",
+        "sha256": "b96dead6b0dc600fc310ae781f19779dd14830889a2712f0815a696227796186"
+      },
+      {
+        "path": "hw/checks/v7/optical/a1/source/check.py.lock",
+        "sha256": "cbd683a939b16dfed84811592ba12d7a9f674bc16aabd5fd3d7b28d2c5495843"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/chk-optical-v7/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0
+      }
+    ],
+    "packages": [
+      {
+        "name": "cadquery",
+        "version": "2.8.0"
+      },
+      {
+        "name": "cadquery-ocp",
+        "version": "7.9.3.1.1"
+      },
+      {
+        "name": "vtk",
+        "version": "9.6.2"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PART",
+        "PN": "STD-0004"
+      }
+    ],
+    "components": [
+      "window"
+    ],
+    "operations": [
+      "print"
+    ],
+    "expected_obligations": [
+      "optical.route@STD-0004.window"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "optical.route@STD-0004.window",
+      "requirement": "REQ-006",
+      "subject": {
+        "kind": "COMPONENT",
+        "PN": "STD-0004",
+        "component": "window"
+      },
+      "facet": "PROCESS_PLANNED",
+      "outcome": "FAIL",
+      "value": {
+        "text": "FDM forms the optical surface"
+      },
+      "criterion": {
+        "id": "optical_route_rule",
+        "property": "optical_route",
+        "comparator": "EQUALS",
+        "value": "purchased transparent part or identified transparent stock on an approving route",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md optical.route",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md optical.route"
+        },
+        "conditions": "REQ-006: the phone screen bottom edge stays readable through the front lip"
+      },
+      "method": {
+        "name": "optical.route record check of part transparency, route kinds and stock identity (cad-verify references/process-checks.md)"
+      },
+      "evidence": [
+        {
+          "path": "hw/versions/v7/record/parts/STD-0004/part.yaml",
+          "sha256": "4230f09808b4e9b3dcd802aad6ec886f412c9350ec24ee1b08728015134c1d68"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "optical.route:STD-0004.window:fdm_optical",
+      "family": "optical.route",
+      "obligation": "optical.route@STD-0004.window",
+      "subject": {
+        "kind": "COMPONENT",
+        "PN": "STD-0004",
+        "component": "window"
+      },
+      "severity": "MAJOR",
+      "outcome": "FAIL",
+      "measured": {
+        "text": "operation print (FDM, fdm_pc_polylite_transparent) forms the OPTICAL surface view_face"
+      },
+      "criterion": {
+        "id": "optical_route_rule",
+        "property": "optical_route",
+        "comparator": "EQUALS",
+        "value": "purchased transparent part or identified transparent stock on an approving route",
+        "source": {
+          "kind": "POLICY",
+          "reference": "cad-verify references/process-checks.md optical.route",
+          "origin": "cad-agent-skills 0.1.0",
+          "document": "cad-verify references/process-checks.md optical.route"
+        },
+        "conditions": "REQ-006: the phone screen bottom edge stays readable through the front lip"
+      },
+      "requirements": [
+        "REQ-006"
+      ],
+      "method": {
+        "name": "optical.route record check of part transparency, route kinds and stock identity (cad-verify references/process-checks.md)"
+      },
+      "uncertainty": "record fact; no measurement uncertainty",
+      "consequence": "a printed window scatters light; REQ-006 readability is not achievable by this route",
+      "remedy": "laser-cut the window from identified cast PMMA or polycarbonate sheet with sourced grade, thickness and transmission, or buy a transparent part",
+      "alternatives": [
+        {
+          "text": "laser-cut cast_pmma_plexiglas_gs_0f00 3 mm",
+          "tradeoff": "needs a laser capability approving PMMA and a new selection approval"
+        },
+        {
+          "text": "purchased PC window",
+          "tradeoff": "supplier identity and lead time to source"
+        }
+      ],
+      "recheck": {
+        "families": [
+          "optical.route"
+        ],
+        "earliest_stage": "INTENT"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v7/optical/a1/artifacts/optical.json",
+      "sha256": "4a225fb4792d227eacfb7f4757695b3e85a60c1178e29daa66e64d391dcfcbe3",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v7/optical/a1/stdout.txt",
+      "sha256": "3b02a543559b5b571492c488e60e6acecc4f4ea661b5adcd8799e4ac9a215b94",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "FAIL",
+  "limitations": [
+    "record check; transmission of any made window is a physical.test obligation"
+  ]
+}

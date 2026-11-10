@@ -1,0 +1,18 @@
+id: DR-009
+kind: GATE
+state: SUPERSEDED
+binding:
+  kind: STAGE
+  stage: LAYOUT
+  version: v6
+  verdict:
+    path: hw/versions/v6/stage-verdict.json
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  verdict_result: PASS
+title: Supersede LAYOUT v6 approval
+scope: mass change reopens LAYOUT
+rationale: phone mass changed
+actor:
+  kind: LEAD
+  name: cad-flow lead
+time: '2026-11-04T08:00:00Z'

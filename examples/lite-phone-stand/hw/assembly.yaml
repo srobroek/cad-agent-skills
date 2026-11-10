@@ -1,0 +1,8 @@
+# Reference record for examples/lite-phone-stand: hw/assembly.yaml after GROUND stage work, before the GROUND gate.
+# The lite template's empty wrapper: the one occurrence and its nominal placement start at LAYOUT; joints, couplings,
+# operations and service stay empty for a static model.
+occurrences: []
+joints: []
+couplings: []
+operations: []
+service: []

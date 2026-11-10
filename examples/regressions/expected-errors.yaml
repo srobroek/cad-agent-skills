@@ -1,0 +1,28 @@
+# Intended schema error of each invalid regression case (data index, not an instance).
+# Same convention as cad-record contract-fixtures/expected-errors.yaml; keys are relative to examples/regressions/.
+# Every valid/<root>/* case exits 0 and every invalid/<root>/* case exits 1 against <cad-record>/schemas/<root>.schema.json;
+# a valid case may still fail the semantic check its scenario names.
+# a delivery.integrity result names each merged hw/ target, never the unit's .cad-work/ source
+invalid/check-result/integrity-scratch-path-ground.json: "$.input_files[1].path: '.cad-work/ground-v1-semantic/output/result.json' does not match '^hw/"
+# a REVIEW implementation forbids commands; the transcribed critique reply is refused
+invalid/check-result/review-with-commands-critique.json: 'Additional properties are not allowed (''commands'' was unexpected)'
+# a current result names an input by its hw/ origin, never by the installed template snapshot
+invalid/check-result/sealed-path-slip-current.json: "$.input_files[3].path: 'installed/cad-record/assets/project-template/hw/product.yaml' does not match '^(hw|"
+# a waiver is bounded by expires or until_change; one with neither is refused
+invalid/decision/waiver-out-of-scope-unbounded.yaml: "'until_change' is a required property"
+# a LITE part names no material profile
+invalid/part/lite-geometry-only-material.yaml: "$.components[0]: False schema does not allow 'fdm_petg_polylite'"
+# a LITE package claims CAD_VALID only, never manufacturability
+invalid/release-manifest/lite-geometry-only-printable-claim.json: "$.claims[2].facets[0]: 'CAD_VALID' was expected"
+# a PLANNED hard outcome is due at a stage after INTENT
+invalid/selection/selection-planned-due-intent.yaml: "$.candidates[0].hard_outcomes[8].due: 'INTENT' should not be valid under {'enum': ['GROUND', 'INTENT']}"
+# a PLANNED hard outcome names the stage whose evidence settles it
+invalid/selection/selection-planned-without-due.yaml: "$.candidates[0].hard_outcomes[8]: 'due' is a required property"
+# an EXCLUDED candidate is never scored or recommended
+invalid/selection/selection-score-revives-excluded.yaml: "should not be valid under {'required': ['preference_scores']}"
+# a PASS readiness verdict never accepts the UNKNOWN physical result
+invalid/stage-verdict/release-without-physical-pass.json: "'UNKNOWN' is not one of ['PASS', 'WAIVED', 'NOT_APPLICABLE']"
+# a PASS verdict needs a PASS review; MINOR fails the gate
+invalid/stage-verdict/review-minor-pass.json: "$.review.verdict: 'PASS' was expected"
+# a CARRIED_FORWARD result names carried_from
+invalid/stage-verdict/stale-after-change-no-recheck.json: "'carried_from' is a required property"

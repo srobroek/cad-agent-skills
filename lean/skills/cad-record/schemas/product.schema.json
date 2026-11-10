@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills product record (hw/product.yaml)",
+  "description": "Project namespace, record version, build mode, identity, units and frame, rigor, regime, intake, service, risk, authority, release scope, storage and license. No workflow stage lives here: the stage chain derives from immutable stage verdicts and decisions. Missing information is an explicit UNKNOWN, never a default. The full shape applies to a KNOWN FULL build and to a legacy record without build_mode; a KNOWN LITE build or an unanswered mode needs only the common fields (cad-record references/record.md#build-mode).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "record_version",
+    "id",
+    "title",
+    "identity",
+    "units",
+    "frame",
+    "rigor",
+    "intake",
+    "service",
+    "risk",
+    "authority",
+    "release_scope",
+    "storage",
+    "license"
+  ],
+  "properties": {
+    "format": {"description": "record namespace; explicitly not cad-agent v1", "const": "cad-agent-skills"},
+    "record_version": {"const": 1},
+    "id": {"$ref": "common.schema.json#/$defs/product_id"},
+    "title": {"$ref": "common.schema.json#/$defs/text"},
+    "build_mode": {
+      "description": "the owner's build-mode source fact; absent only in a legacy record, read as FULL",
+      "$ref": "common.schema.json#/$defs/build_mode_fact"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "owner"],
+      "properties": {
+        "description": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "owner": {"$ref": "common.schema.json#/$defs/text_fact"}
+      }
+    },
+    "units": {"const": "mm"},
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handedness", "up", "new_geometry"],
+      "properties": {
+        "handedness": {"const": "RIGHT_HANDED"},
+        "up": {"const": "+Z"},
+        "new_geometry": {
+          "description": "new part geometry is authored in its own part_local frame; imported ASSEMBLY_ZERO parts declare it in part.yaml",
+          "const": "PART_LOCAL"
+        }
+      }
+    },
+    "rigor": {
+      "oneOf": [{"$ref": "common.schema.json#/$defs/rigor"}, {"$ref": "common.schema.json#/$defs/fact_unknown"}]
+    },
+    "regime": {
+      "oneOf": [
+        {"description": "tolerancing and drawing regime", "enum": ["ISO", "ASME"]},
+        {"$ref": "common.schema.json#/$defs/fact_unknown"}
+      ]
+    },
+    "general_tolerance": {"$ref": "common.schema.json#/$defs/text_fact"},
+    "intake": {"$ref": "#/$defs/intake"},
+    "service": {"$ref": "#/$defs/service"},
+    "risk": {"$ref": "#/$defs/risk"},
+    "authority": {"$ref": "#/$defs/authority"},
+    "release_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "operating_limits", "exclusions"],
+      "properties": {
+        "purpose": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "operating_limits": {"$ref": "common.schema.json#/$defs/texts_fact"},
+        "exclusions": {"$ref": "common.schema.json#/$defs/texts_fact"}
+      }
+    },
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["results_in_git", "retention"],
+      "properties": {
+        "results_in_git": {"$ref": "common.schema.json#/$defs/boolean_fact"},
+        "retention": {"$ref": "common.schema.json#/$defs/text_fact"}
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hardware", "documentation"],
+      "properties": {
+        "hardware": {
+          "description": "SPDX expression approved by the owner",
+          "$ref": "common.schema.json#/$defs/text_fact"
+        },
+        "documentation": {"$ref": "common.schema.json#/$defs/text_fact"}
+      }
+    },
+    "import": {"$ref": "#/$defs/import"}
+  },
+  "allOf": [
+    {
+      "description": "full shape: a legacy record without build_mode or a KNOWN FULL build; the same required fields as before build modes",
+      "if": {
+        "anyOf": [
+          {"not": {"required": ["build_mode"]}},
+          {"required": ["build_mode"], "properties": {"build_mode": {"required": ["value"], "properties": {"value": {"const": "FULL"}}}}}
+        ]
+      },
+      "then": {
+        "required": ["regime", "general_tolerance"],
+        "properties": {
+          "intake": {"required": ["loads", "environment", "motion", "accuracy", "logistics", "capability"]},
+          "risk": {"required": ["severity", "standards", "supervision"]},
+          "authority": {"required": ["competent"]}
+        }
+      }
+    },
+    {
+      "description": "a KNOWN LITE build is an APPEARANCE_CONCEPT prototype; its service class cites the QUESTION decision of the mode answer",
+      "if": {"required": ["build_mode"], "properties": {"build_mode": {"required": ["value"], "properties": {"value": {"const": "LITE"}}}}},
+      "then": {"properties": {"service": {"properties": {"class": {"const": "APPEARANCE_CONCEPT"}}}}}
+    }
+  ],
+  "$defs": {
+    "intake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "purpose", "users"],
+      "properties": {
+        "status": {"enum": ["UNKNOWN", "DRAFT", "CONFIRMED"]},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "purpose": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "users": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "loads": {
+          "oneOf": [
+            {"type": "array", "items": {"$ref": "common.schema.json#/$defs/load"}, "minItems": 1},
+            {"$ref": "common.schema.json#/$defs/fact_open"}
+          ]
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["temperature", "heat_sources", "moisture", "chemicals", "uv", "corrosion"],
+          "properties": {
+            "temperature": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "heat_sources": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "moisture": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "chemicals": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "uv": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "corrosion": {"$ref": "common.schema.json#/$defs/text_fact"}
+          }
+        },
+        "motion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["speed", "range", "duty_cycle", "service_life", "wear", "friction"],
+          "properties": {
+            "speed": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "range": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "duty_cycle": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "service_life": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "wear": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "friction": {"$ref": "common.schema.json#/$defs/text_fact"}
+          }
+        },
+        "accuracy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tolerance", "repeatability", "surface_finish", "dimensional_stability"],
+          "properties": {
+            "tolerance": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "repeatability": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "surface_finish": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "dimensional_stability": {"$ref": "common.schema.json#/$defs/text_fact"}
+          }
+        },
+        "logistics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["quantity", "budget", "lead_time", "maintenance", "repair"],
+          "properties": {
+            "quantity": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "budget": {"$ref": "common.schema.json#/$defs/money_fact"},
+            "lead_time": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+            "maintenance": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "repair": {"$ref": "common.schema.json#/$defs/text_fact"}
+          }
+        },
+        "capability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["equipment", "operator", "outsourcing"],
+          "properties": {
+            "equipment": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {"$ref": "common.schema.json#/$defs/profile_id"},
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                {"$ref": "common.schema.json#/$defs/fact_open"}
+              ]
+            },
+            "operator": {"$ref": "common.schema.json#/$defs/text_fact"},
+            "outsourcing": {"$ref": "common.schema.json#/$defs/text_fact"}
+          }
+        }
+      },
+      "if": {"properties": {"status": {"const": "CONFIRMED"}}},
+      "then": {"required": ["decision"]}
+    },
+    "service": {
+      "description": "service class is asked, never inferred from rigor; a prototype names its class",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class"],
+      "properties": {
+        "class": {"$ref": "common.schema.json#/$defs/service_class"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "question": {"$ref": "common.schema.json#/$defs/question_id"}
+      },
+      "if": {"properties": {"class": {"const": "UNKNOWN"}}},
+      "then": {"required": ["question"]},
+      "else": {"required": ["decision"]}
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["failure_consequence", "forbidden_outcomes"],
+      "properties": {
+        "failure_consequence": {"$ref": "common.schema.json#/$defs/text_fact"},
+        "severity": {
+          "oneOf": [
+            {"$ref": "common.schema.json#/$defs/consequence_severity"},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "forbidden_outcomes": {"$ref": "common.schema.json#/$defs/texts_fact"},
+        "standards": {"$ref": "common.schema.json#/$defs/texts_fact"},
+        "supervision": {"$ref": "common.schema.json#/$defs/text_fact"}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approver"],
+      "properties": {
+        "approver": {
+          "oneOf": [
+            {"$ref": "common.schema.json#/$defs/authority"},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"}
+          ]
+        },
+        "competent": {
+          "oneOf": [
+            {"$ref": "common.schema.json#/$defs/authority"},
+            {"$ref": "common.schema.json#/$defs/fact_unknown"},
+            {"$ref": "common.schema.json#/$defs/fact_not_applicable"}
+          ]
+        }
+      }
+    },
+    "import": {
+      "description": "provenance of an explicit, approved import of an existing record; the original stays retained and uncertified",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_format", "original_snapshot", "mapping", "decision", "date"],
+      "properties": {
+        "source_format": {"$ref": "common.schema.json#/$defs/text"},
+        "original_snapshot": {
+          "description": "layout record.import_original root for this import's DR; never under hw/docs/",
+          "allOf": [
+            {"$ref": "common.schema.json#/$defs/hw_path"},
+            {"pattern": "^hw/imports/DR-[0-9]{3}/original$"}
+          ]
+        },
+        "mapping": {"$ref": "common.schema.json#/$defs/hw_path"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "date": {"$ref": "common.schema.json#/$defs/date"}
+      }
+    }
+  }
+}

@@ -1,0 +1,313 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills selection record (hw/manufacturing/selection.yaml)",
+  "description": "Architecture and per-part material and route candidates. Hard requirement outcomes decide feasibility: FEASIBLE has no FAIL or UNKNOWN, CONDITIONAL has UNKNOWN and no FAIL, EXCLUDED has a FAIL. Preferences rank feasible candidates only. The recommendation is NONE, with no route, exactly when no candidate is FEASIBLE (cad-select selection.md Recommend). A FINAL recommendation names its approving decision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "candidates"],
+  "properties": {
+    "status": {"enum": ["NOT_ASSESSED", "ASSESSED", "CONFIRMED"]},
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputs", "input_sha256", "method", "date"],
+      "properties": {
+        "inputs": {
+          "description": "every hw/ file the assessment read, with its sha256; never hw/manufacturing/selection.yaml, which holds this list, or a decision written from this assessment",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {
+                "allOf": [
+                  {"$ref": "common.schema.json#/$defs/hw_path"},
+                  {"not": {"const": "hw/manufacturing/selection.yaml"}}
+                ]
+              },
+              "sha256": {"$ref": "common.schema.json#/$defs/sha256"}
+            }
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "input_sha256": {
+          "description": "set digest (references/record.md#inventory-digest) over inputs",
+          "$ref": "common.schema.json#/$defs/sha256"
+        },
+        "method": {"$ref": "common.schema.json#/$defs/text"},
+        "date": {"$ref": "common.schema.json#/$defs/date"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "architecture",
+          "parts",
+          "hard_outcomes",
+          "feasibility",
+          "economics",
+          "limits",
+          "reversal"
+        ],
+        "properties": {
+          "id": {"$ref": "common.schema.json#/$defs/slug"},
+          "title": {"$ref": "common.schema.json#/$defs/text"},
+          "architecture": {"$ref": "common.schema.json#/$defs/text"},
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["PN", "sourcing", "material_profile", "route"],
+              "properties": {
+                "PN": {"$ref": "common.schema.json#/$defs/pn"},
+                "title": {"$ref": "common.schema.json#/$defs/text"},
+                "sourcing": {"$ref": "common.schema.json#/$defs/sourcing"},
+                "material_profile": {
+                  "oneOf": [
+                    {"$ref": "common.schema.json#/$defs/profile_id"},
+                    {"$ref": "common.schema.json#/$defs/fact_open"}
+                  ]
+                },
+                "route": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["kind"],
+                    "properties": {
+                      "kind": {"$ref": "common.schema.json#/$defs/route_kind"},
+                      "capability": {
+                        "oneOf": [
+                          {"$ref": "common.schema.json#/$defs/profile_id"},
+                          {"$ref": "common.schema.json#/$defs/fact_unknown"}
+                        ]
+                      },
+                      "provider": {"enum": ["LOCAL", "OUTSOURCED"]},
+                      "purchase": {"$ref": "part.schema.json#/$defs/purchase"}
+                    },
+                    "if": {"properties": {"kind": {"const": "PURCHASED"}}},
+                    "then": {"required": ["purchase"], "not": {"required": ["capability"]}},
+                    "else": {"required": ["capability"], "not": {"required": ["purchase"]}}
+                  },
+                  "minItems": 1
+                },
+                "proposed": {"description": "true when the candidate introduces this PN", "type": "boolean"}
+              }
+            },
+            "minItems": 1
+          },
+          "hard_outcomes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["requirement", "outcome", "criterion", "method"],
+              "properties": {
+                "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
+                "outcome": {"enum": ["PASS", "FAIL", "UNKNOWN", "PLANNED"]},
+                "criterion": {"$ref": "common.schema.json#/$defs/criterion_or_unknown"},
+                "method": {"$ref": "common.schema.json#/$defs/text"},
+                "source": {"$ref": "common.schema.json#/$defs/source"},
+                "reason": {"$ref": "common.schema.json#/$defs/text"},
+                "due": {
+                  "description": "PLANNED only: the first later stage whose evidence settles the criterion; never PASS",
+                  "$ref": "common.schema.json#/$defs/stage"
+                },
+                "question": {
+                  "description": "UNKNOWN only: the open question in hw/requirements.yaml that settles it",
+                  "$ref": "common.schema.json#/$defs/question_id"
+                }
+              },
+              "allOf": [
+                {
+                  "if": {"required": ["outcome"], "properties": {"outcome": {"enum": ["PASS", "FAIL"]}}},
+                  "then": {
+                    "required": ["source"],
+                    "properties": {"criterion": {"$ref": "common.schema.json#/$defs/criterion"}}
+                  }
+                },
+                {
+                  "if": {"required": ["outcome"], "properties": {"outcome": {"const": "UNKNOWN"}}},
+                  "then": {"required": ["reason", "question"]},
+                  "else": {"not": {"required": ["question"]}}
+                },
+                {
+                  "if": {"required": ["outcome"], "properties": {"outcome": {"const": "PLANNED"}}},
+                  "then": {
+                    "required": ["reason", "due"],
+                    "properties": {
+                      "criterion": {"$ref": "common.schema.json#/$defs/criterion"},
+                      "due": {"not": {"enum": ["GROUND", "INTENT"]}}
+                    }
+                  },
+                  "else": {"not": {"required": ["due"]}}
+                }
+              ]
+            },
+            "minItems": 1
+          },
+          "feasibility": {"enum": ["FEASIBLE", "CONDITIONAL", "EXCLUDED"]},
+          "preference_scores": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["preference", "score", "reason"],
+              "properties": {
+                "preference": {"$ref": "common.schema.json#/$defs/preference_id"},
+                "score": {"type": "number"},
+                "reason": {"$ref": "common.schema.json#/$defs/text"}
+              }
+            },
+            "minItems": 1
+          },
+          "economics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["quantity", "cost", "lead_time", "maintenance"],
+            "properties": {
+              "quantity": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+              "cost": {"$ref": "common.schema.json#/$defs/money_fact"},
+              "lead_time": {"$ref": "common.schema.json#/$defs/quantity_fact"},
+              "maintenance": {"$ref": "common.schema.json#/$defs/text_fact"}
+            }
+          },
+          "limits": {"$ref": "common.schema.json#/$defs/texts"},
+          "reversal": {"$ref": "common.schema.json#/$defs/text"},
+          "pros": {"$ref": "common.schema.json#/$defs/texts"},
+          "cons": {"$ref": "common.schema.json#/$defs/texts"},
+          "tradeoffs": {"$ref": "common.schema.json#/$defs/text"}
+        },
+        "allOf": [
+          {
+            "if": {"required": ["feasibility"], "properties": {"feasibility": {"const": "FEASIBLE"}}},
+            "then": {
+              "properties": {
+                "hard_outcomes": {
+                  "not": {
+                    "contains": {
+                      "type": "object",
+                      "properties": {"outcome": {"enum": ["FAIL", "UNKNOWN"]}},
+                      "required": ["outcome"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {"required": ["feasibility"], "properties": {"feasibility": {"const": "CONDITIONAL"}}},
+            "then": {
+              "properties": {
+                "hard_outcomes": {
+                  "contains": {"type": "object", "properties": {"outcome": {"const": "UNKNOWN"}}, "required": ["outcome"]},
+                  "not": {
+                    "contains": {"type": "object", "properties": {"outcome": {"const": "FAIL"}}, "required": ["outcome"]}
+                  }
+                }
+              },
+              "not": {"required": ["preference_scores"]}
+            }
+          },
+          {
+            "if": {"required": ["feasibility"], "properties": {"feasibility": {"const": "EXCLUDED"}}},
+            "then": {
+              "properties": {
+                "hard_outcomes": {
+                  "contains": {"type": "object", "properties": {"outcome": {"const": "FAIL"}}, "required": ["outcome"]}
+                }
+              },
+              "not": {"required": ["preference_scores"]}
+            }
+          }
+        ]
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "governing_requirements", "reasons", "limits", "reversal", "what_would_change"],
+      "properties": {
+        "status": {"enum": ["NONE", "CONDITIONAL", "FINAL"]},
+        "primary": {"$ref": "common.schema.json#/$defs/slug"},
+        "prototype": {"$ref": "common.schema.json#/$defs/slug"},
+        "end_use": {"$ref": "common.schema.json#/$defs/slug"},
+        "fallback": {"$ref": "common.schema.json#/$defs/slug"},
+        "governing_requirements": {"$ref": "common.schema.json#/$defs/requirement_ids"},
+        "reasons": {"$ref": "common.schema.json#/$defs/texts"},
+        "limits": {"$ref": "common.schema.json#/$defs/texts"},
+        "reversal": {"$ref": "common.schema.json#/$defs/text"},
+        "what_would_change": {"$ref": "common.schema.json#/$defs/texts"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      },
+      "allOf": [
+        {
+          "if": {"required": ["status"], "properties": {"status": {"const": "NONE"}}},
+          "then": {
+            "not": {
+              "anyOf": [
+                {"required": ["primary"]},
+                {"required": ["prototype"]},
+                {"required": ["end_use"]},
+                {"required": ["fallback"]},
+                {"required": ["decision"]}
+              ]
+            }
+          },
+          "else": {"required": ["primary"]}
+        },
+        {
+          "if": {"required": ["status"], "properties": {"status": {"const": "FINAL"}}},
+          "then": {"required": ["decision"]}
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["candidates", "recommendation"],
+        "properties": {
+          "candidates": {
+            "not": {
+              "contains": {"type": "object", "required": ["feasibility"], "properties": {"feasibility": {"const": "FEASIBLE"}}}
+            }
+          }
+        }
+      },
+      "then": {"properties": {"recommendation": {"properties": {"status": {"const": "NONE"}}}}},
+      "else": {"properties": {"recommendation": {"properties": {"status": {"enum": ["CONDITIONAL", "FINAL"]}}}}}
+    },
+    {
+      "if": {"required": ["status"], "properties": {"status": {"const": "NOT_ASSESSED"}}},
+      "then": {
+        "properties": {"candidates": {"maxItems": 0}},
+        "not": {"anyOf": [{"required": ["assessment"]}, {"required": ["recommendation"]}]}
+      }
+    },
+    {
+      "if": {"required": ["status"], "properties": {"status": {"const": "ASSESSED"}}},
+      "then": {"required": ["assessment", "recommendation"], "properties": {"candidates": {"minItems": 1}}}
+    },
+    {
+      "if": {"required": ["status"], "properties": {"status": {"const": "CONFIRMED"}}},
+      "then": {
+        "required": ["assessment", "recommendation"],
+        "properties": {
+          "candidates": {"minItems": 1},
+          "assessment": {"required": ["decision"]},
+          "recommendation": {"properties": {"status": {"const": "FINAL"}}}
+        }
+      }
+    }
+  ]
+}

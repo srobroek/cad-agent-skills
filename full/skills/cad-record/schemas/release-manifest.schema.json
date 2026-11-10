@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "cad-agent-skills release manifest (hw/releases/<REV>/release-manifest.json)",
+  "description": "PROPOSAL lists the planned payload inventory and excludes the not-yet-written RELEASE readiness verdict, approval and integrity result. FINAL adds the RELEASE readiness verdict, the approval, the package-integrity result and the full inventory, and excludes its own bytes; the outer digest is reported separately, never self-hashed. A manifest with build_mode LITE is a geometry-only prototype package frozen at a PASS LAYOUT version (cad-record references/record.md#build-mode).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "phase",
+    "rev",
+    "frozen",
+    "decisions",
+    "planned",
+    "scope",
+    "claims",
+    "waivers",
+    "licenses",
+    "exclusions"
+  ],
+  "properties": {
+    "build_mode": {
+      "description": "local shape discriminator of a LITE package, equal to the frozen product build mode (a semantic check); absent on every FULL and legacy manifest",
+      "const": "LITE"
+    },
+    "format": {"const": "cad-agent-skills.release-manifest"},
+    "schema_version": {"const": 1},
+    "phase": {"enum": ["PROPOSAL", "FINAL"]},
+    "rev": {"$ref": "common.schema.json#/$defs/release_rev"},
+    "frozen": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "version_manifest", "verdict"],
+      "properties": {
+        "version": {"$ref": "common.schema.json#/$defs/version"},
+        "version_manifest": {"$ref": "common.schema.json#/$defs/file_hash"},
+        "verdict": {"$ref": "common.schema.json#/$defs/file_hash"},
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"}
+      }
+    },
+    "readiness": {
+      "description": "FINAL only: the RELEASE stage verdict; a PROPOSAL never hashes it, because that verdict hashes the proposal",
+      "$ref": "common.schema.json#/$defs/file_hash"
+    },
+    "decisions": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
+    "planned": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "role"],
+        "properties": {
+          "path": {
+            "allOf": [
+              {"$ref": "common.schema.json#/$defs/relative_path"},
+              {"not": {"pattern": "^release-manifest\\.json$"}}
+            ]
+          },
+          "source": {"$ref": "common.schema.json#/$defs/project_path"},
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "bytes": {"type": "integer", "minimum": 0},
+          "role": {
+            "enum": [
+              "DEFINITION",
+              "MANUFACTURE",
+              "DRAWING",
+              "RECORD",
+              "CHECK",
+              "BOM",
+              "VERIFICATION",
+              "DOCUMENT",
+              "ACCEPTANCE",
+              "LICENSE"
+            ]
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "file"],
+      "properties": {
+        "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+        "file": {"$ref": "common.schema.json#/$defs/file_hash"}
+      }
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "role"],
+        "properties": {
+          "path": {
+            "allOf": [
+              {"$ref": "common.schema.json#/$defs/relative_path"},
+              {"not": {"pattern": "^release-manifest\\.json$"}}
+            ]
+          },
+          "source": {"$ref": "common.schema.json#/$defs/project_path"},
+          "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+          "bytes": {"type": "integer", "minimum": 0},
+          "role": {
+            "enum": [
+              "DEFINITION",
+              "MANUFACTURE",
+              "DRAWING",
+              "RECORD",
+              "CHECK",
+              "BOM",
+              "VERIFICATION",
+              "DOCUMENT",
+              "ACCEPTANCE",
+              "LICENSE"
+            ]
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "result"],
+      "properties": {
+        "path": {"const": "acceptance/package-integrity.json"},
+        "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
+        "result": {"const": "PASS"}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["service_class", "purpose", "operating_limits", "exclusions"],
+      "properties": {
+        "service_class": {"allOf": [{"$ref": "common.schema.json#/$defs/service_class"}, {"not": {"const": "UNKNOWN"}}]},
+        "purpose": {"$ref": "common.schema.json#/$defs/text"},
+        "operating_limits": {"$ref": "common.schema.json#/$defs/texts"},
+        "exclusions": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/text"}},
+        "trial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision", "envelope", "supervision", "expires"],
+          "properties": {
+            "decision": {"$ref": "common.schema.json#/$defs/decision_id"},
+            "envelope": {"$ref": "common.schema.json#/$defs/text"},
+            "supervision": {"$ref": "common.schema.json#/$defs/text"},
+            "expires": {"$ref": "common.schema.json#/$defs/date"}
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement", "facets", "outcome"],
+        "properties": {
+          "requirement": {"$ref": "common.schema.json#/$defs/requirement_id"},
+          "facets": {
+            "type": "array",
+            "items": {"$ref": "common.schema.json#/$defs/facet"},
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "outcome": {"enum": ["PASS", "WAIVED", "UNKNOWN", "PLANNED"]}
+        }
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": {"$ref": "common.schema.json#/$defs/decision_id"},
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "licenses": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hardware", "documentation", "third_party"],
+      "properties": {
+        "hardware": {"$ref": "common.schema.json#/$defs/text"},
+        "documentation": {"$ref": "common.schema.json#/$defs/text"},
+        "third_party": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["item", "license", "source", "redistributed"],
+            "properties": {
+              "item": {"$ref": "common.schema.json#/$defs/text"},
+              "license": {"$ref": "common.schema.json#/$defs/text"},
+              "source": {"$ref": "common.schema.json#/$defs/source"},
+              "redistributed": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item", "reason"],
+        "properties": {
+          "item": {"$ref": "common.schema.json#/$defs/text"},
+          "reason": {"$ref": "common.schema.json#/$defs/text"}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"required": ["phase"], "properties": {"phase": {"const": "PROPOSAL"}}},
+      "then": {
+        "not": {
+          "anyOf": [
+            {"required": ["approval"]},
+            {"required": ["integrity"]},
+            {"required": ["inventory"]},
+            {"required": ["readiness"]}
+          ]
+        }
+      }
+    },
+    {
+      "if": {"required": ["phase"], "properties": {"phase": {"const": "FINAL"}}},
+      "then": {
+        "required": ["readiness", "approval", "integrity", "inventory"],
+        "properties": {
+          "inventory": {
+            "contains": {
+              "type": "object",
+              "required": ["path"],
+              "properties": {"path": {"const": "acceptance/package-integrity.json"}}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"not": {"required": ["build_mode"]}},
+      "then": {"properties": {"frozen": {"required": ["decision"]}}},
+      "else": {
+        "description": "LITE package: frozen is the PASS LAYOUT version with no gate decision; APPEARANCE_CONCEPT scope with the exact cad-flow disclosure line; CAD_VALID PASS claims only; no waiver, trial, manufacturing, drawing or BOM payload",
+        "properties": {
+          "frozen": {"properties": {"decision": false}},
+          "waivers": {"maxItems": 0},
+          "scope": {
+            "properties": {
+              "service_class": {"const": "APPEARANCE_CONCEPT"},
+              "trial": false,
+              "exclusions": {
+                "contains": {"const": "LITE prototype: geometry only; no material, fit, strength or manufacturing claims"}
+              }
+            }
+          },
+          "claims": {
+            "items": {"properties": {"facets": {"items": {"const": "CAD_VALID"}}, "outcome": {"const": "PASS"}}}
+          },
+          "planned": {"items": {"properties": {"role": {"not": {"enum": ["MANUFACTURE", "DRAWING", "BOM"]}}}}},
+          "inventory": {"items": {"properties": {"role": {"not": {"enum": ["MANUFACTURE", "DRAWING", "BOM"]}}}}}
+        }
+      }
+    }
+  ]
+}

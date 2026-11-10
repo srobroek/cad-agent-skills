@@ -1,0 +1,14 @@
+name: cad-checker
+description: Independent checker for one assigned check unit.
+thinkingLevel: high
+tools:
+- read
+- grep
+- glob
+- edit
+- write
+- bash
+spawns: []
+autoloadSkills:
+- cad-verify
+- cad-record

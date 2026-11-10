@@ -1,0 +1,39 @@
+{
+  "name": "cad-sourcing-researcher",
+  "description": "Researches sources and purchase identities for one unit.",
+  "prompt": "Read the brief at the literal path the lead gives.",
+  "tools": [
+    "read",
+    "write",
+    "web"
+  ],
+  "resources": [
+    "skill://.kiro/skills/cad-select/SKILL.md"
+  ],
+  "includeMcpJson": false,
+  "includePowers": false,
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_write",
+        "match": [
+          "**/*"
+        ],
+        "exclude": [
+          ".cad-work/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          ".cad-work/**"
+        ],
+        "effect": "allow"
+      }
+    ]
+  },
+  "allowedTools": [
+    "read"
+  ]
+}

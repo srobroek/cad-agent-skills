@@ -1,0 +1,6 @@
+name: cad-mech-dfm-reviewer
+description: Read-only combined mechanical and DFM reviewer.
+tools: Read, Grep, Glob
+disallowedTools: Agent, Write, Edit, Bash
+skills:
+- cad-review

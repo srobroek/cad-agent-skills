@@ -1,0 +1,32 @@
+id: DR-018
+kind: CHANGE
+state: APPROVED
+binding:
+  kind: PROPOSAL
+  path: hw/decisions/proposals/DR-018/change.yaml
+  sha256: d86d35a6535ba1b4c950ed58394f5ec997b3e081dc20f725e2e7f33b96c9da7d
+title: Arm material PETG to ASA
+scope: STD-0002 material profile
+rationale: the arm sits in sun on a window desk; ASA keeps stiffness at higher temperature
+limits:
+- geometry of every part unchanged
+- material-dependent evidence of STD-0002 is stale
+actor:
+  kind: USER
+  name: product owner
+time: '2026-11-03T09:30:00Z'
+statement:
+  path: hw/decisions/statements/DR-018.txt
+  transcript_sha256: 5f90bd0e2e3a407049475ea19c76a64590c584a072ec9a09dbef9d14566f1f8c
+  quote: approve the change of the STD-0002 arm to ASA
+  time: '2026-11-03T09:30:00Z'
+change:
+  reason: service temperature near a window exceeds the PETG comfort range
+  affected:
+  - kind: PART
+    PN: STD-0002
+  - kind: COMPONENT
+    PN: STD-0002
+    component: body
+  reopen: PARTS
+  baseline: v7
