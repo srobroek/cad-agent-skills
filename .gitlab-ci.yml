@@ -38,7 +38,7 @@ static-checks:
       mkdir /opt/node
       tar -xJf /tmp/node.tar.xz --strip-components=1 -C /opt/node node-v22.21.1-linux-arm64
       export PATH="/opt/node/bin:$PATH"
-      uv tool install check-jsonschema==0.39.0 --bin-dir "$HOME/.local/bin"
+      UV_TOOL_BIN_DIR="$HOME/.local/bin" uv tool install check-jsonschema==0.39.0
       export PATH="$HOME/.local/bin:$PATH"
   script:
     - |

@@ -55,7 +55,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          uv tool install check-jsonschema==0.39.0 --bin-dir "$HOME/.local/bin"
+          UV_TOOL_BIN_DIR="$HOME/.local/bin" uv tool install check-jsonschema==0.39.0
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Check tracked repository inventory
