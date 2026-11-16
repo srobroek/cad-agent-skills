@@ -55,6 +55,8 @@ schemas:
 
       # Fixture cases run concurrently, at most one per CPU, one validator process per case. Each case buffers its own report in
       # $queue_dir; drain_queue (called at every phase boundary) waits for all cases and prints the buffered reports of failed ones.
+      # A case's last action is its $id.done marker, and the parent records its name in $id.name before starting it. A worker killed
+      # before it finishes (SIGKILL, out-of-memory) leaves no marker, so drain_queue fails the phase and names that case.
       max_jobs="$(nproc)"
       queue_dir="$(mktemp -d)"
       trap 'rm -rf "$queue_dir"' EXIT
@@ -66,10 +68,17 @@ schemas:
 
       drain_queue() {
         wait
+        local id lost=0
         local -a failures=("$queue_dir"/*.fail)
-        if ((${#failures[@]} > 0)); then
-          cat "${failures[@]}" >&2
-          fail "${#failures[@]} validator case(s) failed; the reports above name each case"
+        for ((id = 1; id <= queue_count; id++)); do
+          if [[ ! -e "$queue_dir/$id.done" ]]; then
+            printf 'Validator worker lost before finishing: %s\n\n' "$(<"$queue_dir/$id.name")" >&2
+            lost=$((lost + 1))
+          fi
+        done
+        if ((${#failures[@]} > 0)); then cat "${failures[@]}" >&2; fi
+        if ((${#failures[@]} + lost > 0)); then
+          fail "$((${#failures[@]} + lost)) validator case(s) failed or were lost; the reports above name each case"
         fi
       }
 
@@ -90,10 +99,12 @@ schemas:
         (($# > 0)) || fail "No instances supplied for $schema"
         case_id=$((++queue_count))
         wait_for_slot
+        printf 'valid instances against %s: %s\n' "$schema" "$*" >"$queue_dir/$case_id.name"
         (
           if ! output="$(check-jsonschema --schemafile "$schema" "$@" 2>&1)"; then
             printf 'Valid instances failed against %s: %s\n%s\n\n' "$schema" "$*" "$output" >"$queue_dir/$case_id.fail"
           fi
+          : >"$queue_dir/$case_id.done"
         ) &
       }
 
@@ -124,6 +135,7 @@ schemas:
         expected="$(expected_error "$index_file" "$key")" || fail "Missing intended error in $index_file: $key"
         case_id=$((++queue_count))
         wait_for_slot
+        printf '%s: %s\n' "$kind" "$instance" >"$queue_dir/$case_id.name"
         (
           if output="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then
             printf '%s unexpectedly validated: %s\n\n' "$kind" "$instance" >"$queue_dir/$case_id.fail"
@@ -131,6 +143,7 @@ schemas:
             printf '%s reported an unexpected error: %s\nExpected substring: %s\nValidator output:\n%s\n\n' \
               "$kind" "$instance" "$expected" "$output" >"$queue_dir/$case_id.fail"
           fi
+          : >"$queue_dir/$case_id.done"
         ) &
       }
 
