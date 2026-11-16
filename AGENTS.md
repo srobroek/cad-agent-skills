@@ -53,7 +53,7 @@ frontmatter versions together; `metadata.plugin` matches the manifest name. The 
 
 Run focused checks for each change; CI is the repository-wide static matrix.
 `.github/workflows/ci.yml` and `.gitlab-ci.yml` run the same step bodies; edit
-both together. CI needs bash 4 or later. From the repository root, the pinned
+both together. CI needs bash 4.3 or later (`wait -n`). From the repository root, the pinned
 commands are:
 
 ```sh
