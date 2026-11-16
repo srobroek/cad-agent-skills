@@ -4,16 +4,20 @@ stages:
   - test
 
 # The script bodies below are shared verbatim with .github/workflows/ci.yml; change both together.
-static-checks:
+# The three jobs share a stage, so they run concurrently.
+.static-base:
   stage: test
-  timeout: 20m
   tags:
     - arch:arm64
     - size:small
   variables:
     PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
+schemas:
+  extends: .static-base
+  timeout: 15m
   before_script:
-    - apt-get update && apt-get install -y --no-install-recommends ca-certificates coreutils curl git grep jq tar xz-utils && rm -rf /var/lib/apt/lists/*
+    - apt-get update && apt-get install -y --no-install-recommends ca-certificates coreutils curl git grep jq tar && rm -rf /var/lib/apt/lists/*
     - |
       set -euo pipefail
       curl --fail --location --silent --show-error \
@@ -23,21 +27,6 @@ static-checks:
       mkdir /tmp/uv
       tar -xzf /tmp/uv.tar.gz --strip-components=1 -C /tmp/uv uv-aarch64-unknown-linux-gnu/uv
       install -m 0755 /tmp/uv/uv /usr/local/bin/uv
-      set -euo pipefail
-      curl --fail --location --silent --show-error \
-        https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-aarch64-unknown-linux-gnu.tar.gz \
-        --output /tmp/lychee.tar.gz
-      echo "91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c  /tmp/lychee.tar.gz" | sha256sum --check
-      mkdir /tmp/lychee
-      tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp/lychee lychee-aarch64-unknown-linux-gnu/lychee
-      install -m 0755 /tmp/lychee/lychee /usr/local/bin/lychee
-      curl --fail --location --silent --show-error \
-        https://nodejs.org/dist/v22.21.1/node-v22.21.1-linux-arm64.tar.xz \
-        --output /tmp/node.tar.xz
-      echo "e660365729b434af422bcd2e8e14228637ecf24a1de2cd7c916ad48f2a0521e1  /tmp/node.tar.xz" | sha256sum --check
-      mkdir /opt/node
-      tar -xJf /tmp/node.tar.xz --strip-components=1 -C /opt/node node-v22.21.1-linux-arm64
-      export PATH="/opt/node/bin:$PATH"
       UV_TOOL_BIN_DIR="$HOME/.local/bin" uv tool install check-jsonschema==0.39.0
       export PATH="$HOME/.local/bin:$PATH"
   script:
@@ -64,20 +53,59 @@ static-checks:
         exit 1
       }
 
+      # Fixture cases run concurrently, at most one per CPU, one validator process per case. Each case buffers its own report in
+      # $queue_dir; drain_queue (called at every phase boundary) waits for all cases and prints the buffered reports of failed ones.
+      # A case's last action is its $id.done marker, and the parent records its name in $id.name before starting it. A worker killed
+      # before it finishes (SIGKILL, out-of-memory) leaves no marker, so drain_queue fails the phase and names that case.
+      max_jobs="$(nproc)"
+      queue_dir="$(mktemp -d)"
+      trap 'rm -rf "$queue_dir"' EXIT
+      queue_count=0
+
+      wait_for_slot() {
+        while (($(jobs -rp | wc -l) >= max_jobs)); do wait -n || true; done
+      }
+
+      drain_queue() {
+        wait
+        local id lost=0
+        local -a failures=("$queue_dir"/*.fail)
+        for ((id = 1; id <= queue_count; id++)); do
+          if [[ ! -e "$queue_dir/$id.done" ]]; then
+            printf 'Validator worker lost before finishing: %s\n\n' "$(<"$queue_dir/$id.name")" >&2
+            lost=$((lost + 1))
+          fi
+        done
+        if ((${#failures[@]} > 0)); then cat "${failures[@]}" >&2; fi
+        if ((${#failures[@]} + lost > 0)); then
+          fail "$((${#failures[@]} + lost)) validator case(s) failed or were lost; the reports above name each case"
+        fi
+      }
+
       phase_name=""
       phase_start=0
       phase() {
+        drain_queue
         if [[ -n "$phase_name" ]]; then printf '%s: passed in %ds\n' "$phase_name" "$((SECONDS - phase_start))"; fi
         phase_name="${1-}"
         phase_start=$SECONDS
         if [[ -n "$phase_name" ]]; then printf '== %s\n' "$phase_name"; fi
       }
 
+      # Queues one validator call over valid instances.
       validate_many() {
-        local schema="$1"
+        local schema="$1" case_id
         shift
         (($# > 0)) || fail "No instances supplied for $schema"
-        check-jsonschema --schemafile "$schema" "$@"
+        case_id=$((++queue_count))
+        wait_for_slot
+        printf 'valid instances against %s: %s\n' "$schema" "$*" >"$queue_dir/$case_id.name"
+        (
+          if ! output="$(check-jsonschema --schemafile "$schema" "$@" 2>&1)"; then
+            printf 'Valid instances failed against %s: %s\n%s\n\n' "$schema" "$*" "$output" >"$queue_dir/$case_id.fail"
+          fi
+          : >"$queue_dir/$case_id.done"
+        ) &
       }
 
       # All valid fixtures of a root validate together; invalid fixtures must report their indexed error.
@@ -100,14 +128,23 @@ static-checks:
         ' "$index_file"
       }
 
+      # Queues one invalid instance: it must fail validation and its verbose output must contain the intended error.
+      # $1 names the kind of case in reports; $5 is the intended-error key in the index file $4.
       assert_invalid() {
-        local schema="$1" instance="$2" index_file="$3" key="$4" expected actual
+        local kind="$1" schema="$2" instance="$3" index_file="$4" key="$5" expected case_id
         expected="$(expected_error "$index_file" "$key")" || fail "Missing intended error in $index_file: $key"
-        if actual="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then fail "Invalid fixture unexpectedly validated: $instance"; fi
-        if ! grep -Fq -- "$expected" <<<"$actual"; then
-          printf 'Validation error mismatch: %s\nExpected substring: %s\nValidator output:\n%s\n\n' "$instance" "$expected" "$actual" >&2
-          fail "Invalid fixture reported an unexpected error: $instance"
-        fi
+        case_id=$((++queue_count))
+        wait_for_slot
+        printf '%s: %s\n' "$kind" "$instance" >"$queue_dir/$case_id.name"
+        (
+          if output="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then
+            printf '%s unexpectedly validated: %s\n\n' "$kind" "$instance" >"$queue_dir/$case_id.fail"
+          elif ! grep -Fq -- "$expected" <<<"$output"; then
+            printf '%s reported an unexpected error: %s\nExpected substring: %s\nValidator output:\n%s\n\n' \
+              "$kind" "$instance" "$expected" "$output" >"$queue_dir/$case_id.fail"
+          fi
+          : >"$queue_dir/$case_id.done"
+        ) &
       }
 
       validate_fixtures() {
@@ -118,7 +155,7 @@ static-checks:
         validate_many "$schema" "${valid[@]}"
         for instance in "${invalid[@]}"; do
           key="${fixture_dir##*/}/invalid/${instance##*/}"
-          assert_invalid "$schema" "$instance" "$index_file" "$key"
+          assert_invalid "Invalid fixture" "$schema" "$instance" "$index_file" "$key"
         done
       }
 
@@ -165,6 +202,32 @@ static-checks:
 
       phase 'Metaschemas'
       check-jsonschema --check-metaschema "$full_schemas"/*.schema.json "$authoring"/*.schema.json
+
+      phase 'Fixture coverage (every schema has fixtures, every fixture directory has a schema)'
+      # Prints nothing; fails when schema $1/<name>.schema.json lacks a non-empty $2/<name>/valid or $2/<name>/invalid directory,
+      # or when a directory $2/<name> has no schema. The walk in the next phase starts from these directories, so without this
+      # check an unpaired schema or a deleted fixture directory would silently drop out of validation.
+      check_fixture_coverage() {
+        local schema_dir="$1" fixture_root="$2" schema name kind fixture_dir
+        local -a schemas=("$schema_dir"/*.schema.json) fixture_files
+        ((${#schemas[@]} > 0)) || fail "No schemas in $schema_dir"
+        for schema in "${schemas[@]}"; do
+          name="${schema##*/}"
+          name="${name%.schema.json}"
+          for kind in valid invalid; do
+            fixture_files=("$fixture_root/$name/$kind"/*)
+            ((${#fixture_files[@]} > 0)) || fail "Schema without $kind fixtures: $schema needs files in $fixture_root/$name/$kind"
+          done
+        done
+        for fixture_dir in "$fixture_root"/*/; do
+          fixture_dir="${fixture_dir%/}"
+          [[ -f "$schema_dir/${fixture_dir##*/}.schema.json" ]] || fail "Fixture directory without a schema: $fixture_dir has no $schema_dir/${fixture_dir##*/}.schema.json"
+        done
+      }
+      for variant in full; do
+        check_fixture_coverage "$variant/skills/cad-record/schemas" "$variant/skills/cad-record/assets/contract-fixtures"
+      done
+      check_fixture_coverage "$authoring" "$authoring/fixtures"
 
       phase 'Contract and authoring fixtures'
       for variant in full; do
@@ -299,22 +362,41 @@ static-checks:
         validate_many "$schema" "$root_dir"/*
       done
       # Each invalid case runs alone; its intended error must appear among all reported errors (--verbose).
-      mismatches=0
       for instance in "${invalid_cases[@]}"; do
         relative="${instance#"$regressions/"}"
         root="${relative#invalid/}"
         schema="$full_schemas/${root%%/*}.schema.json"
         [[ -f "$schema" ]] || fail "Missing full schema for regression: $instance"
-        expected="$(expected_error "$expected_errors" "$relative")" || fail "Missing intended error in $expected_errors: $relative"
-        if actual="$(check-jsonschema --verbose --schemafile "$schema" "$instance" 2>&1)"; then fail "Invalid regression unexpectedly validated: $instance"; fi
-        if ! grep -Fq -- "$expected" <<<"$actual"; then
-          printf 'Regression error mismatch: %s\nExpected substring: %s\nValidator output:\n%s\n\n' "$instance" "$expected" "$actual" >&2
-          mismatches=$((mismatches + 1))
-        fi
+        assert_invalid "Invalid regression" "$schema" "$instance" "$expected_errors" "$relative"
       done
-      ((mismatches == 0)) || fail "$mismatches invalid regression(s) did not report their intended error"
       phase ''
-    - npm exec --yes --package=markdownlint-cli2@0.24.0 -- markdownlint-cli2 '**/*.md'
+
+markdown:
+  extends: .static-base
+  timeout: 10m
+  variables:
+    PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    # The npm cache lives in the project directory so GitLab can cache it; the Markdown lint ignores it.
+    npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  # The repository has no package manifest, so the key names every pinned npm package.
+  cache:
+    key: npm-markdown-markdownlint-cli2-0.24.0-remark-cli-12.0.1-remark-15.0.1-remark-frontmatter-5.0.0-remark-lint-frontmatter-schema-3.15.4
+    paths:
+      - .npm/
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends ca-certificates coreutils curl git tar xz-utils && rm -rf /var/lib/apt/lists/*
+    - |
+      set -euo pipefail
+      curl --fail --location --silent --show-error \
+        https://nodejs.org/dist/v22.21.1/node-v22.21.1-linux-arm64.tar.xz \
+        --output /tmp/node.tar.xz
+      echo "e660365729b434af422bcd2e8e14228637ecf24a1de2cd7c916ad48f2a0521e1  /tmp/node.tar.xz" | sha256sum --check
+      mkdir /opt/node
+      tar -xJf /tmp/node.tar.xz --strip-components=1 -C /opt/node node-v22.21.1-linux-arm64
+      export PATH="/opt/node/bin:$PATH"
+  script:
+    - |
+      npm exec --yes --package=markdownlint-cli2@0.24.0 -- markdownlint-cli2 '**/*.md' '#.npm'
     - |
       set -euo pipefail
       shopt -s nullglob
@@ -327,7 +409,46 @@ static-checks:
         done
       done
       ((${#markdown_files[@]} > 0)) || { printf 'No Markdown frontmatter files found\n' >&2; exit 1; }
+      # Every frontmatter-schema mapping in .remarkrc.yaml must apply: its schema file exists and each of its globs matches a tracked
+      # file, and every file handed to remark below is covered by some glob. Otherwise remark would lint nothing and still pass.
+      declare -A mapped=()
+      glob_count=0
+      while IFS=$'\t' read -r kind value; do
+        if [[ "$kind" == schema ]]; then
+          [[ -f "$value" ]] || { printf '.remarkrc.yaml maps frontmatter to a missing schema: %s\n' "$value" >&2; exit 1; }
+          continue
+        fi
+        glob_count=$((glob_count + 1))
+        mapfile -t glob_matches < <(git ls-files -- ":(glob)$value")
+        ((${#glob_matches[@]} > 0)) || { printf '.remarkrc.yaml glob matches no tracked file: %s\n' "$value" >&2; exit 1; }
+        for file in "${glob_matches[@]}"; do mapped["$file"]=1; done
+      done < <(awk '
+        /^[[:space:]]+(-[[:space:]]+)?schemas:[[:space:]]*$/ { in_schemas = 1; next }
+        in_schemas && /^[[:space:]]+[^[:space:]-][^[:space:]]*:[[:space:]]*$/ { key = $1; sub(/:$/, "", key); print "schema\t" key; next }
+        in_schemas && /^[[:space:]]+-[[:space:]]+[^[:space:]]+[[:space:]]*$/ { print "glob\t" $2 }
+      ' .remarkrc.yaml)
+      ((glob_count > 0)) || { printf 'No frontmatter-schema globs found in .remarkrc.yaml\n' >&2; exit 1; }
+      for file in "${markdown_files[@]}"; do
+        [[ -n "${mapped[$file]-}" ]] || { printf 'No .remarkrc.yaml frontmatter-schema glob covers %s\n' "$file" >&2; exit 1; }
+      done
       # .remarkrc.yaml at the repository root resolves these plugins from ./node_modules.
       npm install --no-save --ignore-scripts --no-package-lock --no-audit --no-fund remark-cli@12.0.1 remark@15.0.1 remark-frontmatter@5.0.0 remark-lint-frontmatter-schema@3.15.4
       ./node_modules/.bin/remark --frail --quiet --no-stdout "${markdown_files[@]}"
-    - lychee --config lychee.toml '**/*.md'
+
+links:
+  extends: .static-base
+  timeout: 5m
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends ca-certificates curl tar && rm -rf /var/lib/apt/lists/*
+    - |
+      set -euo pipefail
+      curl --fail --location --silent --show-error \
+        https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-aarch64-unknown-linux-gnu.tar.gz \
+        --output /tmp/lychee.tar.gz
+      echo "91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c  /tmp/lychee.tar.gz" | sha256sum --check
+      mkdir /tmp/lychee
+      tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp/lychee lychee-aarch64-unknown-linux-gnu/lychee
+      install -m 0755 /tmp/lychee/lychee /usr/local/bin/lychee
+  script:
+    - |
+      lychee --config lychee.toml '**/*.md'
