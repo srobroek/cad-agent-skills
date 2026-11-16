@@ -54,17 +54,17 @@ checker may speed up a sweep or interference run, but only by an acceleration wh
    sample. A skipped pair is named in the artifact with its bound, never silently dropped; the counts sum to the pairs enumerated in step 1.
 4. A cache entry is keyed by the sha256 of both shapes' content, both poses and every measurement parameter (distance and fuzzy
    tolerances, volume threshold, tool and pin versions). A value from another version is used only when every key part matches.
-5. Equality sample: re-measure without any acceleration a stated subset of pairs and poses (name it; include every pair nearest the
-   criterion and the endpoints and events) and compare distance, shared volume and witness points. The result states the subset size.
+5. Equality sample: re-measure without any acceleration a stated subset of pairs and poses, and compare distance, shared volume and
+   witness points. Name the subset. It holds every measured pair whose PASS or FAIL would change if its distance moved by the distance
+   tolerance, or the pair nearest each criterion when no pair is that close; the bound-skipped pair with the smallest margin over its
+   bound; and the endpoints and events. The result states the subset size.
 6. A sample mismatch, or an accelerated run with no equality sample, leaves the obligation UNKNOWN `UNSUPPORTED_METHOD` (the method is not
    valid evidence, [results.md — Outcomes](results.md#outcomes)), never PASS. A deadline that ends the run stays UNKNOWN `TIMEOUT` as
    there.
 7. Plan wall time per case: estimate it from a timed unaccelerated sample of pairs, and keep the run inside the brief's `limits`
    `wall_seconds` ([worker-brief.md](../../cad-flow/references/worker-brief.md)); split cases across units rather than weaken the sample.
-
-```python
-ext.SetDeflection(1e-7)  # pin the same parameters in cached and reference runs; record them in the cache key
-```
+   Cached and reference runs use the same `BRepExtrema_DistShapeShape` deflection and solid-treatment settings, and the cache key
+   records them.
 
 ## geometry.interference
 
