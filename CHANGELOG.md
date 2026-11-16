@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Workers scan their delivery for `.cad-work/`, `input/`, `installed/` and `lead/` path values before writing
+  `delivery.json`; the lead's Accept scan stays the authority.
 - Add targeted invalid contract fixtures: WAIVER without its waiver or authority, CHANGE without its change or baseline, RELEASE bound to a
   proposal or a malformed verdict hash, a negative BOM part count, BOM totals without mass, a verification index without stage, a capability
   library without profiles and a material library with an unknown key. Four regression and three contract error substrings now name their
