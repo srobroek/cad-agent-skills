@@ -208,6 +208,32 @@ jobs:
           phase 'Metaschemas'
           check-jsonschema --check-metaschema "$full_schemas"/*.schema.json "$authoring"/*.schema.json
 
+          phase 'Fixture coverage (every schema has fixtures, every fixture directory has a schema)'
+          # Prints nothing; fails when schema $1/<name>.schema.json lacks a non-empty $2/<name>/valid or $2/<name>/invalid directory,
+          # or when a directory $2/<name> has no schema. The walk in the next phase starts from these directories, so without this
+          # check an unpaired schema or a deleted fixture directory would silently drop out of validation.
+          check_fixture_coverage() {
+            local schema_dir="$1" fixture_root="$2" schema name kind fixture_dir
+            local -a schemas=("$schema_dir"/*.schema.json) fixture_files
+            ((${#schemas[@]} > 0)) || fail "No schemas in $schema_dir"
+            for schema in "${schemas[@]}"; do
+              name="${schema##*/}"
+              name="${name%.schema.json}"
+              for kind in valid invalid; do
+                fixture_files=("$fixture_root/$name/$kind"/*)
+                ((${#fixture_files[@]} > 0)) || fail "Schema without $kind fixtures: $schema needs files in $fixture_root/$name/$kind"
+              done
+            done
+            for fixture_dir in "$fixture_root"/*/; do
+              fixture_dir="${fixture_dir%/}"
+              [[ -f "$schema_dir/${fixture_dir##*/}.schema.json" ]] || fail "Fixture directory without a schema: $fixture_dir has no $schema_dir/${fixture_dir##*/}.schema.json"
+            done
+          }
+          for variant in full; do
+            check_fixture_coverage "$variant/skills/cad-record/schemas" "$variant/skills/cad-record/assets/contract-fixtures"
+          done
+          check_fixture_coverage "$authoring" "$authoring/fixtures"
+
           phase 'Contract and authoring fixtures'
           for variant in full; do
             for schema in "$variant"/skills/cad-record/schemas/*.schema.json; do
@@ -390,6 +416,28 @@ jobs:
             done
           done
           ((${#markdown_files[@]} > 0)) || { printf 'No Markdown frontmatter files found\n' >&2; exit 1; }
+          # Every frontmatter-schema mapping in .remarkrc.yaml must apply: its schema file exists and each of its globs matches a tracked
+          # file, and every file handed to remark below is covered by some glob. Otherwise remark would lint nothing and still pass.
+          declare -A mapped=()
+          glob_count=0
+          while IFS=$'\t' read -r kind value; do
+            if [[ "$kind" == schema ]]; then
+              [[ -f "$value" ]] || { printf '.remarkrc.yaml maps frontmatter to a missing schema: %s\n' "$value" >&2; exit 1; }
+              continue
+            fi
+            glob_count=$((glob_count + 1))
+            mapfile -t glob_matches < <(git ls-files -- ":(glob)$value")
+            ((${#glob_matches[@]} > 0)) || { printf '.remarkrc.yaml glob matches no tracked file: %s\n' "$value" >&2; exit 1; }
+            for file in "${glob_matches[@]}"; do mapped["$file"]=1; done
+          done < <(awk '
+            /^[[:space:]]+(-[[:space:]]+)?schemas:[[:space:]]*$/ { in_schemas = 1; next }
+            in_schemas && /^[[:space:]]+[^[:space:]-][^[:space:]]*:[[:space:]]*$/ { key = $1; sub(/:$/, "", key); print "schema\t" key; next }
+            in_schemas && /^[[:space:]]+-[[:space:]]+[^[:space:]]+[[:space:]]*$/ { print "glob\t" $2 }
+          ' .remarkrc.yaml)
+          ((glob_count > 0)) || { printf 'No frontmatter-schema globs found in .remarkrc.yaml\n' >&2; exit 1; }
+          for file in "${markdown_files[@]}"; do
+            [[ -n "${mapped[$file]-}" ]] || { printf 'No .remarkrc.yaml frontmatter-schema glob covers %s\n' "$file" >&2; exit 1; }
+          done
           # .remarkrc.yaml at the repository root resolves these plugins from ./node_modules.
           npm install --no-save --ignore-scripts --no-package-lock --no-audit --no-fund remark-cli@12.0.1 remark@15.0.1 remark-frontmatter@5.0.0 remark-lint-frontmatter-schema@3.15.4
           ./node_modules/.bin/remark --frail --quiet --no-stdout "${markdown_files[@]}"
