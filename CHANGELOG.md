@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add targeted invalid contract fixtures: WAIVER without its waiver or authority, CHANGE without its change or baseline, RELEASE bound to a
+  proposal or a malformed verdict hash, a negative BOM part count, BOM totals without mass, a verification index without stage, a capability
+  library without profiles and a material library with an unknown key. Four regression and three contract error substrings now name their
+  field path.
 - cad-record validation states the earlier-attempt rule (sealed files are seal-checked, others only re-hashed, none judged again) once, in
   Attempt scope; Scope, Earlier snapshots, the seal-check note and the Inputs table link to it. Meaning is unchanged.
 - Check-result and bundle-manifest schemas now reject a cited file path outside `hw/` (`input_files`, `source_files`, `inspected`, `artifacts`,
