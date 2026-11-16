@@ -125,17 +125,24 @@ A delivery rejected only for mechanical reasons may go back as a repair unit ins
 step 2). The mechanical reasons are a path value in a path field ([worker-delivery Accept](worker-delivery.md#accept) step 6), a
 sha256 typo, a missing log and a schema failure of `delivery.json` or of a result file.
 
-- A repair unit is a new unit under [Units](#units): a new unit id, a new brief and a new hash. Nothing published is rewritten: it
-  writes new files under its own `output/`, the rejected unit's scratch stays as it is, and nothing of the rejected delivery was merged.
+- Eligible roles: designer, checker and sourcing units. A reviewer unit is never repaired: a review result that fails validation or
+  mismatches the inventory is re-dispatched as a new unit ([cad-review review](../../cad-review/references/review.md)).
+- A repair unit is a new unit under [Units](#units): a new unit id, a new brief and a new hash. Nothing published is rewritten, and
+  nothing of the rejected delivery was merged. The rejected unit's scratch is never written.
 - Its brief ([worker-brief Compose](worker-brief.md#compose)) starts its `task` with `REPAIR of <rejected unit>:` and names only the
-  defects the rejection `reason` lists, each with its file, JSON path and value. Its inputs are the original brief's inputs plus the
-  rejected unit's `output/` files, program and lock as `input/rejected/<rejected unit>/…` copies. A `rejected/` copy is a snapshot (schema
-  `worker-brief`), never a published `hw/` path, so no path field of the repair's results or bundle manifest names one; they cite the same
-  `hw/` origins and targets as any unit. Its `expected` block and `boundary` equal the original's.
-- Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker, reviewer or sourcing unit, 1200 and 65 for a
+  defects the rejection `reason` lists, each with its file, JSON path and value.
+- Inputs: the original brief's inputs, plus snapshots `rejected/<rejected unit>/<path-within-unit>` of the rejected delivery in full:
+  every required output, the program and lock, and each available log. A `rejected/` copy is a snapshot (schema `worker-brief`), never a
+  published `hw/` path, so no path field of the repair's results or bundle manifest names one; they cite the same `hw/` origins and
+  targets as any unit.
+- `expected` equals the original's. `boundary` keeps `project_root` and `locked`, and remaps every unit-local path (`scratch`,
+  `writable`, `tmp`, the delivery path) to the repair unit's own `.cad-work/<repair unit>/`; the shared uv cache entry stays.
+- Edit scope: the task limits which files may change to those a listed defect names, and to the files that record such a file's sha256.
+  Every other required output is re-delivered byte-identical. Besides the [Accept](worker-delivery.md#accept) steps, the lead compares
+  each such output's sha256 with the rejected delivery's recorded hash; a change outside the listed defects rejects the repair.
+- Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker or sourcing unit, 1200 and 65 for a
   designer unit.
-- The same [Accept](worker-delivery.md#accept) steps judge its delivery, and an independent checker judges its results as for any
-  unit.
+- The same Accept steps judge its delivery, and an independent checker judges its results as for any unit.
 - Never a repair, always a full new unit:
   - a wrong fact, value or result;
   - a boundary or read-set violation (Accept step 8);

@@ -13,12 +13,24 @@ input_inventory:
   - path: hw/parts/STD-0001/part.yaml
     sha256: '6666666666666666666666666666666666666666666666666666666666666666'
   snapshots:
+  - path: rejected/base-part/output/part.yaml
+    sha256: '3333333333333333333333333333333333333333333333333333333333333333'
+  - path: rejected/base-part/output/model.py
+    sha256: '4444444444444444444444444444444444444444444444444444444444444444'
   - path: rejected/base-part/output/checks/clearance/result.json
+    sha256: '5555555555555555555555555555555555555555555555555555555555555555'
+  - path: rejected/base-part/output/checks/clearance/stdout.txt
+    sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+  - path: rejected/base-part/output/checks/clearance/stderr.txt
     sha256: '7777777777777777777777777777777777777777777777777777777777777777'
-  - path: rejected/base-part/check.py
+  - path: rejected/base-part/build.py
     sha256: '8888888888888888888888888888888888888888888888888888888888888888'
-  - path: rejected/base-part/check.py.lock
+  - path: rejected/base-part/build.py.lock
     sha256: '9999999999999999999999999999999999999999999999999999999999999999'
+  - path: rejected/base-part/check.py
+    sha256: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+  - path: rejected/base-part/check.py.lock
+    sha256: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
 resources:
   plugin:
     name: cad-agent-skills

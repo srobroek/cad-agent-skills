@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Repair units remap the unit-local boundary paths to their own directory, snapshot the whole rejected delivery, re-deliver unchanged
+  outputs byte-identical and exclude reviewer units.
 - The worker-brief schema accepts a `rejected/<unit>/<path>` snapshot for repair units, under the same dot-segment rules as the other snapshot
   forms. A valid repair-brief fixture and two invalid ones (dot segment, missing unit) cover it.
 - Split `agent-roles.md` by role: the common file keeps the shared rules and `agent-roles/<role>.md` holds each role's duty and rules, so a
