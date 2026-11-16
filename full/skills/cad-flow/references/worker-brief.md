@@ -14,7 +14,9 @@ Template: [worker-brief template](../assets/worker-brief.yaml). Role duties, ski
      brief is written, the current attempt included, in ascending number order, each line ending in LF. Attempt numbers only grow, so the
      copy an earlier brief held is this file cut after that attempt's own line, and its sha256 is the sha256 of those bytes;
    - `installed/<skill-name>/<path-within-skill>`: a byte copy of the installed file at that path in the skill directory
-     `preflight.json` resolved (`installed/cad-record/assets/project-template/hw/product.yaml`).
+     `preflight.json` resolved (`installed/cad-record/assets/project-template/hw/product.yaml`);
+   - a repair unit only ([delegation Repair units](delegation.md#repair-units)): `rejected/<rejected-unit>/<path-within-unit>`, a byte
+     copy of each `output/` file, program and lock of the rejected unit that the listed defects touch.
 
    Then write `.cad-work/<unit>/input/SHA256SUMS` as the output of one `shasum -a 256` run (Linux: `sha256sum`) over the absolute paths
    of the `files` copies and then the `snapshots` copies, in list order, and paste each `sha256` of the brief from that output, never
@@ -38,6 +40,8 @@ Template: [worker-brief template](../assets/worker-brief.yaml). Role duties, ski
    - Confirmable hashes: every sha256 an inventoried file records for a lead snapshot (`input/lead/attempts.txt`, `input/installed/…`)
      equals this brief's snapshot of that path or, for an earlier brief's `lead/attempts.txt`, the sha256 of this copy cut after that
      attempt's line (step 2). A hash no copy confirms is a defect to report, never a brief to dispatch.
+   - A repair unit's `task` names only the defects of the rejection `reason`; the rejected unit is not a checker whose program no
+     independent checker has read, and no earlier repair of the same work exists ([delegation Repair units](delegation.md#repair-units)).
    - `version` is the current attempt's `vN` for a checker or reviewer and absent for every other role.
    - Outputs: `expected.outputs` names a target or pattern for every subject a producer delivers and, for each check whose result a
      checker or reviewer delivers, its `result.json` target, the target of each artifact its Method names (`artifacts/items.json` and
@@ -58,7 +62,7 @@ Template: [worker-brief template](../assets/worker-brief.yaml). Role duties, ski
 | `subjects` | the PNs, components, interfaces, requirements, cases or operations in scope |
 | `seed_urls` | sourcing units only, at least one per subject: every `https` URL on the vendor's own origin that the record, an installed starter profile, the owner or the lead's own search names for the subjects |
 | `input_inventory` | `files`: every `hw/` file the unit reads with its sha256, and their set digest `sha256` ([cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest)); `snapshots`: each lead-owned fact of Compose step 2 the unit reads, with its sha256. Both derive from the brief, never from a guess: each `expected.checks` entry adds every input its method reads ([cad-verify families](../../cad-verify/references/families.md) Method; for `record.semantic`, [cad-record validation Inputs](../../cad-record/references/validation.md#inputs)), and a producer every file its stage-work procedure reads. A unit with a `version` reads the snapshot `hw/versions/vN/**`, never a live file the snapshot holds, the `hw/checks/vN/` bundles its families read and every earlier-version file its method's inputs name, the chain of Compose step 4 included; the seal check adds no file a seal root reaches ([cad-record validation Seal check](../../cad-record/references/validation.md#seal-check)). A checker adds, for each family with an accepted result in an earlier version, the latest such result's `source/check.py` and `source/check.py.lock` ([cad-verify implementation kind](../../cad-verify/references/results.md#implementation-kind) step 2) |
-| `limits` | `{wall_seconds, model_turns}` the unit enforces on itself ([agent-roles Limits](agent-roles.md#limits)) and after which the lead stops it ([delegation Lost and stalled units](delegation.md#lost-and-stalled-units)): 2400 and 150 for a checker, reviewer or sourcing unit; 3600 and 200 for a designer unit |
+| `limits` | `{wall_seconds, model_turns}` the unit enforces on itself ([agent-roles Limits](agent-roles.md#limits)) and after which the lead stops it ([delegation Lost and stalled units](delegation.md#lost-and-stalled-units)): 2400 and 150 for a checker, reviewer or sourcing unit; 3600 and 200 for a designer unit; a [repair unit](delegation.md#repair-units) about one third of these, 800 and 50, or 1200 and 65 |
 | `resources.plugin` | `{name, version}` copied from [preflight](preflight.md#preflightjson) |
 | `resources.skills` | only the skills that own the brief's methods, each with its absolute SKILL.md path and `skill://` URI: cad-record always; the owner of the stage-work procedure ID a producer runs ([stages](stages.md#stage-work-procedure-ids)); cad-model when the unit builds geometry; cad-release when it draws; cad-select for sourcing; cad-verify and the owner of each briefed family's Method ([cad-verify families](../../cad-verify/references/families.md)) when it runs checks; cad-review for the reviewer. The unit loads only these skills and may read any installed file of the plugin ([agent-roles Read set](agent-roles.md#read-set)) |
 | `resources.rubric` | `{name: rubric, path, uri}`: the `rubric` path of `preflight.json` and `skill://cad-review/references/rubric.md` ([cad-review's rubric](../../cad-review/references/rubric.md)) |

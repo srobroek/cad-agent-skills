@@ -75,6 +75,11 @@ researcher, a subject fact that no retained source states and a failed search to
 delivers a FAIL, UNKNOWN or MAJOR finding as its result; that is the evidence, not a stop
 ([cad-flow worker delivery](worker-delivery.md#accept)).
 
+A unit whose `task` starts with `REPAIR of` is a repair unit ([delegation Repair units](delegation.md#repair-units)): fix only the
+defects its task lists, start from the `rejected/` copies of its inputs (a program from its copy, as in step 6), rewrite and
+revalidate what the fix changes, and deliver with the same checks; any other defect you find goes in `limits`, never fixed. Its
+limits are the brief's, shorter than a full unit's.
+
 Run each command alone, never chained with `;`, `&&`, `||` or `|`: the one pipeline is the tree digest of step 4, and a program run's
 `> <stdout> 2> <stderr>` redirect is part of its form. The shell runs only the command forms this contract and your skills name. List,
 read and search files with the host's file tools (on Codex, which has none, with read-only shell commands), never a shell `cat`, `head`,

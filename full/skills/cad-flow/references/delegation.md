@@ -83,9 +83,9 @@ batch reads another unit's pending result.
    each delivery ([worker-delivery](worker-delivery.md)).
 2. Merge accepted bytes verbatim ([merge-deliveries](worker-delivery.md#merge-deliveries)). A rejected delivery goes back to the same role
    as a new unit: a new unit id and `.cad-work/<unit>/`, a new brief that states the defect, and a new native subagent call with a fresh
-   context per step 4. Never send the rework to a returned task (a follow-up, message, resume or steer of its id; on Codex
-   `followup_task` or `send_message`). A rejected unit the lead does not send again follows
-   [Lost and stalled units](#lost-and-stalled-units) step 3.
+   context per step 4; a purely mechanical rejection may instead go back as a [repair unit](#repair-units). Never send the rework to a
+   returned task (a follow-up, message, resume or steer of its id; on Codex `followup_task` or `send_message`). A rejected unit the lead
+   does not send again follows [Lost and stalled units](#lost-and-stalled-units) step 3.
 3. A worker proposal is applied only by the lead: inside the open stage's own controlled files the lead edits the record itself, discloses
    the edit and re-dispatches every unit whose inputs changed; touching approved scope is a [change](change-impact.md).
 4. A consequential unknown a delivery reports is recorded with the OPEN record question its subject already has. A subject without one
@@ -118,6 +118,29 @@ batch reads another unit's pending result.
    obligation of its `expected.obligations` in a lead result of its check, UNKNOWN `TIMEOUT` after a stall and `NOT_RUN` otherwise,
    naming the unit ([stages run-checks](stages.md#run-checks) step 4), and a stage-work unit's facts stay typed UNKNOWN
    ([stages Stop procedure](stages.md#stop-procedure)). The rest of the batch goes on to acceptance.
+
+## Repair units
+
+A delivery rejected only for mechanical reasons may go back as a repair unit instead of a full new unit ([Integrate](#integrate)
+step 2). The mechanical reasons are a path value in a path field ([worker-delivery Accept](worker-delivery.md#accept) step 6), a
+sha256 typo, a missing log and a schema failure of `delivery.json` or of a result file.
+
+- A repair unit is a new unit under [Units](#units): a new unit id, a new brief and a new hash. Nothing published is rewritten: it
+  writes new files under its own `output/`, the rejected unit's scratch stays as it is, and nothing of the rejected delivery was merged.
+- Its brief ([worker-brief Compose](worker-brief.md#compose)) starts its `task` with `REPAIR of <rejected unit>:` and names only the
+  defects the rejection `reason` lists, each with its file, JSON path and value. Its inputs are the original brief's inputs plus the
+  rejected unit's `output/` files, program and lock as `input/` copies. Its `expected` block and `boundary` equal the original's.
+- Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker, reviewer or sourcing unit, 1200 and 65 for a
+  designer unit.
+- The same [Accept](worker-delivery.md#accept) steps judge its delivery, and an independent checker judges its results as for any
+  unit.
+- Never a repair, always a full new unit:
+  - a wrong fact, value or result;
+  - a boundary or read-set violation (Accept step 8);
+  - a sourcing fact, retained source or citation;
+  - a checker program that no independent checker has read, since a repair would reuse an unreviewed program
+    ([cad-record Semantic check](../../cad-record/references/validation.md#semantic-check));
+  - the second repair of the same work: a rejected repair unit goes back as a full new unit.
 
 ## Boundaries
 

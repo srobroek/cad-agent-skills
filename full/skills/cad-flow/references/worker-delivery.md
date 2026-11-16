@@ -83,7 +83,8 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    merged as outputs ([delegation Integrate](delegation.md#integrate)).
 
 A rejected unit is never patched: send it again as a new unit, or its work stays undone
-([delegation Lost and stalled units](delegation.md#lost-and-stalled-units) step 3).
+([delegation Lost and stalled units](delegation.md#lost-and-stalled-units) step 3). A delivery rejected only for a mechanical reason may
+go back as a [repair unit](delegation.md#repair-units), which this Accept judges like any other unit.
 
 ## merge-deliveries
 

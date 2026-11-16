@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- A delivery rejected only for a mechanical reason (path value, hash typo, missing log, schema failure) may go back as a short repair unit
+  with about one third of the limits; wrong facts, boundary violations, sourcing facts, unreviewed checker programs and a second repair
+  still go back as full new units.
 - Workers scan their delivery for `.cad-work/`, `input/`, `installed/` and `lead/` path values before writing
   `delivery.json`; the lead's Accept scan stays the authority.
 - Add targeted invalid contract fixtures: WAIVER without its waiver or authority, CHANGE without its change or baseline, RELEASE bound to a
