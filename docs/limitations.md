@@ -39,8 +39,8 @@ and host agent definitions. It does not itself build or test a product.
   without redesign. Lite geometry enters the full build as concept input only.
 
 Lite uv cache size varies by build and host. One round-7 full lite cell reported about 5 GB and 130,000 files/inodes
-(`smoke-logs-r7/lite-claude-full/EVIDENCE-NOTE-uv-cache.txt`); a separate lean lite cell reported about 1.1 GB and
-130,000 inodes (`smoke-logs-r7/lite-kiro-lean/REPORT.md`). A full-build cell's project used about 43,000 additional
+(`smoke-logs-r7/lite-claude-full/EVIDENCE-NOTE-uv-cache.txt`); a separate lite cell of the since-removed lean variant reported
+about 1.1 GB and 130,000 inodes (`smoke-logs-r7/lite-kiro-lean/REPORT.md`). A full-build cell's project used about 43,000 additional
 inodes without its cache (`smoke-logs-r7/lite-claude-full/REPORT.md`). The round-7 `/tmp` tmpfs had 1,048,576 inodes
 and ran out. Keep smoke projects and their caches on a disk-backed filesystem, never `/tmp`; see the
 [smoke procedure](smoke.md#procedure) and [install guidance](install.md#freecad-for-lite-builds).
@@ -138,8 +138,4 @@ methods, data, approvals or capabilities remain UNKNOWN or BLOCKED. Do not infer
 claims from concept packages, previews, regression fixtures or synthetic
 approvals.
 
-Lean has 11 direct schema roots. The other 17 contracts are prose tables in
-[`lean/skills/cad-record/references/prose-contract.md`](../lean/skills/cad-record/references/prose-contract.md).
-Model-written `record.semantic` item 17 checks these tables, and no validator
-ships here. The variants share stage, gate, procedure and check-family names.
 The repository publishes no A/B result. Round-4 evidence does not establish a per-role model or effort recommendation; see [model-routing evidence](#model-routing-evidence).

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Removed the lean variant (`cad-agent-skills-lean`); it was not faster than full in smoke rounds 4-6. Across six comparable full/lean
+  pairs, lean was slower in three, about even in two and faster in one, with no consistent defect or acceptance advantage. The repository
+  now has one plugin root, `full/`. Plugin versions stay at 0.1.0: nothing is released yet.
 - Add eight full-variant skills, five canonical roles and native profiles for Claude Code, Codex CLI, OpenCode, Kiro CLI V3 and OMP.
 - Add full record and authoring schemas, fixtures, regression cases and phone-stand and lamp-arm declarative examples.
 - Add the lean variant: the same skills, roles, stages, gates and check families with ten record schemas and shared common definitions;

@@ -12,13 +12,7 @@
     {
       "name": "cad-agent-skills",
       "source": "./full",
-      "description": "Full-parity mechanical product architecture and CAD modelling plugin.",
-      "version": "0.1.0"
-    },
-    {
-      "name": "cad-agent-skills-lean",
-      "source": "./lean",
-      "description": "Lean mechanical product architecture and CAD modelling plugin.",
+      "description": "Mechanical product architecture and CAD modelling plugin.",
       "version": "0.1.0"
     }
   ]

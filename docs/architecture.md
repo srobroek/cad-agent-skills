@@ -1,6 +1,6 @@
 # Architecture overview
 
-The full variant is an instruction-only product architecture. Owner skills define
+The plugin is an instruction-only product architecture. Owner skills define
 workflow and engineering responsibilities. Five profiles adapt role contracts
 to native host formats. `cad-record` provides record layout and schemas. Runtime
 CAD programs and semantic-check programs are written in the product project,
@@ -36,7 +36,7 @@ owns the five role contracts:
 | `cad-sourcing-researcher` | Research and cite material, process and procurement options. |
 
 Each role has profiles for Claude Code, Codex CLI, OpenCode, Kiro CLI V3 and OMP
-under `full/harness/` and `lean/harness/`. Profile syntax adapts the role
+under `full/harness/`. Profile syntax adapts the role
 contract to host formats.
 Host permission behavior is not an OS confinement boundary.
 
@@ -107,8 +107,7 @@ flowchart LR
 
 Skipped stages get no verdict, decision or result. Normally only
 `cad-part-designer` and `cad-checker` units run. The lite build adds no skill,
-role, stage ID, check family or plugin. Both record variants carry its shapes;
-lean keeps them in its existing roots and prose tables.
+role, stage ID, check family or plugin. The record schemas carry its shapes.
 
 Promotion to full is an approved CHANGE that reopens GROUND
 ([change impact](../full/skills/cad-flow/references/change-impact.md)). Every
@@ -140,29 +139,3 @@ The hash graph is acyclic. Its order is:
 Each object excludes its own digest and downstream result bytes. See
 [`cad-record/references/record.md`](../full/skills/cad-record/references/record.md#acyclic-hash-graph)
 for exact bindings and inventory rules.
-
-## Full and lean variants
-
-Full carries eight skills, five roles and all 28 record roots, plus fixtures,
-assets and harness files.
-Lean uses the same skills, roles and procedures with 11 direct record roots:
-`common`, `product`, `requirements`, `part`, `assembly`, `decision`,
-`check-result`, `stage-verdict`, `material-profile`, `bom-row` and
-`release-manifest`. The other 17 contracts are prose tables in
-[`lean/skills/cad-record/references/prose-contract.md`](../lean/skills/cad-record/references/prose-contract.md).
-Model-written `record.semantic` item 17 checks those tables.
-Applicable embedded item shapes retain schemas.
-
-The variants share 13 stage IDs, gate kinds, 30 procedure IDs and
-54 check-family names. Only the record schema set differs. Shared lean roots
-are byte-identical to full, so each shared-root lean record is full-valid. CI
-checks lean layout, material-profile wrappers, capabilities and flow policy
-against full schemas. Regression cases use full schemas because lean omits some
-roots. Install one variant per project because names match. Both variants ship
-in this repository. Parallel content is not an A/B result. The
-[A/B protocol](demo.md#ab-protocol-full-versus-lean) treats full as baseline,
-controls inputs and defaults a tie to full.
-
-The build mode is independent of the variant: full and lean each run full and
-lite builds with the same lite stages, checks and package. "Lite" names the
-build and "lean" the record contract, so neither implies the other.

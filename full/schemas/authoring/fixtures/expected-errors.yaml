@@ -9,8 +9,8 @@ claude-agent-frontmatter/invalid/model-set.yaml: "$: Additional properties are n
 claude-agent-frontmatter/invalid/permission-mode.yaml: "$: Additional properties are not allowed ('permissionMode' was unexpected)"
 # every entry declares version
 claude-marketplace/invalid/entry-without-version.json: "$.plugins[0]: 'version' is a required property"
-# sources are ./full or ./lean
-claude-marketplace/invalid/root-source.json: "$.plugins[0].source: './' is not one of ['./full', './lean']"
+# source is ./full
+claude-marketplace/invalid/root-source.json: "$.plugins[0].source: './' is not one of ['./full']"
 # version is semver
 claude-plugin/invalid/bad-version.json: "$.version: 'latest' does not match"
 # hooks are refused
@@ -63,8 +63,8 @@ omp-agent-frontmatter/invalid/unknown-thinking-level.yaml: "$.thinkingLevel: 'ul
 omp-agent-frontmatter/invalid/unknown-role.yaml: "$.name: 'cad-analyst' is not one of ['cad-concept-designer', 'cad-part-designer', 'cad-checker', 'cad-mech-dfm-reviewer', 'cad-sourcing-researcher']"
 # every entry declares version
 omp-marketplace/invalid/entry-without-version.json: "$.plugins[0]: 'version' is a required property"
-# sources are ./full or ./lean
-omp-marketplace/invalid/root-source.json: "$.plugins[0].source: './' is not one of ['./full', './lean']"
+# source is ./full
+omp-marketplace/invalid/root-source.json: "$.plugins[0].source: './' is not one of ['./full']"
 # version is required
 omp-plugin/invalid/missing-version.json: "$: 'version' is a required property"
 # no skills remap
@@ -75,8 +75,8 @@ opencode-agent-frontmatter/invalid/old-list-dialect.yaml: "$: Additional propert
 opencode-agent-frontmatter/invalid/primary-mode.yaml: "$.mode: 'subagent' was expected"
 # task is denied
 opencode-agent-frontmatter/invalid/task-allowed.yaml: "$.permission.task: 'deny' was expected"
-# metadata.plugin is cad-agent-skills or cad-agent-skills-lean
-skill-frontmatter/invalid/cad-flow-unknown-plugin.yaml: "$.metadata.plugin: 'cad-agent' is not one of ['cad-agent-skills', 'cad-agent-skills-lean']"
+# metadata.plugin is cad-agent-skills
+skill-frontmatter/invalid/cad-flow-unknown-plugin.yaml: "$.metadata.plugin: 'cad-agent' is not one of ['cad-agent-skills']"
 # cad-flow carries metadata.plugin and metadata.version
 skill-frontmatter/invalid/cad-flow-without-metadata.yaml: "$: 'metadata' is a required property"
 # cad-flow metadata names the version
