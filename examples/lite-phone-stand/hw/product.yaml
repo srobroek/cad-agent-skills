@@ -89,10 +89,12 @@ release_scope:
     - 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
     - Make no phone-fit or safe-holding claim, and recommend no material, vendor, printer, manufacturing route, fit or strength.
     - It makes no phone-fit, safe-holding, material, fit, strength, manufacturing or other physical claim.
+    - it must never be presented as safe to make or to hold a phone.
     basis: USER_DECLARED
     sources:
     - *l01
     - *l02
+    - *l06
     - *l08
 storage:
   results_in_git:

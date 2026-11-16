@@ -34,12 +34,12 @@ stages:
   must_show:
   - Q-000 asked in the first intake batch, before any geometry, with the lite-for-initial-prototyping recommendation and the tradeoff line (cad-select references/selection.md "Choose the build mode")
   - the first batch asks each still-open lite template question in its full wording, namely Q-000, Q-002, Q-003, Q-005, Q-013 to Q-017, Q-019 and Q-020 (cad-select references/selection.md "Lite intake"). It cites the first prompt, without asking, for Q-001 and Q-018, which the prompt settles. For Q-015 and Q-019, which it settles in part, it keeps the full question and asks only the remainder
-  - release_scope.exclusions opens with the disclosure line, then the prompt's exclusion sentence and A-08 verbatim; the first prompt and A-08 are retained as USER sources
+  - release_scope.exclusions opens with the disclosure line, then the prompt's exclusion sentence, A-08 and the A-06 forbidden claim verbatim; the first prompt, A-06 and A-08 are retained as USER sources
   - REQ-002 and REQ-003, the check-plan rows for solid count and features, and the description in product.yaml cite the first prompt as USER source
   - product.yaml build_mode KNOWN LITE, basis USER_DECLARED, with answer A-01 as its USER source; release_scope.exclusions opens with the disclosure line, with A-01 among its sources
   - service class APPEARANCE_CONCEPT from a QUESTION decision whose statement is answer A-01, with a SYNTHETIC actor, separate from rigor maker
   - the record matches examples/lite-phone-stand/hw in content; ids, wording and order may differ
-  - REQ-001 with the 80 mm X, 90 mm Y and 100 mm Z bounding-box sizes from A-12, each its own criterion within 0.1 mm; REQ-002 one solid and REQ-003 the sloped back and the front retaining lip from A-11; all APPEARANCE with CAD_VALID facets, due LAYOUT, waiver FORBIDDEN
+  - REQ-001 with the 80 mm X, 90 mm Y and 100 mm Z bounding-box sizes from A-12, each its own criterion within 0.1 mm; REQ-002 one solid and REQ-003 the sloped back and the front retaining lip from the first prompt; all APPEARANCE with CAD_VALID facets, due LAYOUT, waiver FORBIDDEN
   - the check plan maps each criterion to its check on the assembly (cad-verify references/check-plan.md "Lite build"), with three bounding-box rows and the solid count under geometry.readback, the two features under geometry.identity, and no interference, clearance or case row
   - the gate packet shows the proposed form, one part with one occurrence, every dimension with its measurement criterion, mode LITE, service class and scope, the planned checks, FreeCAD availability from preflight (the resolved console path and version, or unavailable), the disclosure line, and the full sha256 of the version manifest and the verdict
   must_not:
