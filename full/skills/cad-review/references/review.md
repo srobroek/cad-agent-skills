@@ -13,9 +13,9 @@ requirements, interfaces, assembly, parts, the version manifest, published resul
 obligations, drawings, BOM and verification index.
 
 1. Read only your read set ([cad-flow agent roles — Read set](../../cad-flow/references/agent-roles.md#read-set)): the copies under
-   `.cad-work/<unit>/input/` and any installed file of this plugin. Run no program (on Codex, shell read commands only:
-   [cad-flow agent roles — Roles](../../cad-flow/references/agent-roles.md#roles)); hash, validate and write nothing. A file you need that
-   is not in the inventory is a MAJOR finding, never a guess.
+   `.cad-work/<unit>/input/` and any installed file of this plugin. Run no program (on Codex, shell read commands only: [cad-flow agent
+   roles — Reviewer](../../cad-flow/references/agent-roles/cad-mech-dfm-reviewer.md#rules)); hash, validate and write nothing. A file you
+   need that is not in the inventory is a MAJOR finding, never a guess.
 2. Record each input copy you read, other checks' `result.json` and `bundle-manifest.json` included, as an `inspected` entry with
    the sha256 the brief inventory gives for it; never list this review's own result or an installed file.
 3. List coverage from the version's expected obligations, one entry per obligation:

@@ -89,7 +89,7 @@ dangling symlink, then names that path. It copies the plugin's
 
 Restart if skills or agents are absent; confirm with `/skills` and custom-agent discovery. Codex custom agents inherit the parent session's
 sandbox and approvals, and an agent file cannot narrow them, so every role keeps the shell and its write boundary is an instruction. The
-reviewer's Codex rule is in [agent-roles](../full/skills/cad-flow/references/agent-roles.md#roles).
+reviewer's Codex rule is in [the reviewer role file](../full/skills/cad-flow/references/agent-roles/cad-mech-dfm-reviewer.md#rules).
 
 ## OpenCode
 

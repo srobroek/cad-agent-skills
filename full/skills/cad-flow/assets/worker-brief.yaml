@@ -60,6 +60,7 @@ resources:
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-flow/assets/worker-delivery.yaml
   - name: check-result-unit
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-record/assets/contract-fixtures/check-result/valid/unit-prebuild.json
+  # The common contract; the role file is agent-roles/<role>.md beside it (references/agent-roles.md "Roles").
   role_reference:
     name: agent-roles
     path: /RESOLVED/BY/PREFLIGHT/skills/cad-flow/references/agent-roles.md

@@ -2,7 +2,7 @@
 
 Owner: cad-flow. How the lead splits stage work into worker units, dispatches them and integrates their output. Brief fields:
 [worker-brief](worker-brief.md). Acceptance and merge: [worker-delivery](worker-delivery.md). Role duties and boundaries:
-[agent-roles](agent-roles.md).
+[agent-roles](agent-roles.md) and its role files.
 
 ## Units
 

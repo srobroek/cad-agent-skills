@@ -20,7 +20,8 @@ Keep each domain rule in its current owner; link rather than restate it:
 - `full/skills/cad-verify/` owns obligations, methods, evidence and outcomes.
 - `full/skills/cad-review/` owns independent mechanical/DFM review and rubric.
 - `full/skills/cad-release/` owns drawings, BOM, freeze, package and ceiling.
-- `full/skills/cad-flow/references/agent-roles.md` owns five role contracts.
+- `full/skills/cad-flow/references/agent-roles.md` and `full/skills/cad-flow/references/agent-roles/` together own the five role contracts:
+  the common file holds the shared rules, and each role file holds that role's duty and rules.
   `full/harness/` adapts them to host syntax.
 - `full/skills/cad-record/layout.json` owns paths. Its schemas own fields.
   `full/schemas/authoring/` owns authoring and host-profile formats.
