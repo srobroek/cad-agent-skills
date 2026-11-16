@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- A repair unit rebinds its result files (`binding.unit`, `binding.brief_sha256`, `binding.input_inventory_sha256`) and keeps every other
+  verdict-relevant byte equal to the lead's own hash of the rejected snapshot, never to a hash the rejected delivery claims.
 - Repair units remap the unit-local boundary paths to their own directory, snapshot the whole rejected delivery, re-deliver unchanged
   outputs byte-identical and exclude reviewer units.
 - The worker-brief schema accepts a `rejected/<unit>/<path>` snapshot for repair units, under the same dot-segment rules as the other snapshot

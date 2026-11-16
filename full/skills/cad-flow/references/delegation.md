@@ -137,9 +137,21 @@ sha256 typo, a missing log and a schema failure of `delivery.json` or of a resul
   targets as any unit.
 - `expected` equals the original's. `boundary` keeps `project_root` and `locked`, and remaps every unit-local path (`scratch`,
   `writable`, `tmp`, the delivery path) to the repair unit's own `.cad-work/<repair unit>/`; the shared uv cache entry stays.
-- Edit scope: the task limits which files may change to those a listed defect names, and to the files that record such a file's sha256.
-  Every other required output is re-delivered byte-identical. Besides the [Accept](worker-delivery.md#accept) steps, the lead compares
-  each such output's sha256 with the rejected delivery's recorded hash; a change outside the listed defects rejects the repair.
+- Edit scope: the task limits which files may change to those a listed defect names, the result files' binding below, and the files
+  that record a changed file's sha256 (`delivery.json` is written anew). Any other change rejects the repair.
+- Baseline: the lead's own sha256 of each `rejected/` snapshot file, which the repair brief carries in `input_inventory.snapshots` and
+  `input/SHA256SUMS` and which the lead computed with `shasum -a 256` at Compose. It is never a hash that the rejected `delivery.json`
+  claims, since that hash may be the defect or may be missing from an invalid delivery.
+- Rebinding: a repaired result file (root `check-result`) takes the repair's binding. Its `binding.unit` is the repair unit's id, and its
+  `binding.brief_sha256` and `binding.input_inventory_sha256` are the repair brief's digests. A VERSION binding (`binding.version`,
+  `binding.version_manifest_sha256`) stays as it was. The result's own sha256 changes with it, so the `sha256` of its `outputs[]` and
+  `checks[]` entries, and a `target_pattern` target built from it, are recomputed. Bundle manifests are written by the lead after merge
+  ([worker-delivery merge-deliveries](worker-delivery.md#merge-deliveries) step 4), so no repair carries one. A published file other than
+  a result that embeds the delivering unit's id or brief sha256 cannot be rebound: its rejection is a full new unit.
+- Check, run by the lead after [Accept](worker-delivery.md#accept) passes: every other required output hashes to its baseline. Each
+  result file equals its snapshot as parsed JSON once the `binding.unit`, `binding.brief_sha256` and `binding.input_inventory_sha256`
+  keys, and the JSON paths a listed defect names, are removed from both; outcomes, criteria, measured values, findings, evidence and
+  `implementation` stay equal. A program or lock that differs from its baseline is a change too, unless a listed defect names it.
 - Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker or sourcing unit, 1200 and 65 for a
   designer unit.
 - The same Accept steps judge its delivery, and an independent checker judges its results as for any unit.

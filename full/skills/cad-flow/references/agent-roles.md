@@ -69,11 +69,11 @@ researcher, a subject fact that no retained source states and a failed search to
 researcher](agent-roles/cad-sourcing-researcher.md#rules)). A checker or reviewer delivers a FAIL, UNKNOWN or MAJOR finding as its result;
 that is the evidence, not a stop ([lead-side: cad-flow worker delivery](worker-delivery.md#accept)).
 
-A unit whose `task` starts with `REPAIR of` is a repair unit ([lead-side: delegation Repair units](delegation.md#repair-units)): fix only
+A unit whose `task` starts with `REPAIR of` is a repair unit (read only [delegation Repair units](delegation.md#repair-units)): fix only
 the defects its task lists, start from the `rejected/` copies of its inputs (a program from its copy, as in step 6), rewrite and
-revalidate what the fix changes, re-deliver every other output byte-identical, and deliver with the same checks (no path field cites a
-`rejected/` copy: Path fields name `hw/` origins and targets only); any other defect you find goes in `limits`, never fixed. Its limits
-are the brief's, shorter than a full unit's.
+revalidate what the fix changes, rebind your results and keep every other output as that section says, and deliver with the same checks
+(no path field cites a `rejected/` copy: Path fields name `hw/` origins and targets only); any other defect you find goes in `limits`,
+never fixed. Its limits are the brief's, shorter than a full unit's.
 
 Run each command alone, never chained with `;`, `&&`, `||` or `|`: the one pipeline is the tree digest of step 4, and a program run's
 `> <stdout> 2> <stderr>` redirect is part of its form. The shell runs only the command forms this contract and your skills name. List,
@@ -98,8 +98,8 @@ You read only:
   does not list is never a boundary defect and never a finding; you LOAD only the `resources.skills` entries
   ([Every role](#every-role) step 2);
 - the `resources.tools` binaries, which you execute and never list;
-- never needed, and not to be read to be safe: the cad-flow files `stages.md`, `gates.md`, `preflight.md` and `delegation.md`, and every
-  other `lead-side` link of this file;
+- never needed, and not to be read to be safe: the cad-flow files `stages.md`, `gates.md`, `preflight.md` and `delegation.md` (a repair
+  unit reads only the Repair units section of `delegation.md`), and every other `lead-side` link of this file;
 - for the [cad-record seal check](../../cad-record/references/validation.md#seal-check) of a `record.semantic` checker only:
   each live `hw/` file that the hash graph reaches from an APPROVED `GATE` or `RELEASE` DR in your `input_inventory.files`,
   with each such DR. Your `check.py` reads these read-only to hash them, and parses a binder among them; the one
