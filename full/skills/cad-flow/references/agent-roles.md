@@ -3,7 +3,8 @@
 Owner: cad-flow. The one contract for the five worker roles: duties, inputs, write boundary, outputs and reply. Each native role file links
 here and repeats no rule except the install guard. A worker reads only its [read set](#read-set): this file, its brief, inputs and
 resources, and any installed file of this plugin. It follows only this file, its brief and the skills its brief lists, never cad-flow
-SKILL.md or another lead reference. Grading uses the rubric owned by
+SKILL.md or another lead reference. A link below tagged `lead-side` leads to such a reference: you need not read it, and the one rule
+you act on is stated beside it. Grading uses the rubric owned by
 cad-review: [the rubric reference](../../cad-review/references/rubric.md).
 
 ## Every role
@@ -17,11 +18,11 @@ cad-review: [the rubric reference](../../cad-review/references/rubric.md).
 3. Except the reviewer, run `shasum -a 256 -c <root>/.cad-work/<unit>/input/SHA256SUMS` once (Linux: `sha256sum -c` of the same file)
    → every line OK, else stop. Read the `input_inventory` files and snapshots from their copies at `.cad-work/<unit>/input/<path>`; a
    needed file outside your [read set](#read-set) → stop. An earlier result's sha256 for `input/lead/attempts.txt` is confirmed against
-   your copy cut after that result's attempt line ([worker brief Compose](worker-brief.md#compose) step 2). Every file you write cites
-   an input by its origin, the `input_inventory.files` path (`hw/…`) with the brief's sha256 for it, never by its `input/` copy. A path
+   your copy cut after that result's attempt line ([lead-side: worker brief Compose](worker-brief.md#compose) step 2). Every file you write
+   cites an input by its origin, the `input_inventory.files` path (`hw/…`) with the brief's sha256 for it, never by its `input/` copy. A path
    field is a published `hw/` path; an input snapshot or installed template is named only in a message and bound by the brief's hashes
    ([cad-record validation — Path fields](../../cad-record/references/validation.md#path-fields); the lead rejects any other value:
-   [worker delivery Accept](worker-delivery.md#accept) step 6).
+   [lead-side: worker delivery Accept](worker-delivery.md#accept) step 6).
 4. Writers: take the tree digest with the command of
    [cad-record's Inventory digest](../../cad-record/references/record.md#inventory-digest), no other form, before your first write as
    `boundary.before_sha256`, and again after your last write as `boundary.after_sha256`.
@@ -35,7 +36,7 @@ cad-review: [the rubric reference](../../cad-review/references/rubric.md).
    at acceptance. A checker whose `input_inventory` lists an earlier result's `source/check.py` and its lock may start its `check.py` from
    that copy (cad-verify implementation kind, step 2):
    `cp <root>/.cad-work/<unit>/input/hw/checks/<vN>/<check>/<attempt>/source/check.py <root>/.cad-work/<unit>/check.py`, and the same
-   for `check.py.lock`. A lite geometry checker ([stages Build mode](stages.md#build-mode)) also writes, locks and runs its own `build.py`
+   for `check.py.lock`. A lite geometry checker ([lead-side: stages Build mode](stages.md#build-mode)) also writes, locks and runs its own `build.py`
    before `check.py` when its brief's `boundary.writable` lists `build.py` and `build.py.lock`
    ([cad-model exports — geometry.build](../../cad-model/references/exports.md#geometrybuild), Lite), and its `check.py` alone runs the
    brief's `freecad` tool, as a subprocess on the helper `tmp/<check>/freecad-readback.FCScript` it writes
@@ -57,7 +58,7 @@ cad-review: [the rubric reference](../../cad-review/references/rubric.md).
    with the host's Grep tool for `.cad-work/`, `input/`, `installed/` and `lead/`, and fix each hit that is a path value (step 3), or
    explain it in `limits` when it sits in a field that
    [cad-record validation — Path fields](../../cad-record/references/validation.md#path-fields) lists as not a path field. The lead's
-   [Accept](worker-delivery.md#accept) scan stays the authority. Then write `.cad-work/<unit>/delivery.json` from the brief's
+   [lead-side: Accept](worker-delivery.md#accept) scan stays the authority. Then write `.cad-work/<unit>/delivery.json` from the brief's
    worker-delivery template (root [worker-delivery](../../cad-record/schemas/worker-delivery.schema.json), fields below) and validate
    it with this one command, never another parser, its argv and schema path copied from the brief → exit 0:
    `env TMPDIR=<tmp> <check-jsonschema argv> --schemafile <worker-delivery schema path> <root>/.cad-work/<unit>/delivery.json`.
@@ -73,9 +74,9 @@ needs a change to a locked or shared file; a required capability, method or tool
 fails; or, for a producer, a check of its own output is FAIL or UNKNOWN. A reached limit follows [Limits](#limits). For a sourcing
 researcher, a subject fact that no retained source states and a failed search tool are no stop ([Roles](#roles)). A checker or reviewer
 delivers a FAIL, UNKNOWN or MAJOR finding as its result; that is the evidence, not a stop
-([cad-flow worker delivery](worker-delivery.md#accept)).
+([lead-side: cad-flow worker delivery](worker-delivery.md#accept)).
 
-A unit whose `task` starts with `REPAIR of` is a repair unit ([delegation Repair units](delegation.md#repair-units)): fix only the
+A unit whose `task` starts with `REPAIR of` is a repair unit ([lead-side: delegation Repair units](delegation.md#repair-units)): fix only the
 defects its task lists, start from the `rejected/` copies of its inputs (a program from its copy, as in step 6), rewrite and
 revalidate what the fix changes, and deliver with the same checks; any other defect you find goes in `limits`, never fixed. Its
 limits are the brief's, shorter than a full unit's.
@@ -103,6 +104,8 @@ You read only:
   does not list is never a boundary defect and never a finding; you LOAD only the `resources.skills` entries
   ([Every role](#every-role) step 2);
 - the `resources.tools` binaries, which you execute and never list;
+- never needed, and not to be read to be safe: the cad-flow files `stages.md`, `gates.md`, `preflight.md` and `delegation.md`, and every
+  other `lead-side` link of this file;
 - for the [cad-record seal check](../../cad-record/references/validation.md#seal-check) of a `record.semantic` checker only:
   each live `hw/` file that the hash graph reaches from an APPROVED `GATE` or `RELEASE` DR in your `input_inventory.files`,
   with each such DR. Your `check.py` reads these read-only to hash them, and parses a binder among them; the one
@@ -116,15 +119,15 @@ and uv alone uses the shared cache. Your templates are your only examples of a f
 or header the brief does not give is in your skills ([uv commands](#uv-commands)), never a reason to look further.
 
 Reading a file's contents outside the read set is a boundary defect: record each such path in `limits`, and the lead rejects the
-delivery ([worker delivery Accept](worker-delivery.md#accept) step 8). A names-only listing outside it (a directory listing, a glob or
-search that returns names) reads no contents: record it in `limits` as an INFO observation; it changes no grade and rejects nothing.
+delivery ([lead-side: worker delivery Accept](worker-delivery.md#accept) step 8). A names-only listing outside it (a directory listing, a
+glob or search that returns names) reads no contents: record it in `limits` as an INFO observation; it changes no grade and rejects nothing.
 
 ## Limits
 
 `limits` count from the time step 1 printed: `wall_seconds` of wall time, and `model_turns` of your model replies, a reply that calls
 tools counting once. Before each program run and each fetch, and at least every 20 turns, run `date -u +%Y-%m-%dT%H:%M:%SZ` and compare
 both with the brief. Once 90% of either is spent, start no new work and deliver what you have; the lead stops a unit still running at
-its wall limit ([delegation Lost and stalled units](delegation.md#lost-and-stalled-units)).
+its wall limit ([lead-side: delegation Lost and stalled units](delegation.md#lost-and-stalled-units)).
 
 - A checker runs its program once more, recording every obligation it has not established UNKNOWN `TIMEOUT`
   ([cad-verify results Outcomes](../../cad-verify/references/results.md#outcomes)); the result is UNKNOWN and the grade MAJOR.
@@ -139,7 +142,7 @@ UNKNOWN, never PASS.
 
 | Field                                    | Value                                                                                                                                                                  |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `unit`, `role`, `input_inventory_sha256` | copied from the [worker brief](worker-brief.md)                                                                                                                        |
+| `unit`, `role`, `input_inventory_sha256` | copied from the [lead-side: worker brief](worker-brief.md)                                                                                                                        |
 | `brief_sha256`                           | the sha256 `shasum -a 256 <root>/.cad-work/<unit>/brief.yaml` prints, pasted from its output ([Every role](#every-role) step 8)                                    |
 | `verdict`, `ready`                       | the [cad-review rubric](../../cad-review/references/rubric.md) grade; `ready: true` only with PASS                                                                     |
 | `build`                                  | `SUCCEEDED` or `FAILED` with its log file, or `NOT_APPLICABLE` with the reason                                                                                         |
@@ -156,12 +159,12 @@ UNKNOWN, never PASS.
 | Role                      | Duty                                                                                                                                                                                                                                                                                                                            | Skills a brief may list                                                                     | Writes                                                                                                                 | Delivers to                                                                 |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `cad-concept-designer`    | one variant from the brief's use case, requirements, preferences and feasible route: architecture, load paths, interfaces, coarse CAD and GLB when asked, feasibility per hard constraint, unknowns, own build and geometry readback                                                                                            | cad-design, cad-model, cad-select, cad-verify, cad-record                                   | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `tmp/**`, `__pycache__/**`, `delivery.json`       | `hw/concepts/<variant>/{variant.yaml,architecture.md,geometry/**}`          |
-| `cad-part-designer`       | the brief's part numbers and any required assembly drawing: part record, one-kernel model, components, manufacturing state, route, part drawing intent at DETAIL, own build, readback and UNIT checks; draw each briefed subject per [cad-release's drawing procedure](../../cad-release/references/drawings.md#draft-drawings); in a lite build no manufacturing state or route ([stages Build mode](stages.md#build-mode)) | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL and FREEZE | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `tmp/**`, `__pycache__/**`, `delivery.json`       | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` and briefed drawing bundles |
+| `cad-part-designer`       | the brief's part numbers and any required assembly drawing: part record, one-kernel model, components, manufacturing state, route, part drawing intent at DETAIL, own build, readback and UNIT checks; draw each briefed subject per [cad-release's drawing procedure](../../cad-release/references/drawings.md#draft-drawings); in a lite build no manufacturing state or route ([lead-side: stages Build mode](stages.md#build-mode)) | cad-design, cad-model, cad-select, cad-verify, cad-record; cad-release at DETAIL and FREEZE | `output/**`, `build.py`, `build.py.lock`, `check.py`, `check.py.lock`, `tmp/**`, `__pycache__/**`, `delivery.json`       | `hw/parts/<PN>/{part.yaml,model.py,sources/**}` and briefed drawing bundles |
 | `cad-checker`             | independent checks of the brief's version or unit inputs: own programs, results, artifacts, logs, coverage; in a lite build also the LAYOUT intent inspection, a REVIEW result ([cad-verify families](../../cad-verify/references/families.md#lite-intent-inspection)) | cad-verify, cad-model, cad-select, cad-design, cad-release, cad-record                      | `output/**`, `check.py`, `check.py.lock`, `tmp/**`, `__pycache__/**`, `delivery.json`; a lite geometry checker also `build.py`, `build.py.lock` when its brief lists them | `hw/checks/<vN>/<check>/<attempt>/**`                                       |
 | `cad-mech-dfm-reviewer`   | separate mechanical and DFM outcomes for the exact version: premises, requirements, routes, evidence, drawings, BOM                                                                                                                                                                                                             | cad-review, cad-verify, cad-select, cad-record                                              | nothing                                                                                                                | `hw/checks/<vN>/<check>/<attempt>/result.json`                              |
 | `cad-sourcing-researcher` | the brief's purchased families, stock or capability: retained source bytes, profile proposals, catalogue alternatives with citations                                                                                                                                                                                            | cad-select, cad-record                                                                      | `output/**`, `extract.py`, `extract.py.lock`, `tmp/**`, `__pycache__/**`, `delivery.json`                              | `hw/manufacturing/sources/<sha256>/<name>`, `hw/parts/<PN>/sources/**`      |
 
-The brief lists only the skills that own its methods ([worker-brief](worker-brief.md#compose)); a role loads no other. Every writer
+The brief lists only the skills that own its methods ([lead-side: worker-brief](worker-brief.md#compose)); a role loads no other. Every writer
 also writes the shared uv cache, through uv only ([uv commands](#uv-commands)).
 
 - Concept designer: NOT compare, rank or select variants ([cad-design](../../cad-design/references/concepts.md#compare-variants)).
@@ -169,7 +172,7 @@ also writes the shared uv cache, through uv only ([uv commands](#uv-commands)).
 - Reviewer: read-only: runs no build or check program and writes nothing
   ([cad-review rubric](../../cad-review/references/rubric.md)). On Codex, which has no file-read tool without the shell, it reads
   through shell read commands and stays read-only by instruction; the lead's tree digest before dispatch and after return
-  ([worker delivery — Read-only reviewer](worker-delivery.md#read-only-reviewer)) is the check. Its reply carries the review result
+  ([lead-side: worker delivery — Read-only reviewer](worker-delivery.md#read-only-reviewer)) is the check. Its reply carries the review result
   document as one fenced `json` block with `implementation.kind: REVIEW` and `inspected` listing every file read with its sha256 from
   the brief inventory. The lead writes those bytes unchanged and writes the delivery for it.
 - Sourcing researcher: profiles are proposals to the shared libraries ([cad-select materials](../../cad-select/references/materials.md));
@@ -208,7 +211,7 @@ also writes the shared uv cache, through uv only ([uv commands](#uv-commands)).
 
 Every uv command of a unit or of the lead uses the one shared cache, runs offline (the sourcing `extract.py` alone excepted) and never
 downloads Python. `<cache>` is `<root>/.cad-work/lead/.uv-cache`, warmed by the lead
-([preflight Warm the uv cache](preflight.md#warm-the-uv-cache)); `<tmp>` is `<root>/.cad-work/<unit>/tmp` for a unit and
+([lead-side: preflight Warm the uv cache](preflight.md#warm-the-uv-cache)); `<tmp>` is `<root>/.cad-work/<unit>/tmp` for a unit and
 `<root>/.cad-work/lead/tmp` for the lead; `<program>` is the absolute path of the PEP 723 script. Every program-running command starts
 with the `env` utility, never a bare `TMPDIR=<tmp>` prefix, which some hosts strip before they match a command; a program run's
 `> <stdout> 2> <stderr>` redirect follows `<arguments>`:
@@ -218,7 +221,7 @@ env TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --offline --s
 env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --offline --locked --script <program> <arguments>
 ```
 
-- uv takes the Python 3.12 that preflight found ([preflight Probe tools](preflight.md#probe-tools)) from the header's `requires-python`;
+- uv takes the Python 3.12 that preflight found ([lead-side: preflight Probe tools](preflight.md#probe-tools)) from the header's `requires-python`;
   never look up an interpreter, uv or tool path. A uv error that no 3.12 interpreter exists is a missing tool.
 - Every program except the sourcing `extract.py` declares exactly one warm set as its PEP 723 header, `requires-python = "==3.12.*"`
   and these `dependencies`; any other header cannot lock offline, which is a missing tool:
@@ -246,8 +249,9 @@ env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --offline --lo
   follows the same rule on every check run.
 - `<cache>` lies under the project root, inside every host's workspace and sandbox, so a unit reads it without network. uv writes there
   only its own content-addressed entries and supports concurrent readers and writers. `<cache>`, a unit's `tmp/` and any `__pycache__/`
-  lie outside every digest and are never an output or evidence ([worker-delivery Accept](worker-delivery.md#accept) step 8), except the
-  lite FreeCAD helper `tmp/<check>/freecad-readback.FCScript`, which its result retains as a source file ([Every role](#every-role) step 6).
+  lie outside every digest and are never an output or evidence ([lead-side: worker-delivery Accept](worker-delivery.md#accept) step 8),
+  except the lite FreeCAD helper `tmp/<check>/freecad-readback.FCScript`, which its result retains as a source file
+  ([Every role](#every-role) step 6).
 - Schema validation and a YAML load outside a program run only the brief's `resources.tools` argv, prefixed `env TMPDIR=<tmp>`:
   binaries preflight installed, executed read-only, never resolved through `uvx`.
 
@@ -257,7 +261,8 @@ MUST Installed skills, schemas, assets and role files are read-only: never edit,
 defect and an open question in the reply, and stop the affected work. MUST Keep missing evidence UNKNOWN with its reason, following the
 [cad-record fact contract](../../cad-record/references/record.md#facts); never a default, an invented value or a fallback method. NOT
 Delegate, spawn agents, approve, ask the user, or write `hw/`, another unit's scratch or any path outside `boundary.writable`
-([worker-brief boundary](worker-brief.md#compose)). NOT Repair a locked input or report a UNIT PASS as assembly, stage or physical evidence.
+([lead-side: worker-brief boundary](worker-brief.md#compose)). NOT Repair a locked input or report a UNIT PASS as assembly, stage or
+physical evidence.
 
 ## Reply
 

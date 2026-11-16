@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- agent-roles no longer contradicts itself on what a worker may follow: links to lead references are tagged `lead-side`, and the Read set
+  names the cad-flow files a worker never needs.
 - A delivery rejected only for a mechanical reason (path value, hash typo, missing log, schema failure) may go back as a short repair unit
   with about one third of the limits; wrong facts, boundary violations, sourcing facts, unreviewed checker programs and a second repair
   still go back as full new units.
