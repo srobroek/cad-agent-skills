@@ -51,9 +51,15 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    - every `artifacts[]` entry of a result the delivery outputs is an `outputs` entry whose target is that path, with that sha256.
 
    Then scan every [path field](../../cad-record/references/validation.md#path-fields) of each result file and of each JSON file its
-   `artifacts[]` lists, at every depth, item-table rows included. Each value is a published `hw/` path: an `input_inventory.files` path
-   of the brief, or a target of this delivery (an `outputs` target, or a `source/`, `stdout.txt` or `stderr.txt` path beside a result
-   target, which [merge-deliveries](#merge-deliveries) step 3 retains). Any other value (an `input/` copy, an `installed/…` or `lead/…`
+   `artifacts[]` lists, at every depth, item-table rows included. Each value is a published `hw/` path of one of these kinds:
+
+   - an `input_inventory.files` path of the brief;
+   - a path that a line of the result's seal list names
+     ([cad-record validation Seal check](../../cad-record/references/validation.md#seal-check));
+   - a target of this delivery: an `outputs` target, or a `source/`, `stdout.txt` or `stderr.txt` path beside a result target,
+     which [merge-deliveries](#merge-deliveries) step 3 retains.
+
+   Any other value (an `input/` copy, an `installed/…` or `lead/…`
    snapshot, a `.cad-work/` or other absolute path) rejects the delivery; its `reason` names the file, the field's JSON path and the
    value ([agent-roles Every role](agent-roles.md#every-role) step 3).
 7. Every log hashes to its sha256.

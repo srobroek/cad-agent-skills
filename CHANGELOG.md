@@ -142,3 +142,9 @@
   - `e4f91fd`: FreeCAD readback keys inputs by their published `hw/` paths.
   - Smoke and examples reflect the `56229d2` FreeCAD `HOME` and no-bytecode fixes and the `f3d25a2`/`2a66898`
     RELEASE reply-form and authoring-fixture changes.
+- Seal check in place (full variant, owner decision 19, option G with F): the `record.semantic` checker hashes sealed files
+  read-only at their live `hw/` paths. It walks from each APPROVED `GATE` or `RELEASE` DR in its brief, derives the expected
+  lines from the binders, writes `artifacts/seal.sha256` and confirms it with one `shasum -a 256 -c` run. Briefs no longer
+  stage copies of sealed results, bundles, sources, artifacts or logs, and a REVIEW result's `inspected` files are never seal
+  inputs. A missing or unreadable sealed file is UNKNOWN `MISSING_INPUT`, never PASS. Unsealed earlier attempts are still
+  re-hashed from copies.

@@ -93,11 +93,16 @@ You read only:
   directory; a hit there outside the eight skill directories is no input, never read further. Reading or searching a skill your brief
   does not list is never a boundary defect and never a finding; you LOAD only the `resources.skills` entries
   ([Every role](#every-role) step 2);
-- the `resources.tools` binaries, which you execute and never list.
+- the `resources.tools` binaries, which you execute and never list;
+- for the [cad-record seal check](../../cad-record/references/validation.md#seal-check) of a `record.semantic` checker only:
+  each live `hw/` file that the hash graph reaches from an APPROVED `GATE` or `RELEASE` DR in your `input_inventory.files`,
+  with each such DR. Your `check.py` reads these read-only to hash them, and parses a binder among them; the one
+  `shasum -a 256 -c` run of that check hashes them again. Never read them with a file tool, copy them, or read them for
+  another item.
 
 Never another `.cad-work/` directory (`.cad-work/lead/` with its `preflight.json`, `units.yaml`, `checks.py` and `validator/`, a
-`stage-v*` directory, another unit's), a live `hw/` file, a `boundary.locked` one included (read its input copy), or the rest of the
-product tree by listing or search. The tree digest of step 4 hashes the tree without your reading its files,
+`stage-v*` directory, another unit's), any other live `hw/` file, a `boundary.locked` one included (read its input copy), or the
+rest of the product tree by listing or search. The tree digest of step 4 hashes the tree without your reading its files,
 and uv alone uses the shared cache. Your templates are your only examples of a file's shape, never another unit's files; a path, version
 or header the brief does not give is in your skills ([uv commands](#uv-commands)), never a reason to look further.
 

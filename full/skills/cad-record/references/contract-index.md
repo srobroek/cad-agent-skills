@@ -154,7 +154,7 @@ Anchor: `product`, `assembly`, `<PN>[.<component>][/<operation>][#<feature>]`, `
 | `id`, `check`, `attempt`, `family` | `<check>/<attempt>`, check-plan id, `aN`, registered family |
 | `producer_role`, `stage` | role or `lead`; stage enum |
 | `binding` | `{kind: UNIT, unit, brief_sha256, input_inventory_sha256}` or `{kind: VERSION, version, version_manifest_sha256}` |
-| `input_files` | `[{path, sha256}]` of every input read |
+| `input_files` | `[{path, sha256}]` of every input read; a file the [seal check](validation.md#seal-check) reads only in place is named by the seal list instead |
 | `implementation` | `kind: COMMAND` with `{source_files, commands[{argv, cwd, exit_code, stdout, stderr}] (at least one), packages, platform}`, `stdout` and `stderr` published `hw/` paths beside the result, never scratch; or `kind: REVIEW` with `{inspected[{path, sha256}] (at least one)}` and no commands; `inspected` lists every file read, including other checks' `result.json` and `bundle-manifest.json`; the reviewer always reports REVIEW |
 | `scope` | `{subjects, components, operations, cases, expected_obligations, coverage_kind FULL, SAMPLED or PARTIAL, unsampled}` |
 | `outcomes[]` | `{obligation, requirement, subject, facet, outcome, value, criterion, method, evidence, sampling, …}` |

@@ -113,8 +113,8 @@ validates.
 - A RECORDED row proves hash equality only, never shape: its message names vK's `record.schema` result and that result's
   outcome for the file, or says vK has none. Neither a RECORDED nor a REPORTED row is record evidence or becomes an
   UNCHANGED row of a later baseline.
-- A semantic item reads an earlier snapshot only where [Inputs](#inputs) names one, and never judges its shape
-  ([Attempt scope](#attempt-scope)).
+- A semantic item reads an earlier snapshot only where [Inputs](#inputs) names one or the [seal check](#seal-check) reaches
+  it, and never judges its shape ([Attempt scope](#attempt-scope)).
 
 ## Semantic check
 
@@ -123,10 +123,11 @@ starts from a retained one ([cad-verify results — Implementation kind](../../c
 step 2), with an explicit uv script lock, runs it against the inventoried input, and publishes a `record.semantic` check
 result; an independent checker reads that program before its result counts.
 
-The program reads only what the brief inventories and names ([Inputs](#inputs)) and judges the attempt under check
-([Attempt scope](#attempt-scope)). An item over a collection the record does not have yet (assembly occurrences and joints
-before LAYOUT, deliveries, versions, BOM, verification index, runtime) holds, its item-table row saying `no instance`. An
-input the brief lacks makes the items that need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
+The program reads only what the brief inventories and names ([Inputs](#inputs)) and, for the [seal check](#seal-check), the
+sealed files it reaches in place; it judges the attempt under check ([Attempt scope](#attempt-scope)). An item over a
+collection the record does not have yet (assembly occurrences and joints before LAYOUT, deliveries, versions, BOM,
+verification index, runtime) holds, its item-table row saying `no instance`. An input the brief lacks makes the items that
+need it UNKNOWN `MISSING_INPUT` and is reported as a brief defect.
 
 1. Finite numbers: reject NaN and ±infinity anywhere, including YAML `.nan`, `.inf` and `-.inf`, before any
    other use; serialize JSON with non-finite numbers refused.
@@ -227,10 +228,11 @@ or repairs ([record — Mutability](record.md#mutability)): a sealed attempt get
 unsealed one (failed, superseded or not yet reached by an approval) is only re-hashed. A sealed attempt was cleared once, at
 its write-verdict and its gate, so a rule applied to it later would fail every later attempt on bytes nobody may change.
 
-- Earlier files: each inventoried file of an earlier attempt vK, a path under `hw/versions/vK/`, `hw/checks/vK/`,
-  `hw/bom/vK/`, `hw/verification/vK/` or `hw/drawings/vK/`: its record snapshot, manifest, obligations, verdict and release
-  proposal, and each result an earlier verdict lists, CARRIED_FORWARD ones included. A published release
-  `hw/releases/<REV>/**` is an earlier attempt's file too.
+- Earlier files: each file of an earlier attempt vK that the check reads, as an input copy or in place
+  ([Seal check](#seal-check)): a path under `hw/versions/vK/`, `hw/checks/vK/`, `hw/bom/vK/`, `hw/verification/vK/` or
+  `hw/drawings/vK/`. These are its record snapshot, manifest, obligations, verdict and release proposal, and each result an
+  earlier verdict lists, CARRIED_FORWARD ones included. A published release `hw/releases/<REV>/**` is an earlier attempt's
+  file too.
 - The attempt's files: every other inventoried file. These are vN's own files, among them each inventoried result bound
   `VERSION` vN with its bundle, the live decision record (every `hw/decisions/DR-*.yaml` with the statement and proposal
   files it hashes), the live producer programs and the brief's snapshots.
@@ -258,14 +260,41 @@ The seal reaches every file the hash graph binds from that decision ([record —
 - every `{path, sha256}` a reached verdict or version manifest records: the manifest, obligations, each result file and
   bundle manifest, the predecessor verdict and its approval, a superseded verdict, and the manifest's record, source and
   output files;
-- every entry of a reached bundle manifest's `files`, never its `input`, which cites inputs that may change later.
+- every `hw/` file with a sha256 that a reached release proposal records: each planned payload `source` and the files
+  its `frozen` and `decisions` entries name;
+- every entry of a reached bundle manifest's `files`, never its `input` or `recipe`: they cite inputs, which may change
+  later. A REVIEW recipe's `inspected` files are inputs too; the seal never reaches them.
 
-The seal check walks that graph from each APPROVED `GATE` and `RELEASE` DR in `hw/decisions/`, over the files its check's
-inputs hold: each reached file exists and hashes to the sha256 its binder records. A missing file or a different sha256 is
-FAIL, its finding naming the file and its binder. A later DR that reopens or supersedes the stage never unseals what the
-approval bound. An unsealed earlier file is re-hashed the same way against the sha256 that its own attempt's verdict,
-manifest or bundle manifest records. Items 9 and 12 and the `record.schema` rows of [Earlier snapshots](#earlier-snapshots)
-use this one check.
+The seal check walks that graph from each seal root: an APPROVED `GATE` or `RELEASE` DR among the brief's
+`input_inventory.files`. Each reached file exists and hashes to the sha256 its binder records. A later DR that reopens or
+supersedes the stage never unseals what the approval bound. The `record.semantic` checker runs the walk as follows:
+
+- In place: the seal check reads each file a root reaches in place, never from an input copy, even when another item's
+  input inventories it. The checker's program reads it read-only at `<project_root>/<path>`, the one worker read of a live
+  `hw/` file ([cad-flow agent-roles Read set](../../cad-flow/references/agent-roles.md#read-set)). It hashes every
+  reached file and each live root DR, and parses only a binder (a DR, stage verdict, version manifest, release proposal or
+  bundle manifest), and only once those bytes match their recorded sha256. A root DR is parsed from its input copy, and its
+  binder is the brief. The program copies nothing, and it reads, lists or searches no path outside the roots and the
+  reached set.
+- Independent: the program derives every expected line from a binder it parsed, never from a list the lead supplies:
+  the recorded sha256 and the project-relative path, in the [Inventory digest](record.md#inventory-digest) line form. It
+  writes them sorted by path, one line per distinct path and sha256, to the seal list `artifacts/seal.sha256` of its
+  bundle, with one line per root DR that carries the brief's sha256. With no root the list is empty and nothing more
+  runs. Otherwise, after the program's final run, the checker runs
+  `shasum -a 256 -c <root>/.cad-work/<unit>/output/checks/<check>/artifacts/seal.sha256` once (Linux: `sha256sum -c`) from
+  the project root, where the tree digest also runs. Each line's status matches the program's outcome for that path: OK
+  for a matching file, a failure for a FAIL or UNKNOWN one. A binder that a finding names only as context keeps its own
+  status. A mismatch is a program defect: fix the program and rerun it.
+- Outcomes: a reached file whose bytes differ is FAIL, and its finding names the file and its binder. A missing or
+  unreadable file or binder is UNKNOWN `MISSING_INPUT`, never PASS, and its finding names the path and its binder. The
+  program never parses a binder that is FAIL or UNKNOWN, so it never reaches the files that only that binder lists.
+- Naming: the result's `input_files` list the inventory the program read. A file read only in place is named by its
+  seal-list line, and an item-table row or finding names it by that `hw/` path.
+
+An unsealed earlier file, one no root reaches, is only re-hashed, the same way, from its input copy
+([Inputs](#inputs)), against the sha256 that its own attempt's verdict, manifest or bundle manifest records. A copy the
+brief lacks makes that file UNKNOWN `MISSING_INPUT`, a brief defect. Items 9 and 12 use this one check. The lead's
+`record.schema` reads the live tree, and its [Earlier snapshots](#earlier-snapshots) rows apply the same re-hash.
 
 ### Path fields
 
@@ -287,17 +316,18 @@ brief's hashes.
 
 ### Inputs
 
-The brief ([cad-flow worker brief](../../cad-flow/references/worker-brief.md#compose)) inventories every file below and names
-this skill's schemas, `layout.json` and the stage policy; the lead's own facts are copies under `input/`
+The brief ([cad-flow worker brief](../../cad-flow/references/worker-brief.md#compose)) inventories every file below, except
+the sealed files that the checker hashes in place ([Seal check](#seal-check)). It names this skill's schemas, `layout.json`
+and the stage policy; the lead's own facts are copies under `input/`
 (`input_inventory.snapshots`). Every item reads the attempt's files ([Attempt scope](#attempt-scope)); these items read more:
 
 | Items | Also read |
 |---|---|
-| 12, 18 | every inventoried file; item 12 reads an earlier file only for the [seal check](#seal-check) |
+| 12, 18 | every inventoried file; item 12 reads an earlier file, inventoried or in place, only for the [seal check](#seal-check) |
 | 3 | the `requirements.yaml` and `manufacturing/selection.yaml` snapshots of the version an APPROVED INTENT `GATE` DR binds |
 | 9, 18 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
 | 9 | `input/lead/attempts.txt`: one `v<M>` line per attempt number in use when the lead wrote the brief, ascending |
-| 12 | for the seal check, each result an inventoried verdict lists, CARRIED_FORWARD ones included: its `result.json`, `bundle-manifest.json`, `source/` files, each `artifacts[]` file, the published `stdout` and `stderr` logs named in `commands[]`, and every file its `inspected` lists (REVIEW results have no commands or artifacts; [cad-verify results — Implementation kind](../../cad-verify/references/results.md#implementation-kind) step 1) |
+| 12 | for the seal check: each seal root, an APPROVED `GATE` or `RELEASE` DR, with the statement and proposal files it hashes, and no copy of a file a root reaches, which the checker hashes in place ([Seal check](#seal-check)). For an earlier verdict that no root reaches, each result it lists that no reached verdict lists, CARRIED_FORWARD ones included: its `result.json`, its `bundle-manifest.json` and each `files` entry of that bundle manifest, which are its source, artifact and log files ([record Bundle manifest](record.md#bundle-manifest)). The seal check reads no `inspected` file of a REVIEW result |
 | 13, 16 | `hw/bom/vN/**` and `hw/verification/vN/**` |
 | 14 | the brief snapshot `installed/cad-record/assets/project-template/hw/product.yaml` or `installed/cad-record/assets/project-template-lite/hw/product.yaml`, the template the build mode selects, read from its copy under `input/`; the row names it in its message only |
 | 17 | every producer program: `hw/versions/v*/source/**`, `hw/parts/<PN>/model.py`, `hw/drawings/v*/<SUBJECT>/source/build.py` |
@@ -356,7 +386,10 @@ check result ([cad-verify results — Outcomes](../../cad-verify/references/resu
     file is PASS when it loads (YAML) and its root command lists it in `checked_paths` (exit 0) or `successes`; FAIL when
     the loader rejects it or the report lists it in `errors` or `parse_errors`, with every message and JSON path; UNKNOWN
     `NOT_RUN` when its command did not run or the report does not name it, never PASS.
-  - `record.semantic`: one row per item: item number, outcome, files, message.
+  - `record.semantic`: one row per item: item number, outcome, files, message. Item 12's row names the seal list in
+    `files`, and each FAIL or UNKNOWN file of the seal check with its binder.
+- Seal list: `artifacts/seal.sha256` in the `record.semantic` bundle, role `DATA`, written in every attempt
+  ([Seal check](#seal-check)).
 - Each non-PASS file row or item is one finding: `record.schema:product:<locus>` or
   `record.semantic:item-<n>:<locus>`. `<locus>` is the file path, or the offending ID for an item that spans files,
   lower-cased, with every character outside `a-z0-9_` as `-` and every leading character outside `a-z` dropped
