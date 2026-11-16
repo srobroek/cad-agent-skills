@@ -1,7 +1,6 @@
 # Install
 
-Install exactly one variant into each product project. Do not install both `full/` and `lean/` into the same project: their skill and role
-names are identical.
+Install the `full/` plugin (`cad-agent-skills`) into each product project.
 
 The Codex CLI and OMP installs below stay supported, but the latest smoke round did not verify them
 ([smoke matrix](smoke.md#matrix)).
@@ -19,14 +18,12 @@ The project form declares the marketplace in the project's `.claude/settings.jso
 still records it in the user's `known_marketplaces.json`, so `claude plugin marketplace list` shows it in other projects too, where the
 plugin stays disabled.
 
-Run the one command for your variant and scope:
+Run the one command for your scope:
 
-| Variant | Scope   | Command                                                                        |
-| ------- | ------- | ------------------------------------------------------------------------------ |
-| full    | project | `claude plugin install cad-agent-skills@cad-agent-skills --scope project`      |
-| full    | user    | `claude plugin install cad-agent-skills@cad-agent-skills --scope user`         |
-| lean    | project | `claude plugin install cad-agent-skills-lean@cad-agent-skills --scope project` |
-| lean    | user    | `claude plugin install cad-agent-skills-lean@cad-agent-skills --scope user`    |
+| Scope   | Command                                                              |
+| ------- | -------------------------------------------------------------------- |
+| project | `claude plugin install cad-agent-skills@cad-agent-skills --scope project` |
+| user    | `claude plugin install cad-agent-skills@cad-agent-skills --scope user`    |
 
 Restart Claude Code or run `/reload-plugins`. Confirm the selected skills appear under the plugin's namespace, and invoke an agent from the
 picker, e.g. `@agent-cad-agent-skills:cad-part-designer`.
@@ -39,14 +36,12 @@ Add the public GitHub marketplace once:
 omp plugin marketplace add srobroek/cad-agent-skills
 ```
 
-Run the one command for your variant and scope:
+Run the one command for your scope:
 
-| Variant | Scope   | Command                                                                     |
-| ------- | ------- | --------------------------------------------------------------------------- |
-| full    | project | `omp plugin install --scope project cad-agent-skills@cad-agent-skills`      |
-| full    | user    | `omp plugin install --scope user cad-agent-skills@cad-agent-skills`         |
-| lean    | project | `omp plugin install --scope project cad-agent-skills-lean@cad-agent-skills` |
-| lean    | user    | `omp plugin install --scope user cad-agent-skills-lean@cad-agent-skills`    |
+| Scope   | Command                                                                |
+| ------- | ---------------------------------------------------------------------- |
+| project | `omp plugin install --scope project cad-agent-skills@cad-agent-skills` |
+| user    | `omp plugin install --scope user cad-agent-skills@cad-agent-skills`    |
 
 Restart after CLI install; after marketplace mutation in an interactive session, run `/reload-plugins`. Confirm the five agent roles and
 skills are discovered.
@@ -54,9 +49,9 @@ skills are discovered.
 ## Copy installs
 
 Codex, OpenCode and Kiro install by copying files from a checkout of this repository. Set `CAD_AGENT_SKILLS_SRC` to the checkout's absolute
-root, run the host's block from the target project root, and edit its first lines before you run it: `variant=full` or `variant=lean`, and
-the destination lines for your scope from the host's table. Each block runs in a subshell, so a failure never closes your shell. It checks
-every target first and copies nothing when one exists, including a dangling symlink, then names that path. It copies the variant's
+root, run the host's block from the target project root, and edit its destination lines for your scope from the host's table. Each block
+runs in a subshell, so a failure never closes your shell. It checks every target first and copies nothing when one exists, including a
+dangling symlink, then names that path. It copies the plugin's
 `LICENSE` and `NOTICE` into the installed `cad-flow/` skill directory.
 
 ## Codex CLI
@@ -196,11 +191,11 @@ Once FreeCAD is available, the unchanged attempt reruns. A lite release claims t
 FreeCAD version only, not in every version.
 
 Lite uv cache size and inode count vary by build and host. One round-7 full lite cell reported about 5 GB and
-130,000 files/inodes; a separate lean lite cell reported about 1.1 GB and 130,000 inodes
+130,000 files/inodes; a separate lite cell of the since-removed lean variant reported about 1.1 GB and 130,000 inodes
 ([limitations](limitations.md#lite-build-limits)). Keep the smoke project and cache on a disk-backed filesystem, not
 `/tmp`; verify the backing filesystem as [the smoke procedure](smoke.md#procedure) specifies.
 
-## Variant and provenance
+## Provenance
 
 Do not copy a plugin manifest for Codex, OpenCode or Kiro. Installed `cad-flow/SKILL.md` frontmatter supplies plugin name/version. If a
 discovered installed skill, role or schema differs, report a defect/open question; never patch installed files.

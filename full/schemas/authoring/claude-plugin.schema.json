@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["name", "description", "version", "agents", "skills"],
   "properties": {
-    "name": {"enum": ["cad-agent-skills", "cad-agent-skills-lean"]},
+    "name": {"enum": ["cad-agent-skills"]},
     "description": {"type": "string", "minLength": 1, "maxLength": 1024},
     "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"},
     "agents": {

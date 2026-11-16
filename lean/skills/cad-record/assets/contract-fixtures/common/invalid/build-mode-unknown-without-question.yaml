@@ -1,5 +1,0 @@
-probe: cad-agent-skills.common
-build_mode_fact:
-- status: UNKNOWN
-  reason: 'not yet asked: full or lite build'
-  owner: user

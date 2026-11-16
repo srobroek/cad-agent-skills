@@ -1,6 +1,6 @@
 # Live smoke
 
-This page documents the manual live smoke for every harness and both plugin variants. A full-build cell proves
+This page documents the manual live smoke for every harness. A full-build cell proves
 installation, discovery, resource loading and the first two stages in a fresh project. A [lite cell](#lite-cells) also
 runs a lite build through its sealed package, including the FreeCAD import. No cell proves a DFM, analysis or physical
 result; static CI proves none of these either. Install commands are in [install.md](install.md); stage behaviour is the
@@ -8,18 +8,18 @@ result; static CI proves none of these either. Install commands are in [install.
 
 ## Matrix
 
-Run each cell once per release candidate, in its own fresh project. One cell installs exactly one variant.
+Run each cell once per release candidate, in its own fresh project. One cell installs the `full` plugin (`cad-agent-skills`).
 
-| Harness | `full` (`cad-agent-skills`) | `lean` (`cad-agent-skills-lean`) |
-|---|---|---|
-| Claude Code | required | required |
-| Codex CLI | not verified in round 6 | not verified in round 6 |
-| OpenCode | required | required |
-| Kiro CLI V3 | required | required |
-| OMP | not verified in round 6 | not verified in round 6 |
+| Harness | Status |
+|---|---|
+| Claude Code | required |
+| Codex CLI | not verified in round 6 |
+| OpenCode | required |
+| Kiro CLI V3 | required |
+| OMP | not verified in round 6 |
 
-The smoke rounds cover Claude Code, OpenCode and Kiro CLI V3, each with both variants. Codex CLI and OMP were last run
-in round 5. Their profiles stay in both plugins and their commands stay below, but round 6 verified neither; a report
+The smoke rounds cover Claude Code, OpenCode and Kiro CLI V3. Codex CLI and OMP were last run
+in round 5. Their profiles stay in the plugin and their commands stay below, but round 6 verified neither; a report
 lists them as not covered, never as `PASS`. The lite cells use the same three harnesses.
 
 A cell's result is `PASS`, `FAIL` or `BLOCKED` (a prerequisite such as a login, a CLI or a model role was not
@@ -58,7 +58,7 @@ reports. Kiro matches role-profile rules with a parser chosen from `SHELL`
 ([Kiro shell parsers](limitations.md#observed-host-limitations)). Start a Kiro cell's detached session at least 160
 rows tall, for example `tmux -f <cell tmux.conf> new-session -d -s <cell> -x 220 -y 160`, so that a tall approval
 panel keeps `Allow once` on screen (the "Tall panels" approval rule below).
-Capture every output to `$SMOKE_LOG/<harness>-<variant>/`, outside the project.
+Capture every output to `$SMOKE_LOG/<harness>/`, outside the project.
 
 For OMP, run every OMP command of the cell, including install, listing and cleanup, through one wrapper with a temporary
 HOME and the named profile `cad-smoke`:
@@ -82,7 +82,7 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    `mkdir -p "$HOME/tmp/cad-agent-skills/projects" && SMOKE_PROJECT=$(mktemp -d "$HOME/tmp/cad-agent-skills/projects/cell.XXXXXX")`,
    then `git -C "$SMOKE_PROJECT" init`. Confirm `hw/` and `.cad-work/` are absent. Never reuse a project between
    cells. Record the absolute project path and backing filesystem, and keep the project on disk after the cell.
-2. Install the variant at project scope with the commands in [install.md](install.md) for this harness. For Claude
+2. Install the plugin at project scope with the commands in [install.md](install.md) for this harness. For Claude
    Code and OMP, the marketplace route is the release route; a run with `--plugin-dir` is recorded as a local run.
    For Claude Code, declare the marketplace at project scope too, from `SMOKE_PROJECT`:
    `claude plugin marketplace add <source> --scope project` (2.1.318 `--help` lists `--scope user|project|local`).
@@ -107,7 +107,7 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    `cad-concept-designer`, `cad-part-designer`, `cad-checker`, `cad-mech-dfm-reviewer`, `cad-sourcing-researcher`,
    each once. A duplicate or a missing name is `FAIL`.
 5. Send the phone-stand first prompt. At preflight the lead resolves every skill, schema and role reference to an
-   absolute path and reports the plugin name and version from the `cad-flow` frontmatter; it must equal the variant
+   absolute path and reports the plugin name and version from the `cad-flow` frontmatter; it must equal the plugin
    installed and the tag under test.
 6. GROUND: answer the lead's questions with the brief's scripted answers, batched as the brief says; a question the
    sheet does not cover gets the brief's open-question line, never a value the lead suggests. The lead bootstraps
@@ -140,10 +140,10 @@ under "Environment isolation" below. Project `.omp/` discovery remains active, s
    its files, each path quoted, in sorted order:
 
    ```sh
-   .cad-work/lead/validator/bin/check-jsonschema --schemafile "$CAD_AGENT_SKILLS_SRC/<variant>/skills/cad-record/schemas/<root>.schema.json" -o json --verbose <files>
+   .cad-work/lead/validator/bin/check-jsonschema --schemafile "$CAD_AGENT_SKILLS_SRC/full/skills/cad-record/schemas/<root>.schema.json" -o json --verbose <files>
    ```
 
-   Every command exits 0. A lean file that `layout.json` maps to a prose root has no schema and only loads.
+   Every command exits 0.
 9. Compare the GROUND and INTENT obligations in `hw/versions/<vN>/obligations.yaml` and in each verdict with
    [examples/phone-stand/expected-obligations.yaml](../examples/phone-stand/expected-obligations.yaml): no missing and
    no extra family, every `must_show` present, no `must_not` seen.
@@ -162,7 +162,7 @@ in a scratch project. `claude_smoke`, `omp_smoke` and `omp_cell` are the wrapper
 
 | Harness | Interactive start | Headless start and resume | Prompt prefix |
 |---|---|---|---|
-| Claude Code | `claude_smoke` in `SMOKE_PROJECT` | `claude_smoke -p --max-turns 200 "<prompt>"`; `claude_smoke --resume <session-id> -p --max-turns 200 "<reply>"` | `/cad-agent-skills:cad-flow` or `/cad-agent-skills-lean:cad-flow` |
+| Claude Code | `claude_smoke` in `SMOKE_PROJECT` | `claude_smoke -p --max-turns 200 "<prompt>"`; `claude_smoke --resume <session-id> -p --max-turns 200 "<reply>"` | `/cad-agent-skills:cad-flow` |
 | Codex CLI | `codex -C "$SMOKE_PROJECT"` | `codex exec -C "$SMOKE_PROJECT" "<prompt>"`; from `SMOKE_PROJECT` (`exec resume` has no `-C`): `codex exec resume <thread-id> "<reply>"` | `$cad-flow` |
 | OpenCode | start one persistent private server for the cell, `opencode serve --hostname 127.0.0.1 --port <p>`, in the isolated environment; it takes no `--model` (2.2.5) | `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --title <cell> <prompt words>`; replies use `opencode run --server http://127.0.0.1:<p> --format json --model <provider/model#variant> --session <session-id> <reply words>`. Send a single-line message as separate argv words, never as one quoted argument, and quote a word on its own when it holds a shell metacharacter (`'DR-005;'`). Send a multi-line message, such as the answer batch, on stdin with no positional message: `printf '%s' '<message>' \| opencode run … --session <session-id>`, without a trailing newline | `/cad-flow` |
 | Kiro CLI V3 | `kiro-cli chat --v3` in a `tmux` session, each tool call approved by hand | not used: 3.0.0 headless needs `--trust-all-tools` | name the skill in prose: `Use the cad-flow skill.` |
@@ -202,7 +202,7 @@ Kiro CLI V3's approval driver used `--poll 1.0` by default; the round-4 driver u
 approval waits were 6.93% of harness time at the default and 5.33% after switching; the later interval included a
 75.93 s driver stall. Record the poll setting and observed wait share; this does not establish improvement or a target.
 Run the driver with `--poll 0.25 --monitor-linger 20`. At the 3 s default linger the driver leaves the agent monitor
-and reopens it more than 8 times a minute, so its monitor-loop guard stops approving (round-5 lean cell: one call
+and reopens it more than 8 times a minute, so its monitor-loop guard stops approving (round-5 cell of the since-removed lean variant: one call
 waited 46.4 s); after the switch to 20 s it did not recur over 300 approvals.
 When `invoke_sub_agent` returns reply text only, the task id is unavailable to the lead; map each brief path to its
 session-store `sub_agent_start` and `sub_agent_complete` records. An AIM-managed injector rewrote installed role JSON
@@ -339,7 +339,7 @@ isolation, not an OS boundary.
 
 | Item | Source | PASS when |
 |---|---|---|
-| tag, commit, variant, plugin name and version | prerequisites; preflight report | the reported plugin and version equal the variant and tag installed |
+| tag, commit, plugin name and version | prerequisites; preflight report | the reported plugin and version equal the plugin and tag installed |
 | CLI version, model roles | `--version`; the written role list | recorded before the first prompt |
 | discovered skills and roles | step 4 listing, verbatim | eight skills and five roles, each once |
 | resolved resources | `.cad-work/lead/preflight.json`; the `.cad-work/<unit>/input/` copies | every path absolute and existing; no write to an installed file; a copy of an installed file under `.cad-work/<unit>/input/` is allowed only when byte-identical to it (equal sha256) |
@@ -347,7 +347,7 @@ isolation, not an OS boundary.
 | GROUND and INTENT verdicts | `hw/versions/<vN>/stage-verdict.json` and their sha256 | each validates; PASS before its gate is presented |
 | gate decisions | `hw/decisions/DR-###.yaml` and the saved statements | `kind: GATE`, actor name starting `SYNTHETIC`; `choice` is the scripted option and `statement.quote` its `approve` and `choose` words; the statement file holds exactly the sent bytes, `, then end the session` included, with no added quotes or newline ([cad-flow's gate-decision procedure](../full/skills/cad-flow/references/gates.md#record-a-gate-decision)) |
 | native dispatch | native transcript/events and `.cad-work/lead/units.yaml` | each unit's role, native task id (or `UNAVAILABLE` with the host limit stated), brief sha256, state and exact `task_text`. Codex: compare logged `task_text` with the role name, absolute brief path and absolute `agent-roles.md` reference; inspect each rollout's native `spawn_agent` event for `fork_turns: "none"`, even when `message` is encrypted. Kiro: when `invoke_sub_agent` returns reply text only, log `UNAVAILABLE: <what the call returned>` and map each brief path to `sub_agent_start` and `sub_agent_complete` records in the session store's `messages.jsonl` (`~/.kiro/sessions/<workspace>/<session>/`). No turn ends while a dispatched unit still runs |
-| deliveries | `.cad-work/<unit>/delivery.json` | full: validates against `worker-delivery`; lean, which has no worker-delivery schema: conforms to the prose contract ([prose-contract](../lean/skills/cad-record/references/prose-contract.md#worker-delivery)); both: boundary digests equal; accepted bytes merged verbatim |
+| deliveries | `.cad-work/<unit>/delivery.json` | validates against `worker-delivery`; boundary digests equal; accepted bytes merged verbatim |
 | writes | the transcript's tool calls | no write to an installed file and no record/evidence write outside `hw/` and `.cad-work/`; uv/package caches, bytecode, session stores and other named host caches may be elsewhere and are recorded |
 | schema results | step 8 output | every command exits 0 |
 | obligations | step 9 comparison | no missing or extra family; no `must_not` |
@@ -359,7 +359,7 @@ of its evidence directory.
 ## Lite cells
 
 A lite cell runs the [lite phone stand brief](../examples/lite-phone-stand/brief.md) as a lite build through its sealed
-package. Run one cell per harness and variant for Claude Code, OpenCode and Kiro CLI V3: six cells per release
+package. Run one cell per harness for Claude Code, OpenCode and Kiro CLI V3: three cells per release
 candidate, beside the full-build cells above.
 
 ### Provide FreeCAD
@@ -427,7 +427,7 @@ run: without FreeCAD it is `BLOCKED` with that cause, and any other stop is `FAI
 | OpenCode | 35 min |
 | Kiro CLI V3 | 40 min |
 
-The targets hold for a warm cell of this one-part brief with a usable FreeCAD, in both variants. They are goals, not
+The targets hold for a warm cell of this one-part brief with a usable FreeCAD. They are goals, not
 measured results: no completed lite cell has been timed yet. They are no timeout and no reason to skip or weaken a
 check. Record the time to a stop apart; it never counts as a lite timing.
 

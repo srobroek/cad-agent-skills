@@ -1,4 +1,4 @@
-# markdownlint-cli2 configuration for every Markdown file in the repository, full/ and lean/ alike.
+# markdownlint-cli2 configuration for every Markdown file in the repository.
 config:
   default: true
   # Prose wraps at 140 columns; tables and code blocks keep their natural width.

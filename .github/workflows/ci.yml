@@ -79,10 +79,7 @@ jobs:
           shopt -s nullglob globstar extglob
 
           full_schemas=full/skills/cad-record/schemas
-          lean_schemas=lean/skills/cad-record/schemas
           authoring=full/schemas/authoring
-          # Decision 1 defines the lean record contract: ten record roots plus their shared definitions.
-          lean_roots=(common product requirements part assembly decision check-result stage-verdict material-profile bom-row release-manifest)
 
           fail() {
             printf '%s\n' "$@" >&2
@@ -188,17 +185,11 @@ jobs:
             schema_groups=()
           }
 
-          phase 'Metaschemas (full and lean)'
+          phase 'Metaschemas'
           check-jsonschema --check-metaschema "$full_schemas"/*.schema.json "$authoring"/*.schema.json
-          lean_files=("$lean_schemas"/*.schema.json)
-          for root in "${lean_roots[@]}"; do
-            [[ -f "$lean_schemas/$root.schema.json" ]] || fail "Missing decision-defined lean schema root: $root"
-          done
-          ((${#lean_files[@]} == ${#lean_roots[@]})) || fail "Lean schema inventory differs from the decision-defined roots:" "${lean_files[@]}"
-          check-jsonschema --check-metaschema "${lean_files[@]}"
 
-          phase 'Contract and authoring fixtures (full and lean)'
-          for variant in full lean; do
+          phase 'Contract and authoring fixtures'
+          for variant in full; do
             for schema in "$variant"/skills/cad-record/schemas/*.schema.json; do
               root="${schema##*/}"
               validate_fixtures "$schema" "$variant/skills/cad-record/assets/contract-fixtures/${root%.schema.json}"
@@ -211,16 +202,15 @@ jobs:
             validate_fixtures "$schema" "$fixture_dir"
           done
 
-          phase 'Project templates through layout.json (full and lean, full and lite builds)'
-          # A lean template of a prose-only root validates against the full root.
-          for variant in full lean; do
+          phase 'Project templates through layout.json (full and lite builds)'
+          for variant in full; do
             for template_root in "$variant/skills/cad-record/assets/project-template" "$variant/skills/cad-record/assets/project-template-lite"; do
               template_count=0
               for template in "$template_root"/hw/**; do
                 [[ -f "$template" ]] || continue
                 schema="$(layout_schema "${template#"$template_root/"}")" || fail "Project template has no layout entry: $template"
                 [[ -n "$schema" ]] || fail "Project template maps to a layout entry without a schema: $template"
-                if [[ -f "$variant/skills/cad-record/schemas/$schema" ]]; then schema="$variant/skills/cad-record/schemas/$schema"; else schema="$full_schemas/$schema"; fi
+                schema="$full_schemas/$schema"
                 group_instance "$schema" "$template"
                 template_count=$((template_count + 1))
               done
@@ -229,8 +219,8 @@ jobs:
             done
           done
 
-          phase 'Layout, material profiles, capability templates and stage assets (full and lean against full schemas)'
-          for variant in full lean; do
+          phase 'Layout, material profiles, capability templates and stage assets (full schemas)'
+          for variant in full; do
             record="$variant/skills/cad-record"
             flow_assets="$variant/skills/cad-flow/assets"
             validate_many "$full_schemas/layout.schema.json" "$record/layout.json"
@@ -242,12 +232,12 @@ jobs:
           done
 
           phase 'Host profiles: Codex and Kiro agents, plugin manifests and marketplaces'
-          for variant in full lean; do
+          for variant in full; do
             validate_many "$authoring/codex-agent.schema.json" "$variant"/harness/codex/agents/*.toml
             validate_many "$authoring/kiro-agent.schema.json" "$variant"/harness/kiro/*/agents/*.json
           done
-          validate_many "$authoring/claude-plugin.schema.json" full/.claude-plugin/plugin.json lean/.claude-plugin/plugin.json
-          validate_many "$authoring/omp-plugin.schema.json" full/.omp-plugin/plugin.json lean/.omp-plugin/plugin.json
+          validate_many "$authoring/claude-plugin.schema.json" full/.claude-plugin/plugin.json
+          validate_many "$authoring/omp-plugin.schema.json" full/.omp-plugin/plugin.json
           validate_many "$authoring/claude-marketplace.schema.json" .claude-plugin/marketplace.json
           validate_many "$authoring/omp-marketplace.schema.json" .omp-plugin/marketplace.json
 
@@ -280,7 +270,7 @@ jobs:
             ' "$file"
           }
           expected_version=""
-          for variant in full lean; do
+          for variant in full; do
             claude_manifest="$variant/.claude-plugin/plugin.json"
             omp_manifest="$variant/.omp-plugin/plugin.json"
             claude_name="$(jq -er '.name' "$claude_manifest")"
@@ -302,14 +292,14 @@ jobs:
             [[ "$plugin" == "$claude_name" && "$version" == "$claude_version" ]] || fail "cad-flow provenance mismatch: $skill"
           done
           phase 'Plugin-root license and notice equality'
-          for variant in full lean; do
+          for variant in full; do
             cmp -s LICENSE "$variant/LICENSE" || fail "$variant/LICENSE differs from root LICENSE"
             cmp -s NOTICE "$variant/NOTICE" || fail "$variant/NOTICE differs from root NOTICE"
           done
           phase 'Lite disclosure equality'
           # cad-flow SKILL.md owns the line; the build-guide asset and the authoring schema carry it verbatim.
           lite_disclosure="$(jq -er '.definitions.lite_disclosure.const' "$authoring/expected-obligations.schema.json")"
-          for variant in full lean; do
+          for variant in full; do
             for file in "$variant/skills/cad-flow/SKILL.md" "$variant/skills/cad-release/assets/build-guide.md"; do
               grep -Fq -- "$lite_disclosure" "$file" || fail "Lite disclosure line missing from $file: $lite_disclosure"
             done
@@ -357,7 +347,7 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           markdown_files=()
-          for variant in full lean; do
+          for variant in full; do
             for file in "$variant"/skills/*/SKILL.md "$variant"/agents/*.md "$variant"/harness/claude/agents/*.md "$variant"/harness/opencode/agents/*.md; do
               IFS= read -r first_line < "$file"
               [[ "$first_line" == '---' ]] || { printf 'Missing YAML frontmatter: %s\n' "$file" >&2; exit 1; }

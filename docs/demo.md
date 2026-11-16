@@ -1,7 +1,7 @@
-# Demonstrations and the full-versus-lean A/B protocol
+# Demonstrations and the A/B protocol
 
-Three scripted demonstrations exercise the flow: two full builds and one lite build. An A/B protocol compares the
-`full` and `lean` variants on them. A demonstration shows what the skills make a model do and record; it
+Three scripted demonstrations exercise the flow: two full builds and one lite build. An A/B protocol compares two
+configurations of the plugin on them. A demonstration shows what the skills make a model do and record; it
 is no product approval, and its synthetic answers stand for no owner. Install with [install.md](install.md); run the
 [smoke](smoke.md) for the harness first.
 
@@ -23,7 +23,7 @@ never ask for the build mode; the lite brief's prompt names none, so its lead as
 
 1. Fresh project: a new empty directory under `git init`; for the lamp arm, the setup step of its brief; for the lite
    phone stand, FreeCAD on the host ([smoke.md "Provide FreeCAD"](smoke.md#provide-freecad)).
-2. Install one variant at project scope ([install.md](install.md)) and record the tag, commit, harness version and
+2. Install the plugin at project scope ([install.md](install.md)) and record the tag, commit, harness version and
    model roles, as in [smoke.md](smoke.md) "Prerequisites".
 3. Send the brief's first prompt; answer only with its scripted answers and gate replies. Keep one session; resume it
    after an interruption, never start a second lead.
@@ -76,27 +76,28 @@ Four owner turns reach the sealed package: the prompt, one answer batch, the GRO
 Promotion to a full build is a CHANGE that reopens GROUND; the sealed lite package stays as it is
 ([smoke.md lite negative cells](smoke.md#lite-negative-cells)).
 
-## A/B protocol: full versus lean
+## A/B protocol
 
 ### Question
 
-Does the `lean` variant (about ten core schemas, the rest as prose) reach the same stages with no more defects than
-`full` (all 28 schemas) at lower cost? `full` is the baseline.
+Does a candidate configuration (arm B), such as a cheaper model tier or a lower reasoning effort, reach the same stages
+with no more defects than the baseline (arm A) at lower cost? The baseline is the current default.
 
 ### Fixed across both arms
 
 - The same brief, scripted answers and gate replies; the phone stand is the primary brief and the lamp arm the second.
-  The lite phone stand compares the variants on a lite build, with the same FreeCAD release on the host for both arms.
+  The lite phone stand compares the arms on a lite build, with the same FreeCAD release on the host for both arms.
 - The same harness, CLI version, model roles (model id and reasoning effort per role), host machine, tool versions
-  (`uv`, `check-jsonschema` 0.39.0, CadQuery and build123d as the model contract pins) and release tag of both variants.
-- A fresh project per run with exactly one variant installed at project scope.
+  (`uv`, `check-jsonschema` 0.39.0, CadQuery and build123d as the model contract pins) and release tag of both arms.
+  Only the configuration under test differs.
+- A fresh project per run with the plugin installed at project scope.
 - The same limits per run: harness turn cap, 6 hours of wall time, and the stop at an acceptable end.
 
 ### Runs
 
 - `N` = 5 runs per arm per brief per harness; raise `N` to 10 when the decision rule finds the result within noise.
 - Fixed interleaved order per harness, so drift in the model service hits both arms alike: A B B A A B B A A B
-  (A is `full`, B is `lean`); for `N` = 10 repeat the sequence.
+  (A is the baseline, B the candidate); for `N` = 10 repeat the sequence.
 - A run that fails for an outside reason (login, quota, service outage) is rerun with the same order slot and its
   failed attempt is logged; it is not scored.
 
@@ -123,7 +124,7 @@ One row per run, then one median row and one min to max row per arm.
 
 | Run | Arm | Brief | Harness | Stages reached | Gates presented / re-asked / approved | Findings C/M/m/I | Protocol defects | Invalid records | Tokens in/out | Cost | Wall time | End |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `<n>` | `full` or `lean` | `phone-stand`, `lamp-arm` or `lite-phone-stand` | `<harness>` | `<0-13>`, or `<0-3>` for lite | `<p/r/a>` | `<c/M/m/i>` | `<count>` | `<count>` | `<in/out>` | `<USD or UNREPORTED>` | `<h:mm>` | `<acceptable end or DEFECT>` |
+| `<n>` | `A` or `B` | `phone-stand`, `lamp-arm` or `lite-phone-stand` | `<harness>` | `<0-13>`, or `<0-3>` for lite | `<p/r/a>` | `<c/M/m/i>` | `<count>` | `<count>` | `<in/out>` | `<USD or UNREPORTED>` | `<h:mm>` | `<acceptable end or DEFECT>` |
 
 A determinism table per arm and brief adds: same stage sequence (share), same end (share), mean obligation-set
 Jaccard per stage, and same outcome (share).
@@ -132,11 +133,11 @@ Jaccard per stage, and same outcome (share).
 
 1. Veto: an arm with any run that seals a lamp-arm package, lowers a service class, reports an UNKNOWN or a waiver as
    PASS, invents an approval or claims a physical result loses, unless the other arm has at least as many such runs.
-2. Keep `full` unless `lean` meets all of these on each brief: median stages reached at least `full`'s; median and
-   maximum protocol defects plus invalid records no higher than `full`'s; determinism shares no lower than `full`'s by
+2. Keep the baseline unless the candidate meets all of these on each brief: median stages reached at least the baseline's; median and
+   maximum protocol defects plus invalid records no higher than the baseline's; determinism shares no lower than the baseline's by
    more than 0.1; median cost or wall time at least 20% lower.
 3. Within noise: when the median stages reached differ by one stage or less and the min to max ranges overlap, while
-   step 2 is undecided, rerun with `N` = 10 before deciding; after that, a tie keeps `full`.
+   step 2 is undecided, rerun with `N` = 10 before deciding; after that, a tie keeps the baseline.
 4. Report the decision with both result tables, the harnesses covered, the run log and every rerun with its cause.
 
 Harnesses not run are listed as not covered; the decision covers only the harnesses run.

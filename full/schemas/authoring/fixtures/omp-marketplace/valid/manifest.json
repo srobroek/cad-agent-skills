@@ -12,12 +12,6 @@
       "source": "./full",
       "description": "Full variant.",
       "version": "0.1.0"
-    },
-    {
-      "name": "cad-agent-skills-lean",
-      "source": "./lean",
-      "description": "Lean variant.",
-      "version": "0.1.0"
     }
   ]
 }

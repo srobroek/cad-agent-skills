@@ -223,7 +223,7 @@ or `REVIEW_MAJOR`.
 - Every inventory and boundary digest follows references/record.md#inventory-digest. Installed skills, schemas and
   policy are identified by `plugin{name, version}` and their resolved absolute paths; nothing installed is hashed.
   On every host the version source is the installed cad-flow SKILL.md frontmatter
-  `metadata: {plugin: cad-agent-skills, version: "<semver>"}` (lean: `cad-agent-skills-lean`); the
+  `metadata: {plugin: cad-agent-skills, version: "<semver>"}`; the
   `skill-frontmatter` authoring schema requires both keys on cad-flow.
 
 ## Stage policy (`stage-policy`, written by cad-flow)
