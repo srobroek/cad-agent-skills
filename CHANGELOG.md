@@ -126,7 +126,10 @@
   - J7: Keep smoke projects on verified disk-backed storage, never tmpfs `/tmp`. Lite uv caches with CAD kernels used about 130,000
     inodes in round-7 cells. Accept the host-resolved FreeCAD console when preflight and checker agree on path and version; record both
     observations and the executable sha256 in external smoke evidence.
-  - J8: Lite intake does not re-ask fields stated in the prompt, and records exclusions verbatim.
+  - J8: The first intake batch asks every still-open template question in full wording and cites the prompt for fields it settles; a
+    partly answered composite field keeps its full question and asks only the remainder. Owner exclusions and forbidden claims are
+    recorded verbatim after the LITE disclosure, with the exact prompt or answer text as `USER` source, in lite and full intake. The
+    lite-phone-stand example no longer expects every template question asked.
   - J9: Lite packets report how the render was actually presented, per the
     [host-specific rules](full/skills/cad-flow/references/gates.md#lite-packets): the SVG path and exactly one `Render:` status line.
   - J10: Version snapshots copy only manifest-listed files, one by one; an unlisted path fails its attempt. `accept-results` hashes

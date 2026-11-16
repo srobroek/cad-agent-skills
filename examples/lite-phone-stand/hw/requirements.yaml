@@ -49,7 +49,7 @@ requirements:
     comparator: EQUALS
     value: 1
     units: count
-    source: &l11 {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    source: &l11 {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
   methods:
   - ANALYSIS
   facets:
@@ -100,7 +100,7 @@ questions:
   material_to_choice: true
   safety_relevant: true
   status: RESOLVED
-  resolution: {answer: static one-piece appearance model of a desktop phone stand, source: {kind: USER, reference: brief.md answer A-02, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+  resolution: {answer: static one-piece appearance model of a desktop phone stand, source: {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
 - id: Q-002
   question: 'Who owns the product and its approvals?'
   owner: user
@@ -163,7 +163,7 @@ questions:
   material_to_choice: true
   safety_relevant: false
   status: RESOLVED
-  resolution: {answer: 'one part and one solid with a sloped back and a front retaining lip; no hinge, joint or moving part', source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
+  resolution: {answer: 'one part and one solid with a sloped back and a front retaining lip; no hinge, joint or moving part', source: {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}}
 - id: Q-019
   question: 'Which dimensions and envelopes must the model meet, each with the criterion it is measured against?'
   owner: user

@@ -30,11 +30,15 @@ Use cad-flow to design a static one-piece appearance model of a desktop phone st
 
 ## Scripted owner answers
 
-When the lead asks, reply once with every matching answer, one per line in table order, each line exactly its answer
-text. Each question the sheet does not answer gets its own line `<question id>: I don't know; record it as an open
-question.` Never answer beyond the sheet, add a requirement, or confirm a value the lead suggests: a geometry value
-the sheet does not give stays open, and the release claims nothing about it. The actor is synthetic: every decision
-written from these answers names an actor starting `SYNTHETIC`.
+The first prompt settles Q-001 (product) and Q-018 (form and parts), so the lead cites the prompt for them and does not ask them;
+A-02 and A-11 apply only if the lead asks anyway. The prompt settles Q-019 and Q-015 only in part: the lead keeps their full
+questions and asks only the remainder.
+
+When the lead asks, reply once with every matching answer, one per line in table order, each line exactly its answer text. Each
+question the sheet does not answer gets its own line `<question id>: I don't know; record it as an open question.` Never answer
+beyond the sheet, add a requirement, or confirm a value the lead suggests: a geometry value the sheet does not give stays open,
+and the release claims nothing about it. The actor is synthetic: every decision written from these answers names an actor starting
+`SYNTHETIC`.
 
 | Id | Template question | Answer (exact message) |
 |---|---|---|
