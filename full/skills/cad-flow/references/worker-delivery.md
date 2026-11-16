@@ -82,6 +82,8 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    `reason` and rejects nothing.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared `hw/` file; proposals are never
    merged as outputs ([delegation Integrate](delegation.md#integrate)).
+10. A repair unit only (its `task` starts with `REPAIR of`): the comparison of [delegation Repair units](delegation.md#repair-units)
+    holds against the lead's snapshot hashes; its `reason` names the first file or field that differs.
 
 A rejected unit is never patched: send it again as a new unit, or its work stays undone
 ([delegation Lost and stalled units](delegation.md#lost-and-stalled-units) step 3). A delivery rejected only for a mechanical reason may

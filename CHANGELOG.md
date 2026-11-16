@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The repair-unit comparison is Accept step 10, so a failure rejects before the state is recorded, and it excludes hash references to
+  files a repair may change, checking each against the lead's own sha256 of the repaired file.
 - A repair unit rebinds its result files (`binding.unit`, `binding.brief_sha256`, `binding.input_inventory_sha256`) and keeps every other
   verdict-relevant byte equal to the lead's own hash of the rejected snapshot, never to a hash the rejected delivery claims.
 - Repair units remap the unit-local boundary paths to their own directory, snapshot the whole rejected delivery, re-deliver unchanged

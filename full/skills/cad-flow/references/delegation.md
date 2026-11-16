@@ -148,10 +148,18 @@ sha256 typo, a missing log and a schema failure of `delivery.json` or of a resul
   `checks[]` entries, and a `target_pattern` target built from it, are recomputed. Bundle manifests are written by the lead after merge
   ([worker-delivery merge-deliveries](worker-delivery.md#merge-deliveries) step 4), so no repair carries one. A published file other than
   a result that embeds the delivering unit's id or brief sha256 cannot be rebound: its rejection is a full new unit.
-- Check, run by the lead after [Accept](worker-delivery.md#accept) passes: every other required output hashes to its baseline. Each
-  result file equals its snapshot as parsed JSON once the `binding.unit`, `binding.brief_sha256` and `binding.input_inventory_sha256`
-  keys, and the JSON paths a listed defect names, are removed from both; outcomes, criteria, measured values, findings, evidence and
-  `implementation` stay equal. A program or lock that differs from its baseline is a change too, unless a listed defect names it.
+- Comparison, run as the last [Accept](worker-delivery.md#accept) step (step 10), so a failure rejects the repair before any state is
+  recorded. The lead first derives the changeable set from the defect list: the files the listed defects name, and the result files
+  rebound above. Then:
+  - every required output outside that set hashes to its baseline;
+  - a program or lock that differs from its baseline is a change, unless a listed defect names it;
+  - each result file equals its snapshot as parsed JSON once these are removed from both: the `binding.unit`, `binding.brief_sha256` and
+    `binding.input_inventory_sha256` keys; the JSON paths a listed defect names; and every hash-reference `sha256` whose entry's `path`
+    names a file of the changeable set. The hash-reference fields of `check-result` are `input_files[].sha256`,
+    `implementation.source_files[].sha256`, `implementation.inspected[].sha256`, `artifacts[].sha256` and the `evidence[].sha256` of an
+    outcome or finding;
+  - each excluded hash field equals the lead's own sha256 of the repaired file it names;
+  - everything else, meaning outcomes, criteria, measured values, findings, `implementation` and every other hash field, stays equal.
 - Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker or sourcing unit, 1200 and 65 for a
   designer unit.
 - The same Accept steps judge its delivery, and an independent checker judges its results as for any unit.
