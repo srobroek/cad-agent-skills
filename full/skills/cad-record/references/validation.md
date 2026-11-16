@@ -80,7 +80,7 @@ hash-verified as unchanged is not validated again.
 
 - Universe: every file of the vN snapshot `hw/versions/vN/record/`, and every other `hw/` file outside `hw/versions/v*/record/`
   whose `layout.json` entry names a schema. A CONTROLLED live file (layout `mutability`) is validated as its snapshot copy,
-  never in place. An earlier attempt's snapshot is only re-hashed ([Earlier snapshots](#earlier-snapshots)).
+  never in place. An earlier attempt's snapshot follows the [earlier-attempt rule](#attempt-scope) ([Earlier snapshots](#earlier-snapshots)).
 - Baseline: the `record.schema` result of the newest `hw/versions/v*/stage-verdict.json` whose `policy.plugin` equals
   the installed plugin name and version, with its item table ([Reporting](#reporting)); both re-hash to the sha256s that
   verdict's `result_file` and the result's bundle manifest record. There is none at the first attempt, after a plugin
@@ -99,9 +99,9 @@ hash-verified as unchanged is not validated again.
 
 A file under `hw/versions/vK/record/`, where vK is not the attempt vN under check, is attempt vK's record. Only vK's own
 `record.schema` judges its shape, validating it as vK's version snapshot; that result's row and finding and vK's verdict
-are the evidence of any defect. A later attempt never validates it again and never rewrites or repairs it
-([record — Mutability](record.md#mutability)): a defect is fixed in the live file, which the next attempt snapshots and
-validates.
+are the evidence of any defect. A later attempt treats it by the [earlier-attempt rule](#attempt-scope) and never rewrites or
+repairs it ([record — Mutability](record.md#mutability)): a defect is fixed in the live file, which the next attempt snapshots
+and validates.
 
 - `record.schema` of vN checks each earlier snapshot file by the [seal check](#seal-check): one item-table row with basis
   `RECORDED`, root and sha256, PASS when the file hashes to the sha256 that vK's `manifest.json` `record` lists for its path,
@@ -300,7 +300,7 @@ supersedes the stage never unseals what the approval bound. The `record.semantic
   every line this walk derives over the live tree. When item 12 holds, the list holds the whole set. Accept confirms both
   ([cad-flow worker-delivery Accept](../../cad-flow/references/worker-delivery.md#accept) step 6).
 
-An unsealed earlier file, one no root reaches, is only re-hashed, the same way, from its input copy
+An unsealed earlier file, one no root reaches, is re-hashed ([Attempt scope](#attempt-scope)) the same way, from its input copy
 ([Inputs](#inputs)), against the sha256 that its own attempt's verdict, manifest or bundle manifest records. A copy the
 brief lacks makes that file UNKNOWN `MISSING_INPUT`, a brief defect. Items 9 and 12 use this one check. The lead's
 `record.schema` reads the live tree, and its [Earlier snapshots](#earlier-snapshots) rows apply the same re-hash.
@@ -332,7 +332,7 @@ and the stage policy; the lead's own facts are copies under `input/`
 
 | Items | Also read |
 |---|---|
-| 12, 18 | every inventoried file; item 12 reads an earlier file, inventoried or in place, only for the [seal check](#seal-check) |
+| 12, 18 | every inventoried file; item 12 reads an earlier file, inventoried or in place, as [Attempt scope](#attempt-scope) states |
 | 3 | the `requirements.yaml` and `manufacturing/selection.yaml` snapshots of the version an APPROVED INTENT `GATE` DR binds |
 | 9, 18 | every earlier `hw/versions/v*/manifest.json`, `obligations.yaml` and `stage-verdict.json` |
 | 9 | `input/lead/attempts.txt`: one `v<M>` line per attempt number in use when the lead wrote the brief, ascending |
