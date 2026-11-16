@@ -48,6 +48,7 @@ behavior. Repository content alone does not establish runtime results.
 - [Install one variant](docs/install.md)
 - [Run the demonstrations and full-versus-lean A/B protocol](docs/demo.md)
 - [Run the live harness smoke matrix](docs/smoke.md)
+- [Check shared vocabulary against a cad-agent checkout (developer-only)](docs/vocabulary-drift.md)
 
 ## Release ceiling and status
 
