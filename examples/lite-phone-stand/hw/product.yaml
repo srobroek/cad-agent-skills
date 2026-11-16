@@ -16,7 +16,7 @@ identity:
     value: Static one-piece appearance model of a desktop phone stand, one solid with a sloped back and a front retaining lip, no hinge or moving parts
     basis: USER_DECLARED
     sources:
-    - &l02 {kind: USER, reference: brief.md answer A-02, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    - &l02 {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
   owner:
     status: KNOWN
     value: SYNTHETIC lite-demo owner; owns the product and approves every gate and release
@@ -87,11 +87,14 @@ release_scope:
     status: KNOWN
     value:
     - 'LITE prototype: geometry only; no material, fit, strength or manufacturing claims'
-    - no phone-fit or safe-holding claim
-    - no material, fit, strength, manufacturing or other physical claim
+    - Make no phone-fit or safe-holding claim, and recommend no material, vendor, printer, manufacturing route, fit or strength.
+    - It makes no phone-fit, safe-holding, material, fit, strength, manufacturing or other physical claim.
+    - it must never be presented as safe to make or to hold a phone.
     basis: USER_DECLARED
     sources:
     - *l01
+    - *l02
+    - *l06
     - *l08
 storage:
   results_in_git:

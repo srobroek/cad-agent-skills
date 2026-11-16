@@ -92,7 +92,7 @@ checks:
     comparator: EQUALS
     value: 1
     units: count
-    source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    source: {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
   method: cad-model exports — geometry.readback, Lite; measured in the assembly frame on the exported STEP
   facet: CAD_VALID
   due: LAYOUT
@@ -115,7 +115,7 @@ checks:
     property: sloped_back
     comparator: EQUALS
     value: true
-    source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    source: {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
   method: cad-model exports — geometry.identity, Lite; exactly one part witnesses the feature on its final shape
   facet: CAD_VALID
   due: LAYOUT
@@ -138,7 +138,7 @@ checks:
     property: front_lip
     comparator: EQUALS
     value: true
-    source: {kind: USER, reference: brief.md answer A-11, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
+    source: {kind: USER, reference: brief.md first prompt, origin: SYNTHETIC lite-demo owner, date: '2026-11-05'}
   method: cad-model exports — geometry.identity, Lite; exactly one part witnesses the feature on its final shape
   facet: CAD_VALID
   due: LAYOUT

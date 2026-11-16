@@ -49,11 +49,12 @@ Ask only questions that resolve this product's actual intended function and cons
 
 ### Lite intake
 
-A LITE build asks every open question of the lite template and nothing else: the product and its purpose, owner and approver, rigor,
+A LITE build asks every still-open question of the lite template and nothing else: the product and its purpose, owner and approver, rigor,
 users, the form with its part count, arrangement and the features the model must show, each dimension and envelope with how it is
 measured, the static pose of anything that could move, the failure consequence and the claims it must never make, the release purpose and
 exclusions, storage and licences. It never asks about a material, vendor, machine or printer, process, load, environment, motion duty or
-life, quantity, budget, lead time, stress or physical test. Record each reply by [Ask and finish intake](#ask-and-finish-intake), with
+life, quantity, budget, lead time, stress or physical test. A field the prompt already settles is cited, not asked (step 1 of
+[Ask and finish intake](#ask-and-finish-intake)). Record each reply by [Ask and finish intake](#ask-and-finish-intake), with
 these differences:
 
 - Each part count, arrangement, feature, dimension, envelope, geometric clearance between modelled parts and static pose the owner states is
@@ -62,7 +63,9 @@ these differences:
   record holds at least one such requirement, and no MANUFACTURING requirement, capability profile, material criterion or finish-process
   criterion.
 - `release_scope.exclusions` opens with the exact LITE disclosure line of the [cad-flow skill](../../cad-flow/SKILL.md) OUTPUT, with the
-  LITE answer to `Q-000` among that fact's `USER` sources; the owner's own exclusions follow it unchanged.
+  LITE answer to `Q-000` among that fact's `USER` sources; the owner's own exclusions and forbidden claims follow it verbatim, each entry the
+  owner's exact words, and the exact prompt or answer text that states them is retained as a `USER` source of that fact. Never reword,
+  merge or summarize an exclusion.
 - A fact an answer volunteers on a topic lite never asks, such as an item's mass, is recorded typed where the lite record has a field for
   it, as step 2 and [Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence) require, and adds no requirement. A fact
   that needs a record lite never writes, such as a machine, material or supplier record, is not recorded. A field the lite record does not
@@ -77,13 +80,17 @@ these differences:
 
 ### Ask and finish intake
 
-1. Ask every open question of the build mode's template ([Choose the build mode](#choose-the-build-mode)) in one message, grouped by
-   domain; skip none. Each asked question carries exactly one question id, and each id covers one template question. Ask focused
-   questions, not a generic questionnaire dump.
+1. Ask every still-open question of the build mode's template ([Choose the build mode](#choose-the-build-mode)) in one message, in its full
+   wording, grouped by domain. Read the prompt first by [Settle each intake field](#settle-each-intake-field): for each field it already
+   settles, cite the prompt's answer in the message and do not ask the question. A composite field the prompt settles in part is asked in
+   its full template wording, with the settled part cited and only the remainder left to answer; it is never replaced by a narrowed
+   question. Skip no other question. Each asked question carries exactly one question id, and each id covers one template question.
+   Ask focused questions, not a generic questionnaire dump.
 2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
    ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4):
-   - Every fact the reply states, including a fact no question asked, as KNOWN with a `USER` source
-     ([cad-record Facts](../../cad-record/references/record.md#facts)), and every intake field settled or left open by
+   - Every fact the prompt or reply states, including a fact no question asked, as KNOWN with a `USER` source
+     ([cad-record Facts](../../cad-record/references/record.md#facts)); the owner's exclusions and forbidden claims keep their exact text
+     as the value and the exact prompt or answer as the source, in LITE and FULL alike; and every intake field settled or left open by
      [Settle each intake field](#settle-each-intake-field).
    - Every requirement, preference and assumption those facts state
      ([Write criteria a stage can evidence](#write-criteria-a-stage-can-evidence)).
