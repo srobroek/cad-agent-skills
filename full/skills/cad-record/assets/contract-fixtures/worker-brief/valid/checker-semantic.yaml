@@ -74,6 +74,8 @@ expected:
     kind: check result
   - target: hw/checks/v1/record-semantic/a1/artifacts/items.json
     kind: check artifact
+  - target: hw/checks/v1/record-semantic/a1/artifacts/seal.sha256
+    kind: check artifact
   - target_pattern: hw/checks/v1/record-semantic/a1/artifacts/<name>
     kind: check artifact
     max: 4

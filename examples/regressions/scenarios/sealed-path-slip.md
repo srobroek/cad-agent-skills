@@ -1,7 +1,8 @@
 # A latent path slip in a sealed attempt does not fail a later attempt
 
-Scenario `sealed-path-slip` · stage `INTENT` · rules: cad-record references/validation.md Attempt scope, Seal check, Path
-fields and items 12 and 14; cad-flow references/worker-delivery.md Accept.
+Scenario `sealed-path-slip` · stage `INTENT` · rules: cad-record references/validation.md Attempt scope, Seal check, Inputs,
+Path fields and items 12 and 14; cad-flow references/worker-delivery.md Accept, worker-brief.md Compose and agent-roles.md
+Read set.
 
 ## Situation
 
@@ -17,8 +18,10 @@ round-6 Kiro full A/B cell hit the same with `.cad-work/` paths).
 |---|---|---|
 | [`valid/check-result/sealed-path-slip-ground.json`](../valid/check-result/sealed-path-slip-ground.json) | exit 0 | the GROUND v1 semantic result; its item table, a `schema: null` artifact, holds the latent slip |
 | [`valid/decision/sealed-path-slip-gate.yaml`](../valid/decision/sealed-path-slip-gate.yaml) | exit 0 | DR-002 approves GROUND v1 and binds its verdict sha256: v1 is sealed |
-| [`valid/check-result/sealed-path-slip-intent.json`](../valid/check-result/sealed-path-slip-intent.json) | exit 0 | INTENT v2 semantic PASS: the v1 result, bundle manifest and item table get the seal check only |
+| [`valid/check-result/sealed-path-slip-intent.json`](../valid/check-result/sealed-path-slip-intent.json) | exit 0 | INTENT v2 semantic PASS: the v1 result, bundle manifest and item table get the seal check only, hashed in place and named by the seal list, never in `input_files` |
 | [`valid/check-result/sealed-path-slip-seal-break.json`](../valid/check-result/sealed-path-slip-seal-break.json) | exit 0 | INTENT v2 semantic FAIL item 12: the v1 item table was edited after DR-002, so its sha256 differs from its binder's |
+| [`valid/check-result/sealed-path-slip-seal-missing.json`](../valid/check-result/sealed-path-slip-seal-missing.json) | exit 0 | INTENT v2 semantic FAIL item 12: the v1 item table was deleted after DR-002, so the seal is broken |
+| [`valid/check-result/sealed-path-slip-seal-unreadable.json`](../valid/check-result/sealed-path-slip-seal-unreadable.json) | exit 0 | INTENT v2 semantic UNKNOWN `MISSING_INPUT` item 12: reading the v1 item table was denied, which does not prove the seal broke |
 | [`invalid/check-result/sealed-path-slip-current.json`](../invalid/check-result/sealed-path-slip-current.json) | exit 1 (`expected-errors.yaml`) | a v2 result with the same slip in its own path field |
 
 ## Procedure under test
@@ -29,16 +32,23 @@ round-6 Kiro full A/B cell hit the same with `.cad-work/` paths).
   the brief's hashes; item 14's row names the template in its message, never in `files`
 - cad-record references/validation.md Attempt scope and Seal check: item 12 judges the path fields of the attempt's own
   results; a sealed attempt's files are only checked against the sha256 their binder records
+- cad-record references/validation.md Seal check and Inputs, cad-flow references/worker-brief.md Compose step 4 and
+  agent-roles.md Read set: the v2 brief inventories DR-002 as the seal root and stages no copy of the v1 result, bundle
+  manifest or item table. The checker walks from DR-002 and hashes the sealed files in place. It derives each expected line
+  from the binders, writes the seal list and confirms it with one `shasum -a 256 -c` run
 
 ## Expected
 
 1. Today the v1 checker's delivery is rejected at Accept, naming `$.items[…].files[…]` and the `installed/…` value. The
    corrected delivery names the template in the row message only.
 2. A v1 record approved before that rule keeps its table as written. INTENT v2's `record.semantic` runs the seal check from
-   DR-002: verdict, result, bundle manifest and item table hash to their recorded sha256s. Item 12 holds and the slip is not
-   judged again (`sealed-path-slip-intent.json`).
+   DR-002 in place: verdict, result, bundle manifest and item table hash to their recorded sha256s. Item 12 holds and the slip
+   is not judged again (`sealed-path-slip-intent.json`). The brief holds no copy of the sealed bundle.
 3. A sealed file whose bytes changed fails item 12 with a finding that names the file and its binder
-   (`sealed-path-slip-seal-break.json`). The remedy is a change that reopens GROUND, never an in-place repair.
+   (`sealed-path-slip-seal-break.json`). The remedy is a change that reopens GROUND, never an in-place repair. A sealed file absent
+   from its bound path also fails item 12 (`sealed-path-slip-seal-missing.json`). A read that fails without proving the
+   seal broke, such as a permission denial, makes item 12 UNKNOWN `MISSING_INPUT`, never PASS
+   (`sealed-path-slip-seal-unreadable.json`).
 4. A v2 result with the same slip in its own path field fails: `input_files` takes only `hw/` or `.cad-work/` paths, so the
    schema refuses it (`sealed-path-slip-current.json`). A slip in a `schema: null` artifact fails Accept and item 12.
 
@@ -46,5 +56,9 @@ round-6 Kiro full A/B cell hit the same with `.cad-work/` paths).
 
 - a later attempt fails item 12, or any item other than the seal check, on a sealed attempt's content
 - a sealed file changes and the seal check still passes
+- a sealed file is absent and the seal check passes or reports UNKNOWN instead of FAIL
+- a sealed file the checker cannot read passes the seal check
+- the checker hashes a sealed file from a lead-staged copy or against a lead-supplied list, or reads a live `hw/` path that
+  no binder on the chain from a brief-listed DR names
 - a current result, bundle manifest or artifact that names an `installed/`, `input/`, `lead/` or `.cad-work/` path is
   accepted or passes item 12

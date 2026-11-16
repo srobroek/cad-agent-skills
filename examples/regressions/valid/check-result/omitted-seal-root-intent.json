@@ -1,0 +1,238 @@
+{
+  "format": "cad-agent-skills.check-result",
+  "schema_version": 1,
+  "id": "record-semantic/a1",
+  "check": "record-semantic",
+  "attempt": "a1",
+  "family": "record.semantic",
+  "producer_role": "cad-checker",
+  "stage": "INTENT",
+  "binding": {
+    "kind": "VERSION",
+    "version": "v3",
+    "version_manifest_sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3"
+  },
+  "input_files": [
+    {
+      "path": "hw/versions/v3/manifest.json",
+      "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3"
+    },
+    {
+      "path": "hw/versions/v3/obligations.yaml",
+      "sha256": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3"
+    },
+    {
+      "path": "hw/versions/v3/record/product.yaml",
+      "sha256": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
+    },
+    {
+      "path": "hw/versions/v1/manifest.json",
+      "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+    },
+    {
+      "path": "hw/versions/v1/obligations.yaml",
+      "sha256": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1"
+    },
+    {
+      "path": "hw/versions/v1/stage-verdict.json",
+      "sha256": "9191919191919191919191919191919191919191919191919191919191919191"
+    },
+    {
+      "path": "hw/versions/v2/manifest.json",
+      "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+    },
+    {
+      "path": "hw/versions/v2/obligations.yaml",
+      "sha256": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+    },
+    {
+      "path": "hw/versions/v2/stage-verdict.json",
+      "sha256": "9292929292929292929292929292929292929292929292929292929292929292"
+    }
+  ],
+  "implementation": {
+    "kind": "COMMAND",
+    "source_files": [
+      {
+        "path": "hw/checks/v3/record-semantic/a1/source/check.py",
+        "sha256": "e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2"
+      },
+      {
+        "path": "hw/checks/v3/record-semantic/a1/source/check.py.lock",
+        "sha256": "f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "uv",
+          "run",
+          "--locked",
+          "--script",
+          "/Users/me/stand/.cad-work/intent-v3-semantic/check.py"
+        ],
+        "cwd": "/Users/me/stand",
+        "exit_code": 0,
+        "stdout": "hw/checks/v3/record-semantic/a1/stdout.txt",
+        "stderr": "hw/checks/v3/record-semantic/a1/stderr.txt"
+      }
+    ],
+    "packages": [
+      {
+        "name": "pyyaml",
+        "version": "6.0.3"
+      }
+    ],
+    "platform": {
+      "os": "macOS 26.1",
+      "arch": "arm64",
+      "python": "3.12.8"
+    }
+  },
+  "scope": {
+    "subjects": [
+      {
+        "kind": "PRODUCT"
+      }
+    ],
+    "components": [],
+    "operations": [],
+    "expected_obligations": [
+      "record.semantic@product"
+    ],
+    "coverage_kind": "FULL"
+  },
+  "outcomes": [
+    {
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "facet": "CAD_VALID",
+      "outcome": "UNKNOWN",
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "evidence": [
+        {
+          "path": "hw/checks/v3/record-semantic/a1/artifacts/items.json",
+          "sha256": "0404040404040404040404040404040404040404040404040404040404040404"
+        }
+      ],
+      "findings": [
+        "record.semantic:item-9:hw-decisions-dr-002-yaml",
+        "record.semantic:item-12:hw-decisions-dr-002-yaml"
+      ],
+      "reason": "items 9 and 12 could not be assessed: hw/decisions/DR-002.yaml, the approval that the predecessor of hw/versions/v2/stage-verdict.json records, is not in the brief, so the seal check has no root and the seal list is empty; 16 of 18 items hold",
+      "unknown_code": "MISSING_INPUT"
+    }
+  ],
+  "findings": [
+    {
+      "id": "record.semantic:item-9:hw-decisions-dr-002-yaml",
+      "family": "record.semantic",
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "the predecessor GROUND v1 needs a HUMAN gate DR; hw/versions/v2/stage-verdict.json records hw/decisions/DR-002.yaml as its approval, and the brief does not inventory it"
+      },
+      "criterion": {
+        "property": "missing_gate_decisions",
+        "comparator": "EQUALS",
+        "value": 0,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Semantic check item 9 and Seal check",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "uncertainty": "the omitted approval is never read, so the seal of GROUND v1 is neither confirmed nor refuted",
+      "consequence": "the approved GROUND v1 chain is not checked in this attempt",
+      "remedy": "a brief defect: list hw/decisions/DR-002.yaml with its statement in a new brief and rerun record.semantic",
+      "recheck": {
+        "families": [
+          "record.semantic"
+        ],
+        "earliest_stage": "GROUND"
+      }
+    },
+    {
+      "id": "record.semantic:item-12:hw-decisions-dr-002-yaml",
+      "family": "record.semantic",
+      "obligation": "record.semantic@product",
+      "subject": {
+        "kind": "PRODUCT"
+      },
+      "severity": "MAJOR",
+      "outcome": "UNKNOWN",
+      "measured": {
+        "status": "UNKNOWN",
+        "reason": "missing seal root hw/decisions/DR-002.yaml, recorded by the predecessor approval of hw/versions/v2/stage-verdict.json; the brief does not inventory it, so nothing it seals is hashed"
+      },
+      "criterion": {
+        "property": "seal_mismatches",
+        "comparator": "EQUALS",
+        "value": 0,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Seal check",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
+      "method": {
+        "name": "semantic check program",
+        "tool": "check.py"
+      },
+      "uncertainty": "the omitted approval is never read, so the seal of GROUND v1 is neither confirmed nor refuted",
+      "consequence": "the approved GROUND v1 chain is not checked in this attempt",
+      "remedy": "a brief defect: list hw/decisions/DR-002.yaml with its statement in a new brief and rerun record.semantic",
+      "recheck": {
+        "families": [
+          "record.semantic"
+        ],
+        "earliest_stage": "GROUND"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "hw/checks/v3/record-semantic/a1/artifacts/items.json",
+      "sha256": "0404040404040404040404040404040404040404040404040404040404040404",
+      "role": "REPORT"
+    },
+    {
+      "path": "hw/checks/v3/record-semantic/a1/artifacts/seal.sha256",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "DATA"
+    },
+    {
+      "path": "hw/checks/v3/record-semantic/a1/stdout.txt",
+      "sha256": "0505050505050505050505050505050505050505050505050505050505050505",
+      "role": "LOG"
+    },
+    {
+      "path": "hw/checks/v3/record-semantic/a1/stderr.txt",
+      "sha256": "0606060606060606060606060606060606060606060606060606060606060606",
+      "role": "LOG"
+    }
+  ],
+  "complete": true,
+  "result": "UNKNOWN",
+  "limitations": [
+    "the brief omitted the seal root DR-002, a brief defect: the seal list is empty and the row cites the DR by the missing-root reference that hw/versions/v2/stage-verdict.json records, never by a live read"
+  ]
+}

@@ -56,8 +56,11 @@ a narrower writable filesystem path. Kiro, OpenCode and Claude policy layers do
 not provide OS isolation. An OS read-only mount or sandbox can provide stronger
 confinement, but this repository installs none. Host discovery, permissions,
 model routing and resource loads remain unproved until live smoke runs per host.
-The latest smoke round covered Claude Code, OpenCode and Kiro CLI V3; the Codex CLI and OMP profiles stay in both
-plugins but are not verified in it ([smoke matrix](smoke.md#matrix)).
+The latest smoke round covered Claude Code, OpenCode and Kiro CLI V3; the Codex CLI and OMP profiles stay in the
+plugin but are not verified in it ([smoke matrix](smoke.md#matrix)).
+The `record.semantic` checker reads sealed `hw/` files in place, read-only, through its program and `shasum`
+([cad-record seal check](../full/skills/cad-record/references/validation.md#seal-check)), and Kiro's file-tool deny on
+`hw/**` does not cover those shell reads ([Observed host limitations](#observed-host-limitations)).
 
 ### Observed host limitations
 

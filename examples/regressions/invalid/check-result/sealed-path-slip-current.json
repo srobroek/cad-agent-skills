@@ -38,18 +38,6 @@
       "sha256": "9191919191919191919191919191919191919191919191919191919191919191"
     },
     {
-      "path": "hw/checks/v1/record-semantic/a1/result.json",
-      "sha256": "8181818181818181818181818181818181818181818181818181818181818181"
-    },
-    {
-      "path": "hw/checks/v1/record-semantic/a1/bundle-manifest.json",
-      "sha256": "8282828282828282828282828282828282828282828282828282828282828282"
-    },
-    {
-      "path": "hw/checks/v1/record-semantic/a1/artifacts/items.json",
-      "sha256": "0101010101010101010101010101010101010101010101010101010101010101"
-    },
-    {
       "path": "hw/decisions/DR-002.yaml",
       "sha256": "7171717171717171717171717171717171717171717171717171717171717171"
     }
@@ -147,6 +135,11 @@
       "path": "hw/checks/v2/record-semantic/a1/artifacts/items.json",
       "sha256": "0404040404040404040404040404040404040404040404040404040404040404",
       "role": "REPORT"
+    },
+    {
+      "path": "hw/checks/v2/record-semantic/a1/artifacts/seal.sha256",
+      "sha256": "0303030303030303030303030303030303030303030303030303030303030303",
+      "role": "DATA"
     },
     {
       "path": "hw/checks/v2/record-semantic/a1/stdout.txt",
