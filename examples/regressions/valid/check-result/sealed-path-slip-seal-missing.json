@@ -97,7 +97,22 @@
         "kind": "PRODUCT"
       },
       "facet": "CAD_VALID",
-      "outcome": "UNKNOWN",
+      "outcome": "FAIL",
+      "value": {
+        "text": "17 of 18 items hold"
+      },
+      "criterion": {
+        "property": "semantic_items_holding",
+        "comparator": "EQUALS",
+        "value": 18,
+        "source": {
+          "kind": "POLICY",
+          "reference": "Semantic check, Attempt scope, Seal check and Reporting",
+          "origin": "cad-agent-skills cad-record skill",
+          "document": "references/validation.md"
+        },
+        "units": "count"
+      },
       "method": {
         "name": "semantic check program",
         "tool": "check.py"
@@ -110,9 +125,7 @@
       ],
       "findings": [
         "record.semantic:item-12:hw-checks-v1-record-semantic-a1-artifacts-items-json"
-      ],
-      "reason": "item 12 could not be assessed: hw/checks/v1/record-semantic/a1/artifacts/items.json, which its sealed binder hw/checks/v1/record-semantic/a1/bundle-manifest.json lists, is missing; 17 of 18 items hold",
-      "unknown_code": "MISSING_INPUT"
+      ]
     }
   ],
   "findings": [
@@ -124,10 +137,9 @@
         "kind": "PRODUCT"
       },
       "severity": "MAJOR",
-      "outcome": "UNKNOWN",
+      "outcome": "FAIL",
       "measured": {
-        "status": "UNKNOWN",
-        "reason": "hw/checks/v1/record-semantic/a1/artifacts/items.json is missing; its binder hw/checks/v1/record-semantic/a1/bundle-manifest.json, sealed by DR-002 through hw/versions/v1/stage-verdict.json, records 0101…0101"
+        "text": "hw/checks/v1/record-semantic/a1/artifacts/items.json is absent; its binder hw/checks/v1/record-semantic/a1/bundle-manifest.json, sealed by DR-002 through hw/versions/v1/stage-verdict.json, records 0101…0101"
       },
       "criterion": {
         "property": "seal_mismatches",
@@ -145,9 +157,9 @@
         "name": "semantic check program",
         "tool": "check.py"
       },
-      "uncertainty": "the sealed bytes cannot be hashed, so the seal is neither confirmed nor refuted",
-      "consequence": "the approved GROUND v1 evidence cannot be shown to match what DR-002 approved",
-      "remedy": "restore the sealed file from the approved record or report why it is unreadable; a missing sealed file is never PASS and is never repaired in place",
+      "uncertainty": "none; an absent sealed file is a broken seal",
+      "consequence": "the approved GROUND v1 evidence no longer holds every file DR-002 approved",
+      "remedy": "restore the sealed bytes from the approved record; a defect in sealed evidence is fixed by a change that reopens GROUND, never in place",
       "recheck": {
         "families": [
           "record.semantic"
@@ -179,8 +191,8 @@
     }
   ],
   "complete": true,
-  "result": "UNKNOWN",
+  "result": "FAIL",
   "limitations": [
-    "seal check of the approved GROUND v1 chain, hashed in place from DR-002; a missing or unreadable sealed file is UNKNOWN MISSING_INPUT, never PASS"
+    "seal check of the approved GROUND v1 chain, hashed in place from DR-002; the deleted item table is a broken seal, never re-judged and never UNKNOWN"
   ]
 }

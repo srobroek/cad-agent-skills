@@ -285,8 +285,11 @@ supersedes the stage never unseals what the approval bound. The `record.semantic
   the project root, where the tree digest also runs. Each line's status matches the program's outcome for that path: OK
   for a matching file, a failure for a FAIL or UNKNOWN one. A binder that a finding names only as context keeps its own
   status. A mismatch is a program defect: fix the program and rerun it.
-- Outcomes: a reached file whose bytes differ is FAIL, and its finding names the file and its binder. A missing or
-  unreadable file or binder is UNKNOWN `MISSING_INPUT`, never PASS, and its finding names the path and its binder. The
+- Outcomes: the seal is broken, a FAIL known for certain, when a reached file or binder is absent from its bound path or
+  its bytes differ from the recorded sha256; the finding names the file and its binder. A read that fails for a reason
+  that does not prove the seal broke is UNKNOWN `MISSING_INPUT`, never PASS. Such reasons are a permission denial, a tool
+  error, or a seal root the brief lacks. A missing root is a brief defect: `files` lacks an approval DR that an inventoried
+  verdict names or that item 9's predecessor gate needs. The finding names the path, its binder and the reason. The
   program never parses a binder that is FAIL or UNKNOWN, so it never reaches the files that only that binder lists.
 - Naming: the result's `input_files` list the inventory the program read. A file read only in place is named by its
   seal-list line, and an item-table row or finding names it by that `hw/` path.
