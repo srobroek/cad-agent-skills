@@ -88,6 +88,8 @@ check-result/invalid/lead-review-not-stopped.json: "$.outcomes[0].unknown_code: 
 check-result/invalid/pass-without-criterion.json: "$.outcomes[0]: 'criterion' is a required property"
 # finding ids are family:anchor:locus, never positional
 check-result/invalid/positional-finding-id.json: "$.findings[0].id: 'finding-1' does not match"
+# a REVIEW inspected path names a published hw/ file, never a scratch input copy
+check-result/invalid/review-inspected-scratch-path.json: "$.implementation.inspected[0].path: '.cad-work/review-u1/input/hw/versions/v6/manifest.json' does not match '^hw/"
 # a REVIEW implementation forbids commands
 check-result/invalid/review-with-commands.json: "$.implementation: Additional properties are not allowed ('commands' was unexpected)"
 # a reviewer result needs separate mechanical and DFM coverage
