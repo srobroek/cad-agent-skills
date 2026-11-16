@@ -44,7 +44,10 @@ here, other = Path.cwd(), Path(sys.argv[1])
 SK = "skills/cad-flow/assets/stages.yaml"
 FAM = "skills/cad-record/schemas/common.schema.json"
 PROD = "skills/cad-record/schemas/product.schema.json"
-for p in (here / "full" / SK, here / "full" / FAM, other / PROD, other / "agents"):
+needed = [other / PROD, other / "agents"]
+for v in ("full", "lean"):
+    needed += [here / v / SK, here / v / FAM, here / v / "agents"]
+for p in needed:
     if not p.exists():
         sys.exit(die(f"missing {p}: run from the repo root and pass a cad-agent checkout"))
 
@@ -117,9 +120,9 @@ if lids != ids:
 if lgates != gates:
     report("lean gates differ from full", [f"{gates} vs {lgates}"])
 if families("lean") != fams:
-    report("lean check families differ from full", [])
+    report("lean check families differ from full", sorted(set(families("lean")) ^ set(fams)) or ["order differs"])
 if agents(here / "lean") != agents(here / "full"):
-    report("lean agents differ from full", [])
+    report("lean agents differ from full", sorted(set(agents(here / "lean")) ^ set(agents(here / "full"))) or ["order differs"])
 
 print(f"stages {len(ids)}, gate kinds {kinds}, families {len(fams)}, agents {sorted(a)}")
 print("\n".join(drift) if drift else "no drift")
