@@ -34,6 +34,38 @@ common.SetArguments(args); common.SetTools(tools)  # TopTools_ListOfShape of a a
 common.SetNonDestructive(True); common.SetFuzzyValue(1e-7); common.Build()
 ```
 
+### Permitted accelerations
+
+`BRepExtrema_DistShapeShape` dominates sweep time (97 to 99.7% in measured product runs; a 19-minute single-process lamp sweep), so a
+checker may speed up a sweep or interference run, but only by an acceleration whose outputs equal an unaccelerated reference.
+
+1. Conservative only. A pair may be skipped on a proven bound that covers the whole joint-motion envelope between consecutive samples,
+   plus the largest clearance criterion that applies to it. A rate estimated from the samples is no bound
+   ([results.md — Coverage](results.md#coverage)). An acceleration never relaxes the sampling, the criterion or a tolerance above.
+2. Allowed kinds:
+   - a pair cache with exact keys (rule 4);
+   - a broad phase bounded by the rigid-motion envelope of each occurrence over the interval, in place of the static AABB of step 1;
+   - skipping the solid treatment (step 3) for a pair whose boxes are disjoint by that bound;
+   - a process pool or OCCT threads: each pair outcome is deterministic and independent of worker count and order, so parallelism changes
+     no result;
+   - a persistent cache keyed by content (rule 4).
+3. Record in the existing fields, with no new schema field: `method` names each acceleration that ran and its bound; `sampling` and the
+   DATA artifact hold the counts of pairs measured, skipped by bound and served from cache per pose; `limitations` states the equality
+   sample. A skipped pair is named in the artifact with its bound, never silently dropped; the counts sum to the pairs enumerated in step 1.
+4. A cache entry is keyed by the sha256 of both shapes' content, both poses and every measurement parameter (distance and fuzzy
+   tolerances, volume threshold, tool and pin versions). A value from another version is used only when every key part matches.
+5. Equality sample: re-measure without any acceleration a stated subset of pairs and poses (name it; include every pair nearest the
+   criterion and the endpoints and events) and compare distance, shared volume and witness points. The result states the subset size.
+6. A sample mismatch, or an accelerated run with no equality sample, leaves the obligation UNKNOWN `UNSUPPORTED_METHOD` (the method is not
+   valid evidence, [results.md — Outcomes](results.md#outcomes)), never PASS. A deadline that ends the run stays UNKNOWN `TIMEOUT` as
+   there.
+7. Plan wall time per case: estimate it from a timed unaccelerated sample of pairs, and keep the run inside the brief's `limits`
+   `wall_seconds` ([worker-brief.md](../../cad-flow/references/worker-brief.md)); split cases across units rather than weaken the sample.
+
+```python
+ext.SetDeflection(1e-7)  # pin the same parameters in cached and reference runs; record them in the cache key
+```
+
 ## geometry.interference
 
 1. `@assembly`: every pair at the nominal pose; PASS when no pair interferes outside a declared intended fit.
