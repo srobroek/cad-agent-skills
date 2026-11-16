@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The worker-brief schema accepts a `rejected/<unit>/<path>` snapshot for repair units, under the same dot-segment rules as the other snapshot
+  forms. A valid repair-brief fixture and two invalid ones (dot segment, missing unit) cover it.
 - Split `agent-roles.md` by role: the common file keeps the shared rules and `agent-roles/<role>.md` holds each role's duty and rules, so a
   checker or reviewer loads less. Native profiles, Kiro `resources` and links follow.
 - agent-roles no longer contradicts itself on what a worker may follow: links to lead references are tagged `lead-side`, and the Read set

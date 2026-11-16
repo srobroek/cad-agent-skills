@@ -461,8 +461,12 @@ worker-brief/invalid/scratch-input.yaml: "$.input_inventory.files[0].path: '.cad
 worker-brief/invalid/skill-hash.yaml: "$.resources.skills[0]: Additional properties are not allowed ('sha256' was unexpected)"
 # an installed asset reaches the unit as a snapshot named by its skill-relative logical path, never an absolute path
 worker-brief/invalid/snapshot-absolute-installed.yaml: "$.input_inventory.snapshots[1].path: '/Users/me/.agents/skills/cad-record/assets/project-template/hw/product.yaml' does not match"
-# a snapshot path is lead/attempts.txt or installed/<skill-name>/<path>, with no dot segment
+# a snapshot path is lead/attempts.txt, installed/<skill-name>/<path> or rejected/<unit>/<path>, with no dot segment
 worker-brief/invalid/snapshot-outside-lead.yaml: "$.input_inventory.snapshots[0].path: 'lead/../hw/product.yaml' does not match"
+# a rejected-unit snapshot path has no dot segment
+worker-brief/invalid/rejected-dot-dot.yaml: "$.input_inventory.snapshots[0].path: 'rejected/part-a/output/../../hw/product.yaml' does not match"
+# a rejected-unit snapshot path names the rejected unit before the file path
+worker-brief/invalid/rejected-no-unit.yaml: "$.input_inventory.snapshots[0].path: 'rejected/result.json' does not match"
 # a sourcing brief carries at least one seed URL per subject
 worker-brief/invalid/sourcing-empty-seed-urls.yaml: "$.seed_urls: [] should be non-empty"
 # a sourcing brief carries its seed URLs

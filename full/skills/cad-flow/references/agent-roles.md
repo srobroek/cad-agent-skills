@@ -71,8 +71,8 @@ that is the evidence, not a stop ([lead-side: cad-flow worker delivery](worker-d
 
 A unit whose `task` starts with `REPAIR of` is a repair unit ([lead-side: delegation Repair units](delegation.md#repair-units)): fix only
 the defects its task lists, start from the `rejected/` copies of its inputs (a program from its copy, as in step 6), rewrite and
-revalidate what the fix changes, and deliver with the same checks; any other defect you find goes in `limits`, never fixed. Its limits are
-the brief's, shorter than a full unit's.
+revalidate what the fix changes (no path field cites a `rejected/` copy: Path fields name `hw/` origins and targets only), and deliver
+with the same checks; any other defect you find goes in `limits`, never fixed. Its limits are the brief's, shorter than a full unit's.
 
 Run each command alone, never chained with `;`, `&&`, `||` or `|`: the one pipeline is the tree digest of step 4, and a program run's
 `> <stdout> 2> <stderr>` redirect is part of its form. The shell runs only the command forms this contract and your skills name. List,

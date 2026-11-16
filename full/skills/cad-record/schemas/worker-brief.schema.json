@@ -58,7 +58,7 @@
           "minItems": 1
         },
         "snapshots": {
-          "description": "lead-owned facts copied to .cad-work/<unit>/input/<path> and listed in input/SHA256SUMS (cad-flow worker-brief.md#compose step 2): lead/attempts.txt, or installed/<skill-name>/<path-within-skill> for a byte copy of an installed file a check reads; a logical path, never an absolute one. The sha256 binds the copy as a check input through brief_sha256; it is no install audit",
+          "description": "lead-owned facts copied to .cad-work/<unit>/input/<path> and listed in input/SHA256SUMS (cad-flow worker-brief.md#compose step 2): lead/attempts.txt, installed/<skill-name>/<path-within-skill> for a byte copy of an installed file a check reads, or, in a repair unit only (cad-flow delegation.md#repair-units), rejected/<unit>/<path-within-unit> for a byte copy of a file of the rejected unit; a logical path, never an absolute one. The sha256 binds the copy as a check input through brief_sha256; it is no install audit",
           "type": "array",
           "items": {
             "type": "object",
@@ -67,7 +67,7 @@
             "properties": {
               "path": {
                 "type": "string",
-                "pattern": "^(lead/attempts\\.txt|installed/cad-(flow|record|select|design|model|verify|review|release)/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+)$"
+                "pattern": "^(lead/attempts\\.txt|installed/cad-(flow|record|select|design|model|verify|review|release)/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+|rejected/(?!lead/)(?!stage-)[a-z][a-z0-9_-]*/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+)$"
               },
               "sha256": {"$ref": "common.schema.json#/$defs/sha256"},
               "bytes": {"type": "integer", "minimum": 0}

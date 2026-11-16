@@ -129,7 +129,9 @@ sha256 typo, a missing log and a schema failure of `delivery.json` or of a resul
   writes new files under its own `output/`, the rejected unit's scratch stays as it is, and nothing of the rejected delivery was merged.
 - Its brief ([worker-brief Compose](worker-brief.md#compose)) starts its `task` with `REPAIR of <rejected unit>:` and names only the
   defects the rejection `reason` lists, each with its file, JSON path and value. Its inputs are the original brief's inputs plus the
-  rejected unit's `output/` files, program and lock as `input/` copies. Its `expected` block and `boundary` equal the original's.
+  rejected unit's `output/` files, program and lock as `input/rejected/<rejected unit>/…` copies. A `rejected/` copy is a snapshot (schema
+  `worker-brief`), never a published `hw/` path, so no path field of the repair's results or bundle manifest names one; they cite the same
+  `hw/` origins and targets as any unit. Its `expected` block and `boundary` equal the original's.
 - Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker, reviewer or sourcing unit, 1200 and 65 for a
   designer unit.
 - The same [Accept](worker-delivery.md#accept) steps judge its delivery, and an independent checker judges its results as for any
