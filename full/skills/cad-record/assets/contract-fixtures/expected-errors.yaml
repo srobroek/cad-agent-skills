@@ -21,6 +21,10 @@ bom-row/invalid/zero-quantity.yaml: '$.quantity: 0 is less than the minimum of 1
 bom/invalid/missing-binding.yaml: "$: 'version_manifest_sha256' is a required property"
 # rows are bom-row roots; a BUY row needs purchase
 bom/invalid/row-invalid.yaml: "$.rows[1]: 'purchase' is a required property"
+# a BOM part count is never negative
+bom/invalid/negative-part-count.yaml: "$.totals.part_count: -1 is less than the minimum of 0"
+# BOM totals carry a mass fact, UNKNOWN with a reason when unweighed
+bom/invalid/totals-without-mass.yaml: "$.totals: 'mass' is a required property"
 # a CHECK bundle inventories its result.json
 bundle-manifest/invalid/check-without-result.json: "'role': 'LOG'}] does not contain items matching the given schema"
 # installed policy is recorded by path and plugin name/version, never hashed
@@ -33,8 +37,18 @@ bundle-manifest/invalid/review-recipe-with-commands.json: "$.recipe: Additional 
 bundle-manifest/invalid/scratch-file.json: "$.files[1].path: '.cad-work/chk/check.py' does not match '^hw/"
 # paths have no dot segments
 bundle-manifest/invalid/unsafe-path.json: "$.files[1].path: 'hw/checks/v6/../../product.yaml' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/input-cadwork-path.json: "$.input[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/input-input-path.json: "$.input[0].path: 'input/hw/versions/v9/manifest.json' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/input-installed-path.json: "$.input[0].path: 'installed/cad-record/assets/project-template/hw/product.yaml' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/inspected-scratch-path.json: "$.recipe.inspected[1].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
 # items are capability-profile roots; a template never states an envelope
 capability-library/invalid/template-invents-envelope.yaml: "$.profiles[0].envelope.x.status: 'UNKNOWN' was expected"
+# a capability library lists its profiles
+capability-library/invalid/missing-profiles.yaml: "$: 'profiles' is a required property"
 # a retained artifact needs its sha256
 capability-profile/invalid/artifact-without-sha.yaml: "$.calibrations[0].source: 'sha256' is a dependency of 'artifact'"
 # a FORBIDDEN material approval needs a reason
@@ -74,6 +88,8 @@ check-result/invalid/lead-review-not-stopped.json: "$.outcomes[0].unknown_code: 
 check-result/invalid/pass-without-criterion.json: "$.outcomes[0]: 'criterion' is a required property"
 # finding ids are family:anchor:locus, never positional
 check-result/invalid/positional-finding-id.json: "$.findings[0].id: 'finding-1' does not match"
+# a REVIEW inspected path names a published hw/ file, never a scratch input copy
+check-result/invalid/review-inspected-scratch-path.json: "$.implementation.inspected[0].path: '.cad-work/review-u1/input/hw/versions/v6/manifest.json' does not match '^hw/"
 # a REVIEW implementation forbids commands
 check-result/invalid/review-with-commands.json: "$.implementation: Additional properties are not allowed ('commands' was unexpected)"
 # a reviewer result needs separate mechanical and DFM coverage
@@ -90,6 +106,18 @@ check-result/invalid/semantic-finding-without-item.json: "$.findings[0].id: 'rec
 check-result/invalid/unknown-reported-pass.json: "$.result: 'PASS' is not one of ['FAIL', 'UNKNOWN']"
 # families are the registered enum
 check-result/invalid/unregistered-family.json: "$.family: 'geometry.magic' is not one of ["
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/input-files-cadwork-path.json: "$.input_files[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/input-files-input-path.json: "$.input_files[0].path: 'input/hw/versions/v9/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/input-files-installed-path.json: "$.input_files[0].path: 'installed/cad-record/assets/project-template/hw/product.yaml' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/source-files-scratch-path.json: "$.implementation.source_files[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/artifact-scratch-path.json: "$.artifacts[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/evidence-scratch-path.json: "$.outcomes[0].evidence[0].path: '.cad-work/chk/output/pairs.json' does not match '^hw/"
 # check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the
 # review's own result.json or bundle-manifest.json is semantic only (references/validation.md item 11), because
 # the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.
@@ -108,7 +136,7 @@ common/invalid/datasheet-without-locator.yaml: "$.source[0]: {'kind': 'DATASHEET
 # ESTIMATE needs uncertainty
 common/invalid/estimate-without-uncertainty.yaml: "$.fact[0]: 'uncertainty' is a required property"
 # a quantity is a value or an interval, not both
-common/invalid/interval-and-value.yaml: "should not be valid under {'anyOf': [{'required': ['lower']}, {'required': ['upper']}]}"
+common/invalid/interval-and-value.yaml: "$.quantity[0]: {'value': 1, 'lower': 0, 'upper': 2, 'units': 'mm'} should not be valid under {'anyOf': [{'required': ['lower']}, {'required': ['upper']}]}"
 # NOT_APPLICABLE needs reviewed_by
 common/invalid/na-unreviewed.yaml: "$.fact[0]: 'reviewed_by' is a required property"
 # obligation ids are <family>@<anchor> with a registered family and anchor grammar
@@ -143,6 +171,18 @@ decision/invalid/release-without-verdict.yaml: "$.binding: 'verdict' is a requir
 decision/invalid/statement-in-scratch.yaml: "$.statement.path: '.cad-work/lead/sessions/20261103T100000Z/statements/DR-007.txt' does not match '^hw/decisions/statements/DR-"
 # SUPERSEDED refers to the old DR
 decision/invalid/supersede-without-refers.yaml: "$: 'refers' is a required property"
+# a CHANGE decision names the baseline version it changes
+decision/invalid/change-without-baseline.yaml: "$.change: 'baseline' is a required property"
+# a CHANGE decision carries its change content
+decision/invalid/change-without-change.yaml: "$: 'change' is a required property"
+# a RELEASE decision binds a release inventory, never a plain proposal file
+decision/invalid/release-binds-proposal.yaml: "$.binding.kind: 'RELEASE_INVENTORY' was expected"
+# a RELEASE decision hashes its readiness verdict with a full sha256
+decision/invalid/release-verdict-short-sha.yaml: "$.binding.verdict.sha256: '7777' does not match '^[0-9a-f]{64}$'"
+# a waiver names the authority that grants it
+decision/invalid/waiver-without-authority.yaml: "$.waiver: 'authority' is a required property"
+# a WAIVER decision carries its waiver content
+decision/invalid/waiver-without-waiver.yaml: "$: 'waiver' is a required property"
 # features are semantic lower ids, never face indices
 interfaces/invalid/face-index-feature.yaml: "$.interfaces[0].members[0].feature: 'Face12' does not match"
 # play is required (a value or an explicit UNKNOWN/NOT_APPLICABLE)
@@ -171,6 +211,8 @@ lead-claim/invalid/unknown-harness.yaml: "$.harness: 'CURSOR' is not one of ['OM
 material-library/invalid/missing-profiles.yaml: "$: 'profiles' is a required property"
 # items are material-profile roots; a KNOWN value needs sources
 material-library/invalid/profile-invalid.yaml: "$.profiles[0].properties[0].value: 'sources' is a required property"
+# a material library holds profiles only
+material-library/invalid/unknown-key.yaml: "$: Additional properties are not allowed ('notes' was unexpected)"
 # test temperature is required, as a value or an explicit UNKNOWN
 material-profile/invalid/condition-omitted.yaml: "$.properties[0].conditions: 'temperature' is a required property"
 # a FAMILY profile leaves grade UNKNOWN or NOT_APPLICABLE
@@ -359,6 +401,8 @@ verification-row/invalid/unknown-without-code.yaml: "$: 'unknown_code' is a requ
 verification/invalid/row-invented-pass.yaml: "$.rows[2]: 'results' is a required property"
 # format names the verification root
 verification/invalid/wrong-format.yaml: "$.format: 'cad-agent-skills.verification' was expected"
+# a verification index names the stage it was derived at
+verification/invalid/missing-stage.yaml: "$: 'stage' is a required property"
 # runtime has at most one environment per kernel
 version-manifest/invalid/duplicate-kernel.json: '$.runtime.environments: Too many items match the given schema (expected at most 1)'
 # geometry is millimetres, right-handed Z-up
@@ -394,7 +438,7 @@ worker-brief/invalid/missing-rubric.yaml: "$.resources: 'rubric' is a required p
 # resources list the delivery template and valid check-result fixtures the worker starts from
 worker-brief/invalid/missing-templates.yaml: "$.resources: 'templates' is a required property"
 # every role but the reviewer carries the preflight-resolved check-jsonschema argv
-worker-brief/invalid/missing-validator.yaml: "does not contain items matching the given schema"
+worker-brief/invalid/missing-validator.yaml: "$.resources.tools: [{'name': 'yaml-loader', 'argv': ['/Users/me/projects/phone-stand/.cad-work/lead/validator/bin/python'], 'version': 'PyYAML 6.0.3'}] does not contain items matching the given schema"
 # a target pattern belongs to a sourcing or checker brief only; a producer names literal targets
 worker-brief/invalid/pattern-outside-sourcing.yaml: "$.expected.outputs[2]: 'target' is a required property"
 # a target pattern is bounded to one sha256-named directory and file name
@@ -410,7 +454,7 @@ worker-brief/invalid/relative-skill-path.yaml: "$.resources.skills[0].path: 'ski
 # unit ids exclude lead and stage-*
 worker-brief/invalid/reserved-unit.yaml: "$.unit: 'lead' does not match '^(?!lead$)"
 # the reviewer runs no tool, so its brief lists none
-worker-brief/invalid/reviewer-with-tools.yaml: "is expected to be empty"
+worker-brief/invalid/reviewer-with-tools.yaml: "$.resources.tools: [{'name': 'check-jsonschema', 'argv': ['/Users/me/projects/phone-stand/.cad-work/lead/validator/bin/check-jsonschema'], 'version': 'check-jsonschema, version 0.39.0'}] is expected to be empty"
 # input inventory files are hw/ paths (set digest)
 worker-brief/invalid/scratch-input.yaml: "$.input_inventory.files[0].path: '.cad-work/base-part/input/part.yaml' does not match '^hw/"
 # resource entries carry name, absolute path and URI, never a sha256

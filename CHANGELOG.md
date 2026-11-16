@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Add targeted invalid contract fixtures: WAIVER without its waiver or authority, CHANGE without its change or baseline, RELEASE bound to a
+  proposal or a malformed verdict hash, a negative BOM part count, BOM totals without mass, a verification index without stage, a capability
+  library without profiles and a material library with an unknown key. Four regression and three contract error substrings now name their
+  field path.
+- cad-record validation states the earlier-attempt rule (sealed files are seal-checked, others only re-hashed, none judged again) once, in
+  Attempt scope; Scope, Earlier snapshots, the seal-check note and the Inputs table link to it. Meaning is unchanged.
+- Check-result and bundle-manifest schemas now reject a cited file path outside `hw/` (`input_files`, `source_files`, `inspected`, `artifacts`,
+  `evidence`, bundle `input`): an input copy, installed snapshot or `.cad-work/` path fails. Each has an invalid fixture. Command `argv` and
+  `cwd` stay unconstrained, and worker-delivery needed no change: its scratch paths are not published path fields.
 - Removed the lean variant (`cad-agent-skills-lean`); it was not faster than full in smoke rounds 4-6. Across six comparable full/lean
   pairs, lean was slower in three, about even in two and faster in one, with no consistent defect or acceptance advantage. The repository
   now has one plugin root, `full/`. Plugin versions stay at 0.1.0: nothing is released yet.
