@@ -148,3 +148,6 @@
   stage copies of sealed results, bundles, sources, artifacts or logs, and a REVIEW result's `inspected` files are never seal
   inputs. A sealed file absent from its bound path is FAIL; one the checker cannot read for another reason is UNKNOWN
   `MISSING_INPUT`, never PASS. Unsealed earlier attempts are still re-hashed from copies.
+  Accept recomputes the reached set from the brief's seal roots and rejects a seal-list line outside it, and a holding
+  item 12 whose list lacks a line of that set. Only a
+  `record.semantic` result may cite a seal-list path, or the missing-root reference of a seal root the brief omitted.

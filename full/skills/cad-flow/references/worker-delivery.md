@@ -50,12 +50,19 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
      [cad-review rubric](../../cad-review/references/rubric.md#per-role);
    - every `artifacts[]` entry of a result the delivery outputs is an `outputs` entry whose target is that path, with that sha256.
 
+   Then confirm a `record.semantic` result's seal list, its `artifacts/seal.sha256` output: recompute the reached set from the
+   brief's seal roots over the live tree, as the
+   [cad-record Seal check](../../cad-record/references/validation.md#seal-check) walks it. Every seal-list line lies in that set
+   with the same sha256. When item 12 holds, every line of the set is also in the list. A line outside the set, a line with
+   another sha256, or a set line missing from a holding item 12 rejects the delivery, and its `reason` names the path.
+
    Then scan every [path field](../../cad-record/references/validation.md#path-fields) of each result file and of each JSON file its
    `artifacts[]` lists, at every depth, item-table rows included. Each value is a published `hw/` path of one of these kinds:
 
    - an `input_inventory.files` path of the brief;
-   - a path that a line of the result's seal list names
-     ([cad-record validation Seal check](../../cad-record/references/validation.md#seal-check));
+   - for a `record.semantic` result and its artifacts only: a path that a line of its confirmed seal list names, or a
+     missing-root reference, a DR path that the `predecessor.approval` of a stage verdict in the brief's
+     `input_inventory.files` records;
    - a target of this delivery: an `outputs` target, or a `source/`, `stdout.txt` or `stderr.txt` path beside a result target,
      which [merge-deliveries](#merge-deliveries) step 3 retains.
 

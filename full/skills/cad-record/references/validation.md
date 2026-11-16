@@ -292,7 +292,13 @@ supersedes the stage never unseals what the approval bound. The `record.semantic
   verdict names or that item 9's predecessor gate needs. The finding names the path, its binder and the reason. The
   program never parses a binder that is FAIL or UNKNOWN, so it never reaches the files that only that binder lists.
 - Naming: the result's `input_files` list the inventory the program read. A file read only in place is named by its
-  seal-list line, and an item-table row or finding names it by that `hw/` path.
+  seal-list line, and an item-table row or finding names it by that `hw/` path. A missing root is named, without a live
+  read, by a missing-root reference: the DR path that an inventoried verdict's `predecessor.approval` records. When no
+  inventoried file records that path (item 9's predecessor gate), the row names the predecessor verdict, an inventoried
+  file, and its message says the approval DR is missing.
+- Provenance: every seal-list line lies in the reached set of the brief's roots, with the same sha256. The reached set is
+  every line this walk derives over the live tree. When item 12 holds, the list holds the whole set. Accept confirms both
+  ([cad-flow worker-delivery Accept](../../cad-flow/references/worker-delivery.md#accept) step 6).
 
 An unsealed earlier file, one no root reaches, is only re-hashed, the same way, from its input copy
 ([Inputs](#inputs)), against the sha256 that its own attempt's verdict, manifest or bundle manifest records. A copy the
@@ -390,7 +396,8 @@ check result ([cad-verify results — Outcomes](../../cad-verify/references/resu
     the loader rejects it or the report lists it in `errors` or `parse_errors`, with every message and JSON path; UNKNOWN
     `NOT_RUN` when its command did not run or the report does not name it, never PASS.
   - `record.semantic`: one row per item: item number, outcome, files, message. Item 12's row names the seal list in
-    `files`, and each FAIL or UNKNOWN file of the seal check with its binder.
+    `files`, each FAIL or UNKNOWN file of the seal check with its binder, and each missing-root reference
+    ([Seal check](#seal-check)).
 - Seal list: `artifacts/seal.sha256` in the `record.semantic` bundle, role `DATA`, written in every attempt
   ([Seal check](#seal-check)).
 - Each non-PASS file row or item is one finding: `record.schema:product:<locus>` or
