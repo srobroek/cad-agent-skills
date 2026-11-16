@@ -287,26 +287,23 @@
       }
     },
     {
-      "if": {"required": ["family"], "properties": {"family": {"const": "delivery.integrity"}}},
-      "then": {
-        "description": "an integrity result names each unit and its merged hw/ target with the sha256, never a scratch source (cad-record validation item 12)",
-        "properties": {
-          "input_files": {"items": {"$ref": "#/$defs/hw_file"}},
-          "artifacts": {"items": {"$ref": "#/$defs/hw_file"}},
-          "implementation": {
-            "properties": {
-              "source_files": {"items": {"$ref": "#/$defs/hw_file"}},
-              "inspected": {"items": {"$ref": "#/$defs/hw_file"}}
-            }
-          },
-          "outcomes": {"items": {"properties": {"evidence": {"items": {"$ref": "#/$defs/hw_file"}}}}}
-        }
+      "description": "every cited file is published under hw/; an input copy, installed snapshot or scratch path is named in a message only (cad-record validation, Path fields); a delivery.integrity result names each unit's merged hw/ target, never its scratch source (item 12)",
+      "properties": {
+        "input_files": {"items": {"$ref": "#/$defs/hw_file"}},
+        "artifacts": {"items": {"$ref": "#/$defs/hw_file"}},
+        "implementation": {
+          "properties": {
+            "source_files": {"items": {"$ref": "#/$defs/hw_file"}},
+            "inspected": {"items": {"$ref": "#/$defs/hw_file"}}
+          }
+        },
+        "outcomes": {"items": {"properties": {"evidence": {"items": {"$ref": "#/$defs/hw_file"}}}}}
       }
     }
   ],
   "$defs": {
     "hw_file": {
-      "description": "a cited file published under hw/, never a .cad-work/ path",
+      "description": "a cited file published under hw/, never an input copy, installed snapshot or .cad-work/ path",
       "properties": {"path": {"$ref": "common.schema.json#/$defs/hw_path"}}
     },
     "not_release_manifest": {

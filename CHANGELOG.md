@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Check-result and bundle-manifest schemas now reject a cited file path outside `hw/` (`input_files`, `source_files`, `inspected`, `artifacts`,
+  `evidence`, bundle `input`): an input copy, installed snapshot or `.cad-work/` path fails. Each has an invalid fixture. Command `argv` and
+  `cwd` stay unconstrained, and worker-delivery needed no change: its scratch paths are not published path fields.
 - Removed the lean variant (`cad-agent-skills-lean`); it was not faster than full in smoke rounds 4-6. Across six comparable full/lean
   pairs, lean was slower in three, about even in two and faster in one, with no consistent defect or acceptance advantage. The repository
   now has one plugin root, `full/`. Plugin versions stay at 0.1.0: nothing is released yet.

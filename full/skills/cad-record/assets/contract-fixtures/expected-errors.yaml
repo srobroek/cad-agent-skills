@@ -33,6 +33,14 @@ bundle-manifest/invalid/review-recipe-with-commands.json: "$.recipe: Additional 
 bundle-manifest/invalid/scratch-file.json: "$.files[1].path: '.cad-work/chk/check.py' does not match '^hw/"
 # paths have no dot segments
 bundle-manifest/invalid/unsafe-path.json: "$.files[1].path: 'hw/checks/v6/../../product.yaml' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/input-cadwork-path.json: "$.input[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/input-input-path.json: "$.input[0].path: 'input/hw/versions/v9/manifest.json' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/input-installed-path.json: "$.input[0].path: 'installed/cad-record/assets/project-template/hw/product.yaml' does not match '^hw/"
+# a bundle manifest names an input or inspected file by its hw/ origin, never an input copy, installed snapshot or scratch path
+bundle-manifest/invalid/inspected-scratch-path.json: "$.recipe.inspected[1].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
 # items are capability-profile roots; a template never states an envelope
 capability-library/invalid/template-invents-envelope.yaml: "$.profiles[0].envelope.x.status: 'UNKNOWN' was expected"
 # a retained artifact needs its sha256
@@ -90,6 +98,18 @@ check-result/invalid/semantic-finding-without-item.json: "$.findings[0].id: 'rec
 check-result/invalid/unknown-reported-pass.json: "$.result: 'PASS' is not one of ['FAIL', 'UNKNOWN']"
 # families are the registered enum
 check-result/invalid/unregistered-family.json: "$.family: 'geometry.magic' is not one of ["
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/input-files-cadwork-path.json: "$.input_files[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/input-files-input-path.json: "$.input_files[0].path: 'input/hw/versions/v9/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/input-files-installed-path.json: "$.input_files[0].path: 'installed/cad-record/assets/project-template/hw/product.yaml' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/source-files-scratch-path.json: "$.implementation.source_files[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/artifact-scratch-path.json: "$.artifacts[0].path: '.cad-work/chk/input/manifest.json' does not match '^hw/"
+# a result cites its input, source, artifact and evidence files by published hw/ path, never an input copy, installed snapshot or scratch path
+check-result/invalid/evidence-scratch-path.json: "$.outcomes[0].evidence[0].path: '.cad-work/chk/output/pairs.json' does not match '^hw/"
 # check-result: a REVIEW `inspected` may list other checks' result.json and bundle-manifest.json; listing the
 # review's own result.json or bundle-manifest.json is semantic only (references/validation.md item 11), because
 # the schema cannot compare an inspected path with the result's own id, so no invalid schema fixture exists.

@@ -10,7 +10,7 @@
     "schema_version": {"const": 1},
     "kind": {"enum": ["CHECK", "DRAWING", "BOM", "VERIFICATION"]},
     "binding": {"$ref": "common.schema.json#/$defs/binding"},
-    "input": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1},
+    "input": {"type": "array", "items": {"$ref": "#/$defs/hw_file"}, "minItems": 1},
     "recipe": {
       "oneOf": [
         {
@@ -30,7 +30,7 @@
           "required": ["kind", "inspected"],
           "properties": {
             "kind": {"const": "REVIEW"},
-            "inspected": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/file_hash"}, "minItems": 1}
+            "inspected": {"type": "array", "items": {"$ref": "#/$defs/hw_file"}, "minItems": 1}
           }
         }
       ]
@@ -67,5 +67,14 @@
         }
       }
     }
-  ]
+  ],
+  "$defs": {
+    "hw_file": {
+      "description": "an input or inspected file named by its published hw/ origin, never an input copy, installed snapshot or .cad-work/ path (cad-record validation, Path fields)",
+      "allOf": [
+        {"$ref": "common.schema.json#/$defs/file_hash"},
+        {"properties": {"path": {"$ref": "common.schema.json#/$defs/hw_path"}}}
+      ]
+    }
+  }
 }
