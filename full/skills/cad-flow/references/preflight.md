@@ -67,8 +67,8 @@ claim, preflight and unit log at finish. Nothing in `.cad-work/lead/sessions/` i
    [cad-record's layout](../../cad-record/layout.json), `<cad-flow>/assets/stages.yaml`, `<cad-flow>/assets/worker-brief.yaml`,
    `<cad-flow>/assets/worker-delivery.yaml`, the brief templates
    `<cad-record>/assets/contract-fixtures/check-result/valid/{version-pass,unit-prebuild,semantic-aggregate-fail,review-pass}.json`,
-   [cad-flow agent-roles](agent-roles.md) and [cad-review's rubric](../../cad-review/references/rubric.md)
-   `<cad-review>/references/rubric.md`.
+   [cad-flow agent-roles](agent-roles.md) with its five role files `agent-roles/<role>.md`, and
+   [cad-review's rubric](../../cad-review/references/rubric.md) `<cad-review>/references/rubric.md`.
 3. Plugin provenance ([cad-record common plugin](../../cad-record/schemas/common.schema.json#/$defs/plugin)): `name` and `version` are the
    `metadata.plugin` and `metadata.version` values in the frontmatter of the resolved `<cad-flow>/SKILL.md`, on every host. Either value
    missing → stop as an installation defect.

@@ -28,7 +28,7 @@ TRIGGER
 ## Rules
 
 MUST Stay read-only: run no program (on Codex, shell read commands only:
-  [cad-flow agent roles — Roles](../cad-flow/references/agent-roles.md#roles)), and hash, validate, write, delegate or
+  [cad-flow reviewer role](../cad-flow/references/agent-roles/cad-mech-dfm-reviewer.md#rules)), and hash, validate, write, delegate or
   ask nothing; read only the brief's inventory copies and read-only paths.
 MUST Keep mechanical and DFM coverage separate, and assess each part and operation by its own route kind.
 MUST Cite every measured value with units and the inspected path it came from; never measure, estimate or invent one.

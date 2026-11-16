@@ -37,9 +37,9 @@ Paths, bindings and the hash graph are cad-record's; acceptance and publication 
    `geometry.build` harness loads the snapshot `model.py` files through the model contract as inputs.
 4. A program that did not finish leaves no PASS: its obligations are UNKNOWN `TIMEOUT` or `NOT_RUN`, and a result that was never written is
    `MISSING_RESULT` at acceptance.
-5. A REVIEW result that lists commands, or a reviewer that wrote any file or ran anything other than read-only inspection commands (the lead
-   compares its tree digest before dispatch and after return; per-host reading rule:
-   [cad-flow agent roles — Roles](../../cad-flow/references/agent-roles.md#roles)), fails acceptance; the lead never edits the reviewer's
+5. A REVIEW result that lists commands, or a reviewer that wrote any file or ran anything other than read-only inspection commands (the
+   lead compares its tree digest before dispatch and after return; per-host reading rule: [cad-flow agent roles —
+   Reviewer](../../cad-flow/references/agent-roles/cad-mech-dfm-reviewer.md#rules)), fails acceptance; the lead never edits the reviewer's
    bytes. A checker's REVIEW result has no commands, source files or artifacts, and its `inspected` names only `input_inventory.files`
    entries, by their `hw/` path and sha256; a COMMAND result of the same unit is unaffected.
 

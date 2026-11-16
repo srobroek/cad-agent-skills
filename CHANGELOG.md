@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- The repair-unit comparison is Accept step 10, so a failure rejects before the state is recorded, and it excludes hash references to
+  files a repair may change, checking each against the lead's own sha256 of the repaired file.
+- A repair unit rebinds its result files (`binding.unit`, `binding.brief_sha256`, `binding.input_inventory_sha256`) and keeps every other
+  verdict-relevant byte equal to the lead's own hash of the rejected snapshot, never to a hash the rejected delivery claims.
+- Repair units remap the unit-local boundary paths to their own directory, snapshot the whole rejected delivery, re-deliver unchanged
+  outputs byte-identical and exclude reviewer units.
+- The worker-brief schema accepts a `rejected/<unit>/<path>` snapshot for repair units, under the same dot-segment rules as the other snapshot
+  forms. A valid repair-brief fixture and two invalid ones (dot segment, missing unit) cover it.
+- Split `agent-roles.md` by role: the common file keeps the shared rules and `agent-roles/<role>.md` holds each role's duty and rules, so a
+  checker or reviewer loads less. Native profiles, Kiro `resources` and links follow.
+- agent-roles no longer contradicts itself on what a worker may follow: links to lead references are tagged `lead-side`, and the Read set
+  names the cad-flow files a worker never needs.
+- A delivery rejected only for a mechanical reason (path value, hash typo, missing log, schema failure) may go back as a short repair unit
+  with about one third of the limits; wrong facts, boundary violations, sourcing facts, unreviewed checker programs and a second repair
+  still go back as full new units.
+- Workers scan their delivery for `.cad-work/`, `input/`, `installed/` and `lead/` path values before writing
+  `delivery.json`; the lead's Accept scan stays the authority.
 - Add targeted invalid contract fixtures: WAIVER without its waiver or authority, CHANGE without its change or baseline, RELEASE bound to a
   proposal or a malformed verdict hash, a negative BOM part count, BOM totals without mass, a verification index without stage, a capability
   library without profiles and a material library with an unknown key. Four regression and three contract error substrings now name their

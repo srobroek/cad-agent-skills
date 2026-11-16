@@ -24,12 +24,13 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    the unit's `units.yaml` dispatch log has a `task_text` of only the role, brief path and role reference path and, on Codex,
    `fork_turns: none` ([delegation dispatch-units](delegation.md#dispatch-units) step 4).
 3. Producers (concept designer, part designer, sourcing researcher): `verdict: PASS` and `ready: true`, or `verdict: MINOR` whose every
-   finding leaves each recorded fact, value and citation of the delivery as its evidence states it (an omitted optional note, a wording
-   or formatting slip, an advisory): accept it and log its findings in the unit's `reason`. A MINOR finding that a delivered fact, value
-   or citation is wrong or unsupported, and every MAJOR, rejects the delivery, and its findings shape the next unit's brief. A sourcing
+   finding leaves each recorded fact, value and citation of the delivery as its evidence states it (an omitted optional note, a wording or
+   formatting slip, an advisory): accept it and log its findings in the unit's `reason`. A MINOR finding that a delivered fact, value or
+   citation is wrong or unsupported, and every MAJOR, rejects the delivery, and its findings shape the next unit's brief. A sourcing
    subject fact that no retained source states, or that a failed search tool left unfound, is a typed UNKNOWN in `unknowns`, which is no
-   defect ([agent-roles](agent-roles.md#roles)). Evidence roles (checker, reviewer): the verdict grades the subject, so any verdict that
-   follows from its results (step 6) passes this step, and a FAIL, UNKNOWN or MAJOR result is published as delivered.
+   defect ([sourcing researcher](agent-roles/cad-sourcing-researcher.md#rules)). Evidence roles (checker, reviewer): the verdict grades
+   the subject, so any verdict that follows from its results (step 6) passes this step, and a FAIL, UNKNOWN or MAJOR result is published
+   as delivered.
 4. `build.status` is SUCCEEDED with a matching log, or NOT_APPLICABLE with a reason. A producer that built geometry also delivers a passing
    `geometry.readback` result ([cad-model Readback](../../cad-model/references/exports.md#readback)); an exit code alone is no success.
 5. Every `expected.outputs` target is delivered exactly once and nothing else, except that a `target_pattern` entry takes 0 to `max`
@@ -81,9 +82,12 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    `reason` and rejects nothing.
 9. Each proposal file exists under `output/proposals/`, hashes to its sha256 and targets a locked or shared `hw/` file; proposals are never
    merged as outputs ([delegation Integrate](delegation.md#integrate)).
+10. A repair unit only (its `task` starts with `REPAIR of`): the comparison of [delegation Repair units](delegation.md#repair-units)
+    holds against the lead's snapshot hashes; its `reason` names the first file or field that differs.
 
 A rejected unit is never patched: send it again as a new unit, or its work stays undone
-([delegation Lost and stalled units](delegation.md#lost-and-stalled-units) step 3).
+([delegation Lost and stalled units](delegation.md#lost-and-stalled-units) step 3). A delivery rejected only for a mechanical reason may
+go back as a [repair unit](delegation.md#repair-units), which this Accept judges like any other unit.
 
 ## merge-deliveries
 

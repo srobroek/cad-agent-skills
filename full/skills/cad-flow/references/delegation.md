@@ -2,7 +2,7 @@
 
 Owner: cad-flow. How the lead splits stage work into worker units, dispatches them and integrates their output. Brief fields:
 [worker-brief](worker-brief.md). Acceptance and merge: [worker-delivery](worker-delivery.md). Role duties and boundaries:
-[agent-roles](agent-roles.md).
+[agent-roles](agent-roles.md) and its role files.
 
 ## Units
 
@@ -83,9 +83,9 @@ batch reads another unit's pending result.
    each delivery ([worker-delivery](worker-delivery.md)).
 2. Merge accepted bytes verbatim ([merge-deliveries](worker-delivery.md#merge-deliveries)). A rejected delivery goes back to the same role
    as a new unit: a new unit id and `.cad-work/<unit>/`, a new brief that states the defect, and a new native subagent call with a fresh
-   context per step 4. Never send the rework to a returned task (a follow-up, message, resume or steer of its id; on Codex
-   `followup_task` or `send_message`). A rejected unit the lead does not send again follows
-   [Lost and stalled units](#lost-and-stalled-units) step 3.
+   context per step 4; a purely mechanical rejection may instead go back as a [repair unit](#repair-units). Never send the rework to a
+   returned task (a follow-up, message, resume or steer of its id; on Codex `followup_task` or `send_message`). A rejected unit the lead
+   does not send again follows [Lost and stalled units](#lost-and-stalled-units) step 3.
 3. A worker proposal is applied only by the lead: inside the open stage's own controlled files the lead edits the record itself, discloses
    the edit and re-dispatches every unit whose inputs changed; touching approved scope is a [change](change-impact.md).
 4. A consequential unknown a delivery reports is recorded with the OPEN record question its subject already has. A subject without one
@@ -118,6 +118,58 @@ batch reads another unit's pending result.
    obligation of its `expected.obligations` in a lead result of its check, UNKNOWN `TIMEOUT` after a stall and `NOT_RUN` otherwise,
    naming the unit ([stages run-checks](stages.md#run-checks) step 4), and a stage-work unit's facts stay typed UNKNOWN
    ([stages Stop procedure](stages.md#stop-procedure)). The rest of the batch goes on to acceptance.
+
+## Repair units
+
+A delivery rejected only for mechanical reasons may go back as a repair unit instead of a full new unit ([Integrate](#integrate)
+step 2). The mechanical reasons are a path value in a path field ([worker-delivery Accept](worker-delivery.md#accept) step 6), a
+sha256 typo, a missing log and a schema failure of `delivery.json` or of a result file.
+
+- Eligible roles: designer, checker and sourcing units. A reviewer unit is never repaired: a review result that fails validation or
+  mismatches the inventory is re-dispatched as a new unit ([cad-review review](../../cad-review/references/review.md)).
+- A repair unit is a new unit under [Units](#units): a new unit id, a new brief and a new hash. Nothing published is rewritten, and
+  nothing of the rejected delivery was merged. The rejected unit's scratch is never written.
+- Its brief ([worker-brief Compose](worker-brief.md#compose)) starts its `task` with `REPAIR of <rejected unit>:` and names only the
+  defects the rejection `reason` lists, each with its file, JSON path and value.
+- Inputs: the original brief's inputs, plus snapshots `rejected/<rejected unit>/<path-within-unit>` of the rejected delivery in full:
+  every required output, the program and lock, and each available log. A `rejected/` copy is a snapshot (schema `worker-brief`), never a
+  published `hw/` path, so no path field of the repair's results or bundle manifest names one; they cite the same `hw/` origins and
+  targets as any unit.
+- `expected` equals the original's. `boundary` keeps `project_root` and `locked`, and remaps every unit-local path (`scratch`,
+  `writable`, `tmp`, the delivery path) to the repair unit's own `.cad-work/<repair unit>/`; the shared uv cache entry stays.
+- Edit scope: the task limits which files may change to those a listed defect names, the result files' binding below, and the files
+  that record a changed file's sha256 (`delivery.json` is written anew). Any other change rejects the repair.
+- Baseline: the lead's own sha256 of each `rejected/` snapshot file, which the repair brief carries in `input_inventory.snapshots` and
+  `input/SHA256SUMS` and which the lead computed with `shasum -a 256` at Compose. It is never a hash that the rejected `delivery.json`
+  claims, since that hash may be the defect or may be missing from an invalid delivery.
+- Rebinding: a repaired result file (root `check-result`) takes the repair's binding. Its `binding.unit` is the repair unit's id, and its
+  `binding.brief_sha256` and `binding.input_inventory_sha256` are the repair brief's digests. A VERSION binding (`binding.version`,
+  `binding.version_manifest_sha256`) stays as it was. The result's own sha256 changes with it, so the `sha256` of its `outputs[]` and
+  `checks[]` entries, and a `target_pattern` target built from it, are recomputed. Bundle manifests are written by the lead after merge
+  ([worker-delivery merge-deliveries](worker-delivery.md#merge-deliveries) step 4), so no repair carries one. A published file other than
+  a result that embeds the delivering unit's id or brief sha256 cannot be rebound: its rejection is a full new unit.
+- Comparison, run as the last [Accept](worker-delivery.md#accept) step (step 10), so a failure rejects the repair before any state is
+  recorded. The lead first derives the changeable set from the defect list: the files the listed defects name, and the result files
+  rebound above. Then:
+  - every required output outside that set hashes to its baseline;
+  - a program or lock that differs from its baseline is a change, unless a listed defect names it;
+  - each result file equals its snapshot as parsed JSON once these are removed from both: the `binding.unit`, `binding.brief_sha256` and
+    `binding.input_inventory_sha256` keys; the JSON paths a listed defect names; and every hash-reference `sha256` whose entry's `path`
+    names a file of the changeable set. The hash-reference fields of `check-result` are `input_files[].sha256`,
+    `implementation.source_files[].sha256`, `implementation.inspected[].sha256`, `artifacts[].sha256` and the `evidence[].sha256` of an
+    outcome or finding;
+  - each excluded hash field equals the lead's own sha256 of the repaired file it names;
+  - everything else, meaning outcomes, criteria, measured values, findings, `implementation` and every other hash field, stays equal.
+- Its `limits` are about one third of the role's row in Compose: 800 and 50 for a checker or sourcing unit, 1200 and 65 for a
+  designer unit.
+- The same Accept steps judge its delivery, and an independent checker judges its results as for any unit.
+- Never a repair, always a full new unit:
+  - a wrong fact, value or result;
+  - a boundary or read-set violation (Accept step 8);
+  - a sourcing fact, retained source or citation;
+  - a checker program that no independent checker has read, since a repair would reuse an unreviewed program
+    ([cad-record Semantic check](../../cad-record/references/validation.md#semantic-check));
+  - the second repair of the same work: a rejected repair unit goes back as a full new unit.
 
 ## Boundaries
 

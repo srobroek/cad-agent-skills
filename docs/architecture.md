@@ -24,8 +24,8 @@ Each domain rule has one owner. Other skills and agents link to that owner.
 
 ## Roles and host profiles
 
-[`full/skills/cad-flow/references/agent-roles.md`](../full/skills/cad-flow/references/agent-roles.md)
-owns the five role contracts:
+[`full/skills/cad-flow/references/agent-roles.md`](../full/skills/cad-flow/references/agent-roles.md) (the common rules) and the role files
+in [`agent-roles/`](../full/skills/cad-flow/references/agent-roles/cad-checker.md) together own the five role contracts:
 
 | Role | Bounded work |
 | --- | --- |
