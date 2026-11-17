@@ -12,6 +12,9 @@
 - K10a: the lite phone-stand brief and expected obligations name the sealed `hw/releases/<REV>/`, normally A, because a failed REV advances
   the letter.
 - K1b: cad-record validation "Seal check" states that reach runs through predecessor and superseded links.
+- K5: the lead schema-validates every file it wrote or merged before it publishes a version; `policy.check_order` keeps the families of the
+  row that do not apply (listed in `inapplicable`, NOT_APPLICABLE); a lite release proposal holds only the Lite payload; no check family is
+  added after the gate approval.
 - K4: preflight finishes before intake, and the lead checks that each asked intake question carries exactly one template question id
   before it sends the batch (stages Intake order, linking cad-select Ask and finish intake).
 - K9: the shared uv cache warm-up ends in an offline probe of each due warm set, and dispatch is blocked until it passes.

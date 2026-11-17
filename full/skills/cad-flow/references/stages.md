@@ -68,6 +68,11 @@ attempt from the live file; never from a session setting, the installed plugin, 
   BLOCKED (`DUE_UNKNOWN`): the report lists the produced STEP and render as unverified blocked artifacts, the blocker and the resume
   action, and RELEASE does not start. Once FreeCAD is available the attempt resumes by [resume-state](#resume-state) step 3 and
   [run-checks](#run-checks) step 5.
+- The RELEASE proposal holds only the [Lite payload](../../cad-release/references/release.md#lite-payload) rows, the payload its criterion 2
+  allows: no `manufacturing/`, `drawings/`, `bom.*` or STL path, and no file outside those rows
+  ([cad-release Lite propose-release](../../cad-release/references/release.md#lite-propose-release)).
+- The check families are those of `obligations.yaml`, written before any check runs. No family is added after the gate approval; a
+  check the approval did not cover (such as a package-integrity check) is `publish-release`'s `release.integrity` or a new attempt.
 - The lead's own families stay the four record audits and `delivery.integrity`, plus `release.integrity` in `publish-release`; a lead
   geometry or render run is a scratch diagnostic, never a result.
 - Every lite report and gate packet carries the Mode lines of the [SKILL.md OUTPUT](../SKILL.md).
@@ -161,7 +166,11 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    `lite_stages.method_profile`) and `policy`: `path` and `plugin` as in [preflight.json](preflight.md#preflightjson), `chain` (the
    `lite_stages.stages` IDs in order), `row` (this stage's `lite_stages.stages` entry, copied verbatim), `check_order` (the installed
    `check_order` filtered to the row's families, in its order) and `producers` (`{family, producer}` for each row family: `lead` or
-   `cad-checker`, by the run-checks split). A full attempt writes none of these keys. The verdict's `expected` and `future` equal the
+   `cad-checker`, by the run-checks split). `check_order` keeps every family of the row, including one whose `condition` is false: that
+   family stays in the order and is also listed in `inapplicable` with the reason, and its check-plan applicability is NOT_APPLICABLE
+   ([cad-verify check plan](../../cad-verify/references/check-plan.md)). The order is the installed one filtered to the row, never
+   filtered by applicability ([cad-record validation Semantic check](../../cad-record/references/validation.md#semantic-check) items 8
+   and 18). A full attempt writes none of these keys. The verdict's `expected` and `future` equal the
    file, and its `obligations` hashes it.
 5. An expected obligation with no check-plan method or no available tool is UNKNOWN `UNSUPPORTED_METHOD`; never substitute a method.
 6. Before any dispatch, apply [change-impact Carry-forward](change-impact.md#carry-forward) to every expected obligation; units go out only
@@ -209,6 +218,10 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    [path-field](../../cad-record/references/validation.md#path-fields) scan of [worker-delivery Accept](worker-delivery.md#accept) step 6,
    each value a published `hw/` path or a file of the result's own bundle. A file that fails is never published (the lead corrects its
    own in scratch; a worker's delivery is rejected). Publication follows the order of step 1.
+   Before the lead publishes any version, it validates every file it wrote or merged into the attempt (its results, bundle manifests,
+   JSON artifacts, `obligations.yaml`, the manifest and the verdict) against its layout root with the
+   [schema command](../../cad-record/references/validation.md#schema-validation) → exit 0, and records the command and exit code. One
+   failing file holds the whole publication; a result the lead has not validated is never copied to `hw/`.
 4. Stop rule, applied at acceptance in `check_order` to every result of the attempt, the lead's as each unit's, before any of them is
    published: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every later family; any other FAIL or UNKNOWN
    stops the families that read its result, artifacts or geometry. A family without a valid result yet (its unit still running, or its
