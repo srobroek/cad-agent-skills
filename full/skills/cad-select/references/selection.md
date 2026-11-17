@@ -91,7 +91,7 @@ these differences:
    its full template wording, with the settled part cited and only the remainder left to answer; it is never replaced by a narrowed
    question. Skip no other question. Each asked question carries exactly one template question id, and each id covers one template
    question. A question without an id is a defect: restate it under its template id before sending. Intake starts only after
-   [preflight](../../cad-flow/references/preflight.md#preflight-and-the-lead-claim) has run.
+   preflight has run ([cad-flow Intake order](../../cad-flow/references/stages.md#intake-order)).
    Ask focused questions, not a generic questionnaire dump.
 2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
    ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4):
