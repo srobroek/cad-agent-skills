@@ -50,7 +50,9 @@ cad-review: [the rubric reference](../../cad-review/references/rubric.md).
    every write lies in `boundary.writable`. Scan your paths: read every path value of each result, each bundle manifest and each cited
    artifact JSON under `output/**`, with the host's file tools. Each value is either an `hw/` path in the brief's
    `input_inventory.files`, or an output target of the brief or a file of the result's own bundle (`source/`, `stdout.txt`,
-   `stderr.txt`, `artifacts/`), with no `#fragment` and no absolute path. Fix each other value (step 3). A field that [cad-record
+   `stderr.txt`, `artifacts/`), with no `#fragment` and no absolute path. A `record.semantic` result and its artifacts also
+   take the paths of their own `artifacts/seal.sha256` and the missing-root references that
+   [Accept](worker-delivery.md#accept) step 6 permits there. Fix each other value (step 3). A field that [cad-record
    validation: Path fields](../../cad-record/references/validation.md#path-fields) lists as not a path field is explained in `limits`
    instead. The misses seen are `hw/…#fragment` in a `locus` (name the anchor in prose and cite the bare file), absolute paths, a live
    `hw/` path outside the inventory, and a package-relative `path` that is no `hw/` path. The lead's [lead-side:

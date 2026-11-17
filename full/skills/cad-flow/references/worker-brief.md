@@ -48,8 +48,10 @@ skills and write set: its [role file](agent-roles.md#roles).
      `obligations.yaml` and `stage-verdict.json`.
    - Chain files, a lead self-check on the written `files` list before dispatch: class every file under `hw/decisions/`, and under
      `hw/versions/` or `hw/checks/` of an attempt before vN, as (a) a root DR, (b) the `manifest.json`, `obligations.yaml` or
-     `stage-verdict.json` of an earlier attempt, or (c) a result, bundle or cited file of an attempt that no root reaches. A file in no
-     class, such as a copy of what a root reaches or a snapshot DR, is removed and step 2's digests are recomputed.
+     `stage-verdict.json` of an earlier attempt, (c) a result, bundle or cited file of an attempt that no root reaches, or (d) an input
+     that another rule of this brief requires: a retained `source/check.py` and `check.py.lock` for carry-forward or rerun (the
+     `input_inventory` row of the table below), and the statement and proposal files each DR hashes. Only a copy that no rule requires,
+     such as a copy of what a root reaches or a snapshot DR, is removed, and step 2's digests are recomputed.
    - Confirmable hashes: every sha256 an inventoried file records for a lead snapshot (`input/lead/attempts.txt`, `input/installed/…`)
      equals this brief's snapshot of that path or, for an earlier brief's `lead/attempts.txt`, the sha256 of this copy cut after that
      attempt's line (step 2). A hash no copy confirms is a defect to report, never a brief to dispatch.

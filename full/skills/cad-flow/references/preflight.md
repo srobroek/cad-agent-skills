@@ -152,16 +152,19 @@ env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --scr
 A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched to warm its own environment.
 
 Warm-up probe: after the warm-up, run each due warm set offline, `env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads
---offline --locked --script <tmp>/warm-<set>.py` → exit 0. Dispatch is blocked until that probe passes for every set due, the kernel sets
-before a unit of CONCEPT or later; a failed probe stops with `MISSING_RESOURCE`. A warm-up that was skipped is a failed probe.
+--offline --locked --script <tmp>/warm-<set>.py` → exit 0. A failed probe, or a skipped warm-up, is recorded in `preflight.json` `warm`
+and the session continues: resume and gate handling never wait on it. The lead enforces it before it dispatches any unit that needs that
+warm set (the kernel sets for a unit of CONCEPT or later) and before it runs a lead check that needs it, stopping there with
+`MISSING_RESOURCE`; it is never enforced before presenting or recording a gate on an existing verdict.
 
 ## preflight.json
 
-Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`, `schemas [{name, path}]`, `layout`,
-`policy {path, plugin}`, `role_reference`, `rubric`, `templates [{name, path}]` (the asset and fixture templates of Resolve resources step
-2), `tools [{name, argv, version}]`, `unavailable [{name, observation}]` (lite build only, [FreeCAD](#freecad)), `isolation`, `time`.
-Every path is absolute. Briefs and verdicts copy resource paths and provenance from this file only. The session's first reply follows
-the [SKILL.md OUTPUT](../SKILL.md) first-reply line.
+Fields: `root`, `host`, `harness`, `session`, `plugin {name, version}`, `skills [{name, path, uri}]`, `schemas [{name, path}]`,
+`layout`, `policy {path, plugin}`, `role_reference`, `rubric`, `templates [{name, path}]` (the asset and fixture templates of Resolve
+resources step 2), `tools [{name, argv, version}]`, `unavailable [{name, observation}]` (lite build only, [FreeCAD](#freecad)), `warm
+[{set, status, observation}]` ([warm-up probe](#warm-the-uv-cache)), `isolation`, `time`. Every path is absolute. Briefs and verdicts
+copy resource paths and provenance from this file only. The session's first reply follows the [SKILL.md OUTPUT](../SKILL.md) first-reply
+line.
 
 ## Finish
 
