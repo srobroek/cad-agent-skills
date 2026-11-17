@@ -82,7 +82,15 @@ The `record.semantic` checker reads sealed `hw/` files in place, read-only, thro
   Claude sourcing unit was run with empty seeds and rejected; the tool listing is not an observed search result. The brief now requires a
   passing vendor-origin seed per subject; without one, facts stay typed UNKNOWN. See [live-smoke evidence](smoke.md#observed-smoke-findings).
 - OpenCode 2.2.5 `websearch` returned `Web search cancelled` for every lead and worker call in both round-4 cells;
-  the evidence does not establish why it was cancelled. See [live-smoke evidence](smoke.md#observed-smoke-findings).
+  the evidence does not establish why it was cancelled. Round 8 (OpenCode 2.3.0) points to a cause. The
+  `websearch: allow` permission of the sourcing profile resolved. The first web search of a session still asks for consent and a
+  search provider, which OpenCode documents as a request for input separate from permission rules. A cell with `env -i` has no saved
+  choice and no provider key, and a `run` client cannot answer the prompt. The primary `build` agent made the first call, before any
+  sourcing unit started, and the call failed in 5 ms.
+  `run` then exited 1 with `Cancelled a request for input this run cannot answer: Web Search`. A sourcing child's later call waited
+  60 s and failed with `Web search cancelled`. The `permission` table holds no row. A cell avoids this by setting the `websearch` key
+  in its OpenCode config ([smoke environment isolation](smoke.md#procedure)). When the search tool fails, a role works from its seeds
+  ([sourcing researcher rules](../full/skills/cad-flow/references/agent-roles/cad-sourcing-researcher.md#rules)).
 - Codex CLI 0.166.0 on Bedrock: round-4 probes found `gpt-6.1-terra` and `gpt-6-luna` in `us-east-1`; probes in
   `us-east-2` and `us-west-2` returned 404. Verify a selected model in the provider region before a cell; catalog
   availability does not establish regional availability. See [smoke findings](smoke.md#observed-smoke-findings).
@@ -102,6 +110,20 @@ The `record.semantic` checker reads sealed `hw/` files in place, read-only, thro
 - Claude Code 2.1.318 `claude plugin marketplace add --scope project` declares the marketplace in the project settings,
   but still records it at user level and lists it from other projects (where the plugin stays disabled). Two cells
   that register the same marketplace are therefore not isolated from each other.
+
+### Kiro AIM credential injector
+
+On a host with AIM installed, its `aim` credential injector rewrites Kiro agent files. It tracks them in
+`~/.kiro/settings/aim-creds-agent-permissions-state.json` and, in every installed role file, including the reviewer:
+
+- adds `@creds-agent` to `tools`
+- appends an MCP allow rule for `creds-agent/*` to `permissions.rules`
+- adds `mcpServers.creds-agent` (command `aim`) and `allowedTools: ["@creds-agent"]`
+- re-serializes the file, so every byte differs from the source profile
+
+The source rules stay unchanged and in order. The injector adds no filesystem or shell rule, so a boundary result from the
+same cell stands. It does widen each role's tool surface beyond the shipped profile. A cell records the diff of the installed files
+against the source profiles as a deviation.
 
 ### Model-routing evidence
 

@@ -21,6 +21,10 @@ permission:
     "env TMPDIR=/*/.cad-work/*/tmp /*/.cad-work/lead/validator/bin/check-jsonschema --schemafile * *.cad-work/*/output/*": allow
     "env TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/delivery.json*": allow
     "env TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
+    "cp /*/.cad-work/*/input/rejected/*/build.py /*/.cad-work/*/build.py": allow
+    "cp /*/.cad-work/*/input/rejected/*/build.py.lock /*/.cad-work/*/build.py.lock": allow
+    "cp /*/.cad-work/*/input/rejected/*/check.py /*/.cad-work/*/check.py": allow
+    "cp /*/.cad-work/*/input/rejected/*/check.py.lock /*/.cad-work/*/check.py.lock": allow
     "shasum -a 256 *": allow
     "sha256sum *": allow
     "shasum -a 256": allow
@@ -44,6 +48,9 @@ permission:
     "LC_ALL=C sort *--output*": deny
     "sort *--output*": deny
     "mkdir -p /* ?*": deny
+    "cp * *.cad-work/*/input/*": deny
+    "cp * *.cad-work/lead/*": deny
+    "cp * *.cad-work/*/*/*": deny
     "*>*/hw/*": deny
     "*>hw/*": deny
     "*> hw/*": deny
@@ -58,6 +65,8 @@ permission:
     "*>*.opencode/*": deny
     "*>*.kiro/*": deny
     "*>*.omp/*": deny
+  webfetch: deny
+  websearch: deny
   execute: deny
   task: deny
 ---

@@ -13,13 +13,13 @@ Run each cell once per release candidate, in its own fresh project. One cell ins
 | Harness | Status |
 |---|---|
 | Claude Code | required |
-| Codex CLI | not verified in round 6 |
+| Codex CLI | not verified in rounds 6 to 8 |
 | OpenCode | required |
 | Kiro CLI V3 | required |
-| OMP | not verified in round 6 |
+| OMP | not verified in rounds 6 to 8 |
 
 The smoke rounds cover Claude Code, OpenCode and Kiro CLI V3. Codex CLI and OMP were last run
-in round 5. Their profiles stay in the plugin and their commands stay below, but round 6 verified neither; a report
+in round 5. Their profiles stay in the plugin and their commands stay below. Rounds 6 to 8 verified neither, so a report
 lists them as not covered, never as `PASS`. The lite cells use the same three harnesses.
 
 A cell's result is `PASS`, `FAIL` or `BLOCKED` (a prerequisite such as a login, a CLI or a model role was not
@@ -34,6 +34,11 @@ available). `BLOCKED` is reported with its cause, never counted as `PASS`.
 - `uv` on `PATH`, with network for the one validator install at preflight: preflight installs check-jsonschema
   0.39.0 and PyYAML 6.0.3 into `$SMOKE_PROJECT/.cad-work/lead/validator` and passes its probes
   ([preflight](../full/skills/cad-flow/references/preflight.md#probe-tools)); `uvx` is not used.
+- A working AWS profile for the model provider, where the harness reaches its models through AWS. In round 8 the first
+  profile was gone and the cell ran under another one. Record the profile name as a host prerequisite of each cell. The smoke
+  requires no particular profile name.
+- On Kiro, diff each installed `.kiro/agents/*.json` against its source and record the result as a deviation of the cell,
+  since the AIM credential injector can rewrite the installed role files ([Kiro AIM injector](limitations.md#kiro-aim-credential-injector)).
 - The model roles the harness uses (model id and reasoning effort per role), written down before the run. OMP keeps
   them in the files passed with `--config`.
 - The demo brief: [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) for a full-build cell, whose
@@ -217,7 +222,7 @@ Fallback, where the host has no listing: enumerate the installed files the insta
 |---|---|
 | Claude Code | Start, resume and list through `claude_smoke` below: `--setting-sources project,local --strict-mcp-config`, an auth-only `--settings` file, and `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`. `claude plugin` install and cleanup commands run without the wrapper. |
 | Codex CLI | Create a fresh `CODEX_HOME` with a minimal `config.toml` that sets the model, provider credentials, region and project trust for `SMOKE_PROJECT`; use `--ignore-rules` on `codex exec` and `codex exec resume`. A vendor wrapper around the CLI rewrites a fresh config: if it injects MCP servers, suppress them or record them; it also adds `approvals_reviewer` and telemetry settings, which must be recorded as deviations. |
-| OpenCode | For the server and every client command: `OPENCODE_CONFIG_DIR` an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`, and `XDG_DATA_HOME`, `XDG_STATE_HOME` and `XDG_CACHE_HOME` per-cell directories outside the project and evidence, so the session database, logs and state are the cell's own. The server prints `server password <random>`: keep it in a mode `0600` file outside the project and evidence, pass it to every client as `OPENCODE_PASSWORD`, and redact it in the server log. Pass provider credentials and region in environment variables (logins stored with `opencode auth` live in the default data directory) and fix the model with `--model <provider/model#variant>` on each `run`. |
+| OpenCode | For the server and every client command: `OPENCODE_CONFIG_DIR` an empty directory, `OPENCODE_DISABLE_CLAUDE_CODE=1`, and `XDG_DATA_HOME`, `XDG_STATE_HOME` and `XDG_CACHE_HOME` per-cell directories outside the project and evidence, so the session database, logs and state are the cell's own. The server prints `server password <random>`: keep it in a mode `0600` file outside the project and evidence, pass it to every client as `OPENCODE_PASSWORD`, and redact it in the server log. Pass provider credentials and region in environment variables (logins stored with `opencode auth` live in the default data directory) and fix the model with `--model <provider/model#variant>` on each `run`. Put an `opencode.jsonc` in that config directory that sets `"websearch"` to `{"provider": "<id>"}` with that provider's key in the environment, so the first web search never asks for a provider (see [limitations](limitations.md#observed-host-limitations)). Never set it to `false` for a cell: the sourcing researcher discovers sources only through the host's search tool. Check the setting with `opencode debug config --server http://127.0.0.1:<p>` and record it. |
 | Kiro CLI V3 | none found: record the user-level agents, steering and MCP servers that load. Pin `SHELL=/bin/bash` through the cell's tmux `default-shell` (Procedure) and record the session's shell from its system-information `Shell:` line |
 
 | Harness | Per-agent model selection (documented, or observed where marked) | Source |
@@ -444,7 +449,7 @@ when the run ends with the outcome below and without a sealed package; a rejecte
 | multipart collision | the first prompt, A-02 and A-11 ask for two parts, a base and a back plate whose lower 5 mm sits inside the base | LAYOUT lists `geometry.interference@assembly`, whose condition now holds, and FAILs on the shared volume |
 | byte change after freeze | between `approve GROUND <vN>` and the RELEASE approval, change one byte of a file under `hw/versions/<vN>/` | an audit (`record.inputs` or `release.integrity`) FAILs and names the file |
 | mode mismatch | after the GROUND approval, set `build_mode.value` in the live `hw/product.yaml` to `FULL` | `record.semantic` FAILs on the mismatch with the frozen mode; the lead names the CHANGE route |
-| promotion | after a SEALED cell, send `Change: promote this to a full build.` | a CHANGE proposal from LITE to FULL that reopens GROUND; after its approval the full intake asks the open full questions; every lite version, result and `hw/releases/A/` byte is unchanged; no stage gets a retrospective PASS |
+| promotion | after a SEALED cell, send `Change: promote this to a full build.` | a CHANGE proposal from LITE to FULL that reopens GROUND; after its approval the full intake asks the open full questions; every lite version, result and sealed `hw/releases/<REV>/` byte is unchanged; no stage gets a retrospective PASS |
 
 The promotion cell continues from a sealed package and ends at its first full gate, so "without a sealed package"
 applies to new packages only. Wrong scale, count, volume or bounding box, an open shell, a missing lip and a wrong form
