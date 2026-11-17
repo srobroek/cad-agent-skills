@@ -38,7 +38,20 @@ skills and write set: its [role file](agent-roles.md#roles).
      needs no copy of what a root reaches: the checker hashes those sealed files in place
      ([cad-record validation Seal check](../../cad-record/references/validation.md#seal-check)). Only a stage verdict that no root
      reaches brings, for every result it lists, the files
-     [cad-record validation Inputs](../../cad-record/references/validation.md#inputs) names for such a result.
+     [cad-record validation Inputs](../../cad-record/references/validation.md#inputs) names for such a result. The root is the live
+     `hw/decisions/DR-*.yaml` path in `files`, never a snapshot copy of a DR. An earlier attempt that no root reaches, such as a lite
+     LAYOUT (its gate is NONE, so no DR binds it) or a failed attempt, still brings those copies. Example, a lite RELEASE brief with
+     `lead/attempts.txt` `v1` to `v4` (`v4` the current attempt): live
+     `hw/decisions/DR-001.yaml` is an APPROVED `GATE` for the GROUND verdict of `v2`, which supersedes the verdict of `v1`; the root
+     reaches `v2` and, through the superseded link, `v1`, so neither needs result copies. `v3` is a LAYOUT that no DR binds: its
+     verdict lists results, so `files` holds those result files and bundles. Each of `v1` to `v3` still brings its `manifest.json`,
+     `obligations.yaml` and `stage-verdict.json`.
+   - Chain files, a lead self-check on the written `files` list before dispatch: class every file under `hw/decisions/`, and under
+     `hw/versions/` or `hw/checks/` of an attempt before vN, as (a) a root DR, (b) the `manifest.json`, `obligations.yaml` or
+     `stage-verdict.json` of an earlier attempt, (c) a result, bundle or cited file of an attempt that no root reaches, or (d) an input
+     that another rule of this brief requires: a retained `source/check.py` and `check.py.lock` for carry-forward or rerun (the
+     `input_inventory` row of the table below), and the statement and proposal files each DR hashes. Only a copy that no rule requires,
+     such as a copy of what a root reaches or a snapshot DR, is removed, and step 2's digests are recomputed.
    - Confirmable hashes: every sha256 an inventoried file records for a lead snapshot (`input/lead/attempts.txt`, `input/installed/…`)
      equals this brief's snapshot of that path or, for an earlier brief's `lead/attempts.txt`, the sha256 of this copy cut after that
      attempt's line (step 2). A hash no copy confirms is a defect to report, never a brief to dispatch.
