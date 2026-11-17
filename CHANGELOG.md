@@ -12,6 +12,9 @@
 - K10a: the lite phone-stand brief and expected obligations name the sealed `hw/releases/<REV>/`, normally A, because a failed REV advances
   the letter.
 - K1b: cad-record validation "Seal check" states that reach runs through predecessor and superseded links.
+- K2a: the worker pre-delivery scan checks every path value of the delivery, its results, bundle manifests and cited artifacts against the
+  brief's `input_inventory` and output targets, with no `#fragment` and no absolute path, replacing the four-prefix search. The lead's
+  Accept scan stays the authority.
 - K1: the worker-brief Chain self-check names the live `hw/decisions/DR-*.yaml` path as the seal root, never a snapshot copy, adds a worked
   example of reach through predecessor and superseded links, keeps copies for an earlier attempt no root reaches (an unapproved lite
   LAYOUT), and classes every chain file before dispatch so surplus copies are removed.

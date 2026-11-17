@@ -47,11 +47,14 @@ cad-review: [the rubric reference](../../cad-review/references/rubric.md).
 7. Grade the whole delivery PASS, MINOR or MAJOR with the [cad-review rubric](../../cad-review/references/rubric.md).
 8. Writers check before delivering: every `outputs` target is literal (a `target_pattern` with `<sha256>` replaced by the sha256 of the
    output's final bytes and `<name>` by its file name); a change to a locked or shared file is only in `proposals`, never in `outputs`;
-   every write lies in `boundary.writable`. Scan your paths: search `output/**` and each result, bundle manifest and cited artifact JSON
-   with the host's Grep tool for `.cad-work/`, `input/`, `installed/` and `lead/`, and fix each hit that is a path value (step 3), or
-   explain it in `limits` when it sits in a field that
-   [cad-record validation — Path fields](../../cad-record/references/validation.md#path-fields) lists as not a path field. The lead's
-   [lead-side: Accept](worker-delivery.md#accept) scan stays the authority. Then write `.cad-work/<unit>/delivery.json` from the brief's
+   every write lies in `boundary.writable`. Scan your paths: read every path value of each result, each bundle manifest and each cited
+   artifact JSON under `output/**`, with the host's file tools. Each value is either an `hw/` path in the brief's
+   `input_inventory.files`, or an output target of the brief or a file of the result's own bundle (`source/`, `stdout.txt`,
+   `stderr.txt`, `artifacts/`), with no `#fragment` and no absolute path. Fix each other value (step 3). A field that [cad-record
+   validation: Path fields](../../cad-record/references/validation.md#path-fields) lists as not a path field is explained in `limits`
+   instead. The misses seen are `hw/…#fragment` in a `locus` (name the anchor in prose and cite the bare file), absolute paths, a live
+   `hw/` path outside the inventory, and a package-relative `path` that is no `hw/` path. The lead's [lead-side:
+   Accept](worker-delivery.md#accept) scan stays the authority. Then write `.cad-work/<unit>/delivery.json` from the brief's
    worker-delivery template (root [worker-delivery](../../cad-record/schemas/worker-delivery.schema.json), fields below) and validate
    it with this one command, never another parser, its argv and schema path copied from the brief → exit 0:
    `env TMPDIR=<tmp> <check-jsonschema argv> --schemafile <worker-delivery schema path> <root>/.cad-work/<unit>/delivery.json`.
