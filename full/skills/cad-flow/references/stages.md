@@ -221,8 +221,10 @@ Output: the stage, its attempt `vN` or `new`, and the next procedure ID.
    Before the lead publishes any version, it validates every file it wrote or merged into the attempt whose
    [layout](../../cad-record/layout.json) entry names a schema (its results, bundle manifests, the manifest and the verdict) with the
    [schema command](../../cad-record/references/validation.md#schema-validation) → exit 0, and records the command and exit code. A file
-   whose entry has `schema: null` (`obligations.yaml`, JSON item-table artifacts) is parsed with the pinned loader and its hash checked,
-   and gets no schema command. One failing file holds the whole publication; a file the lead has not checked is never copied to `hw/`.
+   whose entry has `schema: null` is checked by its kind, with no schema command: a YAML or JSON file (`obligations.yaml`, JSON
+   item-table artifacts) is parsed with the pinned loader and its hash checked; any other file (`definition/assembly.glb`, STEP, SVG,
+   logs) is hash-checked only, never parsed as YAML. One failing file holds the whole publication; a file the lead has not checked is
+   never copied to `hw/`.
 4. Stop rule, applied at acceptance in `check_order` to every result of the attempt, the lead's as each unit's, before any of them is
    published: a FAIL or UNKNOWN in `record.*`, `geometry.build` or `geometry.readback` stops every later family; any other FAIL or UNKNOWN
    stops the families that read its result, artifacts or geometry. A family without a valid result yet (its unit still running, or its

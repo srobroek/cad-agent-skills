@@ -149,7 +149,8 @@ env TMPDIR=<tmp> uv lock --cache-dir <cache> --no-python-downloads --script <tmp
 env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --script <tmp>/warm-<set>.py
 ```
 
-A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched to warm its own environment.
+A warm-up that fails is recorded in `preflight.json` `warm` like a failed probe below and enforced the same way; a unit is never
+dispatched to warm its own environment.
 
 Warm-up probe: after the warm-up, run each due warm set offline, `env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads
 --offline --locked --script <tmp>/warm-<set>.py` → exit 0. A failed probe, or a skipped warm-up, is recorded in `preflight.json` `warm`
