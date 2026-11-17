@@ -2,8 +2,8 @@
 
 Owner: cad-flow. Runs first in every lead session, before any write under `hw/`. Outputs the live claim `.cad-work/lead/active/claim.yaml`
 (root `lead-claim`) and `.cad-work/lead/preflight.json` (scratch, no root). One shared local filesystem is supported; several hosts writing
-one project are unsupported. Preflight finishes before intake asks
-its first question ([stages Intake order](stages.md#intake-order)).
+one project are unsupported. Preflight, the `yaml` warm-up probe of [Warm the uv cache](#warm-the-uv-cache) included, finishes before intake
+asks its first question ([stages Intake order](stages.md#intake-order)).
 
 ## Identify the host
 
@@ -150,6 +150,10 @@ env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads --locked --scr
 ```
 
 A warm-up that fails stops with `MISSING_RESOURCE`; a unit is never dispatched to warm its own environment.
+
+Warm-up probe: after the warm-up, run each due warm set offline, `env TMPDIR=<tmp> uv run --cache-dir <cache> --no-python-downloads
+--offline --locked --script <tmp>/warm-<set>.py` → exit 0. Dispatch is blocked until that probe passes for every set due, the kernel sets
+before a unit of CONCEPT or later; a failed probe stops with `MISSING_RESOURCE`. A warm-up that was skipped is a failed probe.
 
 ## preflight.json
 
