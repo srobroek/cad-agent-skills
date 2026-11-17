@@ -15,6 +15,7 @@
     "criterion": {"type": "array", "items": {"$ref": "#/$defs/criterion"}, "minItems": 1},
     "subject": {"type": "array", "items": {"$ref": "#/$defs/subject"}, "minItems": 1},
     "obligation": {"type": "array", "items": {"$ref": "#/$defs/obligation"}, "minItems": 1},
+    "hw_locus": {"type": "array", "items": {"$ref": "#/$defs/hw_locus"}, "minItems": 1},
     "finding": {"type": "array", "items": {"$ref": "#/$defs/finding"}, "minItems": 1},
     "waiver": {"type": "array", "items": {"$ref": "#/$defs/waiver"}, "minItems": 1},
     "authority": {"type": "array", "items": {"$ref": "#/$defs/authority"}, "minItems": 1},
@@ -343,9 +344,14 @@
     },
     "url": {"type": "string", "pattern": "^https://\\S+$"},
     "hw_path": {
-      "description": "project-relative path under hw/; no dot segments, empty segments, trailing slash, backslash or control character",
+      "description": "project-relative path under hw/; no dot segments, empty segments, trailing slash, backslash, '#' or control character. A '#fragment' names a location, not a file: use hw_locus",
       "type": "string",
-      "pattern": "^hw/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+$"
+      "pattern": "^hw/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\#\\u0000-\\u001f]+$"
+    },
+    "hw_locus": {
+      "description": "a location inside a published file: an hw_path, then an optional '#<fragment>' (one '#', no whitespace) such as hw/product.yaml#build_mode. The file part is still a published hw/ path; the fragment only narrows it",
+      "type": "string",
+      "pattern": "^hw/(?!(.*/)?\\.{1,2}(/|$|#))(?!.*//)[^\\\\#\\u0000-\\u001f]*[^/\\\\#\\u0000-\\u001f](#[^\\s#\\u0000-\\u001f\\\\]+)?$"
     },
     "scratch_path": {
       "description": "project-relative path under .cad-work/; never durable evidence",
@@ -353,9 +359,9 @@
       "pattern": "^\\.cad-work/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+$"
     },
     "project_path": {
-      "description": "project-relative path under hw/ or .cad-work/",
+      "description": "project-relative path under hw/ or .cad-work/; no '#' (see hw_path)",
       "type": "string",
-      "pattern": "^(hw|\\.cad-work)/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\\\u0000-\\u001f]+$"
+      "pattern": "^(hw|\\.cad-work)/(?!(.*/)?\\.{1,2}(/|$))(?!.*//)(?!.*/$)[^\\\\#\\u0000-\\u001f]+$"
     },
     "relative_path": {
       "description": "path relative to a stated directory, such as a release package root",
@@ -936,6 +942,7 @@
         "family": {"$ref": "#/$defs/check_family"},
         "obligation": {"$ref": "#/$defs/obligation_id"},
         "subject": {"$ref": "#/$defs/subject"},
+        "locus": {"$ref": "#/$defs/hw_locus"},
         "severity": {"$ref": "#/$defs/severity"},
         "outcome": {"$ref": "#/$defs/observed_outcome"},
         "measured": {"$ref": "#/$defs/measured"},

@@ -75,6 +75,8 @@ check-result/invalid/artifact-lists-coverage-json.json: '$.artifacts[2].path: ''
 check-result/invalid/artifact-lists-result-json.json: '$.artifacts[2].path: ''hw/checks/v6/clearance/a1/result.json'' should not be valid under {''pattern'': ''(^|/)(result|bundle-manifest|coverage|package-integrity)\\.json$''}'
 # a command's stdout and stderr name published logs beside the result, never scratch
 check-result/invalid/command-log-scratch.json: "$.implementation.commands[0].stdout: '.cad-work/chk/output/stdout.txt' does not match '^hw/"
+# a command's stdout is a log file path typed by hw_path: a '#fragment' names a place, never a file
+check-result/invalid/command-log-fragment.json: "$.implementation.commands[0].stdout: 'hw/checks/v6/clearance/a1/artifacts/stdout.txt#L1' does not match '^hw/"
 # a COMMAND implementation needs at least one command
 check-result/invalid/command-without-commands.json: '$.implementation.commands: [] should be non-empty'
 # a delivery.integrity result names each unit's merged hw/ target, never its .cad-work/ source (references/validation.md item 12)
@@ -145,6 +147,12 @@ common/invalid/obligation-bad-anchor.yaml: "$.obligation[0].id: 'geometry.cleara
 common/invalid/outcome-entry-waived.yaml: "$.outcome_entry[0].outcome: 'WAIVED' is not one of ['PASS', 'FAIL', 'UNKNOWN', 'NOT_APPLICABLE']"
 # project paths have no dot segments
 common/invalid/path-traversal.yaml: "$.file_hash[0].path: 'hw/../etc/passwd' does not match"
+# a '#fragment' names a location inside a file, never a file: hw_path rejects it (a locus uses hw_locus)
+common/invalid/path-fragment.yaml: "$.file_hash[0].path: 'hw/product.yaml#build_mode' does not match"
+# a path field is project-relative under hw/, never absolute
+common/invalid/path-absolute.yaml: "$.file_hash[0].path: '/Users/owner/project/hw/product.yaml' does not match"
+# a locus is a published hw/ path plus an optional fragment, never an absolute path
+common/invalid/locus-absolute.yaml: "$.hw_locus[0]: '/Users/owner/project/hw/product.yaml#build_mode' does not match"
 # safety or regulatory obligations are never waived
 common/invalid/safety-waiver.yaml: '$.waiver[0].safety_or_regulatory: False was expected'
 # an UNVALIDATED_TRIAL waiver needs expires and supervision

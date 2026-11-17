@@ -33,7 +33,7 @@ stages:
   gate: APPROVED after `approve GROUND <vN>`
   must_show:
   - Q-000 asked in the first intake batch, before any geometry, with the lite-for-initial-prototyping recommendation and the tradeoff line (cad-select references/selection.md "Choose the build mode")
-  - the first batch asks each still-open lite template question in its full wording, namely Q-000, Q-002, Q-003, Q-005, Q-013 to Q-017, Q-019 and Q-020 (cad-select references/selection.md "Lite intake"). It cites the first prompt, without asking, for Q-001 and Q-018, which the prompt settles. For Q-015 and Q-019, which it settles in part, it keeps the full question and asks only the remainder
+  - the first batch asks each still-open lite template question in its full wording, namely Q-000, Q-002, Q-003, Q-005, Q-013 to Q-017, Q-019 and Q-020 (cad-select references/selection.md "Lite intake"). It cites the first prompt, without asking, for Q-001 and Q-018, which the prompt settles. For Q-015, Q-019 and Q-020, which it settles in part, it keeps the full question and asks only the remainder (for Q-020 the remainder is which axis is up and what the model rests on, answered by A-13)
   - release_scope.exclusions opens with the disclosure line, then the prompt's exclusion sentence, A-08 and the A-06 forbidden claim verbatim; the first prompt, A-06 and A-08 are retained as USER sources
   - REQ-002 and REQ-003, the check-plan rows for solid count and features, and the description in product.yaml cite the first prompt as USER source
   - product.yaml build_mode KNOWN LITE, basis USER_DECLARED, with answer A-01 as its USER source; release_scope.exclusions opens with the disclosure line, with A-01 among its sources
@@ -96,7 +96,7 @@ stages:
   - the verification index, the build guide and the release proposal published before the RELEASE checks are dispatched, the proposal without readiness, approval or integrity (cad-release references/release.md "Lite release")
   - the packet shows the render in the host or an opened viewer, the STEP and source paths, the measured dimensions, solid count and volumes, the checked FreeCAD version and outcomes, the independent intent findings, the exclusions, the inventory, the REV and the full sha256 of the proposal, verdict and manifest
   - the disclosure line in the packet and in docs/build-guide.md
-  - after approval, a sealed hw/releases/A/ whose FINAL release-manifest.json carries build_mode LITE, readiness, approval, inventory and integrity PASS, sealed last; its outer digest reported outside the package
+  - after approval, the sealed hw/releases/<REV>/, normally A (a failed REV stays consumed and the letter advances; cad-release references/release.md "propose-release" step 2), whose FINAL release-manifest.json carries build_mode LITE, readiness, approval, inventory and integrity PASS, sealed last; its outer digest reported outside the package
   - claims only the CAD_VALID outcomes of the verification index
   must_not:
   - a FREEZE, BOM, drawing, manufacturing state or STL in the package, or a part revision other than its X draft
@@ -106,7 +106,7 @@ stages:
 
 # Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
 acceptable_ends:
-- SEALED: hw/releases/A sealed as a lite package with every due lite check PASS, a PASS FreeCAD readback on the recorded version, both gates approved by their scripted replies and integrity PASS
+- SEALED: hw/releases/<REV> (normally A; a failed REV advances the letter) sealed as a lite package with every due lite check PASS, a PASS FreeCAD readback on the recorded version, both gates approved by their scripted replies and integrity PASS
 - STOPPED: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it, nothing advanced past it; without FreeCAD, LAYOUT BLOCKED on geometry.readback UNKNOWN NOT_RUN with the STEP and render shown as unverified blocked artifacts and the resume action. A STOPPED run is no completed lite run and gives no lite timing
 never:
 - a material, fit, strength, manufacturing, safety or other physical claim

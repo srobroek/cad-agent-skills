@@ -71,6 +71,11 @@ these differences:
   that needs a record lite never writes, such as a machine, material or supplier record, is not recorded. A field the lite record does not
   require, or an entry of one such as a load of unstated force, stays absent when the reply leaves its value open: no UNKNOWN and no
   question.
+- A field the prompt settles only in part is asked whole, with the settled part cited. Example: the prompt gives "80 mm along X, 90 mm
+  along Y, 100 mm along Z, each within 0.1 mm" but not how a size is measured or whether other dimensions matter. Ask `Q-019` in its full
+  template wording, add "The prompt already gives the 80 x 90 x 100 mm bounding box within 0.1 mm", and leave the owner the measurement
+  criterion and whether any other dimension is a requirement. Never ask a narrowed "how is it measured?" instead, and never cite the
+  prompt as the whole answer.
 - An answer that requires a material, fit, strength, finish or manufacturing property, or a purchased part, contradicts the lite scope.
   The one follow-up batch asks whether to choose FULL for it or to record it as a `release_scope.exclusions` entry; it is never a lite
   criterion and never dropped.
@@ -84,7 +89,9 @@ these differences:
    wording, grouped by domain. Read the prompt first by [Settle each intake field](#settle-each-intake-field): for each field it already
    settles, cite the prompt's answer in the message and do not ask the question. A composite field the prompt settles in part is asked in
    its full template wording, with the settled part cited and only the remainder left to answer; it is never replaced by a narrowed
-   question. Skip no other question. Each asked question carries exactly one question id, and each id covers one template question.
+   question. Skip no other question. Each asked question carries exactly one template question id, and each id covers one template
+   question. A question without an id is a defect: restate it under its template id before sending. Intake starts only after
+   [preflight](../../cad-flow/references/preflight.md#preflight-and-the-lead-claim) has run.
    Ask focused questions, not a generic questionnaire dump.
 2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
    ([cad-record record-bootstrap](../../cad-record/references/record.md#record-bootstrap), step 4):

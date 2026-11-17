@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- K2b: `common` `hw_path` and `project_path` reject `#`. A new `hw_locus` (`hw/<path>` with an optional `#fragment`) types the optional finding
+  `locus`; validation "Path fields" records why a locus may carry a fragment. Fixtures cover a fragment and an absolute path, each in a path
+  field, an absolute locus, and a valid fragment locus.
+- K3: cad-select Lite intake gains a worked partial-settlement example. The lite phone-stand brief treats Q-020 as settled in part (remainder:
+  which axis is up, answered by A-13), and its expected obligations say so.
+- K4b: cad-select Ask and finish intake states that each asked question carries exactly one template id, that an id-less question is a
+  defect, and that preflight comes first.
+- K10a: the lite phone-stand brief and expected obligations name the sealed `hw/releases/<REV>/`, normally A, because a failed REV advances
+  the letter.
+- K1b: cad-record validation "Seal check" states that reach runs through predecessor and superseded links.
 - The repair-unit comparison is Accept step 10, so a failure rejects before the state is recorded, and it excludes hash references to
   files a repair may change, checking each against the lead's own sha256 of the repaired file.
 - A repair unit rebinds its result files (`binding.unit`, `binding.brief_sha256`, `binding.input_inventory_sha256`) and keeps every other

@@ -105,11 +105,16 @@ obligation:
   facet: CAD_VALID
   due: LAYOUT
   basis: IF-001 critical rotating
+hw_locus:
+- hw/product.yaml
+- hw/product.yaml#build_mode
+- hw/parts/STD-0001/part.yaml#model.kernel
 finding:
 - id: motion.sweep:assembly:hinge
   family: motion.sweep
   subject:
     kind: ASSEMBLY
+  locus: hw/product.yaml#build_mode
   severity: MAJOR
   outcome: UNKNOWN
   measured:

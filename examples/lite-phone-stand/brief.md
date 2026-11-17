@@ -31,8 +31,10 @@ Use cad-flow to design a static one-piece appearance model of a desktop phone st
 ## Scripted owner answers
 
 The first prompt settles Q-001 (product) and Q-018 (form and parts), so the lead cites the prompt for them and does not ask them;
-A-02 and A-11 apply only if the lead asks anyway. The prompt settles Q-019 and Q-015 only in part: the lead keeps their full
-questions and asks only the remainder.
+A-02 and A-11 apply only if the lead asks anyway. The prompt settles Q-019, Q-020 and Q-015 only in part: the lead keeps their full
+questions and asks only the remainder. For Q-019 the remainder is how each size is measured (A-12 says on the exported STEP) and
+that no other dimension is a requirement. For Q-020 the prompt gives only "static ... no hinge or moving parts"; the remainder is
+which axis points up and what the model rests on (A-13).
 
 When the lead asks, reply once with every matching answer, one per line in table order, each line exactly its answer text. Each
 question the sheet does not answer gets its own line `<question id>: I don't know; record it as an open question.` Never answer
@@ -73,8 +75,10 @@ and the release claims nothing about it. The actor is synthetic: every decision 
 
 ## Expected end
 
-A sealed lite package `hw/releases/A/` for service class `APPEARANCE_CONCEPT`, with its outer digest reported outside
-the package ([cad-release lite release](../../full/skills/cad-release/references/release.md#lite-release)). It holds the
+A sealed lite package `hw/releases/<REV>/`, normally `A`: a failed REV stays consumed and advances the letter
+([cad-release REV rule](../../full/skills/cad-release/references/release.md#propose-release), step 2). It is for service class
+`APPEARANCE_CONCEPT`, with its outer digest reported outside the package
+([cad-release lite release](../../full/skills/cad-release/references/release.md#lite-release)). It holds the
 assembly and part STEP (AP214), the assembly GLB, the SVG renders under `docs/previews/`, the build guide's lite
 sections with the disclosure line, the CAD_VALID verification index and the FreeCAD readback evidence of the recorded
 version. Its claims are the CAD_VALID outcomes of the bounding-box, solid-count and form criteria; it holds no BOM,
