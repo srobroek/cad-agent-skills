@@ -89,8 +89,8 @@ these differences:
    wording, grouped by domain. Read the prompt first by [Settle each intake field](#settle-each-intake-field): for each field it already
    settles, cite the prompt's answer in the message and do not ask the question. A composite field the prompt settles in part is asked in
    its full template wording, with the settled part cited and only the remainder left to answer; it is never replaced by a narrowed
-   question. Skip no other question. Each asked question carries exactly one template question id, and each id covers one template question. A question
-   without an id is a defect: restate it under its template id before sending. Intake starts only after
+   question. Skip no other question. Each asked question carries exactly one template question id, and each id covers one template
+   question. A question without an id is a defect: restate it under its template id before sending. Intake starts only after
    [preflight](../../cad-flow/references/preflight.md#preflight-and-the-lead-claim) has run.
    Ask focused questions, not a generic questionnaire dump.
 2. After the reply, write its whole record in one batch, before any follow-up, and validate each changed file once
