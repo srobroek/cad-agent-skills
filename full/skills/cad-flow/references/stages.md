@@ -22,6 +22,14 @@ graph follow cad-record ([layout](../../cad-record/layout.json), [record contrac
 `safety` and `required_by` are not used: safety comes from the requirement. `release.integrity` belongs to no stage verdict; it is the
 post-approval package check inside `publish-release`.
 
+## Intake order
+
+[Preflight](preflight.md) finishes before intake starts: the claim, `preflight.json`, the tool probes and the uv cache warm-up pass first,
+and no question reaches the owner until they do. Intake then follows [cad-select's Ask and finish
+intake](../../cad-select/references/selection.md#ask-and-finish-intake). Before the lead sends the question batch, it checks that each
+asked question carries exactly one template question id and that no free-form question without an id is in it; a question without an id
+is rewritten from the template or dropped.
+
 ## Build mode
 
 The build mode selects the policy rows. `hw/product.yaml` `build_mode`

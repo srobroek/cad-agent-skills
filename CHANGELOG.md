@@ -12,6 +12,8 @@
 - K10a: the lite phone-stand brief and expected obligations name the sealed `hw/releases/<REV>/`, normally A, because a failed REV advances
   the letter.
 - K1b: cad-record validation "Seal check" states that reach runs through predecessor and superseded links.
+- K4: preflight finishes before intake, and the lead checks that each asked intake question carries exactly one template question id
+  before it sends the batch (stages Intake order, linking cad-select Ask and finish intake).
 - K2a: the worker pre-delivery scan checks every path value of the delivery, its results, bundle manifests and cited artifacts against the
   brief's `input_inventory` and output targets, with no `#fragment` and no absolute path, replacing the four-prefix search. The lead's
   Accept scan stays the authority.

@@ -2,7 +2,8 @@
 
 Owner: cad-flow. Runs first in every lead session, before any write under `hw/`. Outputs the live claim `.cad-work/lead/active/claim.yaml`
 (root `lead-claim`) and `.cad-work/lead/preflight.json` (scratch, no root). One shared local filesystem is supported; several hosts writing
-one project are unsupported.
+one project are unsupported. Preflight finishes before intake asks
+its first question ([stages Intake order](stages.md#intake-order)).
 
 ## Identify the host
 
