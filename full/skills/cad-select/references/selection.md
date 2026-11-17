@@ -71,6 +71,11 @@ these differences:
   that needs a record lite never writes, such as a machine, material or supplier record, is not recorded. A field the lite record does not
   require, or an entry of one such as a load of unstated force, stays absent when the reply leaves its value open: no UNKNOWN and no
   question.
+- A field the prompt settles only in part is asked whole, with the settled part cited. Example: the prompt gives "80 mm along X, 90 mm
+  along Y, 100 mm along Z, each within 0.1 mm" but not how a size is measured or whether other dimensions matter. Ask `Q-019` in its full
+  template wording, add "The prompt already gives the 80 x 90 x 100 mm bounding box within 0.1 mm", and leave the owner the measurement
+  criterion and whether any other dimension is a requirement. Never ask a narrowed "how is it measured?" instead, and never cite the
+  prompt as the whole answer.
 - An answer that requires a material, fit, strength, finish or manufacturing property, or a purchased part, contradicts the lite scope.
   The one follow-up batch asks whether to choose FULL for it or to record it as a `release_scope.exclusions` entry; it is never a lite
   criterion and never dropped.

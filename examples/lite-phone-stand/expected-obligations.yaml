@@ -33,7 +33,7 @@ stages:
   gate: APPROVED after `approve GROUND <vN>`
   must_show:
   - Q-000 asked in the first intake batch, before any geometry, with the lite-for-initial-prototyping recommendation and the tradeoff line (cad-select references/selection.md "Choose the build mode")
-  - the first batch asks each still-open lite template question in its full wording, namely Q-000, Q-002, Q-003, Q-005, Q-013 to Q-017, Q-019 and Q-020 (cad-select references/selection.md "Lite intake"). It cites the first prompt, without asking, for Q-001 and Q-018, which the prompt settles. For Q-015 and Q-019, which it settles in part, it keeps the full question and asks only the remainder
+  - the first batch asks each still-open lite template question in its full wording, namely Q-000, Q-002, Q-003, Q-005, Q-013 to Q-017, Q-019 and Q-020 (cad-select references/selection.md "Lite intake"). It cites the first prompt, without asking, for Q-001 and Q-018, which the prompt settles. For Q-015, Q-019 and Q-020, which it settles in part, it keeps the full question and asks only the remainder (Q-020: which axis is up and what the model rests on, answered by A-13)
   - release_scope.exclusions opens with the disclosure line, then the prompt's exclusion sentence, A-08 and the A-06 forbidden claim verbatim; the first prompt, A-06 and A-08 are retained as USER sources
   - REQ-002 and REQ-003, the check-plan rows for solid count and features, and the description in product.yaml cite the first prompt as USER source
   - product.yaml build_mode KNOWN LITE, basis USER_DECLARED, with answer A-01 as its USER source; release_scope.exclusions opens with the disclosure line, with A-01 among its sources

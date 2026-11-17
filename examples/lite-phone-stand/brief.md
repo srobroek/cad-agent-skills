@@ -31,8 +31,10 @@ Use cad-flow to design a static one-piece appearance model of a desktop phone st
 ## Scripted owner answers
 
 The first prompt settles Q-001 (product) and Q-018 (form and parts), so the lead cites the prompt for them and does not ask them;
-A-02 and A-11 apply only if the lead asks anyway. The prompt settles Q-019 and Q-015 only in part: the lead keeps their full
-questions and asks only the remainder.
+A-02 and A-11 apply only if the lead asks anyway. The prompt settles Q-019, Q-020 and Q-015 only in part: the lead keeps their full
+questions and asks only the remainder. For Q-019 the remainder is how each size is measured (A-12 says on the exported STEP) and
+that no other dimension is a requirement. For Q-020 the prompt gives only "static ... no hinge or moving parts"; the remainder is
+which axis points up and what the model rests on (A-13).
 
 When the lead asks, reply once with every matching answer, one per line in table order, each line exactly its answer text. Each
 question the sheet does not answer gets its own line `<question id>: I don't know; record it as an open question.` Never answer
