@@ -75,8 +75,10 @@ and the release claims nothing about it. The actor is synthetic: every decision 
 
 ## Expected end
 
-A sealed lite package `hw/releases/A/` for service class `APPEARANCE_CONCEPT`, with its outer digest reported outside
-the package ([cad-release lite release](../../full/skills/cad-release/references/release.md#lite-release)). It holds the
+A sealed lite package `hw/releases/<REV>/`, normally `A`: a failed REV stays consumed and advances the letter
+([cad-release REV rule](../../full/skills/cad-release/references/release.md#propose-release), step 2). It is for service class
+`APPEARANCE_CONCEPT`, with its outer digest reported outside the package
+([cad-release lite release](../../full/skills/cad-release/references/release.md#lite-release)). It holds the
 assembly and part STEP (AP214), the assembly GLB, the SVG renders under `docs/previews/`, the build guide's lite
 sections with the disclosure line, the CAD_VALID verification index and the FreeCAD readback evidence of the recorded
 version. Its claims are the CAD_VALID outcomes of the bounding-box, solid-count and form criteria; it holds no BOM,

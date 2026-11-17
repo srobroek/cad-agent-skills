@@ -96,7 +96,7 @@ stages:
   - the verification index, the build guide and the release proposal published before the RELEASE checks are dispatched, the proposal without readiness, approval or integrity (cad-release references/release.md "Lite release")
   - the packet shows the render in the host or an opened viewer, the STEP and source paths, the measured dimensions, solid count and volumes, the checked FreeCAD version and outcomes, the independent intent findings, the exclusions, the inventory, the REV and the full sha256 of the proposal, verdict and manifest
   - the disclosure line in the packet and in docs/build-guide.md
-  - after approval, a sealed hw/releases/A/ whose FINAL release-manifest.json carries build_mode LITE, readiness, approval, inventory and integrity PASS, sealed last; its outer digest reported outside the package
+  - after approval, the sealed hw/releases/<REV>/, normally A (a failed REV stays consumed and the letter advances; cad-release references/release.md "propose-release" step 2), whose FINAL release-manifest.json carries build_mode LITE, readiness, approval, inventory and integrity PASS, sealed last; its outer digest reported outside the package
   - claims only the CAD_VALID outcomes of the verification index
   must_not:
   - a FREEZE, BOM, drawing, manufacturing state or STL in the package, or a part revision other than its X draft
@@ -106,7 +106,7 @@ stages:
 
 # Correct end states. A run that ends anywhere else, or reaches one by a must_not, is a defect.
 acceptable_ends:
-- SEALED: hw/releases/A sealed as a lite package with every due lite check PASS, a PASS FreeCAD readback on the recorded version, both gates approved by their scripted replies and integrity PASS
+- SEALED: hw/releases/<REV> (normally A; a failed REV advances the letter) sealed as a lite package with every due lite check PASS, a PASS FreeCAD readback on the recorded version, both gates approved by their scripted replies and integrity PASS
 - STOPPED: a stage verdict FAIL or BLOCKED whose blocker names the obligation and what unblocks it, nothing advanced past it; without FreeCAD, LAYOUT BLOCKED on geometry.readback UNKNOWN NOT_RUN with the STEP and render shown as unverified blocked artifacts and the resume action. A STOPPED run is no completed lite run and gives no lite timing
 never:
 - a material, fit, strength, manufacturing, safety or other physical claim
