@@ -9,9 +9,9 @@ is no product approval, and its synthetic answers stand for no owner. Install wi
 
 | Demo | Brief | Build | Starts from | Service class | Correct end |
 |---|---|---|---|---|---|
-| Phone stand | [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) | full | an empty project | `APPEARANCE_CONCEPT` | a sealed concept-definition package `hw/releases/A/`, or a named stop |
+| Phone stand | [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) | full | an empty project | `APPEARANCE_CONCEPT` | a sealed concept-definition package `hw/releases/<REV>/` (normally `A`), or a named stop |
 | Lamp arm | [examples/lamp-arm/brief.md](../examples/lamp-arm/brief.md) | full | a cad-agent v0.1.1 record as data | `FUNCTIONAL_DEMO` | a named stop no later than RELEASE: physical evidence for its safety requirements does not exist |
-| Lite phone stand | [examples/lite-phone-stand/brief.md](../examples/lite-phone-stand/brief.md) | lite | an empty project and a host with FreeCAD | `APPEARANCE_CONCEPT` | a sealed lite package `hw/releases/A/`, or a named stop; without FreeCAD, LAYOUT BLOCKED |
+| Lite phone stand | [examples/lite-phone-stand/brief.md](../examples/lite-phone-stand/brief.md) | lite | an empty project and a host with FreeCAD | `APPEARANCE_CONCEPT` | a sealed lite package `hw/releases/<REV>/` (normally `A`), or a named stop; without FreeCAD, LAYOUT BLOCKED |
 
 Each example also holds `hw/`, the reference record after GROUND stage work, and `expected-obligations.yaml`, the
 obligations each stage must enumerate with what the run must show and must not do. Its `build_mode` names the build:
@@ -49,7 +49,7 @@ never ask for the build mode; the lite brief's prompt names none, so its lead as
 | ANALYSIS | the ANALYSIS reply | mass and centre of mass with their density basis; no stability, friction or holding claim |
 | CRITIQUE | none | separate mechanical and DFM outcomes; a MAJOR finding reopens its causal stage |
 | FREEZE | the FREEZE reply | promote revisions; run checks before deriving the BOM; build the verification index, then accept results; exact frozen version and digest in the packet |
-| RELEASE | the RELEASE reply | enumerate the `vM` verification index before proposing; no readiness or approval is in the proposal; after approval a sealed `hw/releases/A/`, integrity PASS, only CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED claims copied from `vM`, no fit or physical claim, and outer digest reported outside the package |
+| RELEASE | the RELEASE reply | enumerate the `vM` verification index before proposing; no readiness or approval is in the proposal; after approval a sealed `hw/releases/<REV>/` (normally `A`), integrity PASS, only CAD_VALID, GEOMETRICALLY_MANUFACTURABLE and PROCESS_PLANNED claims copied from `vM`, no fit or physical claim, and outer digest reported outside the package |
 
 ## Lamp arm walk-through
 
@@ -71,7 +71,7 @@ Four owner turns reach the sealed package: the prompt, one answer batch, the GRO
 |---|---|---|
 | GROUND | answers A-01 to A-13 | `Q-000` first, with the recommendation of lite for initial prototyping and the tradeoff line; only the lite template questions, none on material, printer, load or capability; `build_mode` KNOWN LITE and the service class from A-01; the bounding-box, solid-count and feature criteria with their checks; FreeCAD availability and the lite disclosure in the packet; no geometry before the approval |
 | LAYOUT | nothing: no owner gate | the finished one-piece form with the sloped back and front lip, not an envelope; part and assembly STEP (AP214), GLB and SVG; the checker's rebuild, export, feature and render checks, its intent inspection and its FreeCAD readback with the recorded version; without FreeCAD, `geometry.readback` UNKNOWN `NOT_RUN` and a BLOCKED stop |
-| RELEASE | `approve RELEASE <vN>` | the index, guide and proposal published before the RELEASE checks; the rendered preview presented to the owner as specified in [cad-flow Lite packets](../full/skills/cad-flow/references/gates.md#lite-packets), with the measured dimensions, FreeCAD outcomes and REV in the packet; after approval a sealed `hw/releases/A/` with `build_mode: LITE`, CAD_VALID claims only, no BOM, drawing or manufacturing file, and the outer digest reported outside the package |
+| RELEASE | `approve RELEASE <vN>` | the index, guide and proposal published before the RELEASE checks; the rendered preview presented to the owner as specified in [cad-flow Lite packets](../full/skills/cad-flow/references/gates.md#lite-packets), with the measured dimensions, FreeCAD outcomes and REV in the packet; after approval a sealed `hw/releases/<REV>/` (normally `A`) with `build_mode: LITE`, CAD_VALID claims only, no BOM, drawing or manufacturing file, and the outer digest reported outside the package |
 
 Promotion to a full build is a CHANGE that reopens GROUND; the sealed lite package stays as it is
 ([smoke.md lite negative cells](smoke.md#lite-negative-cells)).

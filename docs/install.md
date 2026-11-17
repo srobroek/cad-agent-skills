@@ -128,8 +128,8 @@ Restart if files are not discovered. Each role profile carries its own `edit` an
 policy; they admit only the absolute-path commands the role contract runs.
 
 OpenCode asks for consent and a search provider on a session's first web search. A profile cannot answer that request, so a headless
-`opencode run` cancels it and exits 1. Set `websearch` in your OpenCode config to a provider with its key in the environment, or to
-`false`.
+`opencode run` cancels it and exits 1. Set `websearch` in your OpenCode config to a provider with its key in the environment. Setting it
+to `false` stops the prompt but leaves the sourcing researcher without the search tool its role needs.
 
 ## Kiro CLI V3
 
