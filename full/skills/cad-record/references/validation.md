@@ -318,13 +318,12 @@ brief's hashes.
   (item-table rows included) that names a file: a string under a `path`, `file`, `files`, `source`, `target`, `stdout` or
   `stderr` key, and every other whitespace-free string that starts with `/`, `hw/`, `.cad-work/`, `input/`, `installed/` or
   `lead/`. A JSON path (`$…`) or a URL names no file.
-- A path field holds a file path and nothing else: `common` `hw_path` and `project_path` reject `#`, a backslash, a dot
-  segment and an absolute path. A `#fragment` names a place inside a file, never a file.
-- Locus: a `locus` key (a finding's, or a scan row's) names a place, so it may be `hw/<path>` or `hw/<path>#<fragment>`, such as
-  `hw/product.yaml#build_mode` (`common` `hw_locus`). Its file part is a path field in every other respect: a published
-  `hw/` file of the delivery's inventory or outputs, never an absolute, input-copy or scratch path. The rule allows the
-  fragment because file plus key is how a finding points at one field. A scan checks a `locus` by its part before the
-  `#`.
+- Fragment: only a `locus` value may carry a `#fragment`. In a `locus`, the part before the `#` is a published `hw/` path in the
+  delivery's inventory or outputs, and the fragment only names a place in that file. Every other path field is fragment-free:
+  `common` `hw_path` and `project_path` reject `#`, a backslash, a dot segment and an absolute path.
+- Locus: a `locus` key (a finding's, or a scan row's) is `hw/<path>` or `hw/<path>#<fragment>`, such as `hw/product.yaml#build_mode`
+  (`common` `hw_locus`). File plus key is how a finding points at one field. A scan checks a `locus` by its part before the `#`, and
+  never accepts an absolute, input-copy or scratch path there.
 - A file read through a copy is named by its origin, the `input_inventory.files` path (`hw/…`), never by its
   `.cad-work/<unit>/input/` copy. A `delivery.integrity` row names its unit and `hw/` target, never the unit's scratch
   source. A command's `stdout` and `stderr` name the logs beside the result
