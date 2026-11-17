@@ -48,7 +48,7 @@ permission:
     "curl -fsSL -o /* * --compressed*": deny
     "curl -fsSL --create-dirs -o /* * --compressed*": deny
     "curl * --retry-max-time 20 * ?*": deny
-    "cp * *input/*": deny
+    "cp * *.cad-work/*/input/*": deny
     "cp * *.cad-work/lead/*": deny
     "cp * *.cad-work/*/*/*": deny
     "*>*/hw/*": deny

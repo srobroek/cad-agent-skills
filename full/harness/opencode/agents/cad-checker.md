@@ -53,7 +53,7 @@ permission:
     "sort *--output*": deny
     "mkdir -p /* ?*": deny
     "cp * * ?*": deny
-    "cp * *input/*": deny
+    "cp * *.cad-work/*/input/*": deny
     "cp * *.cad-work/lead/*": deny
     "cp * *.cad-work/*/*/*": deny
     "*>*/hw/*": deny
