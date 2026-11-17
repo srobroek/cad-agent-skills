@@ -1,0 +1,4 @@
+probe: cad-agent-skills.common
+file_hash:
+- path: /Users/owner/project/hw/product.yaml
+  sha256: '1111111111111111111111111111111111111111111111111111111111111111'

@@ -1,0 +1,3 @@
+probe: cad-agent-skills.common
+hw_locus:
+- /Users/owner/project/hw/product.yaml#build_mode

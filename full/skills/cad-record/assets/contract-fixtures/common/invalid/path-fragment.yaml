@@ -1,0 +1,4 @@
+probe: cad-agent-skills.common
+file_hash:
+- path: hw/product.yaml#build_mode
+  sha256: '1111111111111111111111111111111111111111111111111111111111111111'
