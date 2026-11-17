@@ -84,6 +84,9 @@ Run in order; the first failure rejects the delivery with that reason. Write eac
    merged as outputs ([delegation Integrate](delegation.md#integrate)).
 10. A repair unit only (its `task` starts with `REPAIR of`): the comparison of [delegation Repair units](delegation.md#repair-units)
     holds against the lead's snapshot hashes; its `reason` names the first file or field that differs.
+11. Shell use: a worker that read a file with a shell `cat`, `grep`, `head`, `wc`, `diff` or `file`, or chained commands with `;`, `&&`, `||`
+    or a pipe outside the [agent-roles](agent-roles.md#every-role) forms, is graded MINOR in every role and cycle. The finding names the
+    command; the delivery is not rejected for it, and no outcome in it changes.
 
 A rejected unit is never patched: send it again as a new unit, or its work stays undone
 ([delegation Lost and stalled units](delegation.md#lost-and-stalled-units) step 3). A delivery rejected only for a mechanical reason may

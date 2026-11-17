@@ -12,6 +12,8 @@
 - K10a: the lite phone-stand brief and expected obligations name the sealed `hw/releases/<REV>/`, normally A, because a failed REV advances
   the letter.
 - K1b: cad-record validation "Seal check" states that reach runs through predecessor and superseded links.
+- K8: workers read files with the host file tools, not shell `cat`, `grep` or `head`, and never chain commands; the lead grades a violation
+  MINOR in Accept step 11 and names the command in the finding.
 - K5: the lead schema-validates every file it wrote or merged before it publishes a version; `policy.check_order` keeps the families of the
   row that do not apply (listed in `inapplicable`, NOT_APPLICABLE); a lite release proposal holds only the Lite payload; no check family is
   added after the gate approval.

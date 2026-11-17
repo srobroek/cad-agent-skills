@@ -88,6 +88,9 @@ parents. A host that denies one command has not blocked every command: retry onl
 skills name, each once, and record every denial verbatim (the command and the host's denial text) in `limits`. A required command
 that stays denied is a missing tool: stop as above.
 
+Shell use is graded by the lead ([lead-side: worker delivery Accept](worker-delivery.md#accept) step 11): a shell `cat`, `grep` or
+`head` on a file the host's file tools read, or a chained command, is MINOR, and the finding names the command.
+
 ## Read set
 
 You read only:
