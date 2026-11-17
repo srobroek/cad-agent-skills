@@ -84,8 +84,9 @@ The `record.semantic` checker reads sealed `hw/` files in place, read-only, thro
 - OpenCode 2.2.5 `websearch` returned `Web search cancelled` for every lead and worker call in both round-4 cells;
   the evidence does not establish why it was cancelled. Round 8 (OpenCode 2.3.0) points to a cause. The
   `websearch: allow` permission of the sourcing profile resolved. The first web search of a session still asks for consent and a
-  search provider, which OpenCode documents as a request for input separate from permission rules. A cell with `env -i` and no provider
-  key has neither, and a `run` client cannot answer. The primary `build` agent made the first call, before any sourcing unit started, and the call failed in 5 ms.
+  search provider, which OpenCode documents as a request for input separate from permission rules. A cell with `env -i` has no saved
+  choice and no provider key, and a `run` client cannot answer the prompt. The primary `build` agent made the first call, before any
+  sourcing unit started, and the call failed in 5 ms.
   `run` then exited 1 with `Cancelled a request for input this run cannot answer: Web Search`. A sourcing child's later call waited
   60 s and failed with `Web search cancelled`. The `permission` table holds no row. A cell avoids this by setting the `websearch` key
   in its OpenCode config ([smoke environment isolation](smoke.md#procedure)). When the search tool fails, a role works from its seeds
