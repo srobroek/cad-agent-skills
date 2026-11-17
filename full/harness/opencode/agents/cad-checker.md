@@ -25,6 +25,10 @@ permission:
     "env TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/python\" -c 'import sys, yaml; [yaml.safe_load(open(p, \"rb\")) for p in sys.argv[1:]]' *": allow
     "cp /*/.cad-work/*/input/hw/checks/*/source/check.py /*/.cad-work/*/check.py": allow
     "cp /*/.cad-work/*/input/hw/checks/*/source/check.py.lock /*/.cad-work/*/check.py.lock": allow
+    "cp /*/.cad-work/*/input/rejected/*/check.py /*/.cad-work/*/check.py": allow
+    "cp /*/.cad-work/*/input/rejected/*/check.py.lock /*/.cad-work/*/check.py.lock": allow
+    "cp /*/.cad-work/*/input/rejected/*/build.py /*/.cad-work/*/build.py": allow
+    "cp /*/.cad-work/*/input/rejected/*/build.py.lock /*/.cad-work/*/build.py.lock": allow
     "shasum -a 256 *": allow
     "sha256sum *": allow
     "shasum -a 256": allow

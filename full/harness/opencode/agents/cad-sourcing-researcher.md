@@ -20,6 +20,8 @@ permission:
     "env TMPDIR=/*/.cad-work/*/tmp \"/*/.cad-work/lead/validator/bin/check-jsonschema\" --schemafile * *.cad-work/*/output/*": allow
     "curl -fsSL -o /*/.cad-work/*/output/* --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 *": allow
     "curl -fsSL --create-dirs -o /*/.cad-work/*/output/* --compressed --remove-on-error --connect-timeout 10 --max-time 60 --max-filesize 64M --retry 1 --retry-max-time 20 *": allow
+    "cp /*/.cad-work/*/input/rejected/*/extract.py /*/.cad-work/*/extract.py": allow
+    "cp /*/.cad-work/*/input/rejected/*/extract.py.lock /*/.cad-work/*/extract.py.lock": allow
     "shasum -a 256 *": allow
     "sha256sum *": allow
     "shasum -a 256": allow
