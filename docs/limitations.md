@@ -103,6 +103,20 @@ The `record.semantic` checker reads sealed `hw/` files in place, read-only, thro
   but still records it at user level and lists it from other projects (where the plugin stays disabled). Two cells
   that register the same marketplace are therefore not isolated from each other.
 
+### Kiro AIM credential injector
+
+On a host with AIM installed, its `aim` credential injector rewrites Kiro agent files. It tracks them in
+`~/.kiro/settings/aim-creds-agent-permissions-state.json` and, in every installed role file, including the reviewer:
+
+- adds `@creds-agent` to `tools`
+- appends an MCP allow rule for `creds-agent/*` to `permissions.rules`
+- adds `mcpServers.creds-agent` (command `aim`) and `allowedTools: ["@creds-agent"]`
+- re-serializes the file, so every byte differs from the source profile
+
+The source rules stay unchanged and in order. The injector adds no filesystem or shell rule, so a boundary result from the
+same cell stands. It does widen each role's tool surface beyond the shipped profile. A cell records the diff of the installed files
+against the source profiles as a deviation.
+
 ### Model-routing evidence
 
 Each host's per-agent model selection, with the host documentation or smoke log that supports each part, is in

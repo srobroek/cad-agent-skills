@@ -27,6 +27,8 @@
 - K1: the worker-brief Chain self-check names the live `hw/decisions/DR-*.yaml` path as the seal root, never a snapshot copy, adds a worked
   example of reach through predecessor and superseded links, keeps copies for an earlier attempt no root reaches (an unapproved lite
   LAYOUT), and classes every chain file before dispatch so surplus copies are removed.
+- K10b: the smoke and limitations docs record the Kiro AIM credential injector's additions to installed role files, which a cell logs
+  as a deviation, and an AWS profile as a per-cell host prerequisite. The matrix says Codex CLI and OMP were not verified in rounds 6 to 8.
 - K6: the Kiro and OpenCode profiles of the repairable roles (checker, part designer, concept designer, sourcing researcher) allow the
   repair worker's copy of its program and lock from `input/rejected/<unit>/…` to the unit root, one form per file name. Claude and
   Codex profiles do not restrict `cp`; OMP and Codex are unverified.

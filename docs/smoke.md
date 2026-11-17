@@ -13,13 +13,13 @@ Run each cell once per release candidate, in its own fresh project. One cell ins
 | Harness | Status |
 |---|---|
 | Claude Code | required |
-| Codex CLI | not verified in round 6 |
+| Codex CLI | not verified in rounds 6 to 8 |
 | OpenCode | required |
 | Kiro CLI V3 | required |
-| OMP | not verified in round 6 |
+| OMP | not verified in rounds 6 to 8 |
 
 The smoke rounds cover Claude Code, OpenCode and Kiro CLI V3. Codex CLI and OMP were last run
-in round 5. Their profiles stay in the plugin and their commands stay below, but round 6 verified neither; a report
+in round 5. Their profiles stay in the plugin and their commands stay below. Rounds 6 to 8 verified neither, so a report
 lists them as not covered, never as `PASS`. The lite cells use the same three harnesses.
 
 A cell's result is `PASS`, `FAIL` or `BLOCKED` (a prerequisite such as a login, a CLI or a model role was not
@@ -34,6 +34,11 @@ available). `BLOCKED` is reported with its cause, never counted as `PASS`.
 - `uv` on `PATH`, with network for the one validator install at preflight: preflight installs check-jsonschema
   0.39.0 and PyYAML 6.0.3 into `$SMOKE_PROJECT/.cad-work/lead/validator` and passes its probes
   ([preflight](../full/skills/cad-flow/references/preflight.md#probe-tools)); `uvx` is not used.
+- A working AWS profile for the model provider, where the harness reaches its models through AWS. In round 8 the first
+  profile was gone and the cell ran under another one. Record the profile name as a host prerequisite of each cell. The smoke
+  requires no particular profile name.
+- On Kiro, diff each installed `.kiro/agents/*.json` against its source and record the result as a deviation of the cell,
+  since the AIM credential injector can rewrite the installed role files ([Kiro AIM injector](limitations.md#kiro-aim-credential-injector)).
 - The model roles the harness uses (model id and reasoning effort per role), written down before the run. OMP keeps
   them in the files passed with `--config`.
 - The demo brief: [examples/phone-stand/brief.md](../examples/phone-stand/brief.md) for a full-build cell, whose
