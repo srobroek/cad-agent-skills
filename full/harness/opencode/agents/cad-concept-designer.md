@@ -48,6 +48,9 @@ permission:
     "LC_ALL=C sort *--output*": deny
     "sort *--output*": deny
     "mkdir -p /* ?*": deny
+    "cp * *input/*": deny
+    "cp * *.cad-work/lead/*": deny
+    "cp * *.cad-work/*/*/*": deny
     "*>*/hw/*": deny
     "*>hw/*": deny
     "*> hw/*": deny

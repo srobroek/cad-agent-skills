@@ -30,8 +30,10 @@
 - K10b: the smoke and limitations docs record the Kiro AIM credential injector's additions to installed role files, which a cell logs
   as a deviation, and an AWS profile as a per-cell host prerequisite. The matrix says Codex CLI and OMP were not verified in rounds 6 to 8.
 - K6: the Kiro and OpenCode profiles of the repairable roles (checker, part designer, concept designer, sourcing researcher) allow the
-  repair worker's copy of its program and lock from `input/rejected/<unit>/…` to the unit root, one form per file name. Claude and
-  Codex profiles do not restrict `cp`; OMP and Codex are unverified.
+  repair worker's copy of its program and lock from `input/rejected/<unit>/…` to the unit root, one form per file name. Deny rules win
+  over the allow: a copy destination under `input/`, under `.cad-work/lead/` or deeper than a unit root is denied. The profiles do not
+  check that source and destination belong to the same unit; the lead's Accept does. Claude and Codex profiles do not restrict `cp`;
+  OMP and Codex are unverified.
 - K7: a round-8 OpenCode turn exited on `Cancelled a request for input this run cannot answer: Web Search`. The cause is OpenCode's
   first-search consent and provider prompt, which no profile permission answers; the lead's `build` agent triggered it. Smoke cells now
   set `websearch` in their OpenCode config. The checker, part designer and concept designer profiles also deny `webfetch` and
