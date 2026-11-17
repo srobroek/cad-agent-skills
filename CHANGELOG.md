@@ -30,6 +30,8 @@
 - K6: the Kiro and OpenCode profiles of the repairable roles (checker, part designer, concept designer, sourcing researcher) allow the
   repair worker's copy of its program and lock from `input/rejected/<unit>/…` to the unit root, one form per file name. Claude and
   Codex profiles do not restrict `cp`; OMP and Codex are unverified.
+- K7: the OpenCode checker, part designer and concept designer profiles deny `webfetch` and `websearch` explicitly, so a headless run
+  never reaches a prompt for them. The sourcing researcher already allows both; its role names a host search tool.
 - The repair-unit comparison is Accept step 10, so a failure rejects before the state is recorded, and it excludes hash references to
   files a repair may change, checking each against the lead's own sha256 of the repaired file.
 - A repair unit rebinds its result files (`binding.unit`, `binding.brief_sha256`, `binding.input_inventory_sha256`) and keeps every other

@@ -67,6 +67,8 @@ permission:
     "*>*.opencode/*": deny
     "*>*.kiro/*": deny
     "*>*.omp/*": deny
+  webfetch: deny
+  websearch: deny
   execute: deny
   task: deny
 ---
