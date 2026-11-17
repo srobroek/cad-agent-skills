@@ -265,6 +265,10 @@ The seal reaches every file the hash graph binds from that decision ([record —
 - every entry of a reached bundle manifest's `files`, never its `input` or `recipe`: they cite inputs, which may change
   later. A REVIEW recipe's `inspected` files are inputs too; the seal never reaches them.
 
+Reach is transitive through the predecessor and superseded links: a reached verdict's predecessor verdict, that verdict's
+approval DR and a superseded verdict are reached in turn, each with everything it binds, back to the earliest approved gate. An
+earlier attempt that no root reaches is not sealed: the brief carries its files as copies, not the checker's in-place read.
+
 The seal check walks that graph from each seal root: an APPROVED `GATE` or `RELEASE` DR among the brief's
 `input_inventory.files`. Each reached file exists and hashes to the sha256 its binder records. A later DR that reopens or
 supersedes the stage never unseals what the approval bound. The `record.semantic` checker runs the walk as follows:
